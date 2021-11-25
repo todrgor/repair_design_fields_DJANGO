@@ -1,0 +1,2 @@
+# repair_design_fields_DJANGO
+Как repair_design_fields, но repair_design_fields_DJANGO
