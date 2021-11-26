@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Обращение в поддержку</title>
+    <link rel="stylesheet" href="lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="lib\css\style_header.css">
+    <link rel="stylesheet" href="lib\css\style_footer.css">
+    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="lib\css\style_pub_create_new.css">
+    <link rel="stylesheet" href="lib\css\style_filter.css">
+</head>
+<body>
+  <div class="header_bg">
+    <div class="header">
+        <a href="">
+            <div class="logo_mini"></div>
+        </a>
+        <div class="header_search">
+            <img src="sources/SVG/search.svg" alt="">
+            <form class="" action="search.py" method="post">
+                <input type="text" name="search_input" value="" placeholder="Я ищу...">
+            </form>
+        </div>
+
+        <div class="user_logged_in">
+          <div class="header_content">
+              <a href="" class="not_heart">Ремонт</a>
+              <a href="" class="not_heart">Дизайн</a>
+              <a href="" class="not_heart">Лайфхаки</a>
+              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+          </div>
+          <div class="role_buttoms">
+              <!-- <a href="" class="ad_panel"></a> -->
+              <a href="" class="super_admin_panel"></a>
+              <a href="" class="create_new_pub"></a>
+          </div>
+          <div class="avatar_and_notifications">
+              <div class="avatar_container">
+                  <button class="avatar_btn">
+                      <div class="avatar_options_mini">
+                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <p class="avatar_options_mini_p">Алексей</p>
+                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                      </div>
+                  </button>
+                  <div id="avtr_optns" class="avatar_options">
+                      <a href="">Мой профиль</a>
+                      <a href="">Настройки</a>
+                      <a href="">Помощь</a>
+                  </div>
+              </div>
+
+              <div class="notifications_container">
+                  <button class="notifications_btn">
+                      <div class="notifications_mini">
+                          <div class="noti_logo"></div>
+                          <p class="notifications_mini_p">99+</p>
+                      </div>
+                  </button>
+                  <div class="notifications_opened">
+                      <div class="last_noti">
+                        <p class="title_notifications_opened">Уведомления:</p>
+                        <div class="notification_one noti_new">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Егор Иванов сохарнил в “Избранне” вашу публикацию <a href="#">Шкаф на
+                                балконе</a></p>
+                            <p class="when_happend_noti">Сегодня, 12:12</p>
+                        </div>
+                        <div class="notification_one noti_new">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Закончился бюджет на рекламной кампании <a href="#">NEW ERA MILITARY</a></p>
+                            <p class="when_happend_noti">Вчера, 23:39</p>
+                        </div>
+                        <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Началась рекламаная кампания <a href="#">NEW ERA MILITARY</a></p>
+                            <p class="when_happend_noti">Вчера, 22:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">1 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                      </div>
+                      <form class="more_notifications" action="more_notifications.py" method="post">
+                          <button type="button" name="more_notifications" class="show_more_noti">Показать ещё</button>
+                      </form>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="user_didnt_log_in">
+          <button class="btn_udli login dont_close_on_click" type="button" name="login">Войти</button>
+          <button class="btn_udli signup dont_close_on_click" type="button" name="signup">Зарегистрироваться</button>
+          <div class="before_slides_form header_restyle">
+  					<input type="radio" name="openned_form" id="reg" checked>
+  					<input type="radio" name="openned_form" id="auth">
+  					<!-- <input type="radio" name="openned_form" id="reset_pass"> -->
+
+  					<div class="before_slides_reg">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle dont_close_on_click">Зарегистрируйтесь,</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle dont_close_on_click">чтобы сохранять к себе каждый понравившийся элемент</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle dont_close_on_click">
+  							<form name="reg_form" method="post" action="try_to_reg.py" class="dont_close_on_click">
+  								<input type="tel" name="reg_tel" placeholder="Ваш номер телефона" class="dont_close_on_click">
+  								<input type="email" name="reg_email" placeholder="Ваша эл. почта" class="dont_close_on_click">
+  								<input type="number" name="reg_age" placeholder="Сколько вам лет?" class="dont_close_on_click">
+  								<input type="password" name="reg_pass" placeholder="Придумайте пароль" class="dont_close_on_click">
+  								<input type="text" name="reg_nick" placeholder="Придумайте себе ник" class="dont_close_on_click">
+  								<div class="submit_bs_form dont_close_on_click">  <input class="submit_bs_form_input dont_close_on_click" type="submit" name="start_reg" value="Зарегистрироваться" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+  					</div>
+
+  					<div class="before_slides_auth">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle dont_close_on_click">Войдите, чтобы</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle dont_close_on_click">свободно пользоваться всем функционалом системы</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle dont_close_on_click">
+  							<form name="auth_form" method="post" action="try_to_auth.py" class="dont_close_on_click">
+  								<input type="text" name="auth_input" placeholder="Телефон, почта или ник" class="dont_close_on_click">
+  								<input type="password" name="auth_pass" placeholder="Пароль" class="dont_close_on_click">
+  								<!-- <label class="podpis_na_forme" for="reset_pass" name="to_reset_pass">Забыл свой пароль...</label> -->
+  								<div class="submit_bs_form dont_close_on_click">  <input class="submit_bs_form_input dont_close_on_click" type="submit" name="start_auth" value="Войти" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+  					</div>
+
+  					<!-- <div class="before_slides_reset_pass">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle">Восстановить доступ</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle">к своему аккаунту на «Ремонт и Дизайн»</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle">
+  							<form name="reset_pass_form" method="post" action="try_to_reset_pass.py">
+  								<input type="text" name="reset_input" placeholder="Эл.почта">
+  								<p class="podpis_na_forme">Мы отправим код для сброса пароля на вашу почту</p>
+  								<div class="submit_bs_form">  <input class="submit_bs_form_input" type="submit" name="start_auth" value="Восстановить доступ" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten"><label for="auth" id="to_auth">Я вспомнил пароль для авторизации ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#">условия конфиденциальности.</a></span></p>
+  					</div> -->
+  				</div>
+        </div>
+    </div>
+  </div>
+  <div class="header_clear_hix"> <!-- чтобы под хэдэр ничего не попадало --> </div>
+
+  <div class="pub_id" id="1"></div>
+  <div id="tags_count"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+
+  <div class="page_title">
+      <p class="title_p">Обращение в поддержку</p>
+  </div>
+  <div class="pubs_container">
+    <form class="" action="index.html" method="post">
+      <div class="appeal_types" style="margin: 0 0 27px;">
+        <h4>С какой целью вы обращаетесь в поддержку?</h4>
+        <label><input type="radio" name="appeal_type" value="idea" id="pub_role" checked>У меня идея</label>
+        <label><input type="radio" name="appeal_type" value="complaint" id="pub_role">У меня жалоба</label>
+        <label><input type="radio" name="appeal_type" value="incomprehensible_situation" id="pub_role">У меня некая непонятная ситуация</label>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Текст Вашего обращения:</h4>
+        <textarea name="pub_description" id="1" placeholder="Расскажите нам, что случилось?" title="У вас какая-либо идея или проблема?"></textarea>
+        <p>Каждое обращение будет рассмотрено и с его учётом будут приняты какие-либо меры, о которых автор обращения получит уведомление.</p>
+      </div>
+      <div class="pub_photos pub_inp_one">
+        <h4>Если у вас есть фотографии по теме:</h4>
+        <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
+        <p>С помощью фотографий можно яснее передать сложившуюся ситуацию.</p>
+      </div>
+
+      <input type="submit" name="send_appeal" value="Отправить обращение" style="width:40%;">
+    </form>
+  </div>
+
+  <div class="footer_bg">
+    <div class="footer">
+        <a href="">
+            <div class="logo_huge">
+              <div class="text_in_logo">
+                <p class="title_huge_logo">Ремонт и дизайн</p>
+                <p class="text_huge_logo">Один сайт, чтобы выбрать дизайн квартиры и сделать в ней ремонт.</p>
+              </div>
+            </div>
+        </a>
+        <div class="links_and_search_footer">
+          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
+          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
+          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
+          <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
+          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <div class="navigation_again_footer">
+            <a href="">Ремонт</a>
+            <a href="">Дизайн</a>
+            <a href="">Лайфхаки</a>
+            <a href="">Избранное</a>
+            <p class="to_notifications">Уведомления</p>
+            <a href="">Мой профиль</a>
+          </div>
+          <div class="footer_search">
+              <img src="sources/SVG/search.svg" alt="">
+              <form class="" action="search.py" method="post">
+                  <input type="text" name="search_input" value="" placeholder="Я ищу...">
+              </form>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="lib/js/jQuery-3.6.0.js"></script>
+  <script src="lib/js/header-animation.js"></script>
+  <script src="lib/js/from-footer-to-notifications.js"></script>
+  <script src="lib/js/animation-pub-create-new.js"></script>
+  <script src="lib/js/animation-designs.js"></script>
+</body>
+</html>

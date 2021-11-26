@@ -1,0 +1,28 @@
+.page_title {
+  font-family: "Open Sans", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 40px;
+    color: #161515;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.links {
+  display: flex;
+    width: 25%;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+
+.links a {
+  text-decoration: none;
+  color: black;
+  opacity: 0.8;
+  cursor: pointer;
+}
+.links a:hover {
+  opacity: 1;
+}

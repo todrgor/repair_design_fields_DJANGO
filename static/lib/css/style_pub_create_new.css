@@ -1,0 +1,158 @@
+.pub_id,
+#tags_count,
+#fltr_cost_p,
+#fltr_style_p,
+#fltr_room_p,
+#checked_styles_count,
+#checked_rooms_count,
+.opened_filter {
+  display: none;
+}
+
+.pubs_container h4 {
+  margin-bottom: 5px;
+  letter-spacing: 0;
+  font-size: 21px;
+}
+.pub_inp_one {
+  font-weight: bold;
+    font-size: 24px;
+    line-height: 31px;
+    letter-spacing: 0.065em;
+    margin: 0 0 27px;
+}
+.pub_inp_one h4 {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 3px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+label:hover {
+  opacity: 1;
+}
+input {
+  margin-right: 10px;
+}
+
+.roles_and_tags {
+  display: flex;
+  margin: 0 0 20px;
+}
+.pub_roles,
+.pub_tags {
+  width: 30%;
+}
+.at_first_choose_the_pub_role,
+.pub_inp_one p {
+  opacity: 0.8;
+    font-size: 16px;
+    letter-spacing: 0;
+    font-weight: 400;
+}
+.pub_inp_one a {
+  letter-spacing: 0;
+  font-size: 16px;
+  margin-right: 5px;
+  color: #333;
+  font-weight: 400;
+  text-decoration: underline;
+}
+.pub_inp_one a:hover {
+  color: #000;
+}
+.pub_inp_one p {
+  font-size: 14px;
+  line-height: 24px;
+  width: 45%;
+}
+.pub_inp_one textarea {
+  width: 38%;
+  height: 100px;
+  padding: 5px 10px;
+}
+
+.pub_title input {
+  width: 40%;
+      display: block;
+      padding: 5px 10px;
+      margin: 0 10px 5px 0;
+}
+
+.pub_roles,
+.pub_tags {
+  margin: 0 0 27px;
+}
+.filters_inline {
+  display: flex;
+  width: 300%;
+}
+.cost input {
+  width: 45%;
+  margin-right: 0;
+}
+input[type="submit"] {
+  cursor: pointer;
+    width: 30%;
+    margin: 0 0 30px;
+    padding: 10px 0;
+    background: #545454;
+    color: #f8f8f8;
+    border: none;
+    border-radius: 10px;
+}
+input[type="submit"]:hover {
+  background: gray;
+}
+
+.filter_mini_div {
+  display: none;
+}
+.filter_mini_div.show {
+  display: flex;
+}
+
+/* для настроек пользователя, на кого чел подписан: */
+.user_one {
+  display: flex;
+  align-items: flex-start;
+}
+.user_one .user_link {
+  width: 35%;
+  margin: 0 0 20px;
+  /* padding: 0 0 0 20px; */
+  display: flex;
+    align-items: center;
+    color: #333;
+}
+.user_one .user_link:hover {
+  color: #000;
+  background: #f5f5f5;
+}
+.user_one .user_photo {
+  margin: 0 10px 0 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    border: 1px solid gray;
+}
+p.cancel_following {
+  cursor: pointer;
+  color: #300;
+  padding: 5px 10px;
+    margin: 10px 0 0;
+    width: auto;
+    border-radius: 10px;
+}
+p.cancel_following:hover {
+  background: #ffd6d6;
+}
+p.cancel_following.dont_cancel {
+  color: #003;
+}
+p.cancel_following.dont_cancel:hover {
+  background: #d6e5ff;
+}

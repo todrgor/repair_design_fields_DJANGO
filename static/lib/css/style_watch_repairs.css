@@ -1,0 +1,89 @@
+.pub_one.lets_see_repair_list {
+  background: url(../../images/watch_repairs/lets_see_repair_list.png) no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    height: 1080px;
+    max-height: 360px;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pub_one.lets_see_repair_list .pub_title {
+  font-size: 36px;
+    letter-spacing: 0;
+    margin: 130px 0 17px;
+}
+.pub_one.lets_see_repair_list .pub_text {
+  font-size: 25px;
+  line-height: 25px;
+      letter-spacing: 0;
+      margin: 0 0 60px;
+}
+.pub_one.lets_see_repair_list .pub_show_full {
+  background: rgb(0 0 0 / 48%);
+  font-size: 18px;
+      letter-spacing: 0;
+      line-height: normal;
+      border: 1px solid #fff;
+      padding: 6px 12px;
+      border-radius: 18px;
+}
+.pub_one.lets_see_repair_list .pub_show_full:hover {
+  background: rgb(33 19 5 / 53%);
+}
+
+.pub_one.repair {
+  max-height: 300px;
+  position: relative;
+}
+.pub_one.repair .img_black_gradient {
+  background: linear-gradient(
+90deg, rgba(0, 0, 0, 0.7) 1%, rgba(0, 0, 0, 0.7) 24%, rgba(0, 0, 0, 0.0) 82.96%), linear-gradient(
+180deg, rgba(27, 26, 26, 0.7) 0%, rgba(21, 20, 20, 0) 14.05%, rgba(21, 20, 20, 0) 83.83%, rgba(27, 26, 26, 0.47) 100%, rgba(27, 26, 26, 0.7) 100%);
+}
+.pub_one.repair .pub_info {
+  position: relative;
+  backdrop-filter: none;
+      margin-left: 0;
+      opacity: 1;
+      background: none;
+      width: 60%;
+      max-height: 160px;
+}
+
+.pub_one.repair .pub_title {
+  font-size: 45px;
+    line-height: 45px;
+    letter-spacing: 0;
+    margin: 0 0 27px;
+}
+.pub_one.repair .pub_stats {
+  position: absolute;
+      bottom: 0;
+}
+
+.pub_one.repair .read_more {
+  position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1;
+    color: white;
+    background: #000000ab;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 2px solid #0000009e;
+    display: none;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.pub_one.repair:hover .read_more {
+  display: inherit;
+  opacity: 1;
+}
+#read_more:hover {
+  background: #000000d1;
+}

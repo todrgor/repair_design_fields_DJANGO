@@ -1,0 +1,589 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать новую публикацию</title>
+    <link rel="stylesheet" href="lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="lib\css\style_header.css">
+    <link rel="stylesheet" href="lib\css\style_footer.css">
+    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="lib\css\style_pub_create_new.css">
+    <link rel="stylesheet" href="lib\css\style_filter.css">
+</head>
+<body>
+  <div class="header_bg">
+    <div class="header">
+        <a href="">
+            <div class="logo_mini"></div>
+        </a>
+        <div class="header_search">
+            <img src="sources/SVG/search.svg" alt="">
+            <form class="" action="search.py" method="post">
+                <input type="text" name="search_input" value="" placeholder="Я ищу...">
+            </form>
+        </div>
+
+        <div class="user_logged_in">
+          <div class="header_content">
+              <a href="" class="not_heart">Ремонт</a>
+              <a href="" class="not_heart">Дизайн</a>
+              <a href="" class="not_heart">Лайфхаки</a>
+              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+          </div>
+          <div class="role_buttoms">
+              <!-- <a href="" class="ad_panel"></a> -->
+              <a href="" class="super_admin_panel"></a>
+              <a href="" class="create_new_pub"></a>
+          </div>
+          <div class="avatar_and_notifications">
+              <div class="avatar_container">
+                  <button class="avatar_btn">
+                      <div class="avatar_options_mini">
+                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <p class="avatar_options_mini_p">Алексей</p>
+                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                      </div>
+                  </button>
+                  <div id="avtr_optns" class="avatar_options">
+                      <a href="">Мой профиль</a>
+                      <a href="">Настройки</a>
+                      <a href="">Помощь</a>
+                  </div>
+              </div>
+
+              <div class="notifications_container">
+                  <button class="notifications_btn">
+                      <div class="notifications_mini">
+                          <div class="noti_logo"></div>
+                          <p class="notifications_mini_p">99+</p>
+                      </div>
+                  </button>
+                  <div class="notifications_opened">
+                      <div class="last_noti">
+                        <p class="title_notifications_opened">Уведомления:</p>
+                        <div class="notification_one noti_new">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Егор Иванов сохарнил в “Избранне” вашу публикацию <a href="#">Шкаф на
+                                балконе</a></p>
+                            <p class="when_happend_noti">Сегодня, 12:12</p>
+                        </div>
+                        <div class="notification_one noti_new">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Закончился бюджет на рекламной кампании <a href="#">NEW ERA MILITARY</a></p>
+                            <p class="when_happend_noti">Вчера, 23:39</p>
+                        </div>
+                        <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Началась рекламаная кампания <a href="#">NEW ERA MILITARY</a></p>
+                            <p class="when_happend_noti">Вчера, 22:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">1 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                        <div class="notification_one noti_old">
+                            <div class="noti_one_logo"></div>
+                            <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
+                                человек!</p>
+                            <p class="when_happend_noti">34 августа, 12:50</p>
+                        </div>
+                      </div>
+                      <form class="more_notifications" action="more_notifications.py" method="post">
+                          <button type="button" name="more_notifications" class="show_more_noti">Показать ещё</button>
+                      </form>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="user_didnt_log_in">
+          <button class="btn_udli login dont_close_on_click" type="button" name="login">Войти</button>
+          <button class="btn_udli signup dont_close_on_click" type="button" name="signup">Зарегистрироваться</button>
+          <div class="before_slides_form header_restyle">
+  					<input type="radio" name="openned_form" id="reg" checked>
+  					<input type="radio" name="openned_form" id="auth">
+  					<!-- <input type="radio" name="openned_form" id="reset_pass"> -->
+
+  					<div class="before_slides_reg">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle dont_close_on_click">Зарегистрируйтесь,</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle dont_close_on_click">чтобы сохранять к себе каждый понравившийся элемент</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle dont_close_on_click">
+  							<form name="reg_form" method="post" action="try_to_reg.py" class="dont_close_on_click">
+  								<input type="tel" name="reg_tel" placeholder="Ваш номер телефона" class="dont_close_on_click">
+  								<input type="email" name="reg_email" placeholder="Ваша эл. почта" class="dont_close_on_click">
+  								<input type="number" name="reg_age" placeholder="Сколько вам лет?" class="dont_close_on_click">
+  								<input type="password" name="reg_pass" placeholder="Придумайте пароль" class="dont_close_on_click">
+  								<input type="text" name="reg_nick" placeholder="Придумайте себе ник" class="dont_close_on_click">
+  								<div class="submit_bs_form dont_close_on_click">  <input class="submit_bs_form_input dont_close_on_click" type="submit" name="start_reg" value="Зарегистрироваться" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+  					</div>
+
+  					<div class="before_slides_auth">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle dont_close_on_click">Войдите, чтобы</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle dont_close_on_click">свободно пользоваться всем функционалом системы</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle dont_close_on_click">
+  							<form name="auth_form" method="post" action="try_to_auth.py" class="dont_close_on_click">
+  								<input type="text" name="auth_input" placeholder="Телефон, почта или ник" class="dont_close_on_click">
+  								<input type="password" name="auth_pass" placeholder="Пароль" class="dont_close_on_click">
+  								<!-- <label class="podpis_na_forme" for="reset_pass" name="to_reset_pass">Забыл свой пароль...</label> -->
+  								<div class="submit_bs_form dont_close_on_click">  <input class="submit_bs_form_input dont_close_on_click" type="submit" name="start_auth" value="Войти" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+  					</div>
+
+  					<!-- <div class="before_slides_reset_pass">
+  						<h1 class="before_slides_form_zagolovok before_slides_ten header_restyle">Восстановить доступ</h1>
+  						<p class="before_slides_form_podzagolovok before_slides_ten header_restyle">к своему аккаунту на «Ремонт и Дизайн»</p>
+  						<div class="white_form_reg_auth_reset before_slides_ten header_restyle">
+  							<form name="reset_pass_form" method="post" action="try_to_reset_pass.py">
+  								<input type="text" name="reset_input" placeholder="Эл.почта">
+  								<p class="podpis_na_forme">Мы отправим код для сброса пароля на вашу почту</p>
+  								<div class="submit_bs_form">  <input class="submit_bs_form_input" type="submit" name="start_auth" value="Восстановить доступ" style="margin-bottom: 0px; border:none;">  </div>
+  							</form>
+  						</div>
+  						<p class="white_form_rar_podpis_1 before_slides_ten"><label for="auth" id="to_auth">Я вспомнил пароль для авторизации ›</label></p>
+  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#">условия конфиденциальности.</a></span></p>
+  					</div> -->
+  				</div>
+        </div>
+    </div>
+  </div>
+  <div class="header_clear_hix"> <!-- чтобы под хэдэр ничего не попадало --> </div>
+
+  <div class="pub_id" id="1"></div>
+  <div id="tags_count"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+
+  <div class="page_title">
+      <p class="title_p">Создать новую публикацию</p>
+  </div>
+
+  <div class="pubs_container">
+    <form class="" action="index.html" method="post">
+      <div class="pub_title pub_inp_one">
+        <h4>Заголовок:</h4>
+        <input type="text" name="pub_title" id="" placeholder="Введите короткий интересный заголовок">
+        <p>Максимальная длина текста — 135 символов.</p>
+      </div>
+      <div class="pub_preview pub_inp_one">
+        <h4>Превью:</h4>
+        <input type="file" name="pub_preview" id="" accept="image/*" title="Загрузите превью публикации">
+        <p>Идеальный размер изображения — 1350×405 пикселей.<br>С другими размерами фото может некорректно отображаться.</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Описание перед фотографиями:</h4>
+        <textarea name="pub_description" id="1" placeholder="Сдеайте текстовое описание Вашей публикации. Расскажите о важном." title="Сдеайте текстовое описание Вашей публикации. Расскажите о важном."></textarea>
+        <p>Сдеайте текстовое описание Вашей публикации. Расскажите о важном в выбранной теме, упомяните используемые фото.</p>
+      </div>
+      <div class="pub_photos pub_inp_one">
+        <h4>Фотографии публикации:</h4>
+        <input type="file" name="pub_photos" id="pub_photos" multiple accept="image/*" title="Загрузите фотографии по теме публикации">
+        <p>Идеальный размер изображения — 1100×580 пикселей. С другими размерами фото могут некорректно отображаться.</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Описание после фотографий:</h4>
+        <textarea name="pub_description" id="2" placeholder="Сдеайте текстовое описание Вашей публикации. Расскажите о важном." title="Сдеайте текстовое описание Вашей публикации. Расскажите о важном."></textarea>
+        <p>Сдеайте вывод по теме Вашей публикации. Можно пожелать хорошего настроения :3</p>
+      </div>
+      <div class="pub_roles">
+        <h4>Вид публикации:</h4>
+        <label><input type="radio" name="pub_role" value="repair" id="pub_role" checked>Ремонт</label>
+        <label><input type="radio" name="pub_role" value="design" id="pub_role">Дизайн</label>
+        <label><input type="radio" name="pub_role" value="lifehack" id="pub_role">Лайфхаки</label>
+      </div>
+      <div class="pub_tags">
+        <h4>Тэги:</h4>
+        <div id="budget" class="filter_mini_div show cost">
+          <p class="opened_filter_text full_width">Бюджет на ремонт, ₽</p>
+          <input id="fltr_cost_min" type="number" name="cost_mini" value="0" placeholder="0">
+          <p style="font-size: 15px; font-weight: 900;">-</p>
+          <input id="fltr_cost_max" type="number" name="cost_max" value="150000000000" placeholder="15 000 000">
+          <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
+        </div>
+
+        <div id="repair" class="filter_mini_div show checked_spheres">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Ремонт чего:
+            </span>
+          </p>
+          <div class="spheres_labels_open">
+            <label> <span> <input type="radio" name="sphere_one" value="Сантехника"> </span><span>Сантехника</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Отопление" > </span><span>Отопление</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Электропроводка" > </span><span>Электропроводка</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Стены и утепление" > </span><span>Стены и утепление</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Пол и фундамент" > </span><span>Пол и фундамент</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Потолок" > </span><span>Потолок</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Шумоизоляция" > </span><span>Шумоизоляция</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Лицевые поверхности" > </span><span>Лицевые поверхности</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Выравнивание" > </span><span>Выравнивание</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Двери, окна и замки" > </span><span>Двери, окна и замки</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Вентиляция" > </span><span>Вентиляция</span> </label>
+            <label> <span> <input type="radio" name="sphere_one" value="Планировка и перепланировка" > </span><span>Планировка и перепланировка</span> </label>
+          </div>
+        </div>
+        <div id="repair" class="filter_mini_div show checked_styles">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Инструмент:
+            </span>
+          </p>
+          <div class="styles_labels_open">
+            <label> <span> <input type="radio" name="style_design" value="Кувалда"> </span><span>Кувалда</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Молоток" > </span><span>Молоток</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Шруповёрт" > </span><span>Шруповёрт</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Шпаклёвка" > </span><span>Шпаклёвка</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Краска и кисти" > </span><span>Краска и кисти</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Клей" > </span><span>Клей</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Лом" > </span><span>Лом</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Сварочный аппарат" > </span><span>Сварочный аппарат</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Стеклорез" > </span><span>Стеклорез</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Плиткорез" > </span><span>Плиткорез</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Пила" > </span><span>Пила</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Наждачная бумага" > </span><span>Наждачная бумага</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Тесак" > </span><span>Тесак</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Другое" > </span><span>Другое</span> </label>
+          </div>
+        </div>
+        <div id="repair" class="filter_mini_div show checked_rooms">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              В помещении:
+            </span>
+          </p>
+          <div class="checked_rooms_open">
+            <label> <span> <input type="radio" name="checked_room" value="kitchen"> </span><span>Кухня</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Туалет" > </span><span>Туалет</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Ванная" > </span><span>Ванная</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Гостинная" > </span><span>Гостинная</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Спальня" > </span><span>Спальня</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Личная комната" > </span><span>Личная комната</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Коридор" > </span><span>Коридор</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Балкон" > </span><span>Балкон</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Прихожая" > </span><span>Прихожая</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Офис" > </span><span>Офис</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Во всех" > </span><span>Во всех</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Другое" > </span><span>Другое</span> </label>
+          </div>
+        </div>
+
+        <div id="design" class="filter_mini_div color">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              3 основных цвета:
+              <span style="display: none;" id="checked_colors_count" class="checked_colors_count">Любые</span>
+              <span class="checked_colors_container">
+                <span class="checked_colors_div checked_color_1" id="zero_none"></span>
+                <span class="checked_colors_div checked_color_2"></span>
+                <span class="checked_colors_div checked_color_3"></span>
+              </span>
+            </span>
+          </p>
+          <div class="color_panel">
+            <input id="color_1_inp" class="color_input color_1" type="text" name="color_1" value="1">
+            <input id="color_2_inp" class="color_input color_2" type="text" name="color_2" value="2">
+            <input id="color_3_inp" class="color_input color_3" type="text" name="color_3" value="3">
+            <ul class="cp">
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_ffa500"></li>
+                <li class="cp__color" id="c_e8a52b"></li>
+                <li class="cp__color" id="c_e0b76c"></li>
+                <li class="cp__color" id="c_cc9a3e"></li>
+                <li class="cp__color" id="c_c8a76a"></li>
+                <li class="cp__color" id="c_a08555"></li>
+                <li class="cp__color" id="c_7e673d"></li>
+                <li class="cp__color" id="c_845808"></li>
+                <li class="cp__color" id="c_5a3b03"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_ffff00"></li>
+                <li class="cp__color" id="c_e2e21e"></li>
+                <li class="cp__color" id="c_e6e681"></li>
+                <li class="cp__color" id="c_b6b663"></li>
+                <li class="cp__color" id="c_b6b625"></li>
+                <li class="cp__color" id="c_a0a02b"></li>
+                <li class="cp__color" id="c_727224"></li>
+                <li class="cp__color" id="c_989800"></li>
+                <li class="cp__color" id="c_62620d"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_ff0000"></li>
+                <li class="cp__color" id="c_ff3030"></li>
+                <li class="cp__color" id="c_fa7e7e"></li>
+                <li class="cp__color" id="c_ce5b5b"></li>
+                <li class="cp__color" id="c_d23030"></li>
+                <li class="cp__color" id="c_b83737"></li>
+                <li class="cp__color" id="c_962e2e"></li>
+                <li class="cp__color" id="c_ca4242"></li>
+                <li class="cp__color" id="c_903131"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_ff006a"></li>
+                <li class="cp__color" id="c_ff3589"></li>
+                <li class="cp__color" id="c_f46aa5"></li>
+                <li class="cp__color" id="c_d64784"></li>
+                <li class="cp__color" id="c_ca2f6f"></li>
+                <li class="cp__color" id="c_b22c64"></li>
+                <li class="cp__color" id="c_84224b"></li>
+                <li class="cp__color" id="c_b81b5d"></li>
+                <li class="cp__color" id="c_821342"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_008000"></li>
+                <li class="cp__color" id="c_1e941e"></li>
+                <li class="cp__color" id="c_40bc40"></li>
+                <li class="cp__color" id="c_268026"></li>
+                <li class="cp__color" id="c_197019"></li>
+                <li class="cp__color" id="c_155c15"></li>
+                <li class="cp__color" id="c_0f440f"></li>
+                <li class="cp__color" id="c_267626"></li>
+                <li class="cp__color" id="c_185218"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_0000ff"></li>
+                <li class="cp__color" id="c_2424ff"></li>
+                <li class="cp__color" id="c_4646dc"></li>
+                <li class="cp__color" id="c_2323ca"></li>
+                <li class="cp__color" id="c_2626c6"></li>
+                <li class="cp__color" id="c_1d1d8e"></li>
+                <li class="cp__color" id="c_17176e"></li>
+                <li class="cp__color" id="c_2a2a9a"></li>
+                <li class="cp__color" id="c_1a1a7c"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_00ffe7"></li>
+                <li class="cp__color" id="c_24f5ff"></li>
+                <li class="cp__color" id="c_46d5dc"></li>
+                <li class="cp__color" id="c_23c2ca"></li>
+                <li class="cp__color" id="c_26c6c6"></li>
+                <li class="cp__color" id="c_1d898e"></li>
+                <li class="cp__color" id="c_17626e"></li>
+                <li class="cp__color" id="c_2a959a"></li>
+                <li class="cp__color" id="c_1a787c"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_800080"></li>
+                <li class="cp__color" id="c_ae00ae"></li>
+                <li class="cp__color" id="c_ac52ac"></li>
+                <li class="cp__color" id="c_a216a2"></li>
+                <li class="cp__color" id="c_981498"></li>
+                <li class="cp__color" id="c_7e1d7e"></li>
+                <li class="cp__color" id="c_521352"></li>
+                <li class="cp__color" id="c_862a86"></li>
+                <li class="cp__color" id="c_6c0d6c"></li>
+              </div>
+
+              <div class="one_color_tone">
+                <li class="cp__color" id="c_000000"></li>
+                <li class="cp__color" id="c_1f1f1f"></li>
+                <li class="cp__color" id="c_313131"></li>
+                <li class="cp__color" id="c_707070"></li>
+                <li class="cp__color" id="c_a0a0a0"></li>
+                <li class="cp__color" id="c_cecece"></li>
+                <li class="cp__color" id="c_e8e8e8"></li>
+                <li class="cp__color" id="c_f2f2f2"></li>
+                <li class="cp__color" id="c_ffffff"></li>
+              </div>
+            </ul>
+          </div>
+        </div>
+        <div id="design" class="filter_mini_div checked_rooms">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Комната:
+            </span>
+          </p>
+          <div class="checked_rooms_open">
+            <label> <span> <input type="radio" name="checked_room" value="kitchen"> </span><span>Кухня</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Туалет" > </span><span>Туалет</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Ванная" > </span><span>Ванная</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Гостинная" > </span><span>Гостинная</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Спальня" > </span><span>Спальня</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Личная комната" > </span><span>Личная комната</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Коридор" > </span><span>Коридор</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Балкон" > </span><span>Балкон</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Прихожая" > </span><span>Прихожая</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Офис" > </span><span>Офис</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Вся квартира" > </span><span>Вся квартира</span> </label>
+            <label> <span> <input type="radio" name="checked_room" value="Другое" > </span><span>Другое</span> </label>
+          </div>
+        </div>
+        <div id="design" class="filter_mini_div checked_rooms">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Основной стиль:
+            </span>
+          </p>
+          <div class="styles_labels_open">
+            <label> <span> <input type="radio" name="style_design" value="Авангард"> </span><span>Авангард</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Американский стиль" > </span><span>Американский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Ампир" > </span><span>Ампир</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Английский стиль" > </span><span>Английский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Античный стиль" > </span><span>Античный стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Ар деко (арт деко)" > </span><span>Ар деко (арт деко)</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Ар нуво (арт нуво)" > </span><span>Ар нуво (арт нуво)</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Арабский стиль" > </span><span>Арабский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Барокко" > </span><span>Барокко</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Баухауз" > </span><span>Баухауз</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Бохо" > </span><span>Бохо</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Брутализм" > </span><span>Брутализм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Версаль" > </span><span>Версаль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Викторианский стиль" > </span><span>Викторианский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Винтаж" > </span><span>Винтаж</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Гжель" > </span><span>Гжель</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Голландский стиль" > </span><span>Голландский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Готический стиль" > </span><span>Готический стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Гранж" > </span><span>Гранж</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Греческий стиль" > </span><span>Греческий стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Датский стиль" > </span><span>Датский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Деконструктивизм" > </span><span>Деконструктивизм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Индийский стиль" > </span><span>Индийский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Индустриальный стиль" > </span><span>Индустриальный стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Кантри" > </span><span>Кантри</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Китайский стиль" > </span><span>Китайский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Китч" > </span><span>Китч</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Классика" > </span><span>Классика</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Классицизм" > </span><span>Классицизм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Классический стиль" > </span><span>Классический стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Колониальный стиль" > </span><span>Колониальный стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Конструктивизм" > </span><span></span>Конструктивизм</label>
+            <label> <span> <input type="radio" name="style_design" value="Контемпорари" > </span><span>Контемпорари</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Лофт" > </span><span>Лофт</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Манга" > </span><span>Манга</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Минимализм" > </span><span>Минимализм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Модерн" > </span><span>Модерн</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Морской стиль" > </span><span>Морской стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Неоклассицизм" > </span><span>Неоклассицизм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Пин-ап" > </span><span>Пин-ап</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Поп-арт" > </span><span>Поп-арт</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Постмодернизм" > </span><span>Постмодернизм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Прованс" > </span><span>Прованс</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Ренессанс" > </span><span>Ренессанс</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Рококо" > </span><span>Рококо</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Романский стиль" > </span><span>Романский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Русский стиль (а-ля рус)" > </span><span>Русский стиль (а-ля рус)</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Рустик" > </span><span>Рустик</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Скандинавский" > </span><span>Скандинавский</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Средиземноморский стиль" > </span><span>Средиземноморский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Стимпанк" > </span><span>Стимпанк</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Финский стиль" > </span><span>Финский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Французский стиль" > </span><span>Французский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Футуризм" > </span><span>Футуризм</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Фьюжн" > </span><span>Фьюжн</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Хай-тек (техно)" > </span><span>Хай-тек (техно)</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Шебби-Шик" > </span><span>Шебби-Шик</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Эклектика" > </span><span>Эклектика</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Эко-стиль" > </span><span>Эко-стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Японский стиль" > </span><span>Японский стиль</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Mid-сentury modern" > </span><span>Mid-сentury modern</span> </label>
+            <label id="author_style_design"> <span> <input type="checkbox" name="style_design" value="Авторский стиль" > </span><span>Авторский стиль (как Вы сами видите, без придуманных стилей)</span> </label>
+          </div>
+        </div>
+
+        <div id="lifehack" class="filter_mini_div checked_styles">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              В сфере жизни:
+            </span>
+          </p>
+          <div class="styles_labels_open">
+            <label> <span> <input type="radio" name="style_design" value="Быт и уборка"> </span><span>Быт и уборка</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Красота, дизайн и уют" > </span><span>Красота, дизайн и уют</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Строительство и ремонт" > </span><span>Строительство и ремонт</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Планирование дизайна или ремонта" > </span><span>Планирование дизайна или ремонта</span> </label>
+            <label> <span> <input type="radio" name="style_design" value="Другое" > </span><span>Другое</span> </label>
+          </div>
+        </div>
+        <div id="lifehack" class="filter_mini_div cost">
+          <p class="opened_filter_text full_width">Сколько просмотревших<br>сохранили к себе, %</p>
+          <input id="fltr_cost_min" type="number" min="0" max="100" name="cost_mini" value="0" placeholder="0">
+          <p style="font-size: 15px; font-weight: 900;">-</p>
+          <input id="fltr_cost_max" type="number" min="0" max="100" name="cost_max" value="100" placeholder="100">
+        </div>
+
+      </div>
+
+      <input type="submit" name="create!" value="Создать новую публикацию!">
+    </form>
+  </div>
+
+  <div class="footer_bg">
+    <div class="footer">
+        <a href="">
+            <div class="logo_huge">
+              <div class="text_in_logo">
+                <p class="title_huge_logo">Ремонт и дизайн</p>
+                <p class="text_huge_logo">Один сайт, чтобы выбрать дизайн квартиры и сделать в ней ремонт.</p>
+              </div>
+            </div>
+        </a>
+        <div class="links_and_search_footer">
+          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
+          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
+          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
+          <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
+          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <div class="navigation_again_footer">
+            <a href="">Ремонт</a>
+            <a href="">Дизайн</a>
+            <a href="">Лайфхаки</a>
+            <a href="">Избранное</a>
+            <p class="to_notifications">Уведомления</p>
+            <a href="">Мой профиль</a>
+          </div>
+          <div class="footer_search">
+              <img src="sources/SVG/search.svg" alt="">
+              <form class="" action="search.py" method="post">
+                  <input type="text" name="search_input" value="" placeholder="Я ищу...">
+              </form>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <script src="lib/js/jQuery-3.6.0.js"></script>
+  <script src="lib/js/header-animation.js"></script>
+  <script src="lib/js/from-footer-to-notifications.js"></script>
+  <script src="lib/js/animation-pub-create-new.js"></script>
+  <script src="lib/js/animation-designs.js"></script>
+</body>
+</html>
