@@ -1,12 +1,12 @@
 function toggleRemovePubFromSaved_D(idPub) {
   if (!$('.pub_one.design#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/come_back_to_saved.svg");
+    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
     $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '255px');
     $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
     $('.pub_one.design#'+idPub+' .p_for_removed_pubs').addClass('show');
     console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
   } else {
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/remove_from_saved.svg");
+    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
     $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '270px');
     $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
     $('.pub_one.design#'+idPub+' .p_for_removed_pubs').removeClass('show');
@@ -18,13 +18,13 @@ function toggleRemovePubFromSaved_D(idPub) {
 function toggleRemovePubFromSaved_R (idPub) {
   if (!$('.pub_one.repair#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
     $('.pub_one.repair#'+idPub+" .additional_functions").css("width","43%");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/come_back_to_saved.svg");
+    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
     $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
     $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').addClass('show');
     console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
   } else {
     $('.pub_one.repair#'+idPub+" .additional_functions").css("width","14%");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/remove_from_saved.svg");
+    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
     $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
     $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').removeClass('show');
     console.log("Восстановленя в избранное публикация о дизайне под ID "+idPub);
@@ -34,13 +34,13 @@ function toggleRemovePubFromSaved_R (idPub) {
 
 function toggleRemovePubFromSaved_LH(idPub) {
   if (!$('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/come_back_to_saved.svg");
+    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
     $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '255px');
     $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
     $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').addClass('show');
     console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
   } else {
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","sources/SVG/remove_from_saved.svg");
+    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
     $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '270px');
     $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
     $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').removeClass('show');
