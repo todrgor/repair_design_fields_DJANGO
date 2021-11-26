@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Смотреть дизайны квартир</title>
-    <link rel="stylesheet" href="lib\css\style_hello_user.css">
-    <link rel="stylesheet" href="lib\css\style_header.css">
-    <link rel="stylesheet" href="lib\css\style_footer.css">
-    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
-    <link rel="stylesheet" href="lib\css\style_filter.css">
+    <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="/static/lib\css\style_header.css">
+    <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_filter.css">
 </head>
 <body>
   <div class="header_bg">
@@ -16,7 +16,7 @@
             <div class="logo_mini"></div>
         </a>
         <div class="header_search">
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
             <form class="" action="search.py" method="post">
                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
             </form>
@@ -24,29 +24,29 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
                   <button class="avatar_btn">
                       <div class="avatar_options_mini">
-                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <div class="account_img"><img src="/static/images/avatars/avatar-1.png" alt=""></div>
                           <p class="avatar_options_mini_p">Алексей</p>
-                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                          <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -137,7 +137,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -152,7 +152,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -182,7 +182,7 @@
   <div class="pubs_container">
       <div class="pub_one design" id="1">
         <div class="img_from_pub">
-          <img src="images/slider-1/9.png" alt="">
+          <img src="/static/images/slider-1/9.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -192,10 +192,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(1)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -203,7 +203,7 @@
 
       <div class="pub_one design" id="2">
         <div class="img_from_pub">
-          <img src="images/slider-1/10.png" alt="">
+          <img src="/static/images/slider-1/10.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -213,10 +213,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(2)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -224,7 +224,7 @@
 
       <div class="pub_one design" id="3">
         <div class="img_from_pub">
-          <img src="images/slider-1/11.png" alt="">
+          <img src="/static/images/slider-1/11.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -234,10 +234,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(3)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -245,7 +245,7 @@
 
       <div class="pub_one design" id="4">
         <div class="img_from_pub">
-          <img src="images/slider-1/12.png" alt="">
+          <img src="/static/images/slider-1/12.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -255,10 +255,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(4)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -266,7 +266,7 @@
 
       <div class="pub_one design" id="5">
         <div class="img_from_pub">
-          <img src="images/slider-1/4.png" alt="">
+          <img src="/static/images/slider-1/4.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -276,10 +276,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(5)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -287,7 +287,7 @@
 
       <div class="pub_one design" id="6">
         <div class="img_from_pub">
-          <img src="images/slider-1/8.png" alt="">
+          <img src="/static/images/slider-1/8.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -297,10 +297,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(6)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -308,7 +308,7 @@
 
       <div class="pub_one design" id="7">
         <div class="img_from_pub">
-          <img src="images/slider-1/2.png" alt="">
+          <img src="/static/images/slider-1/2.png" alt="">
           <div class="img_black_gradient"> </div>
         </div>
         <div class="pub_info">
@@ -318,10 +318,10 @@
           </div>
           <div class="pub_to_do">
             <div class="user_just_saved_it" onclick="toggleSavePub_D(7)">
-              <img src="sources/SVG/heart.svg" alt="">
+              <img src="/static/sources/SVG/heart.svg" alt="">
               <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <div class="pub_tags"></div>
         </div>
@@ -653,23 +653,22 @@
             </div>
         </a>
         <div class="links_and_search_footer">
-          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
           <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
           <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
           <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
           <div class="navigation_again_footer">
-            <a href="">Ремонт</a>
-            <a href="">Дизайн</a>
-            <a href="">Лайфхаки</a>
-            <a href="">Избранное</a>
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
             <p class="to_notifications">Уведомления</p>
-            <a href="">Мой профиль</a>
+            <a href="/account/">Мой профиль</a>
           </div>
           <div class="footer_search">
-              <img src="sources/SVG/search.svg" alt="">
+              <img src="/static/sources/SVG/search.svg" alt="">
               <form class="" action="search.py" method="post">
                   <input type="text" name="search_input" value="" placeholder="Я ищу...">
               </form>
@@ -678,9 +677,9 @@
     </div>
   </div>
 
-  <script src="lib/js/jQuery-3.6.0.js"></script>
-  <script src="lib/js/header-animation.js"></script>
-  <script src="lib/js/from-footer-to-notifications.js"></script>
-  <script src="lib/js/animation-designs.js"></script>
+  <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+  <script src="/static/lib/js/header-animation.js"></script>
+  <script src="/static/lib/js/from-footer-to-notifications.js"></script>
+  <script src="/static/lib/js/animation-designs.js"></script>
 </body>
 </html>

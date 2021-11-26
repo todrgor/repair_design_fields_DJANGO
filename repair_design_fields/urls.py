@@ -22,7 +22,17 @@ urlpatterns = [
 	path('repairs/', mainapp.repairs),
 	path('designs/', mainapp.designs),
 	path('lifehacks/', mainapp.lifehacks),
-	path('saved/', mainapp.saved), 
+	path('saved/', mainapp.saved),
+	path('account/', mainapp.account),
+	path('account_edit/', mainapp.account_edit),
+	path('pub_one/', mainapp.pub_one),
+	path('pub_create_new/', mainapp.pub_create_new),
+	path('pub_edit/', mainapp.pub_edit),
+	path('support/', mainapp.support),
+	path('become_an_author/', mainapp.become_an_author),
+	path('become_a_teammemder/', mainapp.become_a_teammemder),
+	path('help/', mainapp.help),
+	path('adminRDF/', mainapp.adminRDF), 
 
 	path('admin/', admin.site.urls),
 ]

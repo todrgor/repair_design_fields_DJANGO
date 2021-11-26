@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Помощь: готовые ответы</title>
-    <link rel="stylesheet" href="lib\css\style_hello_user.css">
-    <link rel="stylesheet" href="lib\css\style_header.css">
-    <link rel="stylesheet" href="lib\css\style_footer.css">
-    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
-    <link rel="stylesheet" href="lib\css\style_watch_repairs.css">
-    <link rel="stylesheet" href="lib\css\style_watch_lifehacks.css">
-    <link rel="stylesheet" href="lib\css\style_search_results.css">
+    <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="/static/lib\css\style_header.css">
+    <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_repairs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_lifehacks.css">
+    <link rel="stylesheet" href="/static/lib\css\style_search_results.css">
 </head>
 <body>
   <div class="header_bg">
@@ -18,7 +18,7 @@
             <div class="logo_mini"></div>
         </a>
         <div class="header_search">
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
             <form class="" action="search.py" method="post">
                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
             </form>
@@ -26,29 +26,29 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
                   <button class="avatar_btn">
                       <div class="avatar_options_mini">
-                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <div class="account_img"><img src="/static/images/avatars/avatar-1.png" alt=""></div>
                           <p class="avatar_options_mini_p">Алексей</p>
-                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                          <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -139,7 +139,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -154,7 +154,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -192,12 +192,12 @@
 
   <div class="page_title" style="display: flex; justify-content: space-between;">
       <p class="title_p" style="margin-bottom: 20px; ">Помощь: готовые ответы</p>
-      <p class="count_pubs" style="float: right; margin-top: 10px;"><a href="send_to_support.html" style="color: #262626; background: #ececec; padding: 5px; border-radius: 10px; font-size: 16px;">Обратиться в поддержку</a></p>
+      <p class="count_pubs" style="float: right; margin-top: 10px;"><a href="/support/" style="color: #262626; background: #ececec; padding: 5px; border-radius: 10px; font-size: 16px;">Обратиться в поддержку</a></p>
   </div>
 
   <div class="pubs_container">
     <p onclick="toggleShow('faq1')" class="result_type_container" id='faq1'>Как стать автором и делать свои публикации?
-      <span class="triangle_to_open_and_hide"><img src="sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
+      <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
     <div class="pubs_container_one_type show" id='faq1'>
       <p class="answer">
         Если у вас есть хороший опыт работы в дизайне квартир или ремонте квартир, то очень просто! Просто расскажите о себе, подав заявку на авторство по ссылке: /send_to_supprt.html
@@ -207,7 +207,7 @@
     </div>
 
     <p onclick="toggleShow('faq2')" class="result_type_container" id="faq2">Почему здесь есть 3 вида публикаций?
-      <span class="triangle_to_open_and_hide"><img src="sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
+      <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
     <div class="pubs_container_one_type show" id="faq2">
       <p class="answer">
         Это удобно: вы хотите подобрать для своей квартиры дизайн и понять, как правильно сделать отделку?
@@ -218,24 +218,6 @@
 
   </div>
 
-  <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
-    <div class="pub_additional_functions dont_close_on_click">
-      <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
-      <p class="dont_close_on_click" onclick="searchPubsLikeThis()" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">Искать похожее</p>
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-    </div>
-  </div>
-  <div class="new_complaint"> <!-- написать жалобу -->
-    <h1>Жалоба на публикацию</h1>
-    <form>
-      <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
-      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent">
-    </form>
-  </div>
-  <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-    <h1>Ссылка на публикацию: </h1>
-    <p>repairandfields.com/ru/search?pubId=99</p>
-  </div>
 
 
   <div class="footer_bg">
@@ -249,23 +231,22 @@
             </div>
         </a>
         <div class="links_and_search_footer">
-          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
           <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
           <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
           <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
           <div class="navigation_again_footer">
-            <a href="">Ремонт</a>
-            <a href="">Дизайн</a>
-            <a href="">Лайфхаки</a>
-            <a href="">Избранное</a>
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
             <p class="to_notifications">Уведомления</p>
-            <a href="">Мой профиль</a>
+            <a href="/account/">Мой профиль</a>
           </div>
           <div class="footer_search">
-              <img src="sources/SVG/search.svg" alt="">
+              <img src="/static/sources/SVG/search.svg" alt="">
               <form class="" action="search.py" method="post">
                   <input type="text" name="search_input" value="" placeholder="Я ищу...">
               </form>
@@ -274,9 +255,9 @@
     </div>
   </div>
 
-  <script src="lib/js/jQuery-3.6.0.js"></script>
-  <script src="lib/js/header-animation.js"></script>
-  <script src="lib/js/from-footer-to-notifications.js"></script>
-  <script src="lib/js/animation-search-results.js"></script>
+  <script src="/script/lib/js/jQuery-3.6.0.js"></script>
+  <script src="/script/lib/js/header-animation.js"></script>
+  <script src="/script/lib/js/from-footer-to-notifications.js"></script>
+  <script src="/script/lib/js/animation-search-results.js"></script>
 </body>
 </html>

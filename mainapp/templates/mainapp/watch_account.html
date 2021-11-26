@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Пользователь GirlTyan0CHkkka7es7es</title>
-    <link rel="stylesheet" href="lib\css\style_hello_user.css">
-    <link rel="stylesheet" href="lib\css\style_header.css">
-    <link rel="stylesheet" href="lib\css\style_footer.css">
-    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
-    <link rel="stylesheet" href="lib\css\style_watch_repairs.css">
-    <link rel="stylesheet" href="lib\css\style_watch_lifehacks.css">
-    <link rel="stylesheet" href="lib\css\style_watch_account.css">
-    <link rel="stylesheet" href="lib\css\style_filter.css">
+    <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="/static/lib\css\style_header.css">
+    <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_repairs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_lifehacks.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_account.css">
+    <link rel="stylesheet" href="/static/lib\css\style_filter.css">
 </head>
 <body>
   <div class="header_bg">
@@ -19,7 +19,7 @@
             <div class="logo_mini"></div>
         </a>
         <div class="header_search">
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
             <form class="" action="search.py" method="post">
                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
             </form>
@@ -27,29 +27,29 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
                   <button class="avatar_btn">
                       <div class="avatar_options_mini">
-                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <div class="account_img"><img src="/static/images/avatars/avatar-1.png" alt=""></div>
                           <p class="avatar_options_mini_p">Алексей</p>
-                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                          <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -140,7 +140,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -155,7 +155,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -192,7 +192,7 @@
 
   <div class="pubs_container">
     <div class="photo_nickname_role_additionalFunctions">
-      <img src="images/avatars/2.jpg" alt="" class="user_photo">
+      <img src="/static/images/avatars/2.jpg" alt="" class="user_photo">
       <div class="user_nickname_and_role">
         <h4 class="user_nikname">GirlTyan0CHkkka7es7es</h4>
         <p class="user_role">Автор публикаций</p>
@@ -214,24 +214,24 @@
         </div>
       </div>
       <div class="contact_info">
-        <p class="telephone"><img src="sources/SVG/telephone.svg">+7(999)-888-77-33</p>
-        <p class="site"><img src="sources/SVG/site.svg">ssite.xyz</p>
-        <p class="telegram"><img src="sources/SVG/telegram.svg">+7(999)-888-77-33</p>
-        <p class="whatsapp"><img src="sources/SVG/whatsapp.svg">+7(999)-888-77-33</p>
-        <p class="viber"><img src="sources/SVG/viber.svg">+7(999)-888-77-33</p>
-        <p class="vk"><img src="sources/SVG/vk.svg">linkVK</p>
-        <p class="inst"><img src="sources/SVG/instagram.svg">linkINST</p>
-        <p class="fb"><img src="sources/SVG/facebook.svg">linkFB</p>
-        <p class="ok"><img src="sources/SVG/odnoklassniki.svg">linkOK</p>
-        <p class="address"><img src="sources/SVG/address.svg">город Озёры, проезд Балканская, 07, Оренбургская область</p>
-        <p class="other"><img src="sources/SVG/other.svg">Тут какая-то прочая информация</p>
+        <p class="telephone"><img src="/static/sources/SVG/telephone.svg">+7(999)-888-77-33</p>
+        <p class="site"><img src="/static/sources/SVG/site.svg">ssite.xyz</p>
+        <p class="telegram"><img src="/static/sources/SVG/telegram.svg">+7(999)-888-77-33</p>
+        <p class="whatsapp"><img src="/static/sources/SVG/whatsapp.svg">+7(999)-888-77-33</p>
+        <p class="viber"><img src="/static/sources/SVG/viber.svg">+7(999)-888-77-33</p>
+        <p class="vk"><img src="/static/sources/SVG/vk.svg">linkVK</p>
+        <p class="inst"><img src="/static/sources/SVG/instagram.svg">linkINST</p>
+        <p class="fb"><img src="/static/sources/SVG/facebook.svg">linkFB</p>
+        <p class="ok"><img src="/static/sources/SVG/odnoklassniki.svg">linkOK</p>
+        <p class="address"><img src="/static/sources/SVG/address.svg">город Озёры, проезд Балканская, 07, Оренбургская область</p>
+        <p class="other"><img src="/static/sources/SVG/other.svg">Тут какая-то прочая информация</p>
       </div>
     </div>
     <h1 class="author_pubs">Публикации автора:</h1>
 
     <div class="pub_one repair" id="3">
       <div class="img_from_pub">
-        <img src="images/watch_repairs/3.jpg" alt="">
+        <img src="/static/images/watch_repairs/3.jpg" alt="">
         <div class="img_black_gradient"> </div>
       </div>
       <div class="pub_info">
@@ -242,15 +242,15 @@
       <div class="additional_functions">
         <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
         <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(3)">
-          <img src="sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
+          <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
         </div>
-        <a href="" class="read_more" id="read_more">Читать ›</a>
+        <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
       </div>
     </div>
 
     <div class="pub_one repair" id="4">
       <div class="img_from_pub">
-        <img src="images/watch_repairs/4.png" alt="">
+        <img src="/static/images/watch_repairs/4.png" alt="">
         <div class="img_black_gradient"> </div>
       </div>
       <div class="pub_info">
@@ -261,15 +261,15 @@
       <div class="additional_functions">
         <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
         <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(4)">
-          <img src="sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
+          <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
         </div>
-        <a href="" class="read_more" id="read_more">Читать ›</a>
+        <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
       </div>
     </div>
 
     <div class="pub_one design" id="2">
       <div class="img_from_pub">
-        <img src="images/slider-1/10.png" alt="">
+        <img src="/static/images/slider-1/10.png" alt="">
         <div class="img_black_gradient"> </div>
       </div>
       <div class="pub_info">
@@ -279,10 +279,10 @@
         </div>
         <div class="pub_to_do">
           <div class="user_just_saved_it" onclick="toggleSavePub_D(2)">
-            <img src="sources/SVG/heart.svg" alt="">
+            <img src="/static/sources/SVG/heart.svg" alt="">
             <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
           </div>
-          <a class="pub_show_full" href="">Подробнее •••</a>
+          <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
         </div>
         <div class="pub_tags"></div>
       </div>
@@ -290,7 +290,7 @@
 
     <div class="pub_one design" id="3">
       <div class="img_from_pub">
-        <img src="images/slider-1/11.png" alt="">
+        <img src="/static/images/slider-1/11.png" alt="">
         <div class="img_black_gradient"> </div>
       </div>
       <div class="pub_info">
@@ -300,10 +300,10 @@
         </div>
         <div class="pub_to_do">
           <div class="user_just_saved_it" onclick="toggleSavePub_D(3)">
-            <img src="sources/SVG/heart.svg" alt="">
+            <img src="/static/sources/SVG/heart.svg" alt="">
             <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
           </div>
-          <a class="pub_show_full" href="">Подробнее •••</a>
+          <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
         </div>
         <div class="pub_tags"></div>
       </div>
@@ -312,7 +312,7 @@
     <div class="pub_one lifehack" id="3">
       <div class="media">
         <video class="paused" muted="muted" controls="controls" loop>
-          <source src="images/watch_lifehacks/Как из обычного жидкого акрила сделать из кафеля произведение искусства.mp4" type='video/mp4;'>
+          <source src="/static/images/watch_lifehacks/Как из обычного жидкого акрила сделать из кафеля произведение искусства.mp4" type='video/mp4;'>
           Тег video не поддерживается вашим браузером. Увы.
         </video>
         <div class="img_black_gradient"> </div>
@@ -322,15 +322,15 @@
         <div class="pub_to_do">
           <a onclick="toggleRemovePubFromSaved_LH(3)" title="Удалить из «Избранного»">
             <div class="remove_pub_from_saved">
-              <img src="sources/SVG/remove_from_saved.svg" alt="">
+              <img src="/static/sources/SVG/remove_from_saved.svg" alt="">
             </div>
           </a>
           <div class="pub_author_cntnr">
             <div class="pub_author">
-              <a href=""><img src="images/avatars/2.jpg" alt=""></a>
+              <a href="/account/"><img src="/static/images/avatars/2.jpg" alt=""></a>
               <div class="nickname_and_role">
                 <div class="nickname">
-                  <a href="" class="nickname_link">GirlTyan0CHkkka7es7es</a>
+                  <a href="/account/" class="nickname_link">GirlTyan0CHkkka7es7es</a>
                   <a onclick="toggleGetNotiFromAuthor(3)"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
                   <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                 </div>
@@ -346,19 +346,19 @@
         <div class="pub_tags_container">
           <div class="pub_tag">
             <p>В дизайне</p>
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
           </div>
           <div class="pub_tag">
             <p>Устройство быта</p>
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
           </div>
           <div class="pub_tag">
             <p>70% просмотревших сохранили</p>
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
           </div>
           <div class="pub_tag use_all">
             <p>Публикации по всем этим тегам</p>
-            <img src="sources/SVG/filter_logo.svg" alt="">
+            <img src="/static/sources/SVG/filter_logo.svg" alt="">
           </div>
         </div>
       </div>
@@ -392,45 +392,43 @@
   </div>
 
   <div class="footer_bg">
-   <div class="footer">
-       <a href="">
-           <div class="logo_huge">
-             <div class="text_in_logo">
-               <p class="title_huge_logo">Ремонт и дизайн</p>
-               <p class="text_huge_logo">Один сайт, чтобы выбрать дизайн квартиры и сделать в ней ремонт.</p>
-             </div>
-           </div>
-       </a>
-       <div class="links_and_search_footer">
-         <a href="" class="first_two_links">Стать автором публикаций</a>
-         <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-         <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
-         <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-         <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
-         <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-         <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
-         <div class="navigation_again_footer">
-           <a href="">Ремонт</a>
-           <a href="">Дизайн</a>
-           <a href="">Лайфхаки</a>
-           <a href="">Избранное</a>
-           <p class="to_notifications">Уведомления</p>
-           <a href="">Мой профиль</a>
-         </div>
-         <div class="footer_search">
-             <img src="sources/SVG/search.svg" alt="">
-             <form class="" action="search.py" method="post">
-                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
-             </form>
-         </div>
-       </div>
-   </div>
+    <div class="footer">
+        <a href="">
+            <div class="logo_huge">
+              <div class="text_in_logo">
+                <p class="title_huge_logo">Ремонт и дизайн</p>
+                <p class="text_huge_logo">Один сайт, чтобы выбрать дизайн квартиры и сделать в ней ремонт.</p>
+              </div>
+            </div>
+        </a>
+        <div class="links_and_search_footer">
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
+          <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
+          <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
+          <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
+          <div class="navigation_again_footer">
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
+            <p class="to_notifications">Уведомления</p>
+            <a href="/account/">Мой профиль</a>
+          </div>
+          <div class="footer_search">
+              <img src="/static/sources/SVG/search.svg" alt="">
+              <form class="" action="search.py" method="post">
+                  <input type="text" name="search_input" value="" placeholder="Я ищу...">
+              </form>
+          </div>
+        </div>
+    </div>
   </div>
 
-
-  <script src="lib/js/jQuery-3.6.0.js"></script>
-  <script src="lib/js/header-animation.js"></script>
-  <script src="lib/js/from-footer-to-notifications.js"></script>
-  <script src="lib/js/animation-account-watch.js"></script>
+  <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+  <script src="/static/lib/js/header-animation.js"></script>
+  <script src="/static/lib/js/from-footer-to-notifications.js"></script>
+  <script src="/static/lib/js/animation-account-watch.js"></script>
 </body>
 </html>

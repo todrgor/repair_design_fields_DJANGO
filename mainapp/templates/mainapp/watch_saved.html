@@ -27,15 +27,15 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
@@ -47,9 +47,9 @@
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -140,7 +140,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -155,7 +155,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -197,7 +197,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(1)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -219,7 +219,7 @@
           <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(1)">
             <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
           </div>
-          <a href="" class="read_more" id="read_more">Читать ›</a>
+          <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
         </div>
       </div>
 
@@ -237,7 +237,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(2)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -259,7 +259,7 @@
           <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(2)">
             <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
           </div>
-          <a href="" class="read_more" id="read_more">Читать ›</a>
+          <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
         </div>
       </div>
 
@@ -277,7 +277,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(3)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -299,7 +299,7 @@
           <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(3)">
             <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
           </div>
-          <a href="" class="read_more" id="read_more">Читать ›</a>
+          <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
         </div>
       </div>
 
@@ -317,7 +317,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(4)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -342,10 +342,10 @@
             </a>
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href=""><img src="/static/images/avatars/avatar-1.png" alt=""></a>
+                <a href="/account/"><img src="/static/images/avatars/avatar-1.png" alt=""></a>
                 <div class="nickname_and_role">
                   <div class="nickname">
-                    <a href="" class="nickname_link">Алексей</a>
+                    <a href="/account/" class="nickname_link">Алексей</a>
                     <a onclick="toggleGetNotiFromAuthor(3)"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                   </div>
@@ -395,7 +395,7 @@
           <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R(4)">
             <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
           </div>
-          <a href="" class="read_more" id="read_more">Читать ›</a>
+          <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
         </div>
       </div>
 
@@ -413,7 +413,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(5)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -435,10 +435,10 @@
             </a>
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href=""><img src="/static/images/avatars/avatar-1.png" alt=""></a>
+                <a href="/account/"><img src="/static/images/avatars/avatar-1.png" alt=""></a>
                 <div class="nickname_and_role">
                   <div class="nickname">
-                    <a href="" class="nickname_link">Алексей</a>
+                    <a href="/account/" class="nickname_link">Алексей</a>
                     <a onclick="toggleGetNotiFromAuthor(2)"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                   </div>
@@ -487,7 +487,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(6)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -509,10 +509,10 @@
             </a>
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href=""><img src="/static/images/avatars/avatar-1.png" alt=""></a>
+                <a href="/account/"><img src="/static/images/avatars/avatar-1.png" alt=""></a>
                 <div class="nickname_and_role">
                   <div class="nickname">
-                    <a href="" class="nickname_link">Алексей</a>
+                    <a href="/account/" class="nickname_link">Алексей</a>
                     <a onclick="toggleGetNotiFromAuthor(1)"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях пользователя Алексей</div> -->
                   </div>
@@ -561,7 +561,7 @@
             <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D(7)">
               <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <a class="pub_show_full" href="">Подробнее •••</a>
+            <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
           </div>
           <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
           <div class="pub_tags"></div>
@@ -683,20 +683,19 @@
             </div>
         </a>
         <div class="links_and_search_footer">
-          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
           <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
           <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
           <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
           <div class="navigation_again_footer">
-            <a href="">Ремонт</a>
-            <a href="">Дизайн</a>
-            <a href="">Лайфхаки</a>
-            <a href="">Избранное</a>
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
             <p class="to_notifications">Уведомления</p>
-            <a href="">Мой профиль</a>
+            <a href="/account/">Мой профиль</a>
           </div>
           <div class="footer_search">
               <img src="/static/sources/SVG/search.svg" alt="">

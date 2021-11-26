@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Новая квартира в стиле Лофт — Смотреть дизайны</title>
-    <link rel="stylesheet" href="lib\css\style_hello_user.css">
-    <link rel="stylesheet" href="lib\css\style_header.css">
-    <link rel="stylesheet" href="lib\css\style_footer.css">
-    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
-    <link rel="stylesheet" href="lib\css\style_pub_one.css">
-    <link rel="stylesheet" href="lib\css\style_filter.css">
+    <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="/static/lib\css\style_header.css">
+    <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_pub_one.css">
+    <link rel="stylesheet" href="/static/lib\css\style_filter.css">
 </head>
 <body>
   <div class="header_bg">
@@ -17,7 +17,7 @@
             <div class="logo_mini"></div>
         </a>
         <div class="header_search">
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
             <form class="" action="search.py" method="post">
                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
             </form>
@@ -25,29 +25,29 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
                   <button class="avatar_btn">
                       <div class="avatar_options_mini">
-                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <div class="account_img"><img src="/static/images/avatars/avatar-1.png" alt=""></div>
                           <p class="avatar_options_mini_p">Алексей</p>
-                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                          <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -138,7 +138,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -153,7 +153,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -194,18 +194,18 @@
       Рядом торговые центры, кинотеатр, кафе.
     </p>
 
-    <img src="images/designs/20-11-2021/2.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/3.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/4.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/5.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/6.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/7.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/8.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/9.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/10.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/11.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/12.jpg" alt="" class="pub_img">
-    <img src="images/designs/20-11-2021/13.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/2.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/3.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/4.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/5.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/6.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/7.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/8.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/9.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/10.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/11.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/12.jpg" alt="" class="pub_img">
+    <img src="/static/images/designs/20-11-2021/13.jpg" alt="" class="pub_img">
 
     <p class="description">
       Новая квартира в стиле Лофт - от студии дизайна интерьеров Damiani.
@@ -223,15 +223,15 @@
 
     <div class="pub_to_do">
       <div class="user_just_saved_it">
-        <a onclick="toggleSavePub_D(1)" title="Сохранить в «Избранное»"><img src="sources/SVG/heart.svg" alt="">
+        <a onclick="toggleSavePub_D(1)" title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt="">
         <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»"></a>
       </div>
       <div class="pub_author_cntnr">
         <div class="pub_author">
-          <a href=""><img src="images/avatars/avatar-1.png" alt=""></a>
+          <a href="/account/"><img src="/static/images/avatars/avatar-1.png" alt=""></a>
           <div class="nickname_and_role">
             <div class="nickname">
-              <a href="" class="nickname_link">Алексей</a>
+              <a href="/account/" class="nickname_link">Алексей</a>
               <a onclick="toggleGetNotiFromAuthor(1)" class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
               <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
             </div>
@@ -245,7 +245,7 @@
     <div class="pub_tags_container">
       <div class="pub_tag" id="cost">
         <p>Бюджет: до 100000₽</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="color">
         <p>Цвета:
@@ -255,19 +255,19 @@
             <span class="checked_colors_div checked_color_3 checked_color" id="c_962e2e"></span>
           </span>
         </p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="style">
         <p>Стиль: Лофт</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="style">
         <p>Комната: Вся квартира</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag use_all">
         <p>Публикации по всем этим тегам</p>
-        <img src="sources/SVG/filter_logo.svg" alt="">
+        <img src="/static/sources/SVG/filter_logo.svg" alt="">
       </div>
     </div>
 
@@ -325,23 +325,22 @@
             </div>
         </a>
         <div class="links_and_search_footer">
-          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
           <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
           <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
           <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
           <div class="navigation_again_footer">
-            <a href="">Ремонт</a>
-            <a href="">Дизайн</a>
-            <a href="">Лайфхаки</a>
-            <a href="">Избранное</a>
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
             <p class="to_notifications">Уведомления</p>
-            <a href="">Мой профиль</a>
+            <a href="/account/">Мой профиль</a>
           </div>
           <div class="footer_search">
-              <img src="sources/SVG/search.svg" alt="">
+              <img src="/static/sources/SVG/search.svg" alt="">
               <form class="" action="search.py" method="post">
                   <input type="text" name="search_input" value="" placeholder="Я ищу...">
               </form>
@@ -350,9 +349,9 @@
     </div>
   </div>
 
-  <script src="lib/js/jQuery-3.6.0.js"></script>
-  <script src="lib/js/header-animation.js"></script>
-  <script src="lib/js/from-footer-to-notifications.js"></script>
-  <script src="lib/js/animation-pub-one.js"></script>
+  <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+  <script src="/static/lib/js/header-animation.js"></script>
+  <script src="/static/lib/js/from-footer-to-notifications.js"></script>
+  <script src="/static/lib/js/animation-pub-one.js"></script>
 </body>
 </html>

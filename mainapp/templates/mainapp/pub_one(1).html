@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Советы в электропроводке — Изучать ремонт</title>
-    <link rel="stylesheet" href="lib\css\style_hello_user.css">
-    <link rel="stylesheet" href="lib\css\style_header.css">
-    <link rel="stylesheet" href="lib\css\style_footer.css">
-    <link rel="stylesheet" href="lib\css\style_watch_designs.css">
-    <link rel="stylesheet" href="lib\css\style_pub_one.css">
-    <link rel="stylesheet" href="lib\css\style_filter.css">
+    <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+    <link rel="stylesheet" href="/static/lib\css\style_header.css">
+    <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+    <link rel="stylesheet" href="/static/lib\css\style_pub_one.css">
+    <link rel="stylesheet" href="/static/lib\css\style_filter.css">
 </head>
 <body>
   <div class="header_bg">
@@ -17,7 +17,7 @@
             <div class="logo_mini"></div>
         </a>
         <div class="header_search">
-            <img src="sources/SVG/search.svg" alt="">
+            <img src="/static/sources/SVG/search.svg" alt="">
             <form class="" action="search.py" method="post">
                 <input type="text" name="search_input" value="" placeholder="Я ищу...">
             </form>
@@ -25,29 +25,29 @@
 
         <div class="user_logged_in">
           <div class="header_content">
-              <a href="" class="not_heart">Ремонт</a>
-              <a href="" class="not_heart">Дизайн</a>
-              <a href="" class="not_heart">Лайфхаки</a>
-              <a href="" class="saved_heart"><p>Избранное</p><img src="sources/SVG/heart.svg" alt=""></a>
+              <a href="/repairs/" class="not_heart">Ремонт</a>
+              <a href="/designs/" class="not_heart">Дизайн</a>
+              <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+              <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
           </div>
           <div class="role_buttoms">
               <!-- <a href="" class="ad_panel"></a> -->
-              <a href="" class="super_admin_panel"></a>
-              <a href="" class="create_new_pub"></a>
+              <a href="/admin/" class="super_admin_panel"></a>
+              <a href="/create_new_pub/" class="create_new_pub"></a>
           </div>
           <div class="avatar_and_notifications">
               <div class="avatar_container">
                   <button class="avatar_btn">
                       <div class="avatar_options_mini">
-                          <div class="account_img"><img src="images/avatars/avatar-1.png" alt=""></div>
+                          <div class="account_img"><img src="/static/images/avatars/avatar-1.png" alt=""></div>
                           <p class="avatar_options_mini_p">Алексей</p>
-                          <img class="avatar_triangle" src="sources/SVG/avatar-triangle.svg" alt="">
+                          <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                       </div>
                   </button>
                   <div id="avtr_optns" class="avatar_options">
-                      <a href="">Мой профиль</a>
-                      <a href="">Настройки</a>
-                      <a href="">Помощь</a>
+                      <a href="/watch_account/">Мой профиль</a>
+                      <a href="/settings/">Настройки</a>
+                      <a href="/help/">Помощь</a>
                   </div>
               </div>
 
@@ -138,7 +138,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click">У меня есть аккаунт —<label class="dont_close_on_click" for="auth" id="to_auth"> войти ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<div class="before_slides_auth">
@@ -153,7 +153,7 @@
   							</form>
   						</div>
   						<p class="white_form_rar_podpis_1 before_slides_ten dont_close_on_click"><label for="reg" id="to_reg" class="dont_close_on_click">Зарегистрироваться ›</label></p>
-  						<p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>
+          <!-- <p class="white_form_rar_podpis_2 before_slides_ten header_restyle dont_close_on_click">Пользуясь этой информационной системой, вы<br>соглашаетесь на <span><a href="#" class="dont_close_on_click">условия конфиденциальности.</a></span></p>-->
   					</div>
 
   					<!-- <div class="before_slides_reset_pass">
@@ -178,7 +178,7 @@
   <div class="pub_id" id="2"></div>
   <div class="opened_filter"></div><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
 
-  <div class="preview" style="background: url(images/repairs/20-11-2021/14.jpg);">
+  <div class="preview" style="background: url(/static/images/repairs/20-11-2021/14.jpg);">
     <div class="preview_cntnr">
       <p class="title">Советы в электропроводке</p>
     </div>
@@ -187,64 +187,64 @@
   <div class="pubs_container">
     <p class="description">
       Сталкиваться с заменой выключателя или подключением розетки в быту приходится довольно часто, поэтому каждый должен обладать хотя бы минимальными навыками по обслуживанию домашней электросистемы.
-Постараемся разобраться, как произвести монтаж электропроводки своими руками, ориентируясь на нормы ПУЭ и соблюдая технику безопасности. Также в этой статье рассмотрим особенности составления проекта, правила ввода электричества в дом и тонкости надежного соединения проводов.
-Что потребуется для устройства домашней проводки?
-В первую очередь следует разобраться в структуре электрической сети. Она состоит из электроточек, связанных между собой и с силовой линией разного рода кабелями и проводами, защитных устройств и автоматических выключателей, контура заземления.
-Не стоит путать провода и кабели. Первые – это проводники для внутренней разводки, которые могут быть одно- и многожильными, вторые стоят из нескольких проводов, объединенных общей защитной оболочкой.
-Кабели можно монтировать в земле, под водой, в бетонных конструкциях; их используют и для устройства домашней электросети, если требуется подключение мощных приборов или особая защита.
-Жилы проводов состоят из металлов, которые хорошо проводят электроток: меди и алюминия.
+      Постараемся разобраться, как произвести монтаж электропроводки своими руками, ориентируясь на нормы ПУЭ и соблюдая технику безопасности. Также в этой статье рассмотрим особенности составления проекта, правила ввода электричества в дом и тонкости надежного соединения проводов.
+      Что потребуется для устройства домашней проводки?
+      В первую очередь следует разобраться в структуре электрической сети. Она состоит из электроточек, связанных между собой и с силовой линией разного рода кабелями и проводами, защитных устройств и автоматических выключателей, контура заземления.
+      Не стоит путать провода и кабели. Первые – это проводники для внутренней разводки, которые могут быть одно- и многожильными, вторые стоят из нескольких проводов, объединенных общей защитной оболочкой.
+      Кабели можно монтировать в земле, под водой, в бетонных конструкциях; их используют и для устройства домашней электросети, если требуется подключение мощных приборов или особая защита.
+      Жилы проводов состоят из металлов, которые хорошо проводят электроток: меди и алюминия.
 
-Медь считается более ценным материалом по ряду причин:
+      Медь считается более ценным материалом по ряду причин:
 
-имеет большую плотность тока;
-отличается износостойкостью и выносливостью на излом;
-обладает меньшим сопротивлением при окислении;
-не сжимается, как алюминий, поэтому не образует зазоров в соединениях.
-Для внутренней стационарной проводки рекомендуется использовать одножильные медные провода, которые прочнее и надежнее многожильных аналогов.
+      имеет большую плотность тока;
+      отличается износостойкостью и выносливостью на излом;
+      обладает меньшим сопротивлением при окислении;
+      не сжимается, как алюминий, поэтому не образует зазоров в соединениях.
+      Для внутренней стационарной проводки рекомендуется использовать одножильные медные провода, которые прочнее и надежнее многожильных аналогов.
     </p>
 
-    <img src="images/repairs/20-11-2021/15.webp" alt="" class="pub_img">
-    <img src="images/repairs/20-11-2021/16.jpg" alt="" class="pub_img">
-    <img src="images/repairs/20-11-2021/17.webp" alt="" class="pub_img">
-    <img src="images/repairs/20-11-2021/18.webp" alt="" class="pub_img">
-    <img src="images/repairs/20-11-2021/19.webp" alt="" class="pub_img">
-    <img src="images/repairs/20-11-2021/20.webp" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/15.webp" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/16.jpg" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/17.webp" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/18.webp" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/19.webp" alt="" class="pub_img">
+    <img src="/static/images/repairs/20-11-2021/20.webp" alt="" class="pub_img">
 
     <p class="description">
       Разновидности ВВГ также могут оказаться полезными: ВВГ-П (плоский), ВВГнг(А), ВВГнг(А)-LS и др.
-Кроме выбора проводов или кабелей важно разбираться в системах заземления, которые гарантируют безопасное использование электроприборов. В частном доме обязателен монтаж заземляющего контура, в городских квартирах обычно заземляют ванну и бытовые приборы.
-Существует несколько строгих правил: например, нельзя подключать заземляющие провода к металлическим коммуникациям или производить самостоятельные работы в электрощитке.
-Установку УЗО и автоматов-выключателей, а также любые монтажные работы в электрическом щите лучше поручить квалифицированным электрикам, имеющим допуски. Они смогут правильно определить нагрузку и подобрать автоматический выключатель.
-Рекомендации по составлению схемы проводки
-Составление проекта внутриквартирной или внутридомовой разводки – это ответственное и сложное дело, требующее квалификации. Существует множество принципов и норм монтажа проводов, выключателей и розеток.
-Вот только некоторые из них:
-проводку лучше разделить на группы – розеточные, освещения и т.д., выделив отдельные линии под мощную электротехнику;
-в чертеже необходимо указать точки питания и места установки мощных энергопотребителей (духовки, кондиционера, стиральной машины);
-место расположения розеток – от 0,3 м до 1 м от пола;
-оптимальная высота монтажа выключателей – 0,8-1 м от пола;
-лучше больше розеток – не потребуются удлинители;
-отдельный проект – на слаботочную систему (для защиты от помех провода протягиваются отдельно от силовых линий, с отступом не менее 0,5 м);
-выключатели санузла выводят в коридор и др.
-Очень важно правильно проложить и саму проводку – внутреннюю или наружную (открытого/закрытого типа). Рекомендуем ознакомиться с правилами проектирования электропроводки в частном доме.
-Схему проводки необходимо хранить, она обязательно пригодится во время проведения ремонтных работ.
-Если возникают сомнения в собственном опыте или навыках, лучше обратиться к специалистам – квалифицированным электрикам. Им знакомо множество мелких, но важных нюансов, которые простой обыватель не может учесть в силу своей неопытности.
-Опытный проектировщик грамотно составит схему проводки, учтет нормативы и требования ПУЭ, произведет расчеты, выберет оборудование подходящего номинала и, в конце концов, возьмет всю ответственность на себя. При самостоятельном проектировании и монтаже отвечать за ошибки придется владельцу жилья.
-Важна ли мощность энергопотребления?
-Кроме проектирования необходимо учесть и такой момент, как потребляемые мощности в доме.
-В многоэтажном доме квартирного типа они обычно стандартизированы, но в отдельном коттедже перед утверждением документов потребуется знать, какую именно выделенную мощность запрашивать у поставщика электроэнергии.
+      Кроме выбора проводов или кабелей важно разбираться в системах заземления, которые гарантируют безопасное использование электроприборов. В частном доме обязателен монтаж заземляющего контура, в городских квартирах обычно заземляют ванну и бытовые приборы.
+      Существует несколько строгих правил: например, нельзя подключать заземляющие провода к металлическим коммуникациям или производить самостоятельные работы в электрощитке.
+      Установку УЗО и автоматов-выключателей, а также любые монтажные работы в электрическом щите лучше поручить квалифицированным электрикам, имеющим допуски. Они смогут правильно определить нагрузку и подобрать автоматический выключатель.
+      Рекомендации по составлению схемы проводки
+      Составление проекта внутриквартирной или внутридомовой разводки – это ответственное и сложное дело, требующее квалификации. Существует множество принципов и норм монтажа проводов, выключателей и розеток.
+      Вот только некоторые из них:
+      проводку лучше разделить на группы – розеточные, освещения и т.д., выделив отдельные линии под мощную электротехнику;
+      в чертеже необходимо указать точки питания и места установки мощных энергопотребителей (духовки, кондиционера, стиральной машины);
+      место расположения розеток – от 0,3 м до 1 м от пола;
+      оптимальная высота монтажа выключателей – 0,8-1 м от пола;
+      лучше больше розеток – не потребуются удлинители;
+      отдельный проект – на слаботочную систему (для защиты от помех провода протягиваются отдельно от силовых линий, с отступом не менее 0,5 м);
+      выключатели санузла выводят в коридор и др.
+      Очень важно правильно проложить и саму проводку – внутреннюю или наружную (открытого/закрытого типа). Рекомендуем ознакомиться с правилами проектирования электропроводки в частном доме.
+      Схему проводки необходимо хранить, она обязательно пригодится во время проведения ремонтных работ.
+      Если возникают сомнения в собственном опыте или навыках, лучше обратиться к специалистам – квалифицированным электрикам. Им знакомо множество мелких, но важных нюансов, которые простой обыватель не может учесть в силу своей неопытности.
+      Опытный проектировщик грамотно составит схему проводки, учтет нормативы и требования ПУЭ, произведет расчеты, выберет оборудование подходящего номинала и, в конце концов, возьмет всю ответственность на себя. При самостоятельном проектировании и монтаже отвечать за ошибки придется владельцу жилья.
+      Важна ли мощность энергопотребления?
+      Кроме проектирования необходимо учесть и такой момент, как потребляемые мощности в доме.
+      В многоэтажном доме квартирного типа они обычно стандартизированы, но в отдельном коттедже перед утверждением документов потребуется знать, какую именно выделенную мощность запрашивать у поставщика электроэнергии.
     </p>
 
     <div class="pub_to_do">
       <div class="user_just_saved_it">
-        <a onclick="toggleSavePub_D(1)" title="Сохранить в «Избранное»"><img src="sources/SVG/heart.svg" alt="">
+        <a onclick="toggleSavePub_D(1)" title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt="">
         <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»"></a>
       </div>
       <div class="pub_author_cntnr">
         <div class="pub_author">
-          <a href=""><img src="images/avatars/avatar-1.png" alt=""></a>
+          <a href="/account/"><img src="images/avatars/avatar-1.png" alt=""></a>
           <div class="nickname_and_role">
             <div class="nickname">
-              <a href="" class="nickname_link">Алексей</a>
+              <a href="/account/" class="nickname_link">Алексей</a>
               <a onclick="toggleGetNotiFromAuthor(1)" class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
               <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
             </div>
@@ -258,23 +258,23 @@
     <div class="pub_tags_container">
       <div class="pub_tag" id="cost">
         <p>Бюджет: до 100000₽</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="color">
         <p>Ремонт чего: Электрика</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="style">
         <p>Инструмент: Любой</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag" id="style">
         <p>В помещении: В любом</p>
-        <img src="sources/SVG/search.svg" alt="">
+        <img src="/static/sources/SVG/search.svg" alt="">
       </div>
       <div class="pub_tag use_all">
         <p>Публикации по всем этим тегам</p>
-        <img src="sources/SVG/filter_logo.svg" alt="">
+        <img src="/static/sources/SVG/filter_logo.svg" alt="">
       </div>
     </div>
 
@@ -332,23 +332,22 @@
             </div>
         </a>
         <div class="links_and_search_footer">
-          <a href="" class="first_two_links">Стать автором публикаций</a>
+          <a href="/become_an_author/" class="first_two_links">Стать автором публикаций</a>
           <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-          <a href="" class="second_two_links">Работа над проектом вместе с нами</a>
+          <a href="/become_a_teammemder/" class="second_two_links">Работа над проектом вместе с нами</a>
           <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
-          <a href="" class="third_three_links">Связь с поддержкой и администрацией</a>
           <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-          <a href="" class="third_three_links">Написать разработчику идею или жалобу</a>
+          <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
           <div class="navigation_again_footer">
-            <a href="">Ремонт</a>
-            <a href="">Дизайн</a>
-            <a href="">Лайфхаки</a>
-            <a href="">Избранное</a>
+            <a href="/repairs/">Ремонт</a>
+            <a href="/designs/">Дизайн</a>
+            <a href="/lifehacks/">Лайфхаки</a>
+            <a href="/saved/">Избранное</a>
             <p class="to_notifications">Уведомления</p>
-            <a href="">Мой профиль</a>
+            <a href="/account/">Мой профиль</a>
           </div>
           <div class="footer_search">
-              <img src="sources/SVG/search.svg" alt="">
+              <img src="/static/sources/SVG/search.svg" alt="">
               <form class="" action="search.py" method="post">
                   <input type="text" name="search_input" value="" placeholder="Я ищу...">
               </form>
@@ -357,9 +356,9 @@
     </div>
   </div>
 
-  <script src="lib/js/jQuery-3.6.0.js"></script>
-  <script src="lib/js/header-animation.js"></script>
-  <script src="lib/js/from-footer-to-notifications.js"></script>
-  <script src="lib/js/animation-pub-one.js"></script>
+  <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+  <script src="/static/lib/js/header-animation.js"></script>
+  <script src="/static/lib/js/from-footer-to-notifications.js"></script>
+  <script src="/static/lib/js/animation-pub-one.js"></script>
 </body>
 </html>

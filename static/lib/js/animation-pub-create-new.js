@@ -27,7 +27,6 @@ $('input[name="pub_role"]').change(function () {
     $('#design.checked_rooms').removeClass('show');
     $('#design.color').removeClass('show');
     $('#lifehack.checked_styles').removeClass('show');
-    $('#lifehack.cost').removeClass('show');
   }
 
   if ($('#pub_role:checked').val() == 'design') {
@@ -40,7 +39,6 @@ $('input[name="pub_role"]').change(function () {
     $('#design.checked_rooms').addClass('show');
     $('#design.color').addClass('show');
     $('#lifehack.checked_styles').removeClass('show');
-    $('#lifehack.cost').removeClass('show');
   }
 
   if ($('#pub_role:checked').val() == 'lifehack') {
@@ -53,6 +51,5 @@ $('input[name="pub_role"]').change(function () {
     $('#design.checked_rooms').removeClass('show');
     $('#design.color').removeClass('show');
     $('#lifehack.checked_styles').addClass('show');
-    $('#lifehack.cost').addClass('show');
   }
 });
