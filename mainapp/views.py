@@ -2,7 +2,10 @@ from django.shortcuts import render
 
 def main(request):
 	print (request)
-	return render(request, 'mainapp/index.html')
+	content = {
+		'test': 11111111111111
+	}
+	return render(request, 'mainapp/index.html', content)
 
 def repairs(request):
 	print (request)
