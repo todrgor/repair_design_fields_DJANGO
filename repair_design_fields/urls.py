@@ -32,7 +32,9 @@ urlpatterns = [
 	path('become_an_author/', mainapp.become_an_author, name='become_an_author'),
 	path('become_a_teammemder/', mainapp.become_a_teammemder, name='become_a_teammemder'),
 	path('help/', mainapp.help, name='help'),
-	path('adminRDF/', mainapp.adminRDF, name='adminRDF'), 
+	# path('adminRDF/', mainapp.adminRDF, name='adminRDF'),
+	path('admin/', mainapp.adminRDF, name='adminRDF'),
 
-	path('admin/', admin.site.urls),
+	path('adminDJANGO/', admin.site.urls),
+	# path('admin/', admin.site.urls),
 ]
