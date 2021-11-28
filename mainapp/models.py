@@ -6,12 +6,12 @@ from django.db import models
 class User(models.Model):
     nickname = models.CharField(max_length=50, unique=True)
     photo = models.ImageField(max_length=200, blank=True, null=True)
-    role = models.OneToOneField('UserRoles', on_delete=1)
+    role = models.OneToOneField('UserRoles', on_delete=models.SET_DEFAULT, default=1)
     bio = models.CharField(max_length=100, blank=True, null=True)
     age = models.PositiveIntegerField()
     telephone = models.PositiveIntegerField(unique=True)
     email = models.EmailField(unique=True)
-    password = models.CharField(min_length=5, max_length=250)
+    password = models.CharField(max_length=250) # how to min_length=5 ?
     registration = models.DateTimeField(auto_now_add=True)
     last_entry = models.DateTimeField(auto_now=True)
 
@@ -31,14 +31,14 @@ class UserRoles(models.Model):
     name = models.PositiveIntegerField(max_length=1, choices=USER_ROLE_CHOICES)
 
 class UserSubscribes(models.Model):
-    subscriber_id = models.OneToOneField('User', on_delete=99999, unique=True) # как сделать самоудаление при удлении юзера????
+    subscriber_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
     star_id = models.ManyToManyField('User')
 
     def __str__(self):
         return 'User with ID: ' + str(self.subscriber_id) + ', subscribes: ' + str(self.star_id)
 
 class ExpertInfo(models.Model):
-    expert_id = models.OneToOneField('User', on_delete=99999, unique=True) # как сделать самоудаление при удлении юзера????
+    expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
     count_follovers = models.PositiveIntegerField(default=0)
     knowledge = models.TextField(blank=True, null=True)
     offer = models.TextField(blank=True, null=True)
@@ -62,10 +62,10 @@ class ExpertInfo(models.Model):
 
 class Publication (models.Model):
     title = models.CharField(max_length=135)
-    role = models.OneToOneField('PubRoles', on_delete=99999) # как сделать самоудаление при удлении юзера????
+    role = models.OneToOneField('PubRoles', on_delete=models.SET_NULL) # как сделать самоудаление при удлении юзера????
     preview = models.ImageField(max_length=200)
     content =  models.TextField()
-    author_id = models.ForeignKey('User', on_delete=99999) # как сделать самоудаление при удлении юзера????
+    author_id = models.ForeignKey('User', on_delete=models.SET_NULL) # как сделать самоудаление при удлении юзера????
     pushed = models.DateTimeField(auto_now_add=True)
     seen_count = models.IntegerField(default=0)
     saved_count = models.IntegerField(default=0)
@@ -109,31 +109,31 @@ class PubRoles(models.Model):
         (32, 'ReportAccount'),
         (41, 'Notification'),
     )
-    name = models.PositiveIntegerField(max_length=2, choices=USER_ROLE_CHOICES)
+    name = models.PositiveIntegerField(max_length=2, choices=PUB_ROLE_CHOICES)
 
     def __str__(self):
         return self.name
 
 class SavedPubs (models.Model):
     when = models.DateTimeField(auto_now_add=True)
-    saver_id = models.OneToOneField('User', on_delete=99999) # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('Publication', on_delete=99999)
+    saver_id = models.OneToOneField('User', on_delete=models.CASCADE) # как сделать самоудаление при удлении юзера????
+    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE)
 
     def __str__(self):
         return 'saver id: ' + self.saver_id + ', saved pub: ' + self.pub_id
 
 class SeenPubs (models.Model):
     when = models.DateTimeField(auto_now_add=True)
-    watcher_id = models.OneToOneField('User', on_delete=99999) # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('Publication', on_delete=99999)
+    watcher_id = models.OneToOneField('User', on_delete=models.CASCADE) # как сделать самоудаление при удлении юзера????
+    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE)
 
     def __str__(self):
         return 'id seen by: ' + self.watcher_id + ', seen pub: ' + self.pub_id
 
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags (models.Model):
-    pub_id = models.ForeignKey('Publication', on_delete=99999, primary_key=True) # как сделать самоудаление при удлении юзера????
-    tag_id = models.ForeignKey('TagName', on_delete=99999)
+    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, primary_key=True) # как сделать самоудаление при удлении юзера????
+    tag_id = models.ForeignKey('TagName', on_delete=models.CASCADE)
 
     def __str__(self):
         return 'pub id: ' + self.pub_id + ', tag id: ' + self.tag_id
