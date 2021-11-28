@@ -22,13 +22,16 @@ class User(models.Model):
         return self.nickname + ', role: ' + str(self.role) + ', last entry: ' + str(self.last_entry)
 
 class UserRoles(models.Model):
+    # USER_ROLE_CHOICES = (
+    #     (1, 'Watcher'),
+    #     (2, 'Author'),
+    #     (3, 'Admin'),
+    # )choices=USER_ROLE_CHOICES
     id = models.PositiveIntegerField(primary_key=True)
-    USER_ROLE_CHOICES = (
-        (1, 'Watcher'),
-        (2, 'Author'),
-        (3, 'Admin'),
-    )
-    name = models.IntegerField(choices=USER_ROLE_CHOICES)
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class UserSubscribes(models.Model):
     subscriber_id = models.OneToOneField('User', related_name="follower", on_delete=models.CASCADE) # как сделать самоудаление при удлении юзера????
@@ -98,18 +101,18 @@ class Publication (models.Model):
         return 'Title: ' + str(self.title) + ', saved: ' + str(self.saved_count)
 
 class PubRoles(models.Model):
+    # PUB_ROLE_CHOICES = (
+    #     ('11', 'RepairPub'),
+    #     ('12', 'RepairLifehack'),
+    #     ('13', 'RepairBaseBook'),
+    #     ('21', 'DesignPub'),
+    #     ('22', 'DesignLifehack'),
+    #     ('31', 'ReportPub'),
+    #     ('32', 'ReportAccount'),
+    #     ('41', 'Notification'),
+    # )    choices=PUB_ROLE_CHOICES,
     id = models.PositiveIntegerField(primary_key=True)
-    PUB_ROLE_CHOICES = (
-        (11, 'RepairPub'),
-        (12, 'RepairLifehack'),
-        (13, 'RepairBaseBook'),
-        (21, 'DesignPub'),
-        (22, 'DesignLifehack'),
-        (31, 'ReportPub'),
-        (32, 'ReportAccount'),
-        (41, 'Notification'),
-    )
-    name = models.IntegerField(choices=PUB_ROLE_CHOICES)
+    name = models.CharField(max_length=135)
 
     def __str__(self):
         return self.name
