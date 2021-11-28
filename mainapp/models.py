@@ -28,11 +28,11 @@ class UserRoles(models.Model):
         (2, 'Author'),
         (3, 'Admin'),
     )
-    name = models.IntegerField(max_length=1, choices=USER_ROLE_CHOICES)
+    name = models.IntegerField(choices=USER_ROLE_CHOICES)
 
 class UserSubscribes(models.Model):
-    subscriber_id = models.ForeignKey('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
-    star_id = models.OneToOneField('User', on_delete=models.CASCADE)
+    subscriber_id = models.OneToOneField('User', related_name="follower", on_delete=models.CASCADE) # как сделать самоудаление при удлении юзера????
+    star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE)
 
     def __str__(self):
         return 'User with ID: ' + str(self.subscriber_id) + ', subscribes: ' + str(self.star_id)
@@ -44,9 +44,9 @@ class ExpertInfo(models.Model):
     offer = models.TextField(blank=True, null=True, max_length=255)
     site = models.CharField(blank=True, null=True, max_length=255)
     address = models.CharField(blank=True, null=True, max_length=255)
-    telegram = models.PositiveIntegerField(blank=True, null=True, max_length=255)
-    whatsapp = models.PositiveIntegerField(blank=True, null=True, max_length=255)
-    viber = models.PositiveIntegerField(blank=True, null=True, max_length=255)
+    telegram = models.PositiveIntegerField(blank=True, null=True)
+    whatsapp = models.PositiveIntegerField(blank=True, null=True)
+    viber = models.PositiveIntegerField(blank=True, null=True)
     vk = models.CharField(blank=True, null=True, max_length=255)
     inst = models.CharField(blank=True, null=True, max_length=255)
     ok = models.CharField(blank=True, null=True, max_length=255)
@@ -109,7 +109,7 @@ class PubRoles(models.Model):
         (32, 'ReportAccount'),
         (41, 'Notification'),
     )
-    name = models.IntegerField(max_length=2, choices=PUB_ROLE_CHOICES)
+    name = models.IntegerField(choices=PUB_ROLE_CHOICES)
 
     def __str__(self):
         return self.name
