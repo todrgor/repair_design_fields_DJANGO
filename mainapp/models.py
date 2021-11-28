@@ -28,11 +28,11 @@ class UserRoles(models.Model):
         (2, 'Author'),
         (3, 'Admin'),
     )
-    name = models.PositiveIntegerField(max_length=1, choices=USER_ROLE_CHOICES)
+    name = models.IntegerField(max_length=1, choices=USER_ROLE_CHOICES)
 
 class UserSubscribes(models.Model):
-    subscriber_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
-    star_id = models.ManyToManyField('User')
+    subscriber_id = models.ForeignKey('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
+    star_id = models.OneToOneField('User', on_delete=models.CASCADE)
 
     def __str__(self):
         return 'User with ID: ' + str(self.subscriber_id) + ', subscribes: ' + str(self.star_id)
@@ -40,18 +40,18 @@ class UserSubscribes(models.Model):
 class ExpertInfo(models.Model):
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True) # как сделать самоудаление при удлении юзера????
     count_follovers = models.PositiveIntegerField(default=0)
-    knowledge = models.TextField(blank=True, null=True)
-    offer = models.TextField(blank=True, null=True)
-    site = models.CharField(blank=True, null=True)
-    address = models.CharField(blank=True, null=True)
-    telegram = models.PositiveIntegerField(blank=True, null=True)
-    whatsapp = models.PositiveIntegerField(blank=True, null=True)
-    viber = models.PositiveIntegerField(blank=True, null=True)
-    vk = models.CharField(blank=True, null=True)
-    inst = models.CharField(blank=True, null=True)
-    ok = models.CharField(blank=True, null=True)
-    fb = models.CharField(blank=True, null=True)
-    other = models.CharField(blank=True, null=True)
+    knowledge = models.TextField(blank=True, null=True, max_length=255)
+    offer = models.TextField(blank=True, null=True, max_length=255)
+    site = models.CharField(blank=True, null=True, max_length=255)
+    address = models.CharField(blank=True, null=True, max_length=255)
+    telegram = models.PositiveIntegerField(blank=True, null=True, max_length=255)
+    whatsapp = models.PositiveIntegerField(blank=True, null=True, max_length=255)
+    viber = models.PositiveIntegerField(blank=True, null=True, max_length=255)
+    vk = models.CharField(blank=True, null=True, max_length=255)
+    inst = models.CharField(blank=True, null=True, max_length=255)
+    ok = models.CharField(blank=True, null=True, max_length=255)
+    fb = models.CharField(blank=True, null=True, max_length=255)
+    other = models.CharField(blank=True, null=True, max_length=255)
 
     def count_follovers_changed(self, change_count):
         count_follovers += change_count
@@ -62,10 +62,10 @@ class ExpertInfo(models.Model):
 
 class Publication (models.Model):
     title = models.CharField(max_length=135)
-    role = models.OneToOneField('PubRoles', on_delete=models.SET_NULL) # как сделать самоудаление при удлении юзера????
+    role = models.OneToOneField('PubRoles', on_delete=models.SET_NULL, null=True) # как сделать самоудаление при удлении юзера????
     preview = models.ImageField(max_length=200)
     content =  models.TextField()
-    author_id = models.ForeignKey('User', on_delete=models.SET_NULL) # как сделать самоудаление при удлении юзера????
+    author_id = models.ForeignKey('User', on_delete=models.SET_NULL, null=True) # как сделать самоудаление при удлении юзера????
     pushed = models.DateTimeField(auto_now_add=True)
     seen_count = models.IntegerField(default=0)
     saved_count = models.IntegerField(default=0)
@@ -109,7 +109,7 @@ class PubRoles(models.Model):
         (32, 'ReportAccount'),
         (41, 'Notification'),
     )
-    name = models.PositiveIntegerField(max_length=2, choices=PUB_ROLE_CHOICES)
+    name = models.IntegerField(max_length=2, choices=PUB_ROLE_CHOICES)
 
     def __str__(self):
         return self.name
@@ -132,7 +132,7 @@ class SeenPubs (models.Model):
 
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags (models.Model):
-    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, primary_key=True) # как сделать самоудаление при удлении юзера????
+    pub_id = models.OneToOneField('Publication', on_delete=models.CASCADE) # как сделать самоудаление при удлении юзера????
     tag_id = models.ForeignKey('TagName', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -141,8 +141,8 @@ class PubHasTags (models.Model):
 class TagName (models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     pub_role = models.PositiveIntegerField()
-    tag_category = models.CharField()
-    tag_name = models.CharField()
+    tag_category = models.CharField(max_length=255)
+    tag_name = models.CharField(max_length=255)
 
     def __str__(self):
         return 'tag id: ' + self.id + ', pub role: ' + self.pub_role + ', tag category: ' + self.tag_category + ', tag name: ' + self.tag_name
