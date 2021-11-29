@@ -1,17 +1,16 @@
+from django.contrib.auth.models import AbstractUser
+from phonenumber_field.modelfields import PhoneNumberField
 from django.conf import settings
 from django.db import models
 from publicationapp.models import Publication
 # from repair_design_fields import settings
 
-class User(models.Model):
-    nickname = models.CharField(max_length=50, unique=True, verbose_name='Никнейм')
-    photo = models.ImageField(max_length=200, blank=True, null=True, verbose_name='Аватарка')
+class User(AbstractUser):
+    photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default=None, verbose_name='Аватарка')
     role = models.OneToOneField('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС')
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
     age = models.PositiveIntegerField(verbose_name='Возраст')
-    telephone = models.PositiveIntegerField(unique=True, verbose_name='Номер телефона')
-    email = models.EmailField(unique=True, verbose_name='Эл. почта')
-    password = models.CharField(max_length=250, verbose_name='Пароль') # how to min_length=5 ?
+    phone_number = PhoneNumberField(null=True, blank=True, unique=True, verbose_name="Номер телефона")
     registration = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время регистрации')
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
