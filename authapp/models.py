@@ -91,7 +91,7 @@ class ExpertInfo(models.Model):
 class SavedPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
     saver_id = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name='id сохранившего') # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации')
+    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Сохранённая публикация'
@@ -103,7 +103,7 @@ class SavedPubs(models.Model):
 class SeenPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True)
     watcher_id = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name='id просмотревшего') # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации')
+    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации')
 
     class Meta:
         verbose_name = 'Просмотренная публикация'

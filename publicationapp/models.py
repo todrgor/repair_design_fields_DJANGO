@@ -1,6 +1,6 @@
 from django.db import models
-from authapp.models import User
-# from repair_design_fields import settings
+# from authapp.models import User
+from repair_design_fields import settings
 
 class Publication(models.Model):
     # PUB_ROLE_CHOICES = (
@@ -57,7 +57,7 @@ class Publication(models.Model):
         return 'Title: ' + str(self.title) + ', role id: ' + str(self.role)
 
 class PubPhotos(models.Model):
-    id_pub = models.ForeignKey('Publication', verbose_name='id публикации')
+    id_pub = models.ForeignKey('Publication', verbose_name='id публикации', on_delete=models.CASCADE)
     photo = models.ImageField(max_length=200, verbose_name='Фотографии публикации')
 
     class Meta:
