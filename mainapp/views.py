@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .models import User, UserRoles, UserSubscribes, ExpertInfo,
+					Publication, PubRoles, SavedPubs, SeenPubs, PubHasTags, TagName
 
 def main(request):
 	print (request)
