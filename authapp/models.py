@@ -1,17 +1,27 @@
 from django.contrib.auth.models import AbstractUser
-from phonenumber_field.modelfields import PhoneNumberField
 from django.conf import settings
 from django.db import models
 from publicationapp.models import Publication
 # from repair_design_fields import settings
 
 class User(AbstractUser):
+    # USER_ROLE_CHOICES = (
+    #     (0, 'SomethingGoesWrong'),
+    #     (11, 'RepairPub'),
+    #     (12', 'RepairLifehack'),
+    #     (13, 'RepairBaseBook'),
+    #     (21', 'DesignPub'),
+    #     (22, 'DesignLifehack'),
+    #     (31, 'ReportPub'),
+    #     (32, 'ReportAccount'),
+    #     (41, 'Notification'),
+    # )
+
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default=None, verbose_name='Аватарка')
-    role = models.OneToOneField('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС')
+    role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
     age = models.PositiveIntegerField(verbose_name='Возраст')
-    phone_number = PhoneNumberField(null=True, blank=True, unique=True, verbose_name="Номер телефона")
-    registration = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время регистрации')
+    phone_number = models.PositiveIntegerField(unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
     class Meta:

@@ -3,12 +3,23 @@ from authapp.models import User
 # from repair_design_fields import settings
 
 class Publication(models.Model):
+    # PUB_ROLE_CHOICES = (
+    #     (0, 'SomethingGoesWrong'),
+    #     (11, 'RepairPub'),
+    #     (12', 'RepairLifehack'),
+    #     (13, 'RepairBaseBook'),
+    #     (21', 'DesignPub'),
+    #     (22, 'DesignLifehack'),
+    #     (31, 'ReportPub'),
+    #     (32, 'ReportAccount'),
+    #     (41, 'Notification'),
+    # )
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
-    role = models.OneToOneField('PubRoles', on_delete=models.SET_NULL, null=True)
+    role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
     preview = models.ImageField(max_length=200, verbose_name='Превью')
-    content_first_desc =  models.TextField(, verbose_name='Текст перед фотографиями')
-    content_last_desc =  models.TextField(, verbose_name='Текст после фотографий')
-    author_id = models.ForeignKey('User', on_delete=models.DO_NOTHING, null=True, verbose_name='Автор') # как сделать самоудаление при удлении юзера????
+    content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями')
+    content_last_desc =  models.TextField(verbose_name='Текст после фотографий')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
     seen_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
     saved_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была сохранена')
@@ -91,7 +102,7 @@ class PubHasTags(models.Model):
 
 class TagName(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id тега')
-    pub_role = models.PositiveIntegerField(, verbose_name='роль публикации')
+    pub_role = models.PositiveIntegerField(verbose_name='роль публикации')
     tag_category = models.CharField(max_length=255, verbose_name='категория')
     tag_name = models.CharField(max_length=255, verbose_name='значение тега')
 
