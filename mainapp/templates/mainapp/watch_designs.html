@@ -343,16 +343,16 @@
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
                 </div>
-                <div class="filter_one" id="fltr_color">
+                <div class="filter_one" id="fltr_color" style="display:none;">
                    <!-- фильтер цвет -->
                    <p>
-                     <span class="checked_colors_container">
-                       <span class="checked_colors_div checked_color_1" id="zero_none"></span>
-                       <span class="checked_colors_div checked_color_2"></span>
-                       <span class="checked_colors_div checked_color_3"></span>
+                     <span class="checked_colors_container"style="display:none;">
+                       <span class="checked_colors_div checked_color_1" id="zero_none"  style="display:none;"></span>
+                       <span class="checked_colors_div checked_color_2" style="display:none;"></span>
+                       <span class="checked_colors_div checked_color_3" style="display:none;"></span>
                      </span>
                    </p>
-                   <div class="to_close_filter fltr_color"></div>
+                   <div class="to_close_filter fltr_color" style="display:none;"></div>
                 </div>
                 <div class="filter_one" id="fltr_style">
                    <p id="fltr_style_p">Фильтер выбранный стиль</p>
@@ -375,27 +375,27 @@
               <input id="fltr_cost_max" type="number" name="cost_max" value="" placeholder="15 000 000">
               <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
             </div>
-            <div class="filter_mini_div color">
-              <p class="opened_filter_text full_width big_p">
-                <span class="big_p_parth">
+            <div class="filter_mini_div color" style="display:none;">
+              <p class="opened_filter_text full_width big_p" style="display:none;">
+                <span class="big_p_parth" style="display:none;">
                   3 основных цвета:
-                  <span id="checked_colors_count" class="checked_colors_count">Любые</span>
-                  <span class="checked_colors_container">
-                    <span class="checked_colors_div checked_color_1" id="zero_none"></span>
-                    <span class="checked_colors_div checked_color_2"></span>
-                    <span class="checked_colors_div checked_color_3"></span>
+                  <span id="checked_colors_count" class="checked_colors_count" style="display:none;">Любые</span>
+                  <span class="checked_colors_container" style="display:none;">
+                    <span class="checked_colors_div checked_color_1" id="zero_none" style="display:none;"></span>
+                    <span class="checked_colors_div checked_color_2" style="display:none;"></span>
+                    <span class="checked_colors_div checked_color_3" style="display:none;"></span>
                   </span>
                 </span>
-                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_colors button_and_submit__without__bgn_and_border">
+                <span style="display:none;"> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_colors button_and_submit__without__bgn_and_border">
                   <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
                 </button> </span>
               </p>
-              <div class="color_panel">
+              <div class="color_panel" style="display:none;">
                 <input id="color_1_inp" class="color_input color_1" type="text" name="color_1" value="">
                 <input id="color_2_inp" class="color_input color_2" type="text" name="color_2" value="">
                 <input id="color_3_inp" class="color_input color_3" type="text" name="color_3" value="">
                 <ul class="cp">
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_ffa500"></li>
                     <li class="cp__color" id="c_e8a52b"></li>
                     <li class="cp__color" id="c_e0b76c"></li>
@@ -407,7 +407,7 @@
                     <li class="cp__color" id="c_5a3b03"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_ffff00"></li>
                     <li class="cp__color" id="c_e2e21e"></li>
                     <li class="cp__color" id="c_e6e681"></li>
@@ -419,7 +419,7 @@
                     <li class="cp__color" id="c_62620d"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_ff0000"></li>
                     <li class="cp__color" id="c_ff3030"></li>
                     <li class="cp__color" id="c_fa7e7e"></li>
@@ -431,7 +431,7 @@
                     <li class="cp__color" id="c_903131"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_ff006a"></li>
                     <li class="cp__color" id="c_ff3589"></li>
                     <li class="cp__color" id="c_f46aa5"></li>
@@ -443,7 +443,7 @@
                     <li class="cp__color" id="c_821342"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_008000"></li>
                     <li class="cp__color" id="c_1e941e"></li>
                     <li class="cp__color" id="c_40bc40"></li>
@@ -455,7 +455,7 @@
                     <li class="cp__color" id="c_185218"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_0000ff"></li>
                     <li class="cp__color" id="c_2424ff"></li>
                     <li class="cp__color" id="c_4646dc"></li>
@@ -467,7 +467,7 @@
                     <li class="cp__color" id="c_1a1a7c"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_00ffe7"></li>
                     <li class="cp__color" id="c_24f5ff"></li>
                     <li class="cp__color" id="c_46d5dc"></li>
@@ -479,7 +479,7 @@
                     <li class="cp__color" id="c_1a787c"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_800080"></li>
                     <li class="cp__color" id="c_ae00ae"></li>
                     <li class="cp__color" id="c_ac52ac"></li>
@@ -491,7 +491,7 @@
                     <li class="cp__color" id="c_6c0d6c"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color" id="c_000000"></li>
                     <li class="cp__color" id="c_1f1f1f"></li>
                     <li class="cp__color" id="c_313131"></li>
@@ -503,7 +503,7 @@
                     <li class="cp__color" id="c_ffffff"></li>
                   </div>
 
-                  <div class="one_color_tone">
+                  <div class="one_color_tone" style="display:none;">
                     <li class="cp__color any_3_colors">Любые 3 цвета</li>
                   </div>
                 </ul>
