@@ -6,13 +6,11 @@ class Publication(models.Model):
     # PUB_ROLE_CHOICES = (
     #     (0, 'SomethingGoesWrong'),
     #     (11, 'RepairPub'),
-    #     (12', 'RepairLifehack'),
-    #     (13, 'RepairBaseBook'),
-    #     (21', 'DesignPub'),
-    #     (22, 'DesignLifehack'),
-    #     (31, 'ReportPub'),
-    #     (32, 'ReportAccount'),
-    #     (41, 'Notification'),
+    #     (12, 'RepairBaseBook'),
+    #     (21, 'LifehackPub'),
+    #     (31', 'DesignPub'),
+    #     (41, 'Report'),
+    #     (51, 'Notification'),
     # )
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
