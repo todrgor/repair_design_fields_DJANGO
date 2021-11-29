@@ -16,11 +16,13 @@ class Publication(models.Model):
     # )
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
-    preview = models.ImageField(max_length=200, verbose_name='Превью')
+    preview = models.ImageField(max_length=200, upload_to='pub_media', verbose_name='Превью')
     content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями')
     content_last_desc =  models.TextField(verbose_name='Текст после фотографий')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
+    cost_min = models.PositiveIntegerField(blank=True, default=0, verbose_name='бюджет от')
+    cost_max = models.PositiveIntegerField(blank=True, default=1, verbose_name='бюджет до')
     seen_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
     saved_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была сохранена')
     reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на публикация было жалоб')
@@ -54,18 +56,18 @@ class Publication(models.Model):
         self.save
 
     def __str__(self):
-        return 'Title: ' + str(self.title) + ', role id: ' + str(self.role)
+        return str(self.title) + ', ' + str(self.role)
 
 class PubPhotos(models.Model):
     id_pub = models.ForeignKey('Publication', verbose_name='id публикации', on_delete=models.CASCADE)
-    photo = models.ImageField(max_length=200, verbose_name='Фотографии публикации')
+    photo = models.ImageField(max_length=200, upload_to='pub_media', verbose_name='Фотографии публикации')
 
     class Meta:
         verbose_name = 'Фотография публикации'
         verbose_name_plural = 'Фотографии публикации'
 
     def __str__(self):
-        return self.photo
+        return str(self.photo) +' for '+ str(self.id_pub)
 
 class PubRoles(models.Model):
     # PUB_ROLE_CHOICES = (
@@ -90,15 +92,15 @@ class PubRoles(models.Model):
 
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags(models.Model):
-    pub_id = models.OneToOneField('Publication', on_delete=models.CASCADE, verbose_name='id публикации') # как сделать самоудаление при удлении юзера????
-    tag_id = models.ForeignKey('TagName', on_delete=models.CASCADE, verbose_name='id тега')
+    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации') # как сделать самоудаление при удлении юзера????
+    tag_id = models.OneToOneField('TagName', on_delete=models.CASCADE, verbose_name='id тега')
 
     class Meta:
         verbose_name = 'Тег публикации'
         verbose_name_plural = 'Теги публикаций'
 
     def __str__(self):
-        return 'pub id: ' + self.pub_id + ', tag id: ' + self.tag_id
+        return str(self.pub_id) + ' has tag ' + str(self.tag_id)
 
 class TagName(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id тега')
@@ -111,4 +113,4 @@ class TagName(models.Model):
         verbose_name_plural = 'Значения тегов'
 
     def __str__(self):
-        return 'tag id: ' + self.id + ', pub role: ' + self.pub_role + ', tag category: ' + self.tag_category + ', tag name: ' + self.tag_name
+        return self.tag_category + ': ' + self.tag_name

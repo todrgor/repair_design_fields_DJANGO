@@ -20,8 +20,8 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default=None, verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
-    age = models.PositiveIntegerField(verbose_name='Возраст')
-    phone_number = models.PositiveIntegerField(unique=True, verbose_name="Номер телефона")
+    age = models.PositiveIntegerField(default=9998000, verbose_name='Возраст')
+    phone_number = models.PositiveIntegerField(default=9998000, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
     class Meta:
@@ -32,7 +32,7 @@ class User(AbstractUser):
         self.save()
 
     def __str__(self):
-        return 'nickname: ' + self.nickname + ', role: ' + str(self.role) + ', last entry: ' + str(self.last_entry)
+        return str(self.username) + ', ' + str(self.role)
 
 class UserRoles(models.Model):
     # USER_ROLE_CHOICES = (
@@ -51,15 +51,15 @@ class UserRoles(models.Model):
         return self.name
 
 class UserSubscribes(models.Model):
-    subscriber_id = models.OneToOneField('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
-    star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
+    subscriber_id = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
+    star_id = models.OneToOneField('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
 
     class Meta:
         verbose_name = 'Подписка пользователя'
         verbose_name_plural = 'Подписки пользователей'
 
     def __str__(self):
-        return 'User with ID: ' + str(self.subscriber_id) + ', subscribes users with ID: ' + str(self.star_id)
+        return 'Subscriber ' + str(self.subscriber_id) + ' follows ' + str(self.star_id)
 
 class ExpertInfo(models.Model):
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
@@ -86,28 +86,28 @@ class ExpertInfo(models.Model):
         self.save
 
     def __str__(self):
-        return 'Expert with ID: ' + str(self.subscriber_id) + ', offer: ' + str(self.offer)
+        return 'Expert ' + str(self.subscriber_id) + ', offer: ' + str(self.offer)
 
 class SavedPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
-    saver_id = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name='id сохранившего') # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    saver_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
+    pub_id = models.OneToOneField('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Сохранённая публикация'
         verbose_name_plural = 'Сохранённые публикации'
 
     def __str__(self):
-        return 'saver id: ' + self.saver_id + ', saved pubs with ID: ' + self.pub_id
+        return 'saver ' + str(self.saver_id) + ' saved pub ' + str(self.pub_id)
 
 class SeenPubs(models.Model):
-    when = models.DateTimeField(auto_now_add=True)
-    watcher_id = models.OneToOneField('User', on_delete=models.CASCADE, verbose_name='id просмотревшего') # как сделать самоудаление при удлении юзера????
-    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации')
+    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
+    watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
+    pub_id = models.OneToOneField('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Просмотренная публикация'
         verbose_name_plural = 'Просмотренные публикации'
 
     def __str__(self):
-        return 'id seen by: ' + self.watcher_id + ', seen pubs with ID: ' + self.pub_id
+        return 'pub ' + str(self.pub_id) + ' seen by ' + str(self.watcher_id)
