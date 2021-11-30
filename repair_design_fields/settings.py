@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'authapp',
     'accountapp',
     'publicationapp',
+    'supportapp',
 ]
 
 MIDDLEWARE = [
