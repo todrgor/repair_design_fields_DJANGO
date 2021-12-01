@@ -5,7 +5,7 @@ from authapp.models import User
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('username', 'email',  'phone_number',  'password1', 'password2')
+        fields = ('username', 'email',  'phone_number', 'age',  'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)

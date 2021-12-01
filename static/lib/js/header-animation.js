@@ -80,38 +80,3 @@ $(document).click( function(event) {
     console.log('$is_opened_filter_panel =', $is_opened_filter_panel);
   }
 });
-
-// Теперь для неавторизированного пользователя :
-
-$(".btn_udli.login").on('click', function () {
-    $('.before_slides_form.header_restyle').addClass('show');
-    $("#auth").prop('checked', true);
-    $is_opened_reg_auth_form = 1;
-    console.log('.btn_udli.login opened');
-});
-$(".btn_udli.signup").on('click', function () {
-    $('.before_slides_form.header_restyle').addClass('show');
-    $("#reg").prop('checked', true);
-    $is_opened_reg_auth_form = 1;
-    console.log('.btn_udli.signup opened');
-});
-
-$(document).click( function(event) {
-  if ($is_opened_reg_auth_form == 1 &&
-      !event.target.classList.contains("dont_close_on_click") &&
-      !$('.dont_close_on_click:hover').length>0) {
-
-    $('.before_slides_form.header_restyle').removeClass('show');
-    $is_opened_reg_auth_form = 0;
-    console.log('is_opened_reg_auth_form = 0;');
-  }
-});
-
-$(".submit_bs_form_input").hover(
-  function(){
-    $(".submit_bs_form").css("background", "#1b1b28");
-  },
-  function(){
-    $(".submit_bs_form").css("background", "#000");
-  }
-);

@@ -7,9 +7,12 @@
   <link rel="stylesheet" href="/static/lib\css\style_header.css">
   <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
 {% endblock %}
+{% block bodystyle%}
+<body style='background: #313131;'>
+{% endblock %}
 
 {% block header %}
-  <div class="header_bg">
+  <div class="header_bg" style='position: static;'>
     <div class="header">
       <a href="/">
           <div class="logo_mini"></div>
@@ -22,32 +25,43 @@
       </div>
     </div>
   </div>
-  <div class="header_clear_hix"> <!-- чтобы под хэдэр ничего не попадало --> </div>
 {% endblock %}
 
 {% block content %}
-    <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">
-        <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
-        <div class="pub_id" id="1"></div>
-        <div id="tags_count"></div>
-        <div id="fltr_cost_min"></div>
-        <div id="fltr_cost_max"></div>
-        <div id="fltr_cost_p"></div>
-        <div id="fltr_style_p"></div>
-        <div id="fltr_room_p"></div>
-        <div id="checked_styles_count"></div>
-        <div id="checked_rooms_count"></div>
-        <div class="opened_filter"></div>
-    </div>
 
-    <div class="pubs_container">
-      <h1 class="h1_index">Вход в ИС "Ремонт и дизайн"</h1>
-      <form method="post" class="bootstrap-form">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <input type="submit" value="Войти">
+  <div class="pubs_container">
+    <h1 class="before_slides_form_zagolovok before_slides_ten">Авторизируйтесь,</h1>
+    <p class="before_slides_form_podzagolovok before_slides_ten">чтобы свободно пользоваться всем функционалом системы</p>
+    <div class="white_form_reg_auth_reset before_slides_ten">
+      <form method="post"">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="submit_bs_form">
+          <input class="submit_bs_form_input" type="submit" value="Войти" style="margin-bottom: 0px;">
+        </div>
       </form>
     </div>
+    <a href="{% url 'auth:register' %}" class="white_form_rar_podpis_1 before_slides_ten">Зарегистрироваться ›</a>
+  </div>
+
 {% endblock %}
+
+{% block scripts_standart %}
+  <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+	<script>
+    $('input').css('width', '93%');
+    $('input[type="submit"]').css('width', '100%');
+
+    $(".submit_bs_form_input").hover(
+      function(){
+        $(".submit_bs_form").css("background", "#1b1b28");
+      },
+      function(){
+        $(".submit_bs_form").css("background", "#000");
+      }
+    );
+  </script>
+{% endblock %}
+
 {% block footer %}
 {% endblock %}

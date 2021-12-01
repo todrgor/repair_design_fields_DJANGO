@@ -265,7 +265,10 @@
     border-radius: 20px;
     /* border: 1px solid #FFFFFF; */
     overflow: hidden;
-    margin: 5px 0;
+    margin: 5px 10px 5px 0;
+}
+.account_img img {
+  width: 40px;
 }
 
 .avatar_options_mini_p {
@@ -464,11 +467,11 @@
     display: flex;
     justify-content: flex-end;
 
-    display: none;
+    /* display: none; */
 }
 
 .btn_udli {
-  height: 30px;
+  height: 20px;
     margin: 10px 0;
     font-family: 'Open Sans';
     font-style: normal;

@@ -25,7 +25,7 @@
 
     <div class="pub_one lifehack" id="{{ p.id }}">
       <div class="media">
-        {% if 'mp4' in p.preview.url %}
+        {% if '.mp4' in p.preview.url or '.mov' in p.preview.url %}
         <video class="paused" muted="muted" controls="controls" loop>
           <source src="{{ p.preview.url }}" type='video/mp4;'>
           Тег video не поддерживается вашим браузером. Увы.
