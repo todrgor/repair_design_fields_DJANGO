@@ -3,11 +3,14 @@ import authapp.models
 import publicationapp.models
 
 def main(request):
-	print (request)
-	content = {
-		'test': 11111111111111
-	}
+	content = {}
 	return render(request, 'mainapp/index.html', content)
+
+
+
+
+
+
 
 def repairs(request):
 	print (request)

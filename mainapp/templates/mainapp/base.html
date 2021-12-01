@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>
       {% block title %}
-        {{ title❘capfirst }}
+        {{ title|capfirst }}
       {% endblock %}
     </title>
     {% block css %}
@@ -49,6 +49,7 @@
                         <a href="/watch_account/">Мой профиль</a>
                         <a href="/settings/">Настройки</a>
                         <a href="/help/">Помощь</a>
+                        <a href="/exit/">Выйти</a>
                     </div>
                 </div>
 

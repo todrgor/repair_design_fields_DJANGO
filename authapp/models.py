@@ -17,11 +17,11 @@ class User(AbstractUser):
     #     (41, 'Notification'),
     # )
 
-    photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default=None, verbose_name='Аватарка')
+    photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
     age = models.PositiveIntegerField(default=9998000, verbose_name='Возраст')
-    phone_number = models.PositiveIntegerField(default=9998000, unique=True, verbose_name="Номер телефона")
+    phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
     class Meta:

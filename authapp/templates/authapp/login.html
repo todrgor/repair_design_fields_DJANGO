@@ -1,0 +1,53 @@
+{% extends 'mainapp/base.html' %}
+{% block title %}
+  Вход в ИС
+{% endblock %}
+{% block css %}
+  <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+  <link rel="stylesheet" href="/static/lib\css\style_header.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+{% endblock %}
+
+{% block header %}
+  <div class="header_bg">
+    <div class="header">
+      <a href="/">
+          <div class="logo_mini"></div>
+      </a>
+      <div class="header_search">
+          <img src="/static/sources/SVG/search.svg" alt="">
+          <form class="" action="search.py" method="post">
+              <input type="text" name="search_input" value="" placeholder="Я ищу...">
+          </form>
+      </div>
+    </div>
+  </div>
+  <div class="header_clear_hix"> <!-- чтобы под хэдэр ничего не попадало --> </div>
+{% endblock %}
+
+{% block content %}
+    <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">
+        <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+        <div class="pub_id" id="1"></div>
+        <div id="tags_count"></div>
+        <div id="fltr_cost_min"></div>
+        <div id="fltr_cost_max"></div>
+        <div id="fltr_cost_p"></div>
+        <div id="fltr_style_p"></div>
+        <div id="fltr_room_p"></div>
+        <div id="checked_styles_count"></div>
+        <div id="checked_rooms_count"></div>
+        <div class="opened_filter"></div>
+    </div>
+
+    <div class="pubs_container">
+      <h1 class="h1_index">Вход в ИС "Ремонт и дизайн"</h1>
+      <form method="post" class="bootstrap-form">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <input type="submit" value="Войти">
+      </form>
+    </div>
+{% endblock %}
+{% block footer %}
+{% endblock %}

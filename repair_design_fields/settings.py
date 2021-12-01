@@ -132,8 +132,13 @@ STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
 )
 
+LOGIN_REDIRECT_URL = 'main'
+
+MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
 # а меди надо?
 # MEDIA_URL = '/media/'

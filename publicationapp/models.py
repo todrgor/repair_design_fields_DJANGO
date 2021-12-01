@@ -1,6 +1,7 @@
 from django.db import models
 # from authapp.models import User
 from repair_design_fields import settings
+from django.core.validators import FileExtensionValidator
 
 class Publication(models.Model):
     # PUB_ROLE_CHOICES = (
@@ -14,9 +15,9 @@ class Publication(models.Model):
     # )
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
-    preview = models.ImageField(max_length=200, upload_to='pub_media', verbose_name='Превью')
-    content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями')
-    content_last_desc =  models.TextField(verbose_name='Текст после фотографий')
+    preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'pdf'])], verbose_name='Превью')
+    content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями', default='')
+    content_last_desc =  models.TextField(verbose_name='Текст после фотографий', blank=True, null=True, default='')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
     cost_min = models.PositiveIntegerField(blank=True, default=0, verbose_name='бюджет от')

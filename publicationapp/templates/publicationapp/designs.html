@@ -1,0 +1,376 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  Смотреть дизайны
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\style_filter.css">
+{% endblock %}
+
+{% block content %}
+  <div class="page_title">
+      <p class="title_p">Дизайнерские решения:</p>
+      <p class="count_pubs">{{ pubs.count }} публикации</p>
+  </div>
+
+  <div class="pubs_container">
+    {% for p in pubs %}
+
+        <div class="pub_one design" id="{{ p.id }}">
+          <div class="img_from_pub">
+            <img src="{{ p.preview.url }}" alt="">
+            <div class="img_black_gradient"> </div>
+          </div>
+          <div class="pub_info">
+            <p class="pub_title">{{p.title}}</p>
+            <div class="div_pub_text">
+              <p class="pub_text">
+                {{ p.content_first_desc }}
+              </p>
+            </div>
+            <div class="pub_to_do">
+              <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ p.id }} )">
+                <img src="/static/sources/SVG/heart.svg" alt="">
+                <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
+              </div>
+              <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
+            </div>
+            <div class="pub_tags"></div>
+          </div>
+        </div>
+
+
+      {% endfor %}
+  </div>
+
+  <div class="opened_filter_big_bg">
+    <div class="pre_pre_opened_filter">
+      <div class="pre__opened_filter">
+        <div class="opened_filter">
+          <form class="opened_filter_form" action="to_filter_pubs" method="post">
+            <p class="opened_filter_title">Фильтры для публикаций</p>
+            <div class="opened_filter_under_title">
+              <p class="opened_filter_second_title">349 подобрано</p>
+            </div>
+            <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
+              <div class="filters_on"> <!-- если есть 1+ фильтров -->
+                <div class="filter_one" id="fltr_cost">
+                   <p id="fltr_cost_p">Фильтер бюджет</p>
+                   <div class="to_close_filter fltr_cost"></div>
+                </div>
+                <div class="filter_one" id="fltr_color" style="display:none;">
+                   <!-- фильтер цвет -->
+                   <p>
+                     <span class="checked_colors_container"style="display:none;">
+                       <span class="checked_colors_div checked_color_1" id="zero_none"  style="display:none;"></span>
+                       <span class="checked_colors_div checked_color_2" style="display:none;"></span>
+                       <span class="checked_colors_div checked_color_3" style="display:none;"></span>
+                     </span>
+                   </p>
+                   <div class="to_close_filter fltr_color" style="display:none;"></div>
+                </div>
+                <div class="filter_one" id="fltr_style">
+                   <p id="fltr_style_p">Фильтер выбранный стиль</p>
+                   <div class="to_close_filter fltr_style"></div>
+                </div>
+                <div class="filter_one" id="fltr_room">
+                   <p id="fltr_room_p">Фильтер выбранная комната</p>
+                   <div class="to_close_filter fltr_room"></div>
+                </div>
+                <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
+              </div>
+              <div class="filters_off"> <!-- если ни оного фильтра не включено -->
+                <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
+              </div>
+            </div>
+            <div class="filter_mini_div cost">
+              <p class="opened_filter_text full_width">Бюджет, ₽</p>
+              <input id="fltr_cost_min" type="number" name="cost_mini" value="" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
+              <p style="font-size: 15px; font-weight: 900;">-</p>
+              <input id="fltr_cost_max" type="number" name="cost_max" value="" placeholder="15 000 000">
+              <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
+            </div>
+            <div class="filter_mini_div color" style="display:none;">
+              <p class="opened_filter_text full_width big_p" style="display:none;">
+                <span class="big_p_parth" style="display:none;">
+                  3 основных цвета:
+                  <span id="checked_colors_count" class="checked_colors_count" style="display:none;">Любые</span>
+                  <span class="checked_colors_container" style="display:none;">
+                    <span class="checked_colors_div checked_color_1" id="zero_none" style="display:none;"></span>
+                    <span class="checked_colors_div checked_color_2" style="display:none;"></span>
+                    <span class="checked_colors_div checked_color_3" style="display:none;"></span>
+                  </span>
+                </span>
+                <span style="display:none;"> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_colors button_and_submit__without__bgn_and_border">
+                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
+                </button> </span>
+              </p>
+              <div class="color_panel" style="display:none;">
+                <input id="color_1_inp" class="color_input color_1" type="text" name="color_1" value="">
+                <input id="color_2_inp" class="color_input color_2" type="text" name="color_2" value="">
+                <input id="color_3_inp" class="color_input color_3" type="text" name="color_3" value="">
+                <ul class="cp">
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_ffa500"></li>
+                    <li class="cp__color" id="c_e8a52b"></li>
+                    <li class="cp__color" id="c_e0b76c"></li>
+                    <li class="cp__color" id="c_cc9a3e"></li>
+                    <li class="cp__color" id="c_c8a76a"></li>
+                    <li class="cp__color" id="c_a08555"></li>
+                    <li class="cp__color" id="c_7e673d"></li>
+                    <li class="cp__color" id="c_845808"></li>
+                    <li class="cp__color" id="c_5a3b03"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_ffff00"></li>
+                    <li class="cp__color" id="c_e2e21e"></li>
+                    <li class="cp__color" id="c_e6e681"></li>
+                    <li class="cp__color" id="c_b6b663"></li>
+                    <li class="cp__color" id="c_b6b625"></li>
+                    <li class="cp__color" id="c_a0a02b"></li>
+                    <li class="cp__color" id="c_727224"></li>
+                    <li class="cp__color" id="c_989800"></li>
+                    <li class="cp__color" id="c_62620d"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_ff0000"></li>
+                    <li class="cp__color" id="c_ff3030"></li>
+                    <li class="cp__color" id="c_fa7e7e"></li>
+                    <li class="cp__color" id="c_ce5b5b"></li>
+                    <li class="cp__color" id="c_d23030"></li>
+                    <li class="cp__color" id="c_b83737"></li>
+                    <li class="cp__color" id="c_962e2e"></li>
+                    <li class="cp__color" id="c_ca4242"></li>
+                    <li class="cp__color" id="c_903131"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_ff006a"></li>
+                    <li class="cp__color" id="c_ff3589"></li>
+                    <li class="cp__color" id="c_f46aa5"></li>
+                    <li class="cp__color" id="c_d64784"></li>
+                    <li class="cp__color" id="c_ca2f6f"></li>
+                    <li class="cp__color" id="c_b22c64"></li>
+                    <li class="cp__color" id="c_84224b"></li>
+                    <li class="cp__color" id="c_b81b5d"></li>
+                    <li class="cp__color" id="c_821342"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_008000"></li>
+                    <li class="cp__color" id="c_1e941e"></li>
+                    <li class="cp__color" id="c_40bc40"></li>
+                    <li class="cp__color" id="c_268026"></li>
+                    <li class="cp__color" id="c_197019"></li>
+                    <li class="cp__color" id="c_155c15"></li>
+                    <li class="cp__color" id="c_0f440f"></li>
+                    <li class="cp__color" id="c_267626"></li>
+                    <li class="cp__color" id="c_185218"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_0000ff"></li>
+                    <li class="cp__color" id="c_2424ff"></li>
+                    <li class="cp__color" id="c_4646dc"></li>
+                    <li class="cp__color" id="c_2323ca"></li>
+                    <li class="cp__color" id="c_2626c6"></li>
+                    <li class="cp__color" id="c_1d1d8e"></li>
+                    <li class="cp__color" id="c_17176e"></li>
+                    <li class="cp__color" id="c_2a2a9a"></li>
+                    <li class="cp__color" id="c_1a1a7c"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_00ffe7"></li>
+                    <li class="cp__color" id="c_24f5ff"></li>
+                    <li class="cp__color" id="c_46d5dc"></li>
+                    <li class="cp__color" id="c_23c2ca"></li>
+                    <li class="cp__color" id="c_26c6c6"></li>
+                    <li class="cp__color" id="c_1d898e"></li>
+                    <li class="cp__color" id="c_17626e"></li>
+                    <li class="cp__color" id="c_2a959a"></li>
+                    <li class="cp__color" id="c_1a787c"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_800080"></li>
+                    <li class="cp__color" id="c_ae00ae"></li>
+                    <li class="cp__color" id="c_ac52ac"></li>
+                    <li class="cp__color" id="c_a216a2"></li>
+                    <li class="cp__color" id="c_981498"></li>
+                    <li class="cp__color" id="c_7e1d7e"></li>
+                    <li class="cp__color" id="c_521352"></li>
+                    <li class="cp__color" id="c_862a86"></li>
+                    <li class="cp__color" id="c_6c0d6c"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color" id="c_000000"></li>
+                    <li class="cp__color" id="c_1f1f1f"></li>
+                    <li class="cp__color" id="c_313131"></li>
+                    <li class="cp__color" id="c_707070"></li>
+                    <li class="cp__color" id="c_a0a0a0"></li>
+                    <li class="cp__color" id="c_cecece"></li>
+                    <li class="cp__color" id="c_e8e8e8"></li>
+                    <li class="cp__color" id="c_f2f2f2"></li>
+                    <li class="cp__color" id="c_ffffff"></li>
+                  </div>
+
+                  <div class="one_color_tone" style="display:none;">
+                    <li class="cp__color any_3_colors">Любые 3 цвета</li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div class="filter_mini_div checked_rooms">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  Комната:
+                  <span id="checked_rooms_count" class="checked_rooms_count">Любая</span>
+                </span>
+                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_checked_rooms button_and_submit__without__bgn_and_border">
+                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
+                </button> </span>
+              </p>
+              <div class="checked_rooms_open">
+                <div class="check_any_one_room">
+                  <label> <span> <input id="skandinavskiy_style" type="checkbox" name="checked_room" value="kitchen" > </span><span>Кухня</span> </label>
+                  <label class="any_one" style="max-width: 118px;"> <span> <input type="checkbox" name="checked_room" value="any_one"> </span><span class="any_one__span">Любая комната</span> </label>
+                </div>
+                <label> <span> <input type="checkbox" name="checked_room" value="Туалет" > </span><span>Туалет</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Ванная" > </span><span>Ванная</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Гостинная" > </span><span>Гостинная</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Спальня" > </span><span>Спальня</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Личная комната" > </span><span>Личная комната</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Коридор" > </span><span>Коридор</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Балкон" > </span><span>Балкон</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Прихожая" > </span><span>Прихожая</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Офис" > </span><span>Офис</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Вся квартира" > </span><span>Вся квартира</span> </label>
+                <label> <span> <input type="checkbox" name="checked_room" value="Другое" > </span><span>Другое</span> </label>
+              </div>
+            </div>
+            <div class="filter_mini_div checked_styles">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  Основной стиль:
+                  <span id="checked_styles_count" class="checked_styles_count">Любой</span>
+                </span>
+                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_design_styles button_and_submit__without__bgn_and_border">
+                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
+                </button> </span>
+              </p>
+              <div class="styles_labels_open">
+                <div class="styles_any_one_label">
+                  <label> <span> <input type="checkbox" name="style_design" value="Авангард" > </span><span>Авангард</span> </label>
+                  <label class="any_one" style="max-width: 99px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">Любой стиль</span> </label>
+                </div>
+                <label> <span> <input type="checkbox" name="style_design" value="Американский стиль" > </span><span>Американский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Ампир" > </span><span>Ампир</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Английский стиль" > </span><span>Английский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Античный стиль" > </span><span>Античный стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Ар деко (арт деко)" > </span><span>Ар деко (арт деко)</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Ар нуво (арт нуво)" > </span><span>Ар нуво (арт нуво)</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Арабский стиль" > </span><span>Арабский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Барокко" > </span><span>Барокко</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Баухауз" > </span><span>Баухауз</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Бохо" > </span><span>Бохо</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Брутализм" > </span><span>Брутализм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Версаль" > </span><span>Версаль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Викторианский стиль" > </span><span>Викторианский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Винтаж" > </span><span>Винтаж</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Гжель" > </span><span>Гжель</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Голландский стиль" > </span><span>Голландский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Готический стиль" > </span><span>Готический стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Гранж" > </span><span>Гранж</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Греческий стиль" > </span><span>Греческий стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Датский стиль" > </span><span>Датский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Деконструктивизм" > </span><span>Деконструктивизм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Индийский стиль" > </span><span>Индийский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Индустриальный стиль" > </span><span>Индустриальный стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Кантри" > </span><span>Кантри</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Китайский стиль" > </span><span>Китайский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Китч" > </span><span>Китч</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Классика" > </span><span>Классика</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Классицизм" > </span><span>Классицизм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Классический стиль" > </span><span>Классический стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Колониальный стиль" > </span><span>Колониальный стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Конструктивизм" > </span><span></span>Конструктивизм</label>
+                <label> <span> <input type="checkbox" name="style_design" value="Контемпорари" > </span><span>Контемпорари</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Лофт" > </span><span>Лофт</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Манга" > </span><span>Манга</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Минимализм" > </span><span>Минимализм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Модерн" > </span><span>Модерн</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Морской стиль" > </span><span>Морской стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Неоклассицизм" > </span><span>Неоклассицизм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Пин-ап" > </span><span>Пин-ап</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Поп-арт" > </span><span>Поп-арт</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Постмодернизм" > </span><span>Постмодернизм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Прованс" > </span><span>Прованс</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Ренессанс" > </span><span>Ренессанс</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Рококо" > </span><span>Рококо</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Романский стиль" > </span><span>Романский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Русский стиль (а-ля рус)" > </span><span>Русский стиль (а-ля рус)</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Рустик" > </span><span>Рустик</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Скандинавский" > </span><span>Скандинавский</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Средиземноморский стиль" > </span><span>Средиземноморский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Стимпанк" > </span><span>Стимпанк</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Финский стиль" > </span><span>Финский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Французский стиль" > </span><span>Французский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Футуризм" > </span><span>Футуризм</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Фьюжн" > </span><span>Фьюжн</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Хай-тек (техно)" > </span><span>Хай-тек (техно)</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Шебби-Шик" > </span><span>Шебби-Шик</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Эклектика" > </span><span>Эклектика</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Эко-стиль" > </span><span>Эко-стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Японский стиль" > </span><span>Японский стиль</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="Mid-сentury modern" > </span><span>Mid-сentury modern</span> </label>
+                <label id="author_style_design"> <span> <input type="checkbox" name="style_design" value="Авторский стиль" > </span><span>Авторский стиль (как видит сам автор, без придуманных стилей)</span> </label>
+              </div>
+            </div>
+            <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
+            <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
+            <div class="show_pubs">
+              <div class="show_pubs_container">
+                <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
+                <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
+              </div>
+            </div>
+          <!-- <div class="clear_hix_show_pubs"></div> -->
+          </form>
+        </div>
+      </div>
+
+      <!-- <div class="close_btn"></div> -->
+    </div>
+  </div>
+
+	<div class="filter_and_gradient">
+		<div class="filter_and_gradient_container">
+		  <button class="filter_button button_and_submit__without__bgn_and_border">
+			<div class="filter">
+			  <div class="filter_btn">
+				<img class="filter_logo dont_close_on_click" src="/static/sources/SVG/filter_logo.svg" alt="">
+				<p class="filter_p dont_close_on_click">Отфильтровать</p>
+			  </div>
+			  <div class="filter_tags_count dont_close_on_click">
+				<p id="tags_count" class="dont_close_on_click">6</p>
+			  </div>
+			</div>
+		  </button>
+		</div>
+	</div>
+
+
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-designs.js"></script>
+{% endblock %}
