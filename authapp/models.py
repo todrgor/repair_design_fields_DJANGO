@@ -4,6 +4,10 @@ from django.db import models
 from publicationapp.models import Publication
 # from repair_design_fields import settings
 
+# user : password : role
+# su1 : su1 : admin + superuser
+# 18091ikhgc : zxzxzx12 : watcher
+
 class User(AbstractUser):
     # USER_ROLE_CHOICES = (
     #     (0, 'SomethingGoesWrong'),
