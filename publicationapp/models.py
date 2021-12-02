@@ -91,7 +91,7 @@ class PubRoles(models.Model):
 
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags(models.Model):
-    pub_id = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации') # как сделать самоудаление при удлении юзера????
+    pub_id = models.ForeignKey('Publication', related_name='pub_id', on_delete=models.CASCADE, verbose_name='id публикации')
     tag_id = models.OneToOneField('TagName', on_delete=models.CASCADE, verbose_name='id тега')
 
     class Meta:
@@ -112,4 +112,5 @@ class TagName(models.Model):
         verbose_name_plural = 'Значения тегов'
 
     def __str__(self):
+        # return PubRoles.name(id = self.pub_role) + ' ' + self.tag_category + ': ' + self.tag_name
         return self.tag_category + ': ' + self.tag_name

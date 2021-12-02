@@ -60,22 +60,22 @@
           <p class="pub_text">{{ p.title }}</p>
         </div>
         <div class="pub_tags_container">
-          <!-- <div class="pub_tag">
-            <p>В дизайне</p>
-            <img src="sources/SVG/search.svg" alt="">
-          </div> -->
-          <div class="pub_tag">
-            <p>70% просмотревших сохранили</p>
-            <img src="/static/sources/SVG/search.svg" alt="">
-          </div>
-          <div class="pub_tag">
-            <p>Устройство быта</p>
-            <img src="/static/sources/SVG/search.svg" alt="">
-          </div>
-          <div class="pub_tag use_all">
-            <p>Публикации по всем этим тегам</p>
-            <img src="/static/sources/SVG/filter_logo.svg" alt="">
-          </div>
+          {% if pub_has_tags %}
+            {% for t in pub_has_tags.filter(pub_id__in=p) %}
+            <div class="pub_tag">
+              <p>{{ t.tag_id.tag_name }}</p>
+              <img src="/static/sources/SVG/search.svg" alt="">
+            </div>
+            {% endfor%}
+            <div class="pub_tag use_all">
+              <p>Публикации по всем этим тегам</p>
+              <img src="/static/sources/SVG/filter_logo.svg" alt="">
+            </div>
+          {% else %}
+            <div class="pub_tag">
+              <p>Почему-то у этой публикации нет фильтров (и какого хрена?)</p>
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>
