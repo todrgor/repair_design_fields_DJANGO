@@ -45,6 +45,7 @@ class LifehacksWatch(ListView):
 
         context.update({
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
+            # 'tags_for_filter': TagName.objects.filter(id__gt=3000000).filter(id__lt=3999999)
         })
         return context
 
@@ -62,9 +63,23 @@ class FilterLifehacks(ListView):
         context = super(FilterLifehacks, self).get_context_data(**kwargs)
         publications = Publication.objects.filter(role=31)
 
+        # request = self.kwargs['request']
+        if self.request.method == 'POST':
+            sphera = self.request.POST.getlist('style_design', '')
+            fltr_cost_min = self.request.POST.get('cost_mini', '')
+            fltr_cost_max = self.request.POST.get('cost_max', '')
+            if sphera != '':
+                filter_tag = PubHasTags.objects.filter(tag_id__in=sphera)
+            if fltr_cost_min != '':
+                publications = publications.filter(cost_min__gte=fltr_cost_min)
+            if fltr_cost_max != '':
+                publications = publications.filter(cost_max__lte=fltr_cost_max)
+        else:
+            filter_tag = PubHasTags.objects.all()
+
         context.update({
-            'filter_tag': PubHasTags.objects.filter(tag_id=self.kwargs['pk']),
+            'filter_tag': filter_tag,
+            'pubs': publications,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
-            'pubs': Publication.objects.filter(role=31),
         })
         return context

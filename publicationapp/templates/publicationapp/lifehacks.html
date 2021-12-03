@@ -80,12 +80,14 @@
           <div class="pub_tags_container">
             {% for t in pub_has_tags %}
               {% if t.pub_id == p %}
-                <a href="{% url 'pub:filter_lifehacks' pk=t.tag_id.id %}">
+                <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+                  <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ t.tag_id.id }}" > </span><span>{{ t.tag_id.tag_name }}</span> </label>
                   <div class="pub_tag">
-                    <p>{{ t.tag_id.tag_name }}</p>
+                    <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                      type="submit" name="to_filter" value="{{ t.tag_id.tag_name }}">
                     <img src="/static/sources/SVG/search.svg" alt="">
                   </div>
-                </a>
+                </form>
               {% endif %}
             {% endfor%}
           </div>
@@ -99,7 +101,7 @@
     <div class="pre_pre_opened_filter">
       <div class="pre__opened_filter">
         <div class="opened_filter">
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks1' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
               <p class="opened_filter_second_title">77 подобрано</p>
@@ -132,13 +134,13 @@
               </p>
               <div class="styles_labels_open">
                 <div class="styles_any_one_label">
-                  <label> <span> <input type="checkbox" name="style_design" value="Быт и уборка" > </span><span>Быт и уборка</span> </label>
+                  <label> <span> <input type="checkbox" name="style_design" value="3101001" > </span><span>Быт и уборка</span> </label>
                   <label class="any_one" style="max-width: 112px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">В любой сфере</span> </label>
                 </div>
-                <label> <span> <input type="checkbox" name="style_design" value="Красота, дизайн и уют" > </span><span>Красота, дизайн и уют</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Строительство и ремонт" > </span><span>Строительство и ремонт</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Планирование дизайна или ремонта" > </span><span>Планирование дизайна или ремонта</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Другое" > </span><span>Другое</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="3101002" > </span><span>Красота, дизайн и уют</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="3101003" > </span><span>Строительство и ремонт</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="3101004" > </span><span>Планирование дизайна или ремонта</span> </label>
+                <label> <span> <input type="checkbox" name="style_design" value="3101005" > </span><span>Другое</span> </label>
               </div>
             </div>
             <div class="filter_mini_div cost">
