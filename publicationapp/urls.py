@@ -12,4 +12,6 @@ urlpatterns = [
     path('repairs/', publicationapp.RepairsWatch.as_view(), name='repairs'),
     path('designs/', publicationapp.DesignsWatch.as_view(), name='designs'),
     path('lifehacks/', publicationapp.LifehacksWatch.as_view(), name='lifehacks'),
+    path('lifehacks/filter/', publicationapp.filter_lifehacks, name='filter_lifehacks1'),
+    path('lifehacks/filter/<int:pk>/', publicationapp.FilterLifehacks.as_view(), name='filter_lifehacks'),
 ]

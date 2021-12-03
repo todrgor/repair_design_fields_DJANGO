@@ -41,7 +41,7 @@ function new_complaint_was_sent() {
   $opened_pub_additional_functions_id = 0;
   $('.new_complaint').removeClass('show');
   $('.new_complaint textarea').val('');
-  testFu('Жалоба успешно отправлена, будет проверена когда-то там');
+  alert('Жалоба успешно отправлена, будет проверена когда-то там');
   console.log("Жалоба типо отпрвлена");
 }
 
@@ -71,12 +71,10 @@ function checkScrollForVideo() {
   })
 }
 
-function testFu(t) {
-  alert (t);
-}
 
 
 $(document).ready(function() {
+  checkScrollForVideo();
   $filters_on = 0;
   $selected_sphere = 0;
 
@@ -238,3 +236,7 @@ $(document).ready(function() {
   });
 
 });
+
+function YouHaveToLogin(action) {
+  alert('Вам нужно авторизоваться перед тем, как ' + action + '.')
+}

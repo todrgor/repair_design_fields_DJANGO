@@ -208,7 +208,8 @@
 
 .avatar_container {
     height: 100%;
-    width: 79%;
+    min-width: 51%;
+    max-width: 79%;
     cursor: pointer;
     display: flex;
     align-content: flex-start;

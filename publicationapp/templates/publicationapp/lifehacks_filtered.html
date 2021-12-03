@@ -22,76 +22,80 @@
 
   <div class="pubs_container">
     {% for p in pubs %}
+      {% for t in filter_tag %}
+        {% if p.id == t.pub_id.id %}
 
-    <div class="pub_one lifehack" id="{{ p.id }}">
-      <div class="media">
-        {% if '.mp4' in p.preview.url or '.mov' in p.preview.url %}
-        <video class="paused" muted="muted" controls="controls" loop>
-          <source src="{{ p.preview.url }}" type='video/mp4;'>
-          Тег video не поддерживается вашим браузером. Увы.
-        </video>
-        {% else %}
-          <img src="{{ p.preview.url }}" alt="">
-        {% endif %}
-        <div class="img_black_gradient"> </div>
-      </div>
-
-      <div class="pub_info">
-        <div class="pub_to_do">
-          <div class="user_just_saved_it">
-            <a onclick="
-            {% if user.is_authenticated %}
-              toggleSavePub_LH( {{ p.id }} )
+        <div class="pub_one lifehack" id="{{ p.id }}">
+          <div class="media">
+            {% if '.mp4' in p.preview.url or '.mov' in p.preview.url %}
+            <video class="paused" muted="muted" controls="controls" loop>
+              <source src="{{ p.preview.url }}" type='video/mp4;'>
+              Тег video не поддерживается вашим браузером. Увы.
+            </video>
             {% else %}
-              YouHaveToLogin('сохранить публикацию')
+              <img src="{{ p.preview.url }}" alt="">
             {% endif %}
-            " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
+            <div class="img_black_gradient"> </div>
           </div>
-          <div class="pub_author_cntnr">
-            <div class="pub_author">
-              <a href="/account/"><img src="{{ p.author.photo.url }}" alt=""></a>
-              <div class="nickname_and_role">
-                <div class="nickname">
-                  <a href="/account/" class="nickname_link">{{ p.author.username }}</a>
-                    <a onclick="
-                    {% if user.is_authenticated %}
-                      toggleGetNotiFromAuthor( {{ p.id }} )
-                    {% else %}
-                      YouHaveToLogin('получать уведомления о новых публикациях этого автора')
-                    {% endif %}
-                    " class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
-                    <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
-                </div>
-                <p class="role">Автор публикации</p>
-              </div>
-            </div>
-          </div>
-            <a onclick="
-              {% if user.is_authenticated %}
-                togglePubAdditionalFunctions({{ p.id }})
-              {% else %}
-                YouHaveToLogin('подать жалобу или поделиться этой публикацией')
-              {% endif %}
-            "><div class="pub_show_full">•••</div></a>
-        </div>
-        <div class="div_pub_text">
-          <p class="pub_text">{{ p.title }}</p>
-        </div>
-          <div class="pub_tags_container">
-            {% for t in pub_has_tags %}
-              {% if t.pub_id == p %}
-                <a href="{% url 'pub:filter_lifehacks' pk=t.tag_id.id %}">
-                  <div class="pub_tag">
-                    <p>{{ t.tag_id.tag_name }}</p>
-                    <img src="/static/sources/SVG/search.svg" alt="">
-                  </div>
-                </a>
-              {% endif %}
-            {% endfor%}
-          </div>
-      </div>
-    </div>
 
+          <div class="pub_info">
+            <div class="pub_to_do">
+              <div class="user_just_saved_it">
+                <a onclick="
+                {% if user.is_authenticated %}
+                  toggleSavePub_LH( {{ p.id }} )
+                {% else %}
+                  YouHaveToLogin('сохранить публикацию')
+                {% endif %}
+                " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
+              </div>
+              <div class="pub_author_cntnr">
+                <div class="pub_author">
+                  <a href="/account/"><img src="{{ p.author.photo.url }}" alt=""></a>
+                  <div class="nickname_and_role">
+                    <div class="nickname">
+                      <a href="/account/" class="nickname_link">{{ p.author.username }}</a>
+                        <a onclick="
+                        {% if user.is_authenticated %}
+                          toggleGetNotiFromAuthor( {{ p.id }} )
+                        {% else %}
+                          YouHaveToLogin('получать уведомления о новых публикациях этого автора')
+                        {% endif %}
+                        " class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                        <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                    </div>
+                    <p class="role">Автор публикации</p>
+                  </div>
+                </div>
+              </div>
+                <a onclick="
+                  {% if user.is_authenticated %}
+                    togglePubAdditionalFunctions({{ p.id }})
+                  {% else %}
+                    YouHaveToLogin('подать жалобу или поделиться этой публикацией')
+                  {% endif %}
+                "><div class="pub_show_full">•••</div></a>
+            </div>
+            <div class="div_pub_text">
+              <p class="pub_text">{{ p.title }}</p>
+            </div>
+              <div class="pub_tags_container">
+                {% for t in pub_has_tags %}
+                  {% if t.pub_id == p %}
+                    <a href="{% url 'pub:filter_lifehacks' pk=t.tag_id.id %}">
+                      <div class="pub_tag">
+                        <p>{{ t.tag_id.tag_name }}</p>
+                        <img src="/static/sources/SVG/search.svg" alt="">
+                      </div>
+                    </a>
+                  {% endif %}
+                {% endfor%}
+              </div>
+          </div>
+        </div>
+
+        {% endif %}
+      {% endfor %}
     {% endfor %}
   </div>
 
@@ -99,7 +103,7 @@
     <div class="pre_pre_opened_filter">
       <div class="pre__opened_filter">
         <div class="opened_filter">
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks1' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="filter" method="get">
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
               <p class="opened_filter_second_title">77 подобрано</p>
