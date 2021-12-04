@@ -64,10 +64,10 @@ class FilterLifehacks(ListView):
         publications = Publication.objects.filter(role=31)
 
         # request = self.kwargs['request']
-        if self.request.method == 'POST':
-            sphera = self.request.POST.getlist('style_design', '')
-            fltr_cost_min = self.request.POST.get('cost_mini', '')
-            fltr_cost_max = self.request.POST.get('cost_max', '')
+        if self.request.method == 'GET':
+            sphera = self.request.GET.getlist('style_design', '')
+            fltr_cost_min = self.request.GET.get('cost_mini', '')
+            fltr_cost_max = self.request.GET.get('cost_max', '')
             if sphera != '':
                 filter_tag = PubHasTags.objects.filter(tag_id__in=sphera)
             if fltr_cost_min != '':
@@ -81,5 +81,24 @@ class FilterLifehacks(ListView):
             'filter_tag': filter_tag,
             'pubs': publications,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
+        })
+        return context
+
+class PubWatchOne(ListView):
+    model = Publication
+    template_name = 'publicationapp/pub_one.html'
+    context_object_name = 'pub'
+    allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
+
+    def get_queryset(self):
+        return Publication.objects.get(id=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(PubWatchOne, self).get_context_data(**kwargs)
+        publications = Publication.objects.get(id=self.kwargs['pk'])
+
+        context.update({
+            'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
+            'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
         })
         return context

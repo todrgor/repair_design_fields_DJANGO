@@ -14,9 +14,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="page_title">
-      <p class="title_p">Лайфхаки:</p>
-      <p class="count_pubs">{{ pubs.count }} публикации</p>
+  <div class="page_title">
+        <p class="title_p">Лайфхаки:</p>
+        <p class="count_pubs">{{ pubs.count }} публикации</p>
   </div>
 
 
@@ -101,7 +101,7 @@
     <div class="pre_pre_opened_filter">
       <div class="pre__opened_filter">
         <div class="opened_filter">
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="get">{% csrf_token %}
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
               <p class="opened_filter_second_title">77 подобрано</p>

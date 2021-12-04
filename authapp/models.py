@@ -68,8 +68,8 @@ class UserSubscribes(models.Model):
 class ExpertInfo(models.Model):
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
     count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
-    knowledge = models.TextField(blank=True, null=True, max_length=255, verbose_name='Стаж')
-    offer = models.TextField(blank=True, null=True, max_length=255, verbose_name='Какую услугу предлагает')
+    knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж')
+    offer = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Какую услугу предлагает')
     site = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на сайт')
     address = models.CharField(blank=True, null=True, max_length=255, verbose_name='Адрес')
     telegram = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер телефона, к которому привязан аккаунт Telegram')
@@ -90,7 +90,7 @@ class ExpertInfo(models.Model):
         self.save
 
     def __str__(self):
-        return 'Expert ' + str(self.subscriber_id) + ', offer: ' + str(self.offer)
+        return 'Expert ' + str(self.expert_id) + ', offer: ' + str(self.offer)
 
 class SavedPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
