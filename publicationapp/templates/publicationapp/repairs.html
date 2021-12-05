@@ -31,7 +31,7 @@
             <p class="pub_stats">👀 {{ p.seen_count }}<br>
                                  ❤  {{ p.saved_count }} </p>
           </div>
-          <a href="/pub_one/" class="read_more" id="read_more">Читать ›</a>
+          <a href="{% url 'pub:pub_one' pk=p.id %}" class="read_more" id="read_more">Читать ›</a>
         </div>
       {% endfor %}
   </div>

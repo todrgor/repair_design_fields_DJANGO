@@ -98,15 +98,18 @@
 }
 .contact_info {
   width: 30%;
-    background: #f3f3f3;
-    border-radius: 25px;
-    border: 1px solid #c3c3c3;
-    padding: 20px;
-    margin: -20px;
+  background: #f3f3f3;
+  border-radius: 25px;
+  border: 1px solid #c3c3c3;
+  padding: 20px;
+  margin: -20px;
+  height: fit-content;
 }
 .contact_info p {
   display: flex;
   margin-bottom: 10px;
+  width: 100%;
+  overflow: hidden;
 }
 .contact_info img {
   width: 20px;

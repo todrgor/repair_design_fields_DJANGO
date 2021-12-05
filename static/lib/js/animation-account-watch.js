@@ -1,4 +1,5 @@
-$('.bio').offset({left:( $('.user_role').offset().left) - 88});
+$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $('.user_role').offset().left) - 88});
+$('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
 
 function toggleSavePub_LH(idPub) {
   $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').toggleClass('pub_saved');

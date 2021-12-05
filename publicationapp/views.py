@@ -95,7 +95,7 @@ class PubWatchOne(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(PubWatchOne, self).get_context_data(**kwargs)
-        publications = Publication.objects.get(id=self.kwargs['pk'])
+        # publications = Publication.objects.get(id=self.kwargs['pk'])
 
         context.update({
             'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),

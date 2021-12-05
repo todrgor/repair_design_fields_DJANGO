@@ -28,9 +28,9 @@
           {% if user.is_authenticated %}
             <div class="user_logged_in">
               <div class="header_content">
-                  <a href="/repairs/" class="not_heart">Ремонт</a>
-                  <a href="/designs/" class="not_heart">Дизайн</a>
-                  <a href="/lifehacks/" class="not_heart">Лайфхаки</a>
+                  <a href="{% url 'pub:repairs' %}" class="not_heart">Ремонт</a>
+                  <a href="{% url 'pub:designs' %}" class="not_heart">Дизайн</a>
+                  <a href="{% url 'pub:lifehacks' %}" class="not_heart">Лайфхаки</a>
                   <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
               </div>
               <div class="role_buttoms">
@@ -51,7 +51,7 @@
                           </div>
                       </button>
                       <div id="avtr_optns" class="avatar_options">
-                          <a href="/watch_account/">Мой профиль</a>
+                          <a href="{% url 'auth:account_one' pk=user.id %}">Мой профиль</a>
                           <a href="/settings/">Настройки</a>
                           <a href="/help/">Помощь</a>
                           <a href="{% url 'auth:logout' %}">Выйти</a>
@@ -156,12 +156,12 @@
             <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
             <a href="/support/" class="third_three_links">Отправить идею, жалобу или вопрос</a>
             <div class="navigation_again_footer">
-              <a href="/repairs/">Ремонт</a>
-              <a href="/designs/">Дизайн</a>
-              <a href="/lifehacks/">Лайфхаки</a>
+              <a href="{% url 'pub:repairs' %}">Ремонт</a>
+              <a href="{% url 'pub:designs' %}">Дизайн</a>
+              <a href="{% url 'pub:lifehacks' %}">Лайфхаки</a>
               <a href="/saved/">Избранное</a>
               <p class="to_notifications">Уведомления</p>
-              <a href="/account/">Мой профиль</a>
+              <a href="{% url 'auth:account_one' pk=user.id %}">Мой профиль</a>
             </div>
             <div class="footer_search">
                 <img src="/static/sources/SVG/search.svg" alt="">

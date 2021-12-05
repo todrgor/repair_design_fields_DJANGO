@@ -60,10 +60,10 @@
               </div>
               <div class="pub_author_cntnr">
                 <div class="pub_author">
-                  <a href="/account/"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                  <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                   <div class="nickname_and_role">
                     <div class="nickname">
-                      <a href="/account/" class="nickname_link">{{ pub.author.username }}</a>
+                      <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
                         <a onclick="
                         {% if user.is_authenticated %}
                           toggleGetNotiFromAuthor( {{ pub.id }} )
@@ -109,7 +109,7 @@
     </div>
   {% else %}
 
-    <div class="preview" style="background: url({{pub.preview.url}});">
+    <div class="preview" style="background: url({{ pub.preview.url }}); background-position: center; background-size: cover;">
       <div class="preview_cntnr">
         <p class="title">{{ pub.title }}</p>
       </div>
@@ -134,11 +134,11 @@
         </div>
         <div class="pub_author_cntnr">
           <div class="pub_author">
-            <a href=""><img src="{{ pub.author.photo.url }}" alt=""></a>
+            <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
             <div class="nickname_and_role">
               <div class="nickname">
-                <a href="" class="nickname_link">{{ pub.author.username }}</a>
-                <a onclick="toggleGetNotiFromAuthor({{ pub.author.id }})" class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя Алексей"></div></a>
+                <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                <a onclick="toggleGetNotiFromAuthor({{ pub.author.id }})" class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                 <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
               </div>
               <p class="role">Автор публикации</p>
@@ -184,7 +184,7 @@
         </div>
         <div class="delete_the_pub"> <!-- подтверждение удаление публикации -->
           <h1>Вы точно хотите удалить публикацию?</h1>
-          <p style="margin: 20px 0;">Нельзя будет восстаноить её.</p>
+          <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
           <div class="cancel_or_delete">
             <p id="cancel_deleting">Отмена</p>
             <p onclick="really_delete()" id="delete">Удалить публикацию</p>

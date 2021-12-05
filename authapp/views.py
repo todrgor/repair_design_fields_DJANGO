@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.views.generic.list import ListView
 
@@ -55,7 +56,7 @@ class UserRegisterView(TemplateView):
 class AccountOneWatch(ListView):
     model = User
     template_name = 'authapp/user_one.html'
-    context_object_name = 'user'
+    context_object_name = 'opened_user'
     allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
 
     def get_queryset(self):
@@ -74,8 +75,6 @@ class AccountOneWatch(ListView):
                     expert_info = None
 
             except ObjectDoesNotExist:
-                expert_info = None
-            except MultipleObjectsReturned:
                 expert_info = None
 
             expert_pubs = Publication.objects.filter(author=self.kwargs['pk'])

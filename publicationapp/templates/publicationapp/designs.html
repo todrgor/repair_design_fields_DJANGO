@@ -27,7 +27,7 @@
             <div class="img_black_gradient"> </div>
           </div>
           <div class="pub_info">
-            <p class="pub_title">{{p.title}}</p>
+            <p class="pub_title">{{ p.title }}</p>
             <div class="div_pub_text">
               <p class="pub_text">
                 {{ p.content_first_desc }}
@@ -38,14 +38,13 @@
                 <img src="/static/sources/SVG/heart.svg" alt="">
                 <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
               </div>
-              <a class="pub_show_full" href="/pub_one/">Подробнее •••</a>
+              <a class="pub_show_full" href="{% url 'pub:pub_one' pk=p.id %}">Подробнее •••</a>
             </div>
             <div class="pub_tags"></div>
           </div>
         </div>
 
-
-      {% endfor %}
+    {% endfor %}
   </div>
 
   <div class="opened_filter_big_bg">
