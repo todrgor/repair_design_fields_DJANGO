@@ -6,12 +6,11 @@ app_name = 'publicationapp'
 
 urlpatterns = [
     path('', mainapp.main, name='main'),
-    # path('<pk>/', publicationapp.PubOneWatch.as_view(), name='pub_watch'),
-    # path('create/', publicationapp.CreateNew.as_view(), name='create_new'),
+    path('one/<int:pk>/', publicationapp.PubWatchOne.as_view(), name='pub_one'),
+    path('create/', publicationapp.CreateNewPub, name='create_new'),
     # path('<pk>/edit/', publicationapp.PubOneEdit.as_view(), name='pub_edit'),
     path('repairs/', publicationapp.RepairsWatch.as_view(), name='repairs'),
     path('designs/', publicationapp.DesignsWatch.as_view(), name='designs'),
     path('lifehacks/', publicationapp.LifehacksWatch.as_view(), name='lifehacks'),
     path('lifehacks/filter/', publicationapp.FilterLifehacks.as_view(), name='filter_lifehacks'),
-    path('one/<int:pk>/', publicationapp.PubWatchOne.as_view(), name='pub_one'),
 ]

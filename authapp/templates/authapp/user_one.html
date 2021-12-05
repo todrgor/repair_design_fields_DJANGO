@@ -94,7 +94,7 @@
             </div>
           </div>
           <div class="contact_info">
-            {% if opened_userphone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ opened_user.phone_number }}</p> {% endif %}
+            {% if opened_user.phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ opened_user.phone_number }}</p> {% endif %}
             {% if expert_info.site %} <p class="site"><img src="/static/sources/SVG/site.svg">{{ expert_info.site }}</p> {% endif %}
             {% if expert_info.telegram %} <p class="telegram"><img src="/static/sources/SVG/telegram.svg">{{ expert_info.telegram }}</p> {% endif %}
             {% if expert_info.whatsapp %} <p class="whatsapp"><img src="/static/sources/SVG/whatsapp.svg">{{ expert_info.whatsapp }}</p> {% endif %}

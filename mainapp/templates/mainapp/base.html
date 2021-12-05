@@ -35,10 +35,10 @@
               </div>
               <div class="role_buttoms">
                   {% if user.role.id == 3 %}
-                    <a href="/admin/" class="super_admin_panel"></a>
+                    <a href="/admin/" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
                   {% endif %}
                   {% if user.role.id == 2 or user.role.id == 3 %}
-                    <a href="/create_new_pub/" class="create_new_pub"></a>
+                    <a href="/create_new_pub/" class="create_new_pub" title="Нажмите, чтобы создать публикацию"></a>
                   {% endif %}
               </div>
               <div class="avatar_and_notifications">

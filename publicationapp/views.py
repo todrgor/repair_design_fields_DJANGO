@@ -8,6 +8,12 @@ from publicationapp.models import *
 from .forms import *
 # import mimetypes
 
+def CreateNewPub(request):
+    form = PubForm()
+    title = 'Создать публикацию'
+    return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
+
+
 class RepairsWatch(ListView):
     model = Publication
     template_name = 'publicationapp/repairs.html'
