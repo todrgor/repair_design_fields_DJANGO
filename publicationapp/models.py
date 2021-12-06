@@ -113,4 +113,5 @@ class TagName(models.Model):
 
     def __str__(self):
         # return PubRoles.name(id = self.pub_role) + ' ' + self.tag_category + ': ' + self.tag_name
-        return self.tag_category + ': ' + self.tag_name
+        # return self.tag_category + ': ' + self.tag_name
+        return self.tag_name

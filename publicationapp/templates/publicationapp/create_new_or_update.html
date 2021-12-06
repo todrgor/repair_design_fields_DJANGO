@@ -30,9 +30,116 @@
   </div>
 
   <div class="pubs_container">
-    <form class="" action="index.html" method="post">
+    <form class="" action="" method="post">
       {% csrf_token %}
-      {{ form.as_p }}
+      {{ form.non_field_errors }}
+
+      <div class="pub_title pub_inp_one">
+        <h4>Заголовок:</h4>
+        {{ form.title }}
+        {{ form.title.errors }}
+        <p>Максимальная длина текста — 135 символов.</p>
+      </div>
+      <div class="pub_preview pub_inp_one">
+        <h4>Превью:</h4>
+        {{ form.preview }}
+        {{ form.preview.errors }}
+        <p>Идеальный размер изображения — 1350×405 пикселей.<br>С другими размерами фото может некорректно отображаться.</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Описание перед фотографиями:</h4>
+        {{ form.content_first_desc }}
+        {{ form.content_first_desc.errors }}
+        <p>Сдеайте текстовое описание Вашей публикации. Расскажите о важном в выбранной теме, упомяните используемые фото.</p>
+      </div>
+      <div class="pub_photos pub_inp_one">
+        <h4>Фотографии публикации:</h4>
+        {{ form.photo }}
+        {{ form.photo.errors }}
+        <p>Идеальный размер изображения — 1100×580 пикселей. С другими размерами фото могут некорректно отображаться.</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Описание после фотографий:</h4>
+        {{ form.content_last_desc }}
+        {{ form.content_last_desc.errors }}<p>Сдеайте вывод по теме Вашей публикации. Можно пожелать хорошего настроения :3</p>
+      </div>
+      <div class="pub_roles">
+        <h4>Вид публикации:</h4>
+        {{ form.role }}
+        {{ form.role.errors }}
+      </div>
+      <div class="pub_tags">
+        <h4>Тэги:</h4>
+        <div id="budget" class="filter_mini_div show cost">
+          <p class="opened_filter_text full_width">Бюджет на ремонт, ₽</p>
+          {{ form.cost_min }}
+          <p style="font-size: 15px; font-weight: 900;">-</p>
+          {{ form.cost_max }}
+          {{ form.cost_min.errors }}
+          {{ form.cost_max.errors }}
+        </div>
+
+        <div id="repair" class="filter_mini_div show checked_spheres">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Ремонт чего:
+            </span>
+          </p>
+          {{ form.tag_repair_what_to }}
+          {{ form.tag_repair_what_to.errors }}
+        </div>
+
+        <div id="repair" class="filter_mini_div show checked_styles">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Инструмент:
+            </span>
+          </p>
+          {{ form.tag_repair_by_what }}
+          {{ form.tag_repair_by_what.errors }}
+        </div>
+
+        <div id="repair" class="filter_mini_div show checked_rooms">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              В помещении:
+            </span>
+          </p>
+          {{ form.tag_repair_where }}
+          {{ form.tag_repair_where.errors }}
+        </div>
+
+        <div id="design" class="filter_mini_div checked_rooms">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Комната:
+            </span>
+          </p>
+          {{ form.tag_design_room }}
+          {{ form.tag_design_room.errors }}
+        </div>
+
+        <div id="design" class="filter_mini_div checked_styles">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              Основной стиль:
+            </span>
+          </p>
+          {{ form.tag_design_style }}
+          {{ form.tag_design_style.errors }}
+        </div>
+
+        <div id="lifehack" class="filter_mini_div checked_spheres">
+          <p class="opened_filter_text full_width big_p">
+            <span class="big_p_parth">
+              В сфере жизни:
+            </span>
+          </p>
+          {{ form.tag_lifehack_lifesphere }}
+          {{ form.tag_lifehack_lifesphere.errors }}
+        </div>
+
+      </div>
 
       <input type="submit" name="create!" value="{{ title }}!">
     </form>

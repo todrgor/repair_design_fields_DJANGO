@@ -10,6 +10,13 @@ from .forms import *
 
 def CreateNewPub(request):
     form = PubForm()
+    if request.method == 'POST':
+        form = PubForm(request.POST)
+        if form.is_valid():
+            pub = request.POST
+            print(pub['role'])
+        else:
+            print('форма не валидная')
     title = 'Создать публикацию'
     return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
 
