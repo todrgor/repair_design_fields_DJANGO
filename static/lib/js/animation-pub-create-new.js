@@ -19,6 +19,11 @@
 $('input[name="pub_role"], .pub_roles select').change(function () {
   if ($('#pub_role:checked').val() == 'repair' || $('.pub_roles select').val() == '11') {
     console.log('pub_role = repair');
+    $('.cost p:first').html('Бюджет на ремонт, ₽');
+    $('.pub_preview.pub_inp_one h4:first').html('Превью:');
+    if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
+      $('.pub_description.pub_inp_one textarea').val('');
+    }
     $('#budget.cost').addClass('show');
     $('#repair.checked_spheres').addClass('show');
     $('#repair.checked_styles').addClass('show');
@@ -27,10 +32,17 @@ $('input[name="pub_role"], .pub_roles select').change(function () {
     $('#design.checked_rooms').removeClass('show');
     $('#design.checked_styles').removeClass('show');
     $('#lifehack.checked_spheres').removeClass('show');
+    $('.pub_description').removeClass('hidden');
+    $('.pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_role:checked').val() == 'design' || $('.pub_roles select').val() == '21') {
     console.log('pub_role = design');
+    $('.cost p:first').html('Бюджет на дизайн, ₽');
+    $('.pub_preview.pub_inp_one h4:first').html('Превью:');
+    if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
+      $('.pub_description.pub_inp_one textarea').val('');
+    }
     $('#budget.cost').addClass('show');
     $('#repair.checked_spheres').removeClass('show');
     $('#repair.checked_styles').removeClass('show');
@@ -39,10 +51,15 @@ $('input[name="pub_role"], .pub_roles select').change(function () {
     $('#design.checked_rooms').addClass('show');
     $('#design.checked_styles').addClass('show');
     $('#lifehack.checked_spheres').removeClass('show');
+    $('.pub_description').removeClass('hidden');
+    $('.pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_role:checked').val() == 'lifehack' || $('.pub_roles select').val() == '31') {
     console.log('pub_role = lifehack');
+    $('.pub_preview.pub_inp_one h4:first').html('Файл:');
+    $('.pub_description.pub_inp_one textarea').val('   ');
+    $('.cost input').val(1);
     $('#budget.cost').removeClass('show');
     $('#repair.checked_spheres').removeClass('show');
     $('#repair.checked_styles').removeClass('show');
@@ -51,6 +68,8 @@ $('input[name="pub_role"], .pub_roles select').change(function () {
     $('#design.checked_rooms').removeClass('show');
     $('#design.checked_styles').removeClass('show');
     $('#lifehack.checked_spheres').addClass('show');
+    $('.pub_description').addClass('hidden');
+    $('.pub_photos').addClass('hidden');
   }
 
 });

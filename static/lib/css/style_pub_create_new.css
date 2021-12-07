@@ -1,3 +1,7 @@
+.hidden {
+  display: none;
+}
+
 .pub_id,
 #tags_count,
 #fltr_cost_p,

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from authapp.models import *
 from publicationapp.models import *
 from .forms import *
-# import mimetypes
+from django.core.files.storage import FileSystemStorage
 
 def CreateNewPub(request):
     form = PubForm()
@@ -14,16 +14,18 @@ def CreateNewPub(request):
         form = PubForm(request.POST)
         pub_post = request.POST
         # try:
-        Publication.objects.create(title=pub_post['title'], role=PubRoles.objects.get(id=pub_post['role']), preview=('pub_media/' + pub_post['preview']), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
-        pub_created = Publication.objects.get(title=pub_post['title'], role=pub_post['role'], preview=('pub_media/' + pub_post['preview']), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
-        print('Публикация взята из бд')
-        print(pub_post['role'])
-        if pub_post['photo']:
-            photos = request.POST.getlist('photo')
-            for i in photos:
-                print(i)
-                PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + i))
-            print('Фотографии создались')
+        Publication.objects.create(title=pub_post['title'], role=PubRoles.objects.get(id=pub_post['role']), preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
+        fs = FileSystemStorage()
+        preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
+        pub_created = Publication.objects.get(title=pub_post['title'], role=pub_post['role'], preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
+        if pub_post['role'] == '11' or pub_post['role'] == '21':
+            if request.FILES['photo']:
+                photos = request.FILES.getlist('photo')
+                i_count = 0
+                for i in photos:
+                    fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
+                    PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + photos[i_count].name))
+                    i_count +=1
 
         if pub_post['role'] == '11':
             pub_created.cost_min = pub_post['cost_min']

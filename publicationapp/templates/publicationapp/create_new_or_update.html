@@ -34,6 +34,11 @@
       {% csrf_token %}
       {{ form.non_field_errors }}
 
+      <div class="pub_roles">
+        <h4>Вид публикации:</h4>
+        {{ form.role }}
+        {{ form.role.errors }}
+      </div>
       <div class="pub_title pub_inp_one">
         <h4>Заголовок:</h4>
         {{ form.title }}
@@ -62,11 +67,6 @@
         <h4>Описание после фотографий:</h4>
         {{ form.content_last_desc }}
         {{ form.content_last_desc.errors }}<p>Сдеайте вывод по теме Вашей публикации. Можно пожелать хорошего настроения :3</p>
-      </div>
-      <div class="pub_roles">
-        <h4>Вид публикации:</h4>
-        {{ form.role }}
-        {{ form.role.errors }}
       </div>
       <div class="pub_tags">
         <h4>Тэги:</h4>
