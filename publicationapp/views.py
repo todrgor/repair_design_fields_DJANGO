@@ -2,7 +2,7 @@ from django.views.generic.list import ListView
 from django.http import HttpResponse
 # from django.views.generic.detail import DetailView
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from authapp.models import *
 from publicationapp.models import *
 from .forms import *
@@ -12,11 +12,40 @@ def CreateNewPub(request):
     form = PubForm()
     if request.method == 'POST':
         form = PubForm(request.POST)
-        if form.is_valid():
-            pub = request.POST
-            print(pub['role'])
-        else:
-            print('форма не валидная')
+        pub_post = request.POST
+        # try:
+        Publication.objects.create(title=pub_post['title'], role=PubRoles.objects.get(id=pub_post['role']), preview=('pub_media/' + pub_post['preview']), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
+        pub_created = Publication.objects.get(title=pub_post['title'], role=pub_post['role'], preview=('pub_media/' + pub_post['preview']), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
+        print('Публикация взята из бд')
+        print(pub_post['role'])
+        if pub_post['photo']:
+            photos = request.POST.getlist('photo')
+            for i in photos:
+                print(i)
+                print(Publication.objects.get(id=pub_created.id))
+                PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + i))
+                print('Фотографии создались')
+
+        if pub_post['role'] == '11':
+            pub_created.cost_min = pub_post['cost_min']
+            pub_created.cost_max = pub_post['cost_max']
+            pub_created.save()
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_what_to']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_by_what']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_where']))
+        if pub_post['role'] == '21':
+            pub_created.cost_min = pub_post['cost_min']
+            pub_created.cost_max = pub_post['cost_max']
+            pub_created.save()
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_design_room']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_design_style']))
+        if pub_post['role'] == '31':
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_lifehack_lifesphere'])) 
+
+        return redirect('pub:pub_one', pk=pub_created.id)
+        # except:
+        #     form.add_error(None, 'Ошибка создания публикции')
+
     title = 'Создать публикацию'
     return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
 
