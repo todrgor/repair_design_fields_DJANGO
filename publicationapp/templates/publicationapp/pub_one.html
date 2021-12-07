@@ -7,11 +7,10 @@
 {% block css %}
   <link rel="stylesheet" href="/static/lib\css\style_header.css">
   <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
   {% if pub.role.id == 31 %}
-    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
     <link rel="stylesheet" href="/static/lib\css\style_watch_lifehacks.css">
   {% else %}
-    <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
     <link rel="stylesheet" href="/static/lib\css\style_pub_one.css">
   {% endif %}
 {% endblock %}
@@ -149,6 +148,28 @@
       </div>
 
       <div class="pub_tags_container">
+        {% if pub.cost_min %}
+          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+            <label style='display:none;'> <span> <input type="checkbox" name="cost_min" value="{{ pub.cost_min }}" > </span><span>{{ pub.cost_min }}</span> </label>
+            <div class="pub_tag">
+              <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                type="submit" name="to_filter" value="Бюджет от {{ pub.cost_min }} ₽">
+              <img src="/static/sources/SVG/search.svg" alt="">
+            </div>
+          </form>
+        {% endif %}
+
+        {% if pub.cost_max %}
+          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+            <label style='display:none;'> <span> <input type="checkbox" name="cost_max" value="{{ pub.cost_max }}" > </span><span>{{ pub.cost_max }}</span> </label>
+            <div class="pub_tag">
+              <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                type="submit" name="to_filter" value="Бюджет до {{ pub.cost_max }} ₽">
+              <img src="/static/sources/SVG/search.svg" alt="">
+            </div>
+          </form>
+        {% endif %}
+
         {% for t in pub_has_tags %}
           {% if t.pub_id == pub %}
             <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
@@ -162,64 +183,62 @@
           {% endif %}
         {% endfor%}
       </div>
-
     </div>
-
-    {% if user.is_authenticated %}
-      {% if user.id == pub.author.id %}
-        <div class="functions_for_author_and_admin"> <!-- действия для автора и админа -->
-          <h4>Вам как автору:</h4>
-          <a onclick="open_statistics()"><p id="statistics">Статистика</p></a>
-          <a onclick="user_tried_to_delete()"><p id="delete">Удалить</p></a>
-          <a href="edit_the_pub.py?idPub=99"><p id="edit">Редактировать</p></a>
-        </div>
-        <div class="statistics"> <!-- посмотреть статистику по публикации -->
-          <h1>Статистика по публикации:</h1>
-          <p>Просмотров: <span>{{ pub.seen_count }}</span></p>
-          <p>Сохранений: <span>{{ pub.saved_count }}</span></p>
-          <p>Средний возраст всех просмотревших: <span>FF</span></p>
-          <p>Средний возраст только сохранивших: <span>FF</span></p>
-          <p>"Поделиться" нажато раз: <span>{{ pub.shared_count }}</span></p>
-          <p>Жалоб на публикацию: <span>{{ pub.reported_count }}</span></p>
-        </div>
-        <div class="delete_the_pub"> <!-- подтверждение удаление публикации -->
-          <h1>Вы точно хотите удалить публикацию?</h1>
-          <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
-          <div class="cancel_or_delete">
-            <p id="cancel_deleting">Отмена</p>
-            <p onclick="really_delete()" id="delete">Удалить публикацию</p>
-          </div>
-        </div>
-      {% endif %}
-    {% endif %}
 
 
   {% endif %}
-    <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
-      <div class="pub_additional_functions dont_close_on_click">
-        <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
-        <p class="dont_close_on_click" onclick="searchPubsLikeThis()" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">Искать похожее</p>
-        <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+
+  {% if user.is_authenticated %}
+    {% if user.id == pub.author.id %}
+      <div class="functions_for_author_and_admin"> <!-- действия для автора и админа -->
+        <h4>Вам как автору:</h4>
+        <a onclick="open_statistics()"><p id="statistics">Статистика</p></a>
+        <a onclick="user_tried_to_delete()"><p id="delete">Удалить</p></a>
+        <a href="{% url 'pub:pub_edit' pk=pub.id %}"><p id="edit">Редактировать</p></a>
       </div>
+      <div class="statistics"> <!-- посмотреть статистику по публикации -->
+        <h1>Статистика по публикации:</h1>
+        <p>Просмотров: <span>{{ pub.seen_count }}</span></p>
+        <p>Сохранений: <span>{{ pub.saved_count }}</span></p>
+        <p>Средний возраст всех просмотревших: <span>FF</span></p>
+        <p>Средний возраст только сохранивших: <span>FF</span></p>
+        <p>"Поделиться" нажато раз: <span>{{ pub.shared_count }}</span></p>
+        <p>Жалоб на публикацию: <span>{{ pub.reported_count }}</span></p>
+      </div>
+      <div class="delete_the_pub"> <!-- подтверждение удаление публикации -->
+        <h1>Вы точно хотите удалить публикацию?</h1>
+        <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
+        <div class="cancel_or_delete">
+          <p id="cancel_deleting">Отмена</p>
+          <a href="{% url 'pub:delete' pk=pub.id %}" id="delete">Удалить публикацию</a>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
+    <div class="pub_additional_functions dont_close_on_click">
+      <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
+      <p class="dont_close_on_click" onclick="searchPubsLikeThis()" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">Искать похожее</p>
+      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
     </div>
-    <div class="new_complaint"> <!-- написать жалобу -->
-      <h1>Жалоба на публикацию</h1>
-      <form>
-        <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
-        <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent">
-      </form>
-    </div>
-    <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-      <h1>Ссылка на публикацию: </h1>
-      <p>http://127.0.0.1:8000/pub/one/{{ pub.id }}/</p>
-    </div>
+  </div>
+  <div class="new_complaint"> <!-- написать жалобу -->
+    <h1>Жалоба на публикацию</h1>
+    <form>
+      <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
+      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent">
+    </form>
+  </div>
+  <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
+    <h1>Ссылка на публикацию: </h1>
+    <p>http://127.0.0.1:8000/pub/one/{{ pub.id }}/</p>
+  </div>
 {% endblock %}
 
 {% block scripts_individual %}
+  <script src="/static/lib/js/animation-pub-one.js"></script>
   {% if pub.role.id == 31 %}
     <script src="/static/lib/js/animation-lifehacks.js"></script>
-  {% else %}
-    <script src="/static/lib/js/animation-designs.js"></script>
-    <script src="/static/lib/js/animation-pub-one.js"></script>
   {% endif %}
 {% endblock %}

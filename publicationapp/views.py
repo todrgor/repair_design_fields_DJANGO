@@ -50,6 +50,88 @@ def CreateNewPub(request):
     title = 'Создать публикацию'
     return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
 
+def DeletePub(request, pk):
+    pub = Publication.objects.get(id=pk)
+    role = pub.role.id
+    pub.delete()
+    if role == 11:
+        return redirect('pub:repairs')
+    if role == 21:
+        return redirect('pub:designs')
+    if role == 31:
+        return redirect('pub:lifehacks')
+
+def UpdatePub(request, pk):
+    pub = Publication.objects.get(id=pk)
+    photos = PubPhotos.objects.filter(id_pub=pk)
+    tags = PubHasTags.objects.filter(pub_id=pk)
+
+    tag_repair_what_to = None
+    tag_repair_by_what = None
+    tag_repair_where = None
+    tag_design_room = None
+    tag_design_style = None
+    tag_lifehack_lifesphere = None
+
+    if request.method == 'POST':
+        form = PubForm(request.POST)
+        pub_post = request.POST
+        pub.__dict__.update({'title': pub_post['title'], 'role': PubRoles.objects.get(id=pub_post['role']), 'preview': ('pub_media/' + str(request.FILES['preview'])), 'content_first_desc': pub_post['content_first_desc'], 'content_last_desc': pub_post['content_last_desc'], 'author': User.objects.get(id=request.user.id)})
+        fs = FileSystemStorage()
+        preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
+        if pub_post['role'] == '11' or pub_post['role'] == '21':
+            if request.FILES['photo']:
+                photos = request.FILES.getlist('photo')
+                PubPhotos.objects.filter(id_pub=pub.id).delete()
+                i_count = 0
+                for i in photos:
+                    fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
+                    PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub.id), photo=('pub_media/' + photos[i_count].name))
+                    i_count +=1
+        PubHasTags.objects.filter(pub_id=pub.id).delete()
+        if pub_post['role'] == '11':
+            pub.cost_min = pub_post['cost_min']
+            pub.cost_max = pub_post['cost_max']
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_what_to']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_by_what']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_where']))
+        if pub_post['role'] == '21':
+            pub.cost_min = pub_post['cost_min']
+            pub.cost_max = pub_post['cost_max']
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_design_room']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_design_style']))
+        if pub_post['role'] == '31':
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
+        pub.save()
+        return redirect('pub:pub_one', pk=pub.id)
+
+    if pub.role.id == 11:
+        for t in tags:
+            if t.tag_id.tag_category == 'Ремонт чего':
+                tag_repair_what_to = t.tag_id.id
+            if t.tag_id.tag_category == 'Инструмент':
+                tag_repair_by_what = t.tag_id.id
+            if t.tag_id.tag_category == 'В помещении':
+                tag_repair_where = t.tag_id.id
+        form = PubForm({'title': pub.title, 'role': pub.role, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_repair_what_to': tag_repair_what_to, 'tag_repair_by_what': tag_repair_by_what, 'tag_repair_where': tag_repair_where, })
+
+    if pub.role.id == 21:
+        for t in tags:
+            if t.tag_id.tag_category == 'Комната':
+                tag_design_room = t.tag_id.id
+            if t.tag_id.tag_category == 'Основной стиль':
+                tag_design_style = t.tag_id.id
+        form = PubForm({'title': pub.title, 'role': pub.role, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_design_room': tag_design_room, 'tag_design_style': tag_design_style, })
+
+    if pub.role.id == 31:
+        for t in tags:
+            if t.tag_id.tag_category == 'В сфере жизни':
+                tag_lifehack_lifesphere = t.tag_id.id
+        form = PubForm({'title': pub.title, 'role': pub.role, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_lifehack_lifesphere': tag_lifehack_lifesphere, })
+
+    title = 'Отредактирвать публикацию'
+    return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
+
 
 class RepairsWatch(ListView):
     model = Publication

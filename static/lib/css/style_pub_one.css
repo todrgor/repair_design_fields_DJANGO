@@ -364,11 +364,14 @@
     width: 60%;
     justify-content: space-between;
 }
-.cancel_or_delete p {
+.cancel_or_delete p, .cancel_or_delete a {
   background: #e6e6e6;
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 10px;
+}
+.cancel_or_delete a {
+  color: gray;
 }
 .cancel_or_delete p:hover {
   background: #d6e6c4;

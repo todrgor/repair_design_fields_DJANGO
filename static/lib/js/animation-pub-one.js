@@ -71,7 +71,7 @@ $(document).on('click', function(e) {
   if ($is_opened_pub_additional_functions == 1) {
     if ($(e.target).hasClass('pub_additional_functions_bg')) {
       $idPub = $opened_pub_additional_functions_id;
-      $('.pub_show_full').toggleClass('pub_additional_functions_opened');
+      $('.pub_show_full').removeClass('pub_additional_functions_opened');
       $('.pub_additional_functions_bg').toggleClass('show');
       $is_opened_pub_additional_functions = 0;
       $opened_pub_additional_functions_id = 0;
@@ -98,7 +98,7 @@ $(document).on('click', function(e) {
 $(window).scroll(function () {
   if ($is_opened_pub_additional_functions == 1) {
     $idPub = $opened_pub_additional_functions_id;
-    $('.pub_show_full').toggleClass('pub_additional_functions_opened');
+    $('.pub_show_full').removeClass('pub_additional_functions_opened');
     $('.pub_additional_functions_bg').toggleClass('show');
     $is_opened_pub_additional_functions = 0;
     $opened_pub_additional_functions_id = 0;

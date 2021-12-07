@@ -28,6 +28,8 @@ function openNewComplaintForm() {
 function shareThePub() {
   // $opened_pub_additional_functions_id
   $(' .share_the_pub').addClass('show');
+  $('.share_the_pub a').html('http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
+  $('.share_the_pub a').attr('href', 'http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
   if ($('.new_complaint').hasClass('show')) {
     $('.new_complaint').removeClass('show')
   }
