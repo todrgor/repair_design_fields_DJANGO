@@ -22,25 +22,24 @@ def CreateNewPub(request):
             photos = request.POST.getlist('photo')
             for i in photos:
                 print(i)
-                print(Publication.objects.get(id=pub_created.id))
                 PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + i))
-                print('Фотографии создались')
+            print('Фотографии создались')
 
         if pub_post['role'] == '11':
             pub_created.cost_min = pub_post['cost_min']
             pub_created.cost_max = pub_post['cost_max']
             pub_created.save()
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_what_to']))
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_by_what']))
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_repair_where']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_what_to']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_by_what']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_where']))
         if pub_post['role'] == '21':
             pub_created.cost_min = pub_post['cost_min']
             pub_created.cost_max = pub_post['cost_max']
             pub_created.save()
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_design_room']))
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_design_style']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_design_room']))
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_design_style']))
         if pub_post['role'] == '31':
-            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(tag_name=pub_post['tag_lifehack_lifesphere'])) 
+            PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
 
         return redirect('pub:pub_one', pk=pub_created.id)
         # except:

@@ -92,7 +92,7 @@ class PubRoles(models.Model):
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags(models.Model):
     pub_id = models.ForeignKey('Publication', related_name='pub_id', on_delete=models.CASCADE, verbose_name='id публикации')
-    tag_id = models.OneToOneField('TagName', on_delete=models.CASCADE, verbose_name='id тега')
+    tag_id = models.ForeignKey('TagName', on_delete=models.CASCADE, verbose_name='id тега')
 
     class Meta:
         verbose_name = 'Тег публикации'
