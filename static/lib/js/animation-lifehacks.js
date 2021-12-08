@@ -18,9 +18,24 @@ function toggleSavePub_LH(idPub) {
     });
 }
 
-function toggleGetNotiFromAuthor(idPub) {
-  $('.pub_one.lifehack#'+idPub+' .get_noti').toggleClass('noties_gotten');
-  console.log("Произошло получение уведомлений от автора этой публикации");
+function toggleGetNotiFromAuthor(idAccount) {
+  $.ajax({
+        url: "/account/getNotifications/" + idAccount + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+              $('.pub_one.lifehack a#'+idAccount+' .get_noti').removeClass('noties_gotten');
+              console.log("Прекратилось получение уведомлений от автора этой публикации");
+            }
+            if (data.result == 1) {
+              $('.pub_one.lifehack a#'+idAccount+' .get_noti').addClass('noties_gotten');
+              console.log("Началось получение уведомлений от автора этой публикации");
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 $is_opened_pub_additional_functions = 0;

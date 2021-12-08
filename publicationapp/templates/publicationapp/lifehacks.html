@@ -53,13 +53,13 @@
               <div class="nickname_and_role">
                 <div class="nickname">
                   <a href="{% url 'auth:account_one' pk=p.author.id %}" class="nickname_link">{{ p.author.username }}</a>
-                    <a onclick="
+
                     {% if user.is_authenticated %}
-                      toggleGetNotiFromAuthor( {{ p.id }} )
+                      <a onclick="toggleGetNotiFromAuthor( {{ p.author.id }} )" class="nickname_noti" id="{{ p.author.id }}">
                     {% else %}
-                      YouHaveToLogin('получать уведомления о новых публикациях этого автора')
+                      <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
                     {% endif %}
-                    " class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                      <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                 </div>
                 <p class="role">Автор публикации</p>

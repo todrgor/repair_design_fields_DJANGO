@@ -4,6 +4,7 @@ import authapp.views as authapp
 app_name = 'authapp'
 
 urlpatterns = [
+    path('getNotifications/<pk>/', authapp.toggle_get_noti_from_author, name='toggle_get_noti_from_author'), 
     path('login/', authapp.UserLoginView.as_view(), name='login'),
     path('logout/', authapp.UserLogoutView.as_view(), name='logout'),
     path('register/', authapp.UserRegisterView.as_view(), name='register'),

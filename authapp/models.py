@@ -7,7 +7,7 @@ from publicationapp.models import Publication
 # user : password : role
 # su1 : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
-# authorONE : *_au_*thor : author 
+# authorONE : *_au_*thor : author
 
 class User(AbstractUser):
     # USER_ROLE_CHOICES = (
@@ -57,7 +57,7 @@ class UserRoles(models.Model):
 
 class UserSubscribes(models.Model):
     subscriber_id = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
-    star_id = models.OneToOneField('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
+    star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
 
     class Meta:
         verbose_name = 'Подписка пользователя'

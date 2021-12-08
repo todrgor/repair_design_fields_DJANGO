@@ -4,11 +4,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.list import ListView
 
 from django.contrib.auth import logout, login
-from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView, UpdateView
 from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound, Http404
 
 
 from authapp.forms import RegisterForm, LoginForm
@@ -22,6 +22,26 @@ from .forms import *
 #
 # def logout(request):
 #     pass
+
+def toggle_get_noti_from_author(request, pk):
+    if request.is_ajax():
+        duplicate = UserSubscribes.objects.filter(subscriber_id=request.user, star_id=pk)
+
+        if not duplicate:
+            record = UserSubscribes.objects.create(subscriber_id=request.user, star_id=User.objects.get(id=pk))
+            record.save()
+            result = 1
+        else:
+            duplicate.delete()
+            result = 0
+
+        # context = {
+        #     'user': request.user,
+        #     'news_item': NewsItem.objects.get(pk=pk)
+        # }
+
+        # result = render_to_string('newsapp/includes/likes_block.html', context)
+        return JsonResponse({'result': result})
 
 
 class UserLoginView(LoginView):
