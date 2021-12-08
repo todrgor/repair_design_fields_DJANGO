@@ -45,14 +45,14 @@
                   <div class="avatar_container">
                       <button class="avatar_btn">
                           <div class="avatar_options_mini">
-                              <div class="account_img"><img src="{{ user.photo.url }}" style="width:40px;"></div>
+                              <div class="account_img"><img src="{{ user.photo.url }}" style="width:40px; height:40px;"></div>
                               <p class="avatar_options_mini_p">{{ user.username }}</p>
                               <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                           </div>
                       </button>
                       <div id="avtr_optns" class="avatar_options">
                           <a href="{% url 'auth:account_one' pk=user.id %}">Мой профиль</a>
-                          <a href="/settings/">Настройки</a>
+                          <a href="{% url 'auth:settings' pk=user.id %}">Настройки</a>
                           <a href="/help/">Помощь</a>
                           <a href="{% url 'auth:logout' %}">Выйти</a>
                       </div>

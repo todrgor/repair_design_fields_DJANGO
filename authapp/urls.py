@@ -8,12 +8,8 @@ urlpatterns = [
     path('logout/', authapp.UserLogoutView.as_view(), name='logout'),
     path('register/', authapp.UserRegisterView.as_view(), name='register'),
     path('one/<pk>/', authapp.AccountOneWatch.as_view(), name='account_one'),
+    path('settings/<pk>/', authapp.UpdateAccount, name='settings'),
 
-    # path('login/', authapp.login, name='login'),
-    # path('logout/', authapp.logout, name='logout'),
 
     # path('saved/', authapp.Saved.as_view(), name='saved'),
-    # path('settings/', authapp.Settings.as_view(), name='settings'),
-    # по логике, account edit = account settings!
-    # path('edit/', supportapp.AccountEdit.as_view(), name='account_edit'),
 ]

@@ -74,23 +74,19 @@
           <div class="expert_info_and_offer">
             <div class="expert_info">
               <h4>Стаж:</h4>
-              <p>
                 {% if expert_info.knowledge %}
-                  {{ expert_info.knowledge|safe }}
+                  <p class="offer_text">{{ expert_info.knowledge|safe }}</p>
                 {% else %}
-                  Нет информации.
+                  <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
-              </p>
             </div>
             <div class="offer">
               <h4>Услуга:</h4>
-              <p class="offer_text">
                 {% if expert_info.offer %}
-                  {{ expert_info.offer|safe }}
+                  <p class="offer_text">{{ expert_info.offer|safe }}</p>
                 {% else %}
-                  Нет информации.
+                  <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
-              </p>
             </div>
           </div>
           <div class="contact_info">

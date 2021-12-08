@@ -1,0 +1,167 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="/static/lib\css\style_header.css">
+  <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+  <link rel="stylesheet" href="/static/lib\css\style_pub_create_new.css">
+  <link rel="stylesheet" href="/static/lib\css\style_filter.css">
+{% endblock %}
+
+{% block content %}
+  <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+    <div id="tags_count"></div>
+    <div id="fltr_cost_min"></div>
+    <div id="fltr_cost_max"></div>
+    <div id="fltr_cost_p"></div>
+    <div id="fltr_style_p"></div>
+    <div id="fltr_room_p"></div>
+    <div id="checked_styles_count"></div>
+    <div id="checked_rooms_count"></div>
+    <div class="opened_filter"></div>
+  </div>
+
+  {% if edited_user.id != user.id and user.role.id != 4 %}
+    <div class="page_title">
+        <p class="title_p">Вам сюда нельзя! Попытались они чужой аккаунт отредактировать, ага)</p>
+    </div>
+  {% else %}
+    <div class="page_title">
+        <p class="title_p">{{ title }}</p>
+    </div>
+
+    <div class="pubs_container">
+      <form class="" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="pub_title pub_inp_one">
+          <h4>Ваш никнейм:</h4>
+          {{ form_user.username }}
+          {{ form_user.username.errors }}
+        </div>
+        <div class="pub_preview pub_inp_one">
+          <h4>Ваша аватарка:</h4>
+          {{ form_user.photo }}
+          {{ form_user.photo.errors }}
+          <p>Загружайте фото в соотношении 1:1. Файл желательно размером в 1MB. С другими размерами фото может некорректно отображаться.</p>
+        </div>
+        <div class="pub_title pub_inp_one">
+          <h4>Коротко опишите себя:</h4>
+          {{ form_user.bio }}
+          {{ form_user.bio.errors }}
+        </div>
+        <div class="pub_title pub_inp_one">
+          <h4>Ваш номер телефона:</h4>
+          {{ form_user.phone_number }}
+          {{ form_user.phone_number.errors }}
+        </div>
+        <div class="pub_title pub_inp_one">
+          <h4>Ваш возраст:</h4>
+          {{ form_user.age }}
+          {{ form_user.age.errors }}
+        </div>
+        <div class="pub_title pub_inp_one">
+          {% if edited_user.id == user.id %}
+            <h4>Ваша роль в ИС:</h4>
+          {% else %}
+            <h4>Роль пользователя {{ edited_user.username }} в ИС:</h4>
+          {% endif %}
+          <p style="color: #000; font-size: 18px; padding: 6px; background: #dcdcdc; border-radius: 5px; width: 20%; text-align: center;">{{ edited_user.role.name }}</p>
+          {% if edited_user.role.id == 1 %}
+            <a href="/become_an_author/">Стать автором публикаций</a>
+            <a href="/become_a_teammemder/">Работать в команде</a>
+          {% endif %}
+          {% if edited_user.role.id == 2 %}
+            <a href="">Обртиться в поддержку и перестать быть автором</a>
+            <a href="">Работать в команде</a>
+          {% endif %}
+          {% if edited_user.role.id == 3 %}
+            <a href="">Обртиться в поддержку и перестать быть администратором</a>
+            <a href="">Стать автором публикаций</a>
+          {% endif %}
+        </div>
+        {% if edited_user_subs %}
+          <div class="pub_title pub_inp_one">
+            <h4 style="margin: 0 0 10px">Уведомления получаются от:</h4>
+            {% for s in edited_user_subs %}
+              <div class="user_one" id="{{ s.star_id.id }}">
+                <a href="{% url 'auth:account_one' pk=s.star_id.id %}" class="user_link">
+                  <img src="{{ s.star_id.photo.url }}" alt="" class="user_photo">
+                  <p class="user_nikname">{{ s.star_id.username }}</p>
+                </a>
+                <p class="cancel_following" onclick="cancel_following({{ s.star_id.id }})">Отписаться</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if edited_user.role.id == 2 %}
+          <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Ваш стаж, услуги и контакты:</p>
+          <div class="pub_description pub_inp_one">
+            <h4>Стаж:</h4>
+            {{ form_user_expert.knowledge }}
+            {{ form_user_expert.knowledge.errors }}
+          </div>
+          <div class="pub_description pub_inp_one">
+            <h4>услуги:</h4>
+            {{ form_user_expert.offer }}
+            {{ form_user_expert.offer.errors }}
+          </div>
+          <div class="pub_description pub_inp_one">
+            <h4>Контакты:</h4>
+            <p>Заполнять по желанию</p>
+          </div>
+          <div class="pub_title pub_inp_one">
+            {{ form_user_expert.site }}
+            {{ form_user_expert.site.errors }}
+
+            {{ form_user_expert.address }}
+            {{ form_user_expert.address.errors }}
+
+            {{ form_user_expert.telegram }}
+            {{ form_user_expert.telegram.errors }}
+
+            {{ form_user_expert.whatsapp }}
+            {{ form_user_expert.whatsapp.errors }}
+
+            {{ form_user_expert.viber }}
+            {{ form_user_expert.viber.errors }}
+
+            {{ form_user_expert.vk }}
+            {{ form_user_expert.vk.errors }}
+
+            {{ form_user_expert.inst }}
+            {{ form_user_expert.inst.errors }}
+
+            {{ form_user_expert.ok }}
+            {{ form_user_expert.ok.errors }}
+
+            {{ form_user_expert.fb }}
+            {{ form_user_expert.fb.errors }}
+
+          </div>
+          <div class="pub_title pub_inp_one">
+            <h4>Что-то дополнительно:</h4>
+            {{ form_user_expert.other }}
+            {{ form_user_expert.other.errors }}
+            <p>Необязательно заполнять, но тоже приветствуется.</p>
+          </div>
+
+        {% endif %}
+
+        <input type="submit" name="create!" value="Сохранить">
+      </form>
+    </div>
+  {% endif %}
+
+
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-pub-create-new.js"></script>
+{% endblock %}

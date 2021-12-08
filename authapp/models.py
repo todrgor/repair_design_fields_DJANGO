@@ -5,8 +5,9 @@ from publicationapp.models import Publication
 # from repair_design_fields import settings
 
 # user : password : role
-# su1 : su1 : admin + superuser
+# su1 : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
+# authorONE : *_au_*thor : author 
 
 class User(AbstractUser):
     # USER_ROLE_CHOICES = (
@@ -24,7 +25,7 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
-    age = models.PositiveIntegerField(verbose_name='Возраст')
+    age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True)
     phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
@@ -72,9 +73,9 @@ class ExpertInfo(models.Model):
     offer = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Какую услугу предлагает')
     site = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на сайт')
     address = models.CharField(blank=True, null=True, max_length=255, verbose_name='Адрес')
-    telegram = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер телефона, к которому привязан аккаунт Telegram')
-    whatsapp = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер телефона, к которому привязан аккаунт WhatsApp')
-    viber = models.PositiveIntegerField(blank=True, null=True, verbose_name='Номер телефона, к которому привязан аккаунт Viber')
+    telegram = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Telegram')
+    whatsapp = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт WhatsApp')
+    viber = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Viber')
     vk = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль ВК')
     inst = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Инстаграм')
     ok = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Одноклассники')

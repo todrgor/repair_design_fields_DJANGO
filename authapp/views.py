@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.core.exceptions import ObjectDoesNotExist
+# from django.core.exceptions import ObjectDoesNotExist
 
 from django.views.generic.list import ListView
 
@@ -8,10 +8,14 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView, UpdateView
+from django.core.files.storage import FileSystemStorage
+
 
 from authapp.forms import RegisterForm, LoginForm
 from authapp.models import *
 from publicationapp.models import *
+from .forms import *
+
 
 # def login(request):
 #     pass
@@ -90,3 +94,36 @@ class AccountOneWatch(ListView):
             'pub_has_tags': pub_has_tags,
         })
         return context
+
+def UpdateAccount(request, pk):
+    edited_user = User.objects.get(id=pk)
+    form_user = UserForm({'username': edited_user.username, 'photo': edited_user.photo.url, 'role': edited_user.role, 'bio': edited_user.bio, 'age': edited_user.age, 'phone_number': edited_user.phone_number, })
+    if edited_user.role.id == 2:
+        edited_user_expert_info = ExpertInfo.objects.filter(expert_id=pk)
+        if edited_user_expert_info:
+            edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk)
+        else:
+            edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
+            edited_user_expert_info.save()
+        form_user_expert = UserExpertForm({'knowledge': edited_user_expert_info.knowledge, 'offer': edited_user_expert_info.offer, 'site': edited_user_expert_info.site, 'address': edited_user_expert_info.address, 'telegram': edited_user_expert_info.telegram, 'whatsapp': edited_user_expert_info.whatsapp, 'viber': edited_user_expert_info.viber, 'vk': edited_user_expert_info.vk, 'inst': edited_user_expert_info.inst, 'ok': edited_user_expert_info.ok, 'fb': edited_user_expert_info.fb, 'other': edited_user_expert_info.other, })
+    else:
+        form_user_expert = UserExpertForm()
+    edited_user_subs = UserSubscribes.objects.filter(subscriber_id=pk)
+    print(edited_user_subs)
+    if request.method == 'POST':
+        form_user = UserForm(request.POST)
+        edited_user_post = request.POST
+        if request.FILES['photo']:
+            edited_user.__dict__.update({'username': edited_user_post['username'], 'photo': ('users_avatars/' + str(request.FILES['photo'])), 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+            fs = FileSystemStorage()
+            photo_file = fs.save(('users_avatars/' + request.FILES['photo'].name), request.FILES['photo'])
+        else:
+            edited_user.__dict__.update({'username': edited_user_post['username'], 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+        edited_user.save()
+        if edited_user.role.id == 2:
+            edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
+            edited_user_expert_info.save()
+        return redirect('auth:account_one', pk=edited_user.id)
+
+    title = 'Настройки пользователя ' + edited_user.username
+    return render(request, 'authapp/create_new_or_update.html', {'title': title, 'form_user': form_user, 'form_user_expert': form_user_expert, 'edited_user': edited_user, 'edited_user_subs': edited_user_subs, })
