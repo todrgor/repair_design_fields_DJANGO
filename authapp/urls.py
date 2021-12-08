@@ -9,7 +9,4 @@ urlpatterns = [
     path('register/', authapp.UserRegisterView.as_view(), name='register'),
     path('one/<pk>/', authapp.AccountOneWatch.as_view(), name='account_one'),
     path('settings/<pk>/', authapp.UpdateAccount, name='settings'),
-
-
-    # path('saved/', authapp.Saved.as_view(), name='saved'),
 ]

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-# from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.views.generic.list import ListView
 

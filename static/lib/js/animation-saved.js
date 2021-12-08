@@ -1,52 +1,85 @@
 function toggleRemovePubFromSaved_D(idPub) {
-  if (!$('.pub_one.design#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-    $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '255px');
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-    $('.pub_one.design#'+idPub+' .p_for_removed_pubs').addClass('show');
-    console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
-  } else {
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-    $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '270px');
-    $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-    $('.pub_one.design#'+idPub+' .p_for_removed_pubs').removeClass('show');
-    console.log("Восстановленя в избранное публикация о дизайне под ID "+idPub);
-  }
-  $('.pub_one.design#'+idPub+' .remove_pub_from_saved').toggleClass('pub_removed');
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+              $('.pub_one.design#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '255px');
+              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one.design#'+idPub+' .p_for_removed_pubs').addClass('show');
+              console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.design#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '270px');
+              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one.design#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              console.log("Публикация восстановлена в избранное о дизайне под ID "+idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 function toggleRemovePubFromSaved_R (idPub) {
-  if (!$('.pub_one.repair#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
-    $('.pub_one.repair#'+idPub+" .additional_functions").css("width","43%");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-    $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').addClass('show');
-    console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
-  } else {
-    $('.pub_one.repair#'+idPub+" .additional_functions").css("width","14%");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-    $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-    $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').removeClass('show');
-    console.log("Восстановленя в избранное публикация о дизайне под ID "+idPub);
-  }
-  $('.pub_one.repair#'+idPub+' .remove_pub_from_saved').toggleClass('pub_removed');
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+              $('.pub_one.repair#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one.repair#'+idPub+" .additional_functions").css("width","43%");
+              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').addClass('show');
+              console.log("Публикация удалена из избранного о ремонте под ID "+idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.repair#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one.repair#'+idPub+" .additional_functions").css("width","14%");
+              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              console.log("Публикация восстановлена в избранное о ремонте под ID "+idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 function toggleRemovePubFromSaved_LH(idPub) {
-  if (!$('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').hasClass('pub_removed')) {
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-    $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '255px');
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-    $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').addClass('show');
-    console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
-  } else {
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-    $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '270px');
-    $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-    $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').removeClass('show');
-    console.log("Восстановленя в избранное публикация о дизайне под ID "+idPub);
-  }
-  $('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').toggleClass('pub_removed');
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+              $('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '255px');
+              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').addClass('show');
+              console.log("Удалена из избранного публикация-лайфхак под ID "+idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '270px');
+              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              console.log("Восстановлена в избранное публикация-лайфхак под ID "+idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 function toggleGetNotiFromAuthor(idPub) {
@@ -67,10 +100,18 @@ function togglePubAdditionalFunctions(idPub) {
 function openNewComplaintForm() {
   // $opened_pub_additional_functions_id
   $(' .new_complaint').addClass('show');
+  if ($('.share_the_pub').hasClass('show')) {
+    $('.share_the_pub').removeClass('show')
+  }
 }
 function shareThePub() {
   // $opened_pub_additional_functions_id
   $(' .share_the_pub').addClass('show');
+  $('.share_the_pub a').html('http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
+  $('.share_the_pub a').attr('href', 'http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
+  if ($('.new_complaint').hasClass('show')) {
+    $('.new_complaint').removeClass('show')
+  }
 }
 function new_complaint_was_sent() {
   $idPub = parseInt($('.pub_additional_functions_bg').parent().parent().parent().attr("id"));
@@ -79,7 +120,7 @@ function new_complaint_was_sent() {
   $is_opened_pub_additional_functions = 0;
   $('.new_complaint').removeClass('show');
   $('.new_complaint textarea').val('');
-  testFu('Жалоба успешно отправлена, будет проверена когда-то там');
+  alert('Жалоба успешно отправлена, будет проверена когда-то там');
   console.log("Жалоба типо отпрвлена");
 }
 
@@ -107,10 +148,6 @@ function checkScrollForVideo() {
         $(this).addClass('paused');
     }
   })
-}
-
-function testFu(t) {
-  alert (t);
 }
 
 
@@ -151,8 +188,8 @@ $(document).ready(function() {
     if ($is_opened_pub_additional_functions == 1) {
       if ($(e.target).hasClass('pub_additional_functions_bg')) {
         $idPub = $opened_pub_additional_functions_id;
-        $('.pub_one.lifehack#'+$idPub+' .pub_show_full').toggleClass('pub_additional_functions_opened');
-        $('.pub_additional_functions_bg').toggleClass('show');
+        $('.pub_one.lifehack#'+$idPub+' .pub_show_full').removeClass('pub_additional_functions_opened');
+        $('.pub_additional_functions_bg').removeClass('show');
         $is_opened_pub_additional_functions = 0;
         $opened_pub_additional_functions_id = 0;
         $('.new_complaint').removeClass('show');
@@ -244,8 +281,8 @@ $(document).ready(function() {
 
     if ($is_opened_pub_additional_functions == 1) {
       $idPub = $opened_pub_additional_functions_id;
-      $('.pub_one.lifehack#'+$idPub+' .pub_show_full').toggleClass('pub_additional_functions_opened');
-      $('.pub_additional_functions_bg').toggleClass('show');
+      $('.pub_one.lifehack#'+$idPub+' .pub_show_full').removeClass('pub_additional_functions_opened');
+      $('.pub_additional_functions_bg').removeClass('show');
       $is_opened_pub_additional_functions = 0;
       $opened_pub_additional_functions_id = 0;
       $('.new_complaint').removeClass('show');

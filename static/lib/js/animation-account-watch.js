@@ -2,8 +2,45 @@ $('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $(
 $('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
 
 function toggleSavePub_LH(idPub) {
-  $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').toggleClass('pub_saved');
-  console.log("Произошло сохранение/нет публикации");
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+                $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
+                console.log("Публикация больше не в сохранённом, ID:" +idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').addClass('pub_saved');
+              console.log("Произошло сохранение публикации, ID:" +idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
+}
+
+function toggleSavePub_D(idPub) {
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+                $('.pub_one.design#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
+                $('.pub_one.design#'+idPub+' .user_just_saved_it input').val('В «Избранное»');
+                console.log("Публикация больше не в сохранённом, ID:" +idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.design#'+idPub+' .user_just_saved_it').addClass('pub_saved');
+              $('.pub_one.design#'+idPub+' .user_just_saved_it input').val('Сохранено');
+              console.log("Произошло сохранение публикации, ID:" +idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 function toggleGetNotiFromAuthor(idPub) {
@@ -39,6 +76,8 @@ function openNewComplaintForm() {
 function shareThePub() {
   // $opened_pub_additional_functions_id
   $(' .share_the_pub').addClass('show');
+  $('.share_the_pub a').html('http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
+  $('.share_the_pub a').attr('href', 'http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
   if ($('.new_complaint').hasClass('show')) {
     $('.new_complaint').removeClass('show')
   }

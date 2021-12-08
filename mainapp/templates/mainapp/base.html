@@ -31,7 +31,7 @@
                   <a href="{% url 'pub:repairs' %}" class="not_heart">Ремонт</a>
                   <a href="{% url 'pub:designs' %}" class="not_heart">Дизайн</a>
                   <a href="{% url 'pub:lifehacks' %}" class="not_heart">Лайфхаки</a>
-                  <a href="/saved/" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
+                  <a href="{% url 'pub:saved' %}" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
               </div>
               <div class="role_buttoms">
                   {% if user.role.id == 3 or user.role.id == 4 %}

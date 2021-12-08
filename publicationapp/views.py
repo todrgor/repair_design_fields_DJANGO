@@ -1,5 +1,5 @@
 from django.views.generic.list import ListView
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound, Http404
 # from django.views.generic.detail import DetailView
 
 from django.shortcuts import render, redirect
@@ -132,6 +132,48 @@ def UpdatePub(request, pk):
     title = 'Отредактирвать публикацию'
     return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
 
+class Saved(ListView):
+    model = SavedPubs
+    template_name = 'publicationapp/saved.html'
+    context_object_name = 'pubs'
+
+    def get_queryset(self):
+        return SavedPubs.objects.filter(saver_id=self.request.user).order_by('-when')
+
+    def get_context_data(self, **kwargs):
+        context = super(Saved, self).get_context_data(**kwargs)
+        # у меня не получилось получить только некоторые записи тегов, пришось всей кучей. но работает :)
+        # saved_pubs = SavedPubs.objects.filter(saver_id=self.request.user)
+        # publications = Publication.objects.filter(id=SavedPubs.objects.filter(saver_id=self.request.user))
+        # # какого фига publications queryset получаают, а у PubHasTags точно так же не получается?
+        # print(saved_pubs)
+        # print(str(publications))
+        # print(PubHasTags.objects.filter(pub_id__in=publications))
+
+        context.update({
+            'pub_has_tags': PubHasTags.objects.filter(),
+        })
+        return context
+
+def toggle_saved(request, pk):
+    if request.is_ajax():
+        duplicate = SavedPubs.objects.filter(saver_id=request.user, pub_id=pk)
+
+        if not duplicate:
+            record = SavedPubs.objects.create(saver_id=request.user, pub_id=Publication.objects.get(id=pk))
+            record.save()
+            result = 1
+        else:
+            duplicate.delete()
+            result = 0
+
+        # context = {
+        #     'user': request.user,
+        #     'news_item': NewsItem.objects.get(pk=pk)
+        # }
+
+        # result = render_to_string('newsapp/includes/likes_block.html', context)
+        return JsonResponse({'result': result})
 
 class RepairsWatch(ListView):
     model = Publication

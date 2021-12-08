@@ -49,10 +49,10 @@
           </div>
           <div class="pub_author_cntnr">
             <div class="pub_author">
-              <a href="/account/"><img src="{{ p.author.photo.url }}" alt=""></a>
+              <a href="{% url 'auth:account_one' pk=p.author.id %}"><img src="{{ p.author.photo.url }}" alt=""></a>
               <div class="nickname_and_role">
                 <div class="nickname">
-                  <a href="/account/" class="nickname_link">{{ p.author.username }}</a>
+                  <a href="{% url 'auth:account_one' pk=p.author.id %}" class="nickname_link">{{ p.author.username }}</a>
                     <a onclick="
                     {% if user.is_authenticated %}
                       toggleGetNotiFromAuthor( {{ p.id }} )

@@ -164,7 +164,7 @@
                   </div>
                     <a onclick="
                       {% if opened_user.is_authenticated %}
-                        togglePubAdditionalFunctions({{ pub.id }})
+                        togglePubAdditionalFunctionsPub({{ pub.id }})
                       {% else %}
                         YouHaveToLogin('подать жалобу или поделиться этой публикацией')
                       {% endif %}
@@ -241,6 +241,7 @@
       <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
     </div>
   </div>
+
   <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
     <div class="pub_additional_functions dont_close_on_click"  style="max-height: 24px;">
       <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
@@ -255,12 +256,11 @@
   </div>
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
-    <p>repairandfields.com/ru/search?pubId=99</p>
+    <a style="text-decoration: underline; margin: 30px 0 10px; display: block;">repairandfields.com/ru/search?pubId=99</a>
   </div>
 
 {% endblock %}
 
 {% block scripts_individual %}
-  <script src="/static/lib/js/animation-lifehacks.js"></script>
   <script src="/static/lib/js/animation-account-watch.js"></script>
 {% endblock %}

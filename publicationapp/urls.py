@@ -6,6 +6,8 @@ app_name = 'publicationapp'
 
 urlpatterns = [
     path('', mainapp.main, name='main'),
+    path('saved/', publicationapp.Saved.as_view(), name='saved'),
+    path('makesaved/<pk>/', publicationapp.toggle_saved, name='toggle_saved'), 
     path('one/<pk>/', publicationapp.PubWatchOne.as_view(), name='pub_one'),
     path('create/', publicationapp.CreateNewPub, name='create_new'),
     path('delete/<pk>/', publicationapp.DeletePub, name='delete'),

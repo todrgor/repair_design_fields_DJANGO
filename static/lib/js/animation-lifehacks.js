@@ -1,6 +1,21 @@
 function toggleSavePub_LH(idPub) {
-  $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').toggleClass('pub_saved');
-  console.log("Произошло сохранение публикации");
+  $.ajax({
+        url: "/pub/makesaved/" + idPub + "/",
+
+        success: function (data) {
+            if (data.result == 0) {
+                $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
+                console.log("Публикация больше не в сохранённом, ID:" +idPub);
+            }
+            if (data.result == 1) {
+              $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').addClass('pub_saved');
+              console.log("Произошло сохранение публикации, ID:" +idPub);
+            }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то");
+        }
+    });
 }
 
 function toggleGetNotiFromAuthor(idPub) {
