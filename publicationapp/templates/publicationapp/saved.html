@@ -110,7 +110,7 @@
                     <div class="nickname_and_role">
                       <div class="nickname">
                         <a href="{% url 'auth:account_one' pk=p.pub_id.author.id %}" class="nickname_link">{{ p.pub_id.author.username }}</a>
-                        <a onclick="toggleGetNotiFromAuthor( {{ p.pub_id.id }} )" class="nickname_noti"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                        <a onclick="toggleGetNotiFromAuthor( {{ p.pub_id.author.id }} )" class="nickname_noti" id="{{ p.pub_id.author.id }}"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
                           <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                       </div>
                       <p class="role">Автор публикации</p>
