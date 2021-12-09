@@ -38,15 +38,19 @@
 
       <div class="pub_info">
         <div class="pub_to_do">
-          <div class="user_just_saved_it">
-            <a onclick="
-            {% if user.is_authenticated %}
-              toggleSavePub_LH( {{ p.id }} )
-            {% else %}
-              YouHaveToLogin('сохранить публикацию')
-            {% endif %}
-            " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
-          </div>
+          {% if p.id in saved_pubs %}
+            <div class="user_just_saved_it pub_saved">
+          {% else %}
+            <div class="user_just_saved_it">
+          {% endif %}
+              <a onclick="
+              {% if user.is_authenticated %}
+                toggleSavePub_LH( {{ p.id }} )
+              {% else %}
+                YouHaveToLogin('сохранить публикацию')
+              {% endif %}
+              " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
+            </div>
           <div class="pub_author_cntnr">
             <div class="pub_author">
               <a href="{% url 'auth:account_one' pk=p.author.id %}"><img src="{{ p.author.photo.url }}" alt=""></a>
@@ -56,10 +60,15 @@
 
                     {% if user.is_authenticated %}
                       <a onclick="toggleGetNotiFromAuthor( {{ p.author.id }} )" class="nickname_noti" id="{{ p.author.id }}">
+                      {% if p.author.id in subscribing_authors %}
+                        <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                      {% else %}
+                        <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                      {% endif %}
                     {% else %}
                       <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
-                    {% endif %}
                       <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                    {% endif %}
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                 </div>
                 <p class="role">Автор публикации</p>

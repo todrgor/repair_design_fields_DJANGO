@@ -150,7 +150,11 @@ class Saved(ListView):
         # print(str(publications))
         # print(PubHasTags.objects.filter(pub_id__in=publications))
 
+        subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+        subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+
         context.update({
+            'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(),
         })
         return context
@@ -191,6 +195,20 @@ class DesignsWatch(ListView):
     def get_queryset(self):
         return Publication.objects.filter(role=21)
 
+    def get_context_data(self, **kwargs):
+        context = super(DesignsWatch, self).get_context_data(**kwargs)
+        saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__role=21)
+        saved_pubs = [sp.pub_id.id for sp in saved_urls]
+        # print(all_pubs)
+        # print(saved_pubs)
+        # print(Publication.objects.filter(id__in=saved_pubs))
+
+        context.update({
+            'saved_pubs': saved_pubs
+        })
+        return context
+
+
 def filter_lifehacks(request):
     sphera = request.POST.getlist('style_design', '')
     fltr_cost_min = request.POST.get('cost_mini', '')
@@ -210,7 +228,15 @@ class LifehacksWatch(ListView):
         context = super(LifehacksWatch, self).get_context_data(**kwargs)
         publications = Publication.objects.filter(role=31)
 
+        saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__role=31)
+        saved_pubs = [sp.pub_id.id for sp in saved_urls]
+        subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+        subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+
+
         context.update({
+            'saved_pubs': saved_pubs,
+            'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
             # 'tags_for_filter': TagName.objects.filter(id__gt=3000000).filter(id__lt=3999999)
         })
@@ -264,7 +290,16 @@ class PubWatchOne(ListView):
         context = super(PubWatchOne, self).get_context_data(**kwargs)
         # publications = Publication.objects.get(id=self.kwargs['pk'])
 
+        saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__id=self.kwargs['pk'])
+        saved_pubs = [sp.pub_id.id for sp in saved_urls]
+        subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+        subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+
+        print(saved_pubs)
+
         context.update({
+            'saved_pubs': saved_pubs,
+            'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
             'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
         })

@@ -33,10 +33,17 @@
               </p>
             </div>
             <div class="pub_to_do">
-              <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ p.id }} )">
-                <img src="/static/sources/SVG/heart.svg" alt="">
-                <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
-              </div>
+              {% if p.id in saved_pubs %}
+                <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ p.id }} )">
+                  <img src="/static/sources/SVG/heart.svg" alt="">
+                  <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="Сохранено">
+                </div>
+              {% else %}
+                <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ p.id }} )">
+                  <img src="/static/sources/SVG/heart.svg" alt="">
+                  <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
+                </div>
+              {% endif %}
               <a class="pub_show_full" href="{% url 'pub:pub_one' pk=p.id %}">Подробнее •••</a>
             </div>
             <div class="pub_tags"></div>

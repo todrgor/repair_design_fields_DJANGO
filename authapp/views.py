@@ -89,6 +89,10 @@ class AccountOneWatch(ListView):
     def get_context_data(self, **kwargs):
         context = super(AccountOneWatch, self).get_context_data(**kwargs)
         user_role = User.objects.get(id=self.kwargs['pk']).role.id
+        saved_urls = SavedPubs.objects.filter(saver_id=self.request.user)
+        saved_pubs = [sp.pub_id.id for sp in saved_urls]
+        subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+        subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
 
         if user_role == 2 or user_role == 4:
             try:
@@ -109,6 +113,8 @@ class AccountOneWatch(ListView):
             pub_has_tags = None
 
         context.update({
+            'saved_pubs': saved_pubs,
+            'subscribing_authors': subscribing_authors,
             'expert_info': expert_info,
             'expert_pubs': expert_pubs,
             'pub_has_tags': pub_has_tags,

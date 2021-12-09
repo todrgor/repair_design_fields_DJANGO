@@ -110,8 +110,19 @@
                     <div class="nickname_and_role">
                       <div class="nickname">
                         <a href="{% url 'auth:account_one' pk=p.pub_id.author.id %}" class="nickname_link">{{ p.pub_id.author.username }}</a>
-                        <a onclick="toggleGetNotiFromAuthor( {{ p.pub_id.author.id }} )" class="nickname_noti" id="{{ p.pub_id.author.id }}"> <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
-                          <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+
+                        {% if user.is_authenticated %}
+                          <a onclick="toggleGetNotiFromAuthor( {{ p.pub_id.author.id }} )" class="nickname_noti" id="{{ p.pub_id.author.id }}">
+                          {% if p.pub_id.author.id in subscribing_authors %}
+                            <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                          {% else %}
+                            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                          {% endif %}
+                        {% else %}
+                          <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
+                          <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                        {% endif %}
+                        <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                       </div>
                       <p class="role">Автор публикации</p>
                     </div>
