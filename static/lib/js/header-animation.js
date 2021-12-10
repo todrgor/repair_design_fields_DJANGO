@@ -13,18 +13,33 @@ $avatar_wrap.on('click', function () {
     } else {
       $is_opened_avatar = 0;
     }
-    console.log('$is_opened_avatar = ', $is_opened_avatar);
+    // console.log('$is_opened_avatar = ', $is_opened_avatar);
 });
 
-$notifications_wrap.on('click', function () {
+function open_noti(idAccount) {
     $('.notifications_container').toggleClass('show_ntfctns_more');
     if ($is_opened_notifications == 0) {
       $is_opened_notifications = 1;
     } else {
       $is_opened_notifications = 0;
     }
-    console.log('$is_opened_notifications = ', $is_opened_notifications);
-});
+    $.ajax({
+          url: "/account/NewNotiWereSeen/" + idAccount + "/",
+
+          success: function (data) {
+              if (data.result == 0) {
+                console.log("НЕт новых уведомлений");
+              }
+              if (data.result == 1) {
+                console.log("Все новые уведомления теперь прочитаны");
+              }
+          },
+          error: function (data) {
+            console.log("ошибка какая-то с уведомлениями");
+          }
+      });
+    // console.log('$is_opened_notifications = ', $is_opened_notifications);
+};
 
 $filter_button.on('click', function () {
     $('.opened_filter_big_bg').toggleClass('opened_filter_big_bg_opened');
@@ -33,7 +48,7 @@ $filter_button.on('click', function () {
     } else {
       $is_opened_filter_panel = 0;
     }
-    console.log('$is_opened_filter_panel === ', $is_opened_filter_panel);
+    // console.log('$is_opened_filter_panel === ', $is_opened_filter_panel);
 });
 
 

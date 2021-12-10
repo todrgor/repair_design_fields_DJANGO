@@ -31,6 +31,11 @@ def toggle_get_noti_from_author(request, pk):
             record = UserSubscribes.objects.create(subscriber_id=request.user, star_id=User.objects.get(id=pk))
             record.save()
             result = 1
+
+            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' подписался на уведомления о Ваших новых публикациях.'), role=PubRoles.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(star_id=pk).count() ) + " подписчиков"), content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
+            noti=Publication.objects.create(title=('Теперь вы будете получить уведомления о новых публикациях пользователя '+ User.objects.get(id=pk).username), role=PubRoles.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber_id=request.user.id).count() ) + " источников уведомлений о публикациях"), content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
         else:
             duplicate.delete()
             result = 0
@@ -41,6 +46,18 @@ def toggle_get_noti_from_author(request, pk):
         # }
 
         # result = render_to_string('newsapp/includes/likes_block.html', context)
+        return JsonResponse({'result': result})
+
+
+def new_noti_were_seen(request, pk):
+    if request.is_ajax():
+        if Notifications.objects.filter(user_receiver=request.user, is_new=True):
+            for nn in Notifications.objects.filter(user_receiver=request.user, is_new=True):
+                nn.is_new = False
+                nn.save()
+            result = 1
+        else:
+            result = 0
         return JsonResponse({'result': result})
 
 
@@ -73,7 +90,6 @@ class UserRegisterView(TemplateView):
             'title': 'Регистрация',
             'form': form
         }
-
         return render(request, self.template_name, content)
 
 
@@ -112,14 +128,22 @@ class AccountOneWatch(ListView):
             expert_pubs = None
             pub_has_tags = None
 
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
+
         context.update({
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
             'expert_info': expert_info,
             'expert_pubs': expert_pubs,
             'pub_has_tags': pub_has_tags,
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+            'notes_count': old_noties.count() + new_noties.count(),
+            'new_notes_count': new_noties.count(),
         })
         return context
+
 
 def UpdateAccount(request, pk):
     edited_user = User.objects.get(id=pk)
@@ -149,7 +173,23 @@ def UpdateAccount(request, pk):
         if edited_user.role.id == 2:
             edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
             edited_user_expert_info.save()
+
+        noti=Publication.objects.create(title=('Аккаунт успешно отредактирован.'), role=PubRoles.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Вы большой молодец"), content_last_desc='', author=request.user)
+        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
         return redirect('auth:account_one', pk=edited_user.id)
 
+    old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
+    new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
     title = 'Настройки пользователя ' + edited_user.username
-    return render(request, 'authapp/create_new_or_update.html', {'title': title, 'form_user': form_user, 'form_user_expert': form_user_expert, 'edited_user': edited_user, 'edited_user_subs': edited_user_subs, })
+    context = {
+        'title': title, 'form_user': form_user,
+        'form_user_expert': form_user_expert,
+        'edited_user': edited_user,
+        'edited_user_subs': edited_user_subs,
+        'old_noties': old_noties,
+        'new_noties': new_noties,
+        'notes_count': old_noties.count() + new_noties.count(),
+        'new_notes_count': new_noties.count(),
+    }
+    return render(request, 'authapp/create_new_or_update.html', context)

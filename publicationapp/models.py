@@ -4,15 +4,6 @@ from repair_design_fields import settings
 from django.core.validators import FileExtensionValidator
 
 class Publication(models.Model):
-    # PUB_ROLE_CHOICES = (
-    #     (0, 'SomethingGoesWrong'),
-    #     (11, 'RepairPub'),
-    #     (12, 'RepairBaseBook'),
-    #     (21, 'LifehackPub'),
-    #     (31', 'DesignPub'),
-    #     (41, 'Report'),
-    #     (51, 'Notification'),
-    # )
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
     preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'pdf'])], verbose_name='Превью')

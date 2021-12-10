@@ -43,17 +43,37 @@ def CreateNewPub(request):
         if pub_post['role'] == '31':
             PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
 
+        noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), role=PubRoles.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", content_last_desc='', author=request.user)
+        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), role=PubRoles.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Скорее открывайте её!", content_last_desc='', author=request.user)
+        for s in UserSubscribes.objects.filter(star_id=pub_created.author.id):
+            Notifications.objects.create(user_receiver=s.subscriber_id, noti_for_user=noti)
         return redirect('pub:pub_one', pk=pub_created.id)
         # except:
         #     form.add_error(None, 'Ошибка создания публикции')
 
     title = 'Создать публикацию'
-    return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
+    old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
+    new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
+
+    content = {
+        'title': title,
+        'form': form,
+		'old_noties': old_noties,
+		'new_noties': new_noties,
+		'notes_count': old_noties.count() + new_noties.count(),
+		'new_notes_count': new_noties.count(),
+	}
+    return render(request, 'publicationapp/create_new_or_update.html', content)
 
 def DeletePub(request, pk):
     pub = Publication.objects.get(id=pk)
     role = pub.role.id
     pub.delete()
+
+    noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), role=PubRoles.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", content_last_desc='', author=request.user)
+    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
     if role == 11:
         return redirect('pub:repairs')
     if role == 21:
@@ -103,6 +123,10 @@ def UpdatePub(request, pk):
         if pub_post['role'] == '31':
             PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
         pub.save()
+
+        noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'» !'), role=PubRoles.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", content_last_desc='', author=request.user)
+        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
         return redirect('pub:pub_one', pk=pub.id)
 
     if pub.role.id == 11:
@@ -129,8 +153,19 @@ def UpdatePub(request, pk):
                 tag_lifehack_lifesphere = t.tag_id.id
         form = PubForm({'title': pub.title, 'role': pub.role, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_lifehack_lifesphere': tag_lifehack_lifesphere, })
 
+    old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
+    new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
     title = 'Отредактирвать публикацию'
-    return render(request, 'publicationapp/create_new_or_update.html', {'title': title, 'form': form, })
+
+    content = {
+        'title': title,
+        'form': form,
+        'old_noties': old_noties,
+        'new_noties': new_noties,
+		'notes_count': old_noties.count() + new_noties.count(),
+		'new_notes_count': new_noties.count(),
+    }
+    return render(request, 'publicationapp/create_new_or_update.html', content)
 
 class Saved(ListView):
     model = SavedPubs
@@ -150,12 +185,19 @@ class Saved(ListView):
         # print(str(publications))
         # print(PubHasTags.objects.filter(pub_id__in=publications))
 
+
         subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
         subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when').order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when').order_by('-when')
 
         context.update({
             'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(),
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
         })
         return context
 
@@ -171,13 +213,29 @@ def toggle_saved(request, pk):
             duplicate.delete()
             result = 0
 
+        pub = Publication.objects.get(id=pk)
+        pub.saved_count = SavedPubs.objects.filter(pub_id__id=pk).count()
+        pub.save()
         # context = {
         #     'user': request.user,
         #     'news_item': NewsItem.objects.get(pk=pk)
         # }
 
         # result = render_to_string('newsapp/includes/likes_block.html', context)
+        noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), role=PubRoles.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Просто напоминание и благодарность за использование нашей ИС.", content_last_desc='', author=request.user)
+        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), role=PubRoles.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Теперь у публикации " + str( SavedPubs.objects.filter(pub_id=pub.id).count() ) + " сохранений"), content_last_desc='', author=request.user)
+        Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+
         return JsonResponse({'result': result})
+
+
+def change_shared_count(request, pk):
+    if request.is_ajax():
+        pub = Publication.objects.get(id=pk)
+        pub.shared_count += 1
+        pub.save()
+        return JsonResponse({'result': str(pub)})
 
 class RepairsWatch(ListView):
     model = Publication
@@ -186,6 +244,20 @@ class RepairsWatch(ListView):
 
     def get_queryset(self):
         return Publication.objects.filter(role=11)
+
+    def get_context_data(self, **kwargs):
+        context = super(RepairsWatch, self).get_context_data(**kwargs)
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when').order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when').order_by('-when')
+
+        context.update({
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
+        })
+        return context
+
 
 class DesignsWatch(ListView):
     model = Publication
@@ -202,9 +274,15 @@ class DesignsWatch(ListView):
         # print(all_pubs)
         # print(saved_pubs)
         # print(Publication.objects.filter(id__in=saved_pubs))
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
 
         context.update({
-            'saved_pubs': saved_pubs
+            'saved_pubs': saved_pubs,
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
         })
         return context
 
@@ -213,7 +291,9 @@ def filter_lifehacks(request):
     sphera = request.POST.getlist('style_design', '')
     fltr_cost_min = request.POST.get('cost_mini', '')
     fltr_cost_max = request.POST.get('cost_max', '')
+
     return HttpResponse('sphera: '+ str(sphera) +', fltr_cost_min:'+ fltr_cost_min +', fltr_cost_max:'+ fltr_cost_max)
+
 
 class LifehacksWatch(ListView):
     model = Publication
@@ -233,11 +313,17 @@ class LifehacksWatch(ListView):
         subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
         subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
 
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
 
         context.update({
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
             # 'tags_for_filter': TagName.objects.filter(id__gt=3000000).filter(id__lt=3999999)
         })
         return context
@@ -270,10 +356,17 @@ class FilterLifehacks(ListView):
         else:
             filter_tag = PubHasTags.objects.all()
 
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
+
         context.update({
             'filter_tag': filter_tag,
             'pubs': publications,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
         })
         return context
 
@@ -295,12 +388,36 @@ class PubWatchOne(ListView):
         subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
         subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
 
-        print(saved_pubs)
+        pub = Publication.objects.get(id=self.kwargs['pk'])
+        if not SeenPubs.objects.filter(watcher_id=self.request.user, pub_id=self.kwargs['pk']):
+            SeenPubs.objects.create(watcher_id=self.request.user, pub_id=Publication.objects.get(id=self.kwargs['pk']))
+        ages = 0
+        for e in SeenPubs.objects.filter(pub_id=self.kwargs['pk']):
+            if e.watcher_id.age:
+                ages += e.watcher_id.age
+        if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
+            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()
+        else:
+            pub.average_age_watchers = 0
+        if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
+            pub.average_age_savers = ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count()
+        else:
+            pub.average_age_savers = 0
+        pub.seen_count +=1
+        pub.save()
+
+        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')
+        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
 
         context.update({
+            'pub': pub,
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
             'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
+            'old_noties': old_noties,
+            'new_noties': new_noties,
+    		'notes_count': old_noties.count() + new_noties.count(),
+    		'new_notes_count': new_noties.count(),
         })
         return context

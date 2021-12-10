@@ -96,6 +96,16 @@ function shareThePub() {
   if ($('.new_complaint').hasClass('show')) {
     $('.new_complaint').removeClass('show')
   }
+  $.ajax({
+        url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
+
+        success: function (data) {
+          console.log("Успех c увеличением счётчика репостов");
+        },
+        error: function (data) {
+          console.log("ошибка какая-то c увеличением счётчика репостов");
+        }
+    });
 }
 
 function new_complaint_was_sent() {

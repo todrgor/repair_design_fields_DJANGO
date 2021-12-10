@@ -96,7 +96,7 @@ class ExpertInfo(models.Model):
 class SavedPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
     saver_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
-    pub_id = models.OneToOneField('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Сохранённая публикация'
@@ -116,3 +116,16 @@ class SeenPubs(models.Model):
 
     def __str__(self):
         return 'pub ' + str(self.pub_id) + ' seen by ' + str(self.watcher_id)
+
+class Notifications(models.Model):
+    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания уведомления')
+    user_receiver = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id получателя уведомлении')
+    noti_for_user = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации-уведомления', default=0)
+    is_new = models.BooleanField(default=True, verbose_name='Уведомление новое?')
+
+    class Meta:
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
+
+    def __str__(self):
+        return 'user_receiver: ' + str(self.user_receiver) + ', noti_for_user: ' + str(self.noti_for_user) + ', when: ' + str(self.when)

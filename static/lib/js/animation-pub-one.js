@@ -64,6 +64,16 @@ function shareThePub() {
   // $opened_pub_additional_functions_id
   $('.share_the_pub').addClass('show');
   $('.share_the_pub').offset({top:( $('.pub_show_full').offset().top - 40  ), left:( $('.pub_show_full').offset().left - 220  )});
+  $.ajax({
+        url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
+
+        success: function (data) {
+          console.log("Успех c увеличением счётчика репостов");
+        },
+        error: function (data) {
+          console.log("ошибка какая-то c увеличением счётчика репостов");
+        }
+    });
 }
 function open_statistics() {
   $('.pub_additional_functions_bg').toggleClass('show');

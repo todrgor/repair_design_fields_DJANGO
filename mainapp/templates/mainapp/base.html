@@ -58,67 +58,67 @@
                       </div>
                   </div>
 
-                  <div class="notifications_container">
+                  <div class="notifications_container" onclick="open_noti({{ user.id }})">
                       <button class="notifications_btn">
                           <div class="notifications_mini">
                               <div class="noti_logo"></div>
-                              <p class="notifications_mini_p">99+</p>
+                              {% if new_notes_count %}
+                                {% if new_notes_count <= 99 %}
+                                  <p class="notifications_mini_p">{{ new_notes_count }}</p>
+                                {% else %}
+                                  <p class="notifications_mini_p">99+</p>
+                                {% endif %}
+                              {% else %}
+                                <p style="display: none;" class="notifications_mini_p">99+</p>
+                              {% endif %}
                           </div>
                       </button>
                       <div class="notifications_opened">
+                        {% if old_noties or new_noties %}
                           <div class="last_noti">
                             <p class="title_notifications_opened">Уведомления:</p>
-                            <div class="notification_one noti_new">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Егор Иванов сохарнил в “Избранне” вашу публикацию <a href="#">Шкаф на
-                                    балконе</a></p>
-                                <p class="when_happend_noti">Сегодня, 12:12</p>
-                            </div>
-                            <div class="notification_one noti_new">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Закончился бюджет на рекламной кампании <a href="#">NEW ERA MILITARY</a></p>
-                                <p class="when_happend_noti">Вчера, 23:39</p>
-                            </div>
-                            <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Началась рекламаная кампания <a href="#">NEW ERA MILITARY</a></p>
-                                <p class="when_happend_noti">Вчера, 22:50</p>
-                            </div>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
-                                    человек!</p>
-                                <p class="when_happend_noti">1 августа, 12:50</p>
-                            </div>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
-                                    человек!</p>
-                                <p class="when_happend_noti">34 августа, 12:50</p>
-                            </div>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
-                                    человек!</p>
-                                <p class="when_happend_noti">34 августа, 12:50</p>
-                            </div>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
-                                    человек!</p>
-                                <p class="when_happend_noti">34 августа, 12:50</p>
-                            </div>
-                            <div class="notification_one noti_old">
-                                <div class="noti_one_logo"></div>
-                                <p class="content_noti">Вашу публикацию <a href="#">Шкаф на балконе</a> просмотрели первые 100
-                                    человек!</p>
-                                <p class="when_happend_noti">34 августа, 12:50</p>
-                            </div>
+
+                            {% if new_noties %}
+                              {% for nn in new_noties %}
+                                <div class="notification_one noti_new">
+                                    <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                    <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
+                                    <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
+                                </div>
+                              {% endfor %}
+                            {% endif %}
+
+                            {% if old_noties %}
+                              <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
+                              {% for nn in old_noties %}
+                                <div class="notification_one">
+                                    <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                    <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
+                                    <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
+                                </div>
+                              {% endfor %}
+
+                              {% if notes_count <= 5 %}
+                                <p class="title_notifications_opened" style="color: gray; margin: 30px auto 0; text-align: center; width: 70%; font-size: 17px;">
+                                  Пока что это все уведомления.
+                                </p>
+                                <p class="title_seen_notifications_opened" style="text-align: center; width: 80%; margin: 0 auto; font-size: 15px;">
+                                  Попользуйтесь информационной системой, и вам в уведомлении что-нибудь да придёт :)
+                                </p>
+                              {% endif %}
+                            {% endif %}
                           </div>
-                          <form class="more_notifications" action="more_notifications.py" method="post">
+                        {% else %}
+                          <p class="title_notifications_opened" style="color: gray; margin: 130px auto 0; text-align: center; width: 70%; font-size: 25px;">
+                            Пока что у вас ни одного уведомления.
+                          </p>
+                          <p class="title_seen_notifications_opened" style="text-align: center; width: 80%; margin: 0 auto; font-size: 15px;">
+                            Попользуйтесь информационной системой, и вам в уведомлении что-нибудь да придёт :)
+                          </p>
+                        {% endif %}
+                          <!-- <form class="more_notifications" action="more_notifications.py" method="post">
                               <button type="button" name="more_notifications" class="show_more_noti">Показать ещё</button>
-                          </form>
+                          </form> -->
                     </div>
                   </div>
               </div>

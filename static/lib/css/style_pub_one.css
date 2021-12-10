@@ -64,6 +64,8 @@
     background: #ffffff;
 }
 .title {
+  width: 90%;
+  margin: 0 auto;
   text-align: center;
   color: #000;
     font-size: 40px;

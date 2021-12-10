@@ -1,9 +1,18 @@
 from django.shortcuts import render
-import authapp.models
-import publicationapp.models
+from authapp.models import *
+from publicationapp.models import *
 
 def main(request):
-	content = {}
+	old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
+	new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
+
+	content = {
+		'old_noties': old_noties,
+		'new_noties': new_noties,
+		'notes_count': old_noties.count() + new_noties.count(),
+		'new_notes_count': new_noties.count(),
+	}
+
 	return render(request, 'mainapp/index.html', content)
 
 

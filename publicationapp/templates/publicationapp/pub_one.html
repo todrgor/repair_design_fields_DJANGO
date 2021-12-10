@@ -227,8 +227,8 @@
         <h1>Статистика по публикации:</h1>
         <p>Просмотров: <span>{{ pub.seen_count }}</span></p>
         <p>Сохранений: <span>{{ pub.saved_count }}</span></p>
-        <p>Средний возраст всех просмотревших: <span>FF</span></p>
-        <p>Средний возраст только сохранивших: <span>FF</span></p>
+        <p>Средний возраст всех просмотревших: <span>{{ pub.average_age_watchers }}</span></p>
+        <p>Средний возраст только сохранивших: <span>{{ pub.average_age_savers }}</span></p>
         <p>"Поделиться" нажато раз: <span>{{ pub.shared_count }}</span></p>
         <p>Жалоб на публикацию: <span>{{ pub.reported_count }}</span></p>
       </div>
@@ -259,7 +259,7 @@
   </div>
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
-    <p>http://127.0.0.1:8000/pub/one/{{ pub.id }}/</p>
+    <a href="{% url 'pub:pub_one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
   </div>
 {% endblock %}
 
