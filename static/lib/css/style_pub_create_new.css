@@ -44,6 +44,9 @@ input {
 select {
   width: 100%;
 }
+select[name="role"] {
+  width: 42%;
+}
 
 .roles_and_tags {
   display: flex;
@@ -173,4 +176,14 @@ p.cancel_following.dont_cancel:hover {
 
 .errorlist li {
   list-style: korean-hanja-informal;
+}
+
+
+
+/* для создания нового пользователя */
+.expert_inputs {
+  display: none;
+}
+.expert_inputs.show {
+  display: inherit;
 }

@@ -29,7 +29,7 @@ def DeleteAccount(request, pk):
             if request.user.role.id != user_id:
                 noti=Publication.objects.create(title=('Успешно удалён пользователь ' + user_name), role=PubRoles.objects.get(id=51), preview=(user_photo), content_first_desc="Вот и зачем Вы его так?", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                return redirect('admin_mine:main')
+                return redirect('admin_mine:users')
             else:
                 return redirect('auth:logout')
 
@@ -162,7 +162,6 @@ class AccountOneWatch(ListView):
 
 def UpdateAccount(request, pk):
     if request.user.is_authenticated:
-        print('авториз ' + str(request.user.id))
         if request.user.role.id == 2 or request.user.role.id == 4 or request.user.id == int(pk):
             edited_user = User.objects.get(id=pk)
             form_user = UserForm({'username': edited_user.username, 'photo': edited_user.photo.url, 'role': edited_user.role, 'bio': edited_user.bio, 'age': edited_user.age, 'phone_number': edited_user.phone_number, })
@@ -177,7 +176,6 @@ def UpdateAccount(request, pk):
             else:
                 form_user_expert = UserExpertForm()
             edited_user_subs = UserSubscribes.objects.filter(subscriber_id=pk)
-            print(edited_user_subs)
             if request.method == 'POST':
                 form_user = UserForm(request.POST)
                 edited_user_post = request.POST
@@ -188,9 +186,17 @@ def UpdateAccount(request, pk):
                 else:
                     edited_user.__dict__.update({'username': edited_user_post['username'], 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
                 edited_user.save()
-                if edited_user.role.id == 2:
-                    edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
-                    edited_user_expert_info.save()
+                if 'role' in edited_user_post:
+                    if edited_user_post['role'] == 2 or edited_user_post['role'] == "2":
+                        edited_user.role = UserRoles.objects.get(id=2)
+                        edited_user.save()
+                        edited_user_expert_info = ExpertInfo.objects.filter(expert_id=pk)
+                        if edited_user_expert_info:
+                            edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk)
+                        else:
+                            edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
+                        edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
+                        edited_user_expert_info.save()
 
                 if request.user.id == edited_user.id:
                     noti=Publication.objects.create(title=('Аккаунт успешно отредактирован.'), role=PubRoles.objects.get(id=51), preview=(edited_user.photo.name), content_first_desc=("Вы большой молодец"), content_last_desc='', author=request.user)
@@ -221,7 +227,64 @@ def UpdateAccount(request, pk):
                 'notes_count': notes_count,
                 'new_notes_count': new_notes_count,
             }
-            return render(request, 'authapp/create_new_or_update.html', context)
+            return render(request, 'authapp/update_account.html', context)
+        else:
+            return redirect('main')
+    else:
+        return redirect('main')
+
+
+def CreateAccount(request):
+    if request.user.is_authenticated:
+        edited_user = None
+        if request.user.role.id == 2 or request.user.role.id == 4:
+            form_user = UserForm()
+            form_user_expert = UserExpertForm()
+            if request.method == 'POST':
+                print(request.POST['role'])
+                form_user = UserForm(request.POST)
+                edited_user_post = request.POST
+                edited_user = User.objects.create(username=edited_user_post['username'], age=edited_user_post['age'], phone_number=edited_user_post['phone_number'], role=UserRoles.objects.get(id=edited_user_post['role']) )
+                if 'photo' in request.FILES:
+                    edited_user.__dict__.update({'username': edited_user_post['username'], 'photo': ('users_avatars/' + str(request.FILES['photo'])), 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+                    fs = FileSystemStorage()
+                    photo_file = fs.save(('users_avatars/' + request.FILES['photo'].name), request.FILES['photo'])
+                else:
+                    edited_user.__dict__.update({'username': edited_user_post['username'], 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+                edited_user.save()
+                if edited_user_post['role'] == 2 or edited_user_post['role'] == "2":
+                    edited_user_expert_info = ExpertInfo.objects.filter(expert_id=edited_user.id)
+                    if edited_user_expert_info:
+                        edited_user_expert_info = ExpertInfo.objects.get(expert_id=edited_user.id)
+                    else:
+                        edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
+                        edited_user_expert_info.save()
+                    edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
+                    edited_user_expert_info.save()
+
+                noti=Publication.objects.create(title=('Успешно создан аккаунт пользователя '+ edited_user.username), role=PubRoles.objects.get(id=51), preview=(edited_user.photo.name), content_first_desc=("Вы большой молодец, что расширяете нам базу пользователей"), content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+                return redirect('auth:account_one', pk=edited_user.id)
+
+            old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')[:20]
+            new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
+            notes_count = old_noties.count() + new_noties.count()
+            new_notes_count = new_noties.count()
+            title = 'Создать нового пользователя'
+
+            context = {
+                'title': title,
+                'form_user': form_user,
+                'form_user_expert': form_user_expert,
+                'edited_user': edited_user,
+
+                'old_noties': old_noties,
+                'new_noties': new_noties,
+                'notes_count': notes_count,
+                'new_notes_count': new_notes_count,
+            }
+            return render(request, 'authapp/create_new_account.html', context)
         else:
             return redirect('main')
     else:

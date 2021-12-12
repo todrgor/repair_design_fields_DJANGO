@@ -76,19 +76,37 @@ function shareThePub() {
 }
 
 function new_complaint_was_sent() {
-  $idPub = $opened_pub_additional_functions_id;
-  $('.pub_one.lifehack#'+$idPub+' .pub_show_full').toggleClass('pub_additional_functions_opened');
-  $('.pub_additional_functions_bg').removeClass('show');
-  $is_opened_pub_additional_functions = 0;
-  $opened_pub_additional_functions_id = 0;
-  $('.new_complaint').removeClass('show');
-  $('.new_complaint textarea').val('');
-  alert('Жалоба успешно отправлена, будет проверена когда-то там');
-  console.log("Жалоба типо отпрвлена");
+  if ($('.new_complaint textarea').val() != '' ) {
+    $.ajax({
+          type: "POST",
+          url: "/admin/new_complaint/",
+          data: {
+            complaint_id : $opened_pub_additional_functions_id,
+            complaint_type : 'pub',
+            complaint_text : $('.new_complaint textarea').val(),
+          },
+
+          success: function (data) {
+            alert('Жалоба принята, ждите решения модерации. Ответ Вы получите в уведомлении.');
+          },
+          error: function (data) {
+            alert("ошибка какая-то с жалобой");
+          }
+      });
+
+      $('.pub_one.lifehack#'+$is_opened_pub_additional_functions+' .pub_show_full').removeClass('pub_additional_functions_opened');
+      $('.pub_additional_functions_bg').removeClass('show');
+      $is_opened_pub_additional_functions = 0;
+      $opened_pub_additional_functions_id = 0;
+      $('.new_complaint').removeClass('show');
+      $('.new_complaint textarea').val('');
+  } else {
+    alert('Жалоба не отправлена, для начала напишите её!');
+  }
 }
 
 function checkScrollForVideo() {
-  var fraction = 0.9; // Play video when 80% of the player is visible.
+  var fraction = 0.9; // Play video when 90% of the player is visible.
 
   $('video').each(function(){
     var video = $(this).get(0);

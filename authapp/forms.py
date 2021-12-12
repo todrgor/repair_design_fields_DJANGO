@@ -1,13 +1,15 @@
 from django.contrib.auth.forms import forms, UserCreationForm, AuthenticationForm
 
-from authapp.models import User
+from authapp.models import User, UserRoles
 
 class UserForm(forms.Form):
+    role = forms.ModelChoiceField(queryset=UserRoles.objects.filter(), initial=1, label="Роль пользователя:", empty_label="Ещё не выбрано")
     username = forms.CharField(max_length=135, label="Никнейм:", widget=forms.TextInput(attrs={'placeholder': 'Ваш никнейм'}))
     photo = forms.ImageField(widget=forms.ClearableFileInput(attrs={'title':"Загрузите свою аватарку"}), label="Аватар пользователя:", required=False)
     bio = forms.CharField(max_length=135, label="Короткое самоописание или ваш актуальный статус:", widget=forms.TextInput(attrs={'placeholder': 'Короткое самоописание или статус'}), required=False)
     age = forms.IntegerField(label="Ваш возраст:", widget=forms.TextInput(attrs={'placeholder':"Ваш возраст"}))
     phone_number = forms.IntegerField(label="Ваш номер телефона:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона"}))
+
 
 class UserExpertForm(forms.Form):
     knowledge = forms.CharField(max_length=1500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)

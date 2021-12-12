@@ -36,7 +36,7 @@
   <div class="page_title">
       <p class="title_p">Панель администратора</p>
       <p class="count_pubs">пользователи</p>
-      {% if user.role.id == 4 %}<a href="СОЗДАТЬ НОВОГО ПОЛЬЗОВАТЕЛЯ" class="create_new">создать нового ›</a>{% endif %}
+      {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}" class="create_new">создать нового ›</a>{% endif %}
   </div>
    <div class="pubs_container">
      <div class="pubs_container_one_type withBorder show" id='pubs'>

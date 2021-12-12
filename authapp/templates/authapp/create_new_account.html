@@ -40,75 +40,46 @@
         {{ form.non_field_errors }}
 
         <div class="pub_title pub_inp_one">
-          <h4>Ваш никнейм:</h4>
+          <h4>Никнейм:</h4>
           {{ form_user.username }}
           {{ form_user.username.errors }}
         </div>
         <div class="pub_preview pub_inp_one">
-          <h4>Ваша аватарка:</h4>
+          <h4>Аватарка:</h4>
           {{ form_user.photo }}
           {{ form_user.photo.errors }}
           <p>Загружайте фото в соотношении 1:1. Файл желательно размером в 1MB. С другими размерами фото может некорректно отображаться.</p>
         </div>
         <div class="pub_title pub_inp_one">
-          <h4>Коротко опишите себя:</h4>
+          <h4>Короткое описание:</h4>
           {{ form_user.bio }}
           {{ form_user.bio.errors }}
         </div>
         <div class="pub_title pub_inp_one">
-          <h4>Ваш номер телефона:</h4>
+          <h4>Номер телефона:</h4>
           {{ form_user.phone_number }}
           {{ form_user.phone_number.errors }}
         </div>
         <div class="pub_title pub_inp_one">
-          <h4>Ваш возраст:</h4>
+          <h4>Возраст:</h4>
           {{ form_user.age }}
           {{ form_user.age.errors }}
         </div>
         <div class="pub_title pub_inp_one">
-          {% if edited_user.id == user.id %}
-            <h4>Ваша роль в ИС:</h4>
-          {% else %}
-            <h4>Роль пользователя {{ edited_user.username }} в ИС:</h4>
-          {% endif %}
-          <p style="color: #000; font-size: 18px; padding: 6px; background: #dcdcdc; border-radius: 5px; width: 20%; text-align: center;">{{ edited_user.role.name }}</p>
-          {% if edited_user.role.id == 1 %}
-            <a href="/become_an_author/">Стать автором публикаций</a>
-            <a href="/become_a_teammemder/">Работать в команде</a>
-          {% endif %}
-          {% if edited_user.role.id == 2 %}
-            <a href="">Обртиться в поддержку и перестать быть автором</a>
-            <a href="">Работать в команде</a>
-          {% endif %}
-          {% if edited_user.role.id == 3 %}
-            <a href="">Обртиться в поддержку и перестать быть администратором</a>
-            <a href="">Стать автором публикаций</a>
-          {% endif %}
+          <h4>Роль пользователя в ИС:</h4>
+          {{ form_user.role }}
+          {{ form_user.role.errors }}
         </div>
-        {% if edited_user_subs %}
-          <div class="pub_title pub_inp_one">
-            <h4 style="margin: 0 0 10px">Уведомления получаются от:</h4>
-            {% for s in edited_user_subs %}
-              <div class="user_one" id="{{ s.star_id.id }}">
-                <a href="{% url 'auth:account_one' pk=s.star_id.id %}" class="user_link">
-                  <img src="{{ s.star_id.photo.url }}" alt="" class="user_photo">
-                  <p class="user_nikname">{{ s.star_id.username }}</p>
-                </a>
-                <p class="cancel_following" onclick="cancel_following({{ s.star_id.id }})">Отписаться</p>
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
 
-        {% if edited_user.role.id == 2 %}
-          <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Ваш стаж, услуги и контакты:</p>
+        <div class="expert_inputs">
+          <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Cтаж, услуги и контакты пользователя:</p>
           <div class="pub_description pub_inp_one">
             <h4>Стаж:</h4>
             {{ form_user_expert.knowledge }}
             {{ form_user_expert.knowledge.errors }}
           </div>
           <div class="pub_description pub_inp_one">
-            <h4>услуги:</h4>
+            <h4>Услуги:</h4>
             {{ form_user_expert.offer }}
             {{ form_user_expert.offer.errors }}
           </div>
@@ -152,9 +123,8 @@
             <p>Необязательно заполнять, но тоже приветствуется.</p>
           </div>
 
-        {% endif %}
-
-        <input type="submit" name="create!" value="Сохранить">
+        </div>
+        <input type="submit" name="create!" value="Создать пользователя">
       </form>
     </div>
   {% endif %}
@@ -163,5 +133,5 @@
 {% endblock %}
 
 {% block scripts_individual %}
-  <script src="/static/lib/js/animation-account-edit.js"></script>
+  <script src="/static/lib/js/animation-create-account.js"></script>
 {% endblock %}

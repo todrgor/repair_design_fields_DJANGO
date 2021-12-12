@@ -6,7 +6,8 @@ function toggleRemovePubFromSaved_D(idPub) {
             if (data.result == 0) {
               $('.pub_one.design#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
               $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '255px');
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('min-height', '100px');
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '140px');
               $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
               $('.pub_one.design#'+idPub+' .p_for_removed_pubs').addClass('show');
               console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
@@ -14,7 +15,8 @@ function toggleRemovePubFromSaved_D(idPub) {
             if (data.result == 1) {
               $('.pub_one.design#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
               $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '270px');
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('min-height', '180px');
+              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '180px');
               $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
               $('.pub_one.design#'+idPub+' .p_for_removed_pubs').removeClass('show');
               console.log("Публикация восстановлена в избранное о дизайне под ID "+idPub);

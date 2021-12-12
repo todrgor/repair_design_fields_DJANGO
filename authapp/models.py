@@ -9,6 +9,7 @@ from publicationapp.models import Publication
 # 18091ikhgc : zxzxzx12 : watcher
 # Astwim : generatorseen : watcher
 # authorONE : *_au_*thor : author
+# NewUser : MOYproektTHEbest : watcher
 
 class User(AbstractUser):
     # USER_ROLE_CHOICES = (
