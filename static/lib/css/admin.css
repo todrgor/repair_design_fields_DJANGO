@@ -1,3 +1,143 @@
+.header a:hover, .functions a p:hover {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+
+
+.admin_menu_bg {
+  height: 50px;
+    width: 100%;
+    background: #e8e8e8;
+    display: flex;
+    justify-content: center;
+}
+.admin_menu {
+  width: 80%;
+    max-width: 1100px;
+    display: flex;
+    align-items: center;
+}
+.admin_menu a {
+  margin-right: 20px;
+  color: #313335;
+    opacity: 0.5;
+}
+.admin_menu a:hover {
+  opacity: 1;
+}
+
+.page_title {
+  margin: 40px auto;
+}
+
+.some_divs_in_one_line {
+  display: flex;
+  justify-content: space-between;
+}
+.withBorder {
+  border: 1px solid #d4d4e4;
+}
+.one_div_sdiol p {
+  margin: 10px 10px 10px 0;
+}
+.pub_preview {
+  width: 150px;
+  height: 200px;
+}
+.pub_title_ {
+  max-width: 250px;
+  max-height: 150px;
+  overflow: hidden;
+}
+.pub_desc {
+  max-height: 120px;
+  width: 250px;
+  overflow: hidden;
+}
+.photo_and_nickname {
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+}
+.photo_and_nickname img {
+  width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    margin-right: 10px;
+    border: 1px gray solid;
+}
+
+.one_div_sdiol.body {
+  padding: 10px;
+    background: #edf7ff;
+    width: 260px;
+}
+.one_div_sdiol.body a {
+  display: block;
+}
+.one_div_sdiol.body a:hover {
+  text-decoration: underline;
+}
+
+
+.create_new {
+  position: relative;
+    top: 20px;
+    float: right;
+}
+
+.pub_additional_functions_bg {
+  top: 0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #0000009e;
+    display: none;
+}
+.pub_additional_functions_bg.show {
+  display: inherit;
+}
+.question_block {
+  position: absolute;
+left: 30%;
+top: 30%;
+max-width: 40%;
+background: white;
+padding: 20px;
+border-radius: 30px;
+}
+.cancel_or_delete {
+  display: flex;
+}
+.cancel_or_delete p {
+  margin-right: 20px;
+}
+.cancel_or_delete p, .cancel_or_delete a {
+  background: #e6e6e6;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 48%;
+    text-align: center;
+}
+.cancel_or_delete p:hover {
+    background: #d6e6c4;
+    color: green;
+}
+.cancel_or_delete a {
+    color: gray;
+}
+.cancel_or_delete a#delete:hover {
+    color: red;
+    background: #ff9a9a;
+}
+
+/* old */
 .bold_text {
   font-weight: bold;
 }
@@ -42,7 +182,7 @@ table td {
     border: #e5e5e5;
     height: 106px;
     padding: 0 5px;
-    border-bottom: 1px solid #9d9d9d;
+    border-bottom: 1px solid #d4d4e4;
 
 }
 table tr.without_answer_yet td {
@@ -82,26 +222,27 @@ table td.functions {
 }
 table td.photo_and_nickname {
   display: flex;
-      align-items: center;
-      height: 120px;
+    align-items: flex-start;
+    height: 200px;
+    width: 300px;
 }
-table div.photo_and_nickname {
+/* table div.photo_and_nickname {
   display: flex;
     align-items: center;
     width: 50%;
     height: 70px;
     margin: 0 auto;
-}
+} */
 table div.photo_and_nickname p {
   margin-right: 10px;
 }
-table td.photo_and_nickname img,
+/* table td.photo_and_nickname img,
 table div.photo_and_nickname img {
   width: 50px;
   height: 50px;
   border-radius: 100%;
   margin-right: 10px;
-}
+} */
 table td.photo_and_nickname a,
 table div.photo_and_nickname a,
 table td.following a,
@@ -120,7 +261,7 @@ table td.following {
 table td.following ul {
   overflow: hidden;
     padding-left: 20px;
-    max-height: 110px;
+    max-height: 210px;
     overflow: auto;
 }
 table td.following li {
@@ -229,7 +370,7 @@ tr.without_answer_yet p.admin_checked_the_letter {
     /* border: 1px solid #bababa; */
 }
 .pubs_container_one_type{
-  max-height: 550px;
+  /* max-height: 550px; */
   display: none;
   margin: 0 0 40px;
   overflow-y: auto;

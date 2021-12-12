@@ -35,7 +35,7 @@
               </div>
               <div class="role_buttoms">
                   {% if user.role.id == 3 or user.role.id == 4 %}
-                    <a href="/admin/" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
+                    <a href="{% url 'admin_mine:main' %}" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
                   {% endif %}
                   {% if user.role.id == 2 or user.role.id == 4 %}
                     <a href="{% url 'pub:create_new' %}" class="create_new_pub" title="Нажмите, чтобы создать публикацию"></a>
@@ -98,7 +98,7 @@
                                 </div>
                               {% endfor %}
 
-                              {% if notes_count <= 5 %}
+                              {% if notes_count <= 4 %}
                                 <p class="title_notifications_opened" style="color: gray; margin: 30px auto 0; text-align: center; width: 70%; font-size: 17px;">
                                   Пока что это все уведомления.
                                 </p>

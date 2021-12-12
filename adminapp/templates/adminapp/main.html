@@ -1,0 +1,86 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="/static/lib\css\style_header.css">
+  <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+  <link rel="stylesheet" href="/static/lib\css\admin.css">
+{% endblock %}
+
+{% block content %}
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="">Заявки и жалобы</a>
+      <a href="{% url 'admin_mine:users' %}">Пользователи</a>
+      <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+    </div>
+  </div>
+  <div class="page_title">
+      <p class="title_p">Панель администратора</p>
+      <p class="count_pubs">главная</p>
+  </div>
+  <div class="pubs_container" style="margin-bottom: 20px;">
+    <div class="some_divs_in_one_line">
+      <div class="last_pubs one_div_sdiol">
+        <p>Последние публикации <span><a href="{% url 'admin_mine:pubs' %}">открыть ›</a></span></p>
+        <table border="1" class="pubs withBorder">
+          <tbody>
+          {% for p in pubs %}
+            <tr>
+              <td><div class="pub_preview" style="background: url({{ p.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
+              <td>
+                <p class="bold_text pub_title_">{{ p.title }}</p>
+                <p class="pub_desc">{{ p.content_first_desc }}</p>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}">Создать публикацию ›</a>{% endif %}
+      </div>
+      <div class="last_pubs one_div_sdiol">
+        <p>Пользователи <span><a href="{% url 'admin_mine:users' %}">открыть ›</a></span></p>
+        <table border="1" class="pubs withBorder">
+          {% for u in users %}
+            <tr>
+              <td>
+                <div class="photo_and_nickname">
+                  <img src="{{ u.photo.url }}" alt="">
+                  <div class="nickname_and_desc">
+                    <p class="bold_text">{{ u.username }}</p>
+                    {% if u.bio %}<p class="pub_desc">Статус: <span style="font-style: italic;">{{ u.bio }}</span></p>{% endif %}
+                    {% if u.age %}<p class="pub_desc">Возраст: {{ u.age }}</p>{% endif %}
+                    {% if u.phone_number %}<p class="pub_desc">Телефон: {{ u.phone_number }}</p>{% endif %}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+        {% if user.role.id == 4 %}<a href="">Создать нового пользвователя ›</a>{% endif %}
+      </div>
+      <div class="last_pubs one_div_sdiol">
+        <p>Таблицы БД <span><a href="">открыть ›</a></span></p>
+        <div class="one_div_sdiol body">
+          <a href="">Публикации</a>
+          <a href="">Фотографии публикаций</a>
+          <a href="">Теги публикаций</a>
+          <a href="">Значения публикаций</a>
+          <a href="">Роли публикаций</a>
+          <br>
+          <a href="">Пользователи</a>
+          <a href="">Роли пользователей</a>
+          <a href="">Уведомления пользователей</a>
+          <a href="">Сохранённое пользователей</a>
+          <a href="">Просмотренное пользователей</a>
+          <a href="">Подписки пользователей</a>
+          <a href="">Экспертная информация пользователей</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

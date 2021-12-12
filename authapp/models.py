@@ -7,6 +7,7 @@ from publicationapp.models import Publication
 # user : password : role
 # su1 : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
+# Astwim : generatorseen : watcher
 # authorONE : *_au_*thor : author
 
 class User(AbstractUser):
@@ -108,7 +109,7 @@ class SavedPubs(models.Model):
 class SeenPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
     watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
-    pub_id = models.OneToOneField('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Просмотренная публикация'

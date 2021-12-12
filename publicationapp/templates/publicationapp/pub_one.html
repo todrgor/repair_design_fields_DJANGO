@@ -216,7 +216,7 @@
   {% endif %}
 
   {% if user.is_authenticated %}
-    {% if user.id == pub.author.id %}
+    {% if user.id == pub.author.id or user.role.id == 4 %}
       <div class="functions_for_author_and_admin"> <!-- действия для автора и админа -->
         <h4>Вам как автору:</h4>
         <a onclick="open_statistics()"><p id="statistics">Статистика</p></a>
@@ -260,6 +260,7 @@
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
     <a href="{% url 'pub:pub_one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
+  </div>
   </div>
 {% endblock %}
 

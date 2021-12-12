@@ -1,0 +1,124 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\admin.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+  <div id="tags_count"></div>
+  <div id="fltr_cost_min"></div>
+  <div id="fltr_cost_max"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div>
+</div>
+
+
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="">Заявки и жалобы</a>
+      <a href="">Пользователи</a>
+      <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+    </div>
+  </div>
+  <div class="page_title">
+      <p class="title_p">Панель администратора</p>
+      <p class="count_pubs">пользователи</p>
+      {% if user.role.id == 4 %}<a href="СОЗДАТЬ НОВОГО ПОЛЬЗОВАТЕЛЯ" class="create_new">создать нового ›</a>{% endif %}
+  </div>
+   <div class="pubs_container">
+     <div class="pubs_container_one_type withBorder show" id='pubs'>
+         <table border="1" class="pubs">
+             <tr>
+              {% if user.role.id == 4 %}
+                 <th class="functions">Действия</th>
+              {% endif %}
+                 <th class="id">ID</th>
+                 <th>Кто</th>
+                 <th>Сохранено</th>
+                 <th>Просмотрено</th>
+                 <th>Подписки</th>
+                 <!-- <th>Последние уведомления</th> -->
+                 <th>Дата и время последней авторизации</th>
+                 <th>Зарегистрировался</th>
+             </tr>
+             {% for u in users %}
+             <tr>
+              {% if user.role.id == 4 %}
+                 <td class="functions"><a href="{% url 'auth:settings' pk=u.id%}"><p id="edit">Редактировать</p></a>
+                     <p onclick="really_delete_account({{ u.id }})" id="really_delete">Удалить безвозвратно</p></td>
+              {% endif %}
+                 <td class="id">{{ u.id }}</td>
+                 <td class="photo_and_nickname"><img src="{{ u.photo.url }}" alt="">
+                   <div class="info_container">
+                     <a href="{% url 'auth:account_one' pk=u.id %}" class="bold_text">{{ u.username }}</a>
+                     {% if u.bio %}<p>{{ u.bio }}</p>{% endif %}
+                     {% if u.bio %}<p>{{ u.age }} лет</p>{% endif %}
+                     {% if u.phone_number %}<p>тел.: {{ u.phone_number }}</p>{% endif %}
+                     {% if u.email %}<p>{{ u.email }}</p>{% endif %}
+                     <p style="color:gray;">{{ u.role.name }}</p>
+                   </div>
+                </td>
+
+                 <td class="following">
+                     <ul>
+                      {% for s in saved_urls %}
+                        {% if s.saver_id.id == u.id %}
+                          <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                     </ul>
+                 </td>
+                 <td class="following">
+                     <ul class="overflowX_auto">
+                       {% for s in seen_urls %}
+                         {% if s.watcher_id.id == u.id %}
+                           <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
+                         {% endif %}
+                       {% endfor %}
+                     </ul>
+                 </td>
+                 <td class="following">
+                     <ul class="overflowX_auto">
+                       {% for s in subscribed_urls %}
+                         {% if s.subscriber_id.id == u.id %}
+                           <li><a href="{% url 'auth:account_one' pk=s.star_id.id %}">{{ s.star_id.username }}</a></li>
+                         {% endif %}
+                       {% endfor %}
+                     </ul>
+                 </td>
+                 <td class="last_entry">{{ u.last_entry }}</td>
+                 <td class="last_entry">{{ u.date_joined }}</td>
+             </tr>
+             {% endfor %}
+         </table>
+     </div>
+
+  </div>
+  <div class="pub_additional_functions_bg" onclick="close_pub_additional_functions_bg()"> <!-- доп функции с публикацией -->
+    <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+      <h1 class="dont_close_on_click">Вы точно хотите удалить аккаунт?</h1>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" onclick="close_pub_additional_functions_bg()">Отмена</p>
+        <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-admin.js"></script>
+{% endblock %}

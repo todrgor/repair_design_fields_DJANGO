@@ -1,0 +1,124 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\admin.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+  <div id="tags_count"></div>
+  <div id="fltr_cost_min"></div>
+  <div id="fltr_cost_max"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div>
+</div>
+
+
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="">Заявки и жалобы</a>
+      <a href="">Пользователи</a>
+      <a href="">Публикации</a>
+    </div>
+  </div>
+  <div class="page_title">
+      <p class="title_p">Панель администратора</p>
+      <p class="count_pubs">публикации</p>
+      {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new">создать новую ›</a>{% endif %}
+  </div>
+   <div class="pubs_container">
+     <div class="pubs_container_one_type withBorder show" id='pubs'>
+         <table border="1" class="pubs">
+             <tr>
+              {% if user.role.id == 4 %}
+                 <th class="functions">Действия</th>
+              {% endif %}
+                 <th class="id">ID</th>
+                 <th>Фото и заголовок публикации</th>
+                 <th>Автор публикации</th>
+                 <th class="with200px">Роль публикации</th>
+                 <th>Просмотров</th>
+                 <th>Сохранений</th>
+                 <th class="with200px">Сохранена кем</th>
+                 <th class="with200px">Ссылки на фотографии в публикации</th>
+                 <th>Теги</th>
+             </tr>
+             {% for p in pubs %}
+             <tr>
+              {% if user.role.id == 4 %}
+                 <td class="functions"><a href="{% url 'pub:pub_edit' pk=p.id%}"><p id="edit">Редактировать</p></a>
+                     <p onclick="really_delete_pub({{ p.id }})" id="really_delete">Удалить безвозвратно</p></td>
+              {% endif %}
+                 <td class="id">{{ p.id }}</td>
+                 <td class="width350px">
+                     <div class="preview_and_pub_name">
+                         <img class="preview" src="{{ p.preview.url }}">
+                         <a href="{% url 'pub:pub_one' pk=p.id %}">{{ p.title }}</a>
+                     </div>
+                 </td>
+
+                 <td class="photo_and_nickname"><img src="{{ p.author.photo.url }}" alt=""><a
+                         href="{% url 'auth:account_one' pk=p.author.id %}">{{ p.author.username }}</a></td>
+                <td class="with200px">{{ p.role.name }}</td>
+                <td>{{ p.seen_count }}</td>
+                 <td>{{ p.saved_count }}</td>
+                 <td class="following">
+                     <ul>
+                      {% for su in saved_urls %}
+                        {% if su.pub_id.id == p.id %}
+                          <li><a href="{% url 'auth:account_one' pk=su.saver_id.id %}">{{ su.saver_id.username }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                     </ul>
+                 </td>
+                 <td class="following">
+                     <ul class="overflowX_auto">
+                       {% for pu in photos_urls %}
+                         {% if pu.id_pub.id == p.id %}
+                           <li><a href="{{ pu.photo.url }}">{{ pu.photo.name }}</a></li>
+                         {% endif %}
+                       {% endfor %}
+                     </ul>
+                 </td>
+                 <td class="following">
+                     <ul>
+                       {% for pht in pub_has_tags %}
+                         {% if pht.pub_id.id == p.id %}
+                           <li>{{ pht.tag_id.tag_category }}: {{ pht.tag_id.tag_name }}</li>
+                         {% endif %}
+                       {% endfor %}
+                     </ul>
+                 </td>
+             </tr>
+             {% endfor %}
+         </table>
+     </div>
+
+  </div>
+  <div class="pub_additional_functions_bg" onclick="close_pub_additional_functions_bg()"> <!-- доп функции с публикацией -->
+    <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+      <h1 class="dont_close_on_click">Вы точно хотите удалить публикацию?</h1>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Публикацию нельзя будет восстаноить.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" onclick="close_pub_additional_functions_bg()">Отмена</p>
+        <a href="pub/delete/#>" id="delete">Удалить публикацию</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-admin.js"></script>
+{% endblock %}

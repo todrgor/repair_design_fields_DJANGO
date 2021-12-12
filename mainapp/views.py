@@ -3,16 +3,20 @@ from authapp.models import *
 from publicationapp.models import *
 
 def main(request):
-	old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
-	new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
+	if request.user.is_authenticated:
+		old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')
+		new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
+		notes_count = old_noties.count() + new_noties.count()
+		new_notes_count = new_noties.count()
+	else:
+		old_noties = new_noties = notes_count = new_notes_count = None
 
 	content = {
 		'old_noties': old_noties,
 		'new_noties': new_noties,
-		'notes_count': old_noties.count() + new_noties.count(),
-		'new_notes_count': new_noties.count(),
+		'notes_count': notes_count,
+		'new_notes_count': new_notes_count,
 	}
-
 	return render(request, 'mainapp/index.html', content)
 
 

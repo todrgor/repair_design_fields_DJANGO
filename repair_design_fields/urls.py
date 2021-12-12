@@ -24,7 +24,7 @@ urlpatterns = [
     path('pub/', include('publicationapp.urls', namespace='pub')),
 	# path('support/', include('supportapp.urls', namespace='support')),
 	path('account/', include('authapp.urls', namespace='auth')),
-    # path('admin/', include('adminapp.urls', namespace='admin')),
+    path('admin/', include('adminapp.urls', namespace='admin_mine')),
 	# path('adminRDF/', mainapp.adminRDF, name='adminRDF'),
 
 	path('adminDJANGO/', admin.site.urls),
