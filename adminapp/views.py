@@ -3,7 +3,7 @@ from authapp.models import *
 from publicationapp.models import *
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 
 
 
@@ -24,6 +24,12 @@ class StartPanel(ListView):
     model =  Publication
     template_name = 'adminapp/main.html'
 
+    def get(self, *args, **kwargs):
+        if not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            # return HttpResponseRedirect('/')
+
     def get_context_data(self, **kwargs):
         title ='Главная | Панель администратора'
         pubs = Publication.objects.filter(role__id__in=[11, 21, 31]).order_by('-pushed')[:3]
@@ -32,11 +38,6 @@ class StartPanel(ListView):
         # applications =
         # complaints =
 
-        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')[:20]
-        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
-        notes_count = old_noties.count() + new_noties.count()
-        new_notes_count = new_noties.count()
-
         data = {
             'title': title,
             'pubs': pubs,
@@ -44,11 +45,6 @@ class StartPanel(ListView):
             'users': users,
     		# 'applications': applications,
     		# 'complaints': complaints,
-
-            'old_noties': old_noties,
-            'new_noties': new_noties,
-            'notes_count': notes_count,
-    		'new_notes_count': new_notes_count,
         }
         return data
 
@@ -58,6 +54,12 @@ class PubList(ListView):
     model =  Publication
     template_name = 'adminapp/publications.html'
 
+    def get(self, *args, **kwargs):
+        if not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            # return HttpResponseRedirect('/')
+
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Публикации | Панель администратора'
         pubs = Publication.objects.filter(role__id__in=[11, 21, 31])
@@ -65,22 +67,12 @@ class PubList(ListView):
         pub_has_tags = PubHasTags.objects.filter(pub_id__in = pubs)
         photos_urls = PubPhotos.objects.filter(id_pub__in = pubs)
 
-        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')[:20]
-        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
-        notes_count = old_noties.count() + new_noties.count()
-        new_notes_count = new_noties.count()
-
         data = {
             'title': title,
             'pubs': pubs,
             'saved_urls': saved_urls,
             'pub_has_tags': pub_has_tags,
             'photos_urls': photos_urls,
-
-            'old_noties': old_noties,
-            'new_noties': new_noties,
-            'notes_count': notes_count,
-    		'new_notes_count': new_notes_count,
         }
         return data
 
@@ -88,6 +80,12 @@ class PubList(ListView):
 class UserList(ListView):
     model =  User
     template_name = 'adminapp/users.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            # return HttpResponseRedirect('/')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Пользователи | Панель администратора'
@@ -97,11 +95,6 @@ class UserList(ListView):
         subscribed_urls = UserSubscribes.objects.filter()
         noties = Notifications.objects.filter()
 
-        old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')[:20]
-        new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
-        notes_count = old_noties.count() + new_noties.count()
-        new_notes_count = new_noties.count()
-
         data = {
             'title': title,
             'users': users,
@@ -109,10 +102,5 @@ class UserList(ListView):
             'seen_urls': seen_urls,
             'subscribed_urls': subscribed_urls,
             'noties': noties,
-
-            'old_noties': old_noties,
-            'new_noties': new_noties,
-            'notes_count': notes_count,
-    		'new_notes_count': new_notes_count,
         }
         return data

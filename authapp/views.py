@@ -99,7 +99,7 @@ class UserRegisterView(TemplateView):
 
         content = {
             'title': 'Регистрация',
-            'form': form
+            'form': form,
         }
         return render(request, self.template_name, content)
 
@@ -121,12 +121,9 @@ class AccountOneWatch(ListView):
             saved_pubs = [sp.pub_id.id for sp in saved_urls]
             subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
             subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
-            old_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=False).order_by('-when')[:20]
-            new_noties = Notifications.objects.filter(user_receiver=self.request.user, is_new=True).order_by('-when')
-            notes_count = old_noties.count() + new_noties.count()
-            new_notes_count = new_noties.count()
+
         else:
-            saved_pubs = subscribing_authors = old_noties = new_noties = notes_count = new_notes_count = None
+            saved_pubs = subscribing_authors  = None
 
         if user_role == 2 or user_role == 4:
             try:
@@ -152,17 +149,13 @@ class AccountOneWatch(ListView):
             'pub_has_tags': pub_has_tags,
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
-            'old_noties': old_noties,
-            'new_noties': new_noties,
-            'notes_count': notes_count,
-            'new_notes_count': new_notes_count,
         })
         return context
 
 
 def UpdateAccount(request, pk):
     if request.user.is_authenticated:
-        if request.user.role.id == 2 or request.user.role.id == 4 or request.user.id == int(pk):
+        if request.user.role.id == 4 or request.user.id == int(pk):
             edited_user = User.objects.get(id=pk)
             form_user = UserForm({'username': edited_user.username, 'photo': edited_user.photo.url, 'role': edited_user.role, 'bio': edited_user.bio, 'age': edited_user.age, 'phone_number': edited_user.phone_number, })
             if edited_user.role.id == 2:
@@ -209,10 +202,6 @@ def UpdateAccount(request, pk):
 
                 return redirect('auth:account_one', pk=edited_user.id)
 
-            old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')[:20]
-            new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
-            notes_count = old_noties.count() + new_noties.count()
-            new_notes_count = new_noties.count()
             if request.user.id == int(pk):
                 title = 'Настройки пользователя'
             else:
@@ -222,10 +211,6 @@ def UpdateAccount(request, pk):
                 'form_user_expert': form_user_expert,
                 'edited_user': edited_user,
                 'edited_user_subs': edited_user_subs,
-                'old_noties': old_noties,
-                'new_noties': new_noties,
-                'notes_count': notes_count,
-                'new_notes_count': new_notes_count,
             }
             return render(request, 'authapp/update_account.html', context)
         else:
@@ -267,10 +252,6 @@ def CreateAccount(request):
 
                 return redirect('auth:account_one', pk=edited_user.id)
 
-            old_noties = Notifications.objects.filter(user_receiver=request.user, is_new=False).order_by('-when')[:20]
-            new_noties = Notifications.objects.filter(user_receiver=request.user, is_new=True).order_by('-when')
-            notes_count = old_noties.count() + new_noties.count()
-            new_notes_count = new_noties.count()
             title = 'Создать нового пользователя'
 
             context = {
@@ -278,11 +259,6 @@ def CreateAccount(request):
                 'form_user': form_user,
                 'form_user_expert': form_user_expert,
                 'edited_user': edited_user,
-
-                'old_noties': old_noties,
-                'new_noties': new_noties,
-                'notes_count': notes_count,
-                'new_notes_count': new_notes_count,
             }
             return render(request, 'authapp/create_new_account.html', context)
         else:

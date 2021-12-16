@@ -62,9 +62,9 @@
                       <button class="notifications_btn">
                           <div class="notifications_mini">
                               <div class="noti_logo"></div>
-                              {% if new_notes_count %}
-                                {% if new_notes_count <= 99 %}
-                                  <p class="notifications_mini_p">{{ new_notes_count }}</p>
+                              {% if user.new_noties_count %}
+                                {% if user.new_noties_count <= 99 %}
+                                  <p class="notifications_mini_p">{{ user.new_noties_count }}</p>
                                 {% else %}
                                   <p class="notifications_mini_p">99+</p>
                                 {% endif %}
@@ -74,12 +74,12 @@
                           </div>
                       </button>
                       <div class="notifications_opened">
-                        {% if old_noties or new_noties %}
+                        {% if user.noties_count > 0 %}
                           <div class="last_noti">
                             <p class="title_notifications_opened">Уведомления:</p>
 
-                            {% if new_noties %}
-                              {% for nn in new_noties %}
+                            {% if user.noties_new %}
+                              {% for nn in user.noties_new %}
                                 <div class="notification_one noti_new">
                                     <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
                                     <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
@@ -88,17 +88,17 @@
                               {% endfor %}
                             {% endif %}
 
-                            {% if old_noties %}
+                            {% if user.noties_old %}
                               <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
-                              {% for nn in old_noties %}
-                                <div class="notification_one">
+                              {% for nn in user.noties_old %}
+                                <div class="notification_one noti_old">
                                     <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
                                     <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
                                     <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
                                 </div>
                               {% endfor %}
 
-                              {% if notes_count <= 4 %}
+                              {% if user.noties_count <= 4 %}
                                 <p class="title_notifications_opened" style="color: gray; margin: 30px auto 0; text-align: center; width: 70%; font-size: 17px;">
                                   Пока что это все уведомления.
                                 </p>

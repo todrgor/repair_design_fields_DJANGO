@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
 from publicationapp.models import Publication
+from django.core.validators import MaxValueValidator, MinValueValidator
 # from repair_design_fields import settings
 
 # user : password : role
@@ -10,6 +11,7 @@ from publicationapp.models import Publication
 # Astwim : generatorseen : watcher
 # authorONE : *_au_*thor : author
 # NewUser : MOYproektTHEbest : watcher
+# ksyu : 1212ks12 : Watcher
 
 class User(AbstractUser):
     # USER_ROLE_CHOICES = (
@@ -27,19 +29,44 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
-    age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True)
-    phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
+    age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(140)])
+    phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона", validators=[MinValueValidator(1), MaxValueValidator(99999999999)])
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
-    def new_last_entry(self):
-        self.save()
+    # def new_last_entry(self):
+    #     self.save()
+
+    @property
+    def noties_new(self):
+        # user = User.objects.get(id=self.pk)
+        noties_new = Notifications.objects.filter(user_receiver=self.pk, is_new=True).order_by('-when')
+        return noties_new
+
+    @property
+    def noties_old(self):
+        # user = User.objects.get(id=self.pk)
+        noties_old = Notifications.objects.filter(user_receiver=self.pk, is_new=False).order_by('-when')[:20]
+        return noties_old
+
+    @property
+    def noties_count(self):
+        user = User.objects.get(id=self.pk)
+        noties_count = user.noties_new.count() + user.noties_old.count()
+        return noties_count
+
+    @property
+    def new_noties_count(self):
+        user = User.objects.get(id=self.pk)
+        new_noties_count = user.noties_new.count()
+        return new_noties_count
 
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)
+
 
 class UserRoles(models.Model):
     # USER_ROLE_CHOICES = (
@@ -57,6 +84,7 @@ class UserRoles(models.Model):
     def __str__(self):
         return self.name
 
+
 class UserSubscribes(models.Model):
     subscriber_id = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
     star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
@@ -67,6 +95,7 @@ class UserSubscribes(models.Model):
 
     def __str__(self):
         return 'Subscriber ' + str(self.subscriber_id) + ' follows ' + str(self.star_id)
+
 
 class ExpertInfo(models.Model):
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
@@ -95,6 +124,7 @@ class ExpertInfo(models.Model):
     def __str__(self):
         return 'Expert ' + str(self.expert_id) + ', offer: ' + str(self.offer)
 
+
 class SavedPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
     saver_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
@@ -107,10 +137,12 @@ class SavedPubs(models.Model):
     def __str__(self):
         return 'saver ' + str(self.saver_id) + ' saved pub ' + str(self.pub_id)
 
+
 class SeenPubs(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
     watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
     pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
 
     class Meta:
         verbose_name = 'Просмотренная публикация'
@@ -118,6 +150,7 @@ class SeenPubs(models.Model):
 
     def __str__(self):
         return 'pub ' + str(self.pub_id) + ' seen by ' + str(self.watcher_id)
+
 
 class Notifications(models.Model):
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания уведомления')
@@ -131,3 +164,31 @@ class Notifications(models.Model):
 
     def __str__(self):
         return 'user_receiver: ' + str(self.user_receiver) + ', noti_for_user: ' + str(self.noti_for_user) + ', when: ' + str(self.when)
+
+
+class ContactingSupport(models.Model):
+    asked_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_question", verbose_name='Кто обратился в поддержку')
+    ask_content = models.ForeignKey('publicationapp.Publication', related_name="question_content", on_delete=models.CASCADE, verbose_name='Содержание обращения', default=0)
+    answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого')
+    answer_content = models.ForeignKey('publicationapp.Publication', related_name="answer_content", on_delete=models.CASCADE, verbose_name='Содержание ответа', default=0)
+    when_asked = models.DateTimeField(verbose_name='Дата и время обращения в поддержку')
+    when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение')
+    role = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
+
+    class Meta:
+        verbose_name = 'Обращение в поддержку'
+        verbose_name_plural = 'Обращения в поддержку'
+
+    def __str__(self):
+        return self.ask_content
+
+class ContactingSupportTypes(models.Model):
+    id = models.PositiveIntegerField(primary_key=True, verbose_name='id вида обращения')
+    name = models.CharField(max_length=255, verbose_name='Значение вида обращения')
+
+    class Meta:
+        verbose_name = 'Вид обращения в поддержку'
+        verbose_name_plural = 'Виды обращений в поддержку'
+
+    def __str__(self):
+        return self.name

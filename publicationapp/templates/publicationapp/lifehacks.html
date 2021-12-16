@@ -90,10 +90,10 @@
             {% for t in pub_has_tags %}
               {% if t.pub_id == p %}
                 <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
-                  <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ t.tag_id.id }}" > </span><span>{{ t.tag_id.tag_name }}</span> </label>
+                  <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ t.tag_id.id }}" > </span><span>{{ t.tag_id.tag_category }}: {{ t.tag_id.tag_name }}</span> </label>
                   <div class="pub_tag">
                     <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                      type="submit" name="to_filter" value="{{ t.tag_id.tag_name }}">
+                      type="submit" name="to_filter" value="{{ t.tag_id.tag_category }}: {{ t.tag_id.tag_name }}">
                     <img src="/static/sources/SVG/search.svg" alt="">
                   </div>
                 </form>
