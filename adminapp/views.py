@@ -12,6 +12,10 @@ def NewComplaint(request):
     if request.user.is_authenticated:
         if request.is_ajax():
             complaint = request.POST
+            print(complaint['complaint_id'])
+            print(complaint['complaint_type'])
+            print(isinstance(int(complaint['complaint_type']), int))
+            print(complaint['complaint_text'])
             pub_complaint = Publication.objects.get(id=complaint['complaint_id'])
             Publication.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), role=PubRoles.objects.get(id=41), preview=(pub_complaint.preview.name), content_first_desc=complaint['complaint_text'], content_last_desc=complaint['complaint_type'], author=request.user)
 
@@ -25,10 +29,15 @@ class StartPanel(ListView):
     template_name = 'adminapp/main.html'
 
     def get(self, *args, **kwargs):
-        if not self.request.user.role.id in [3, 4]:
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
             # return HttpResponseRedirect('/')
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
 
     def get_context_data(self, **kwargs):
         title ='Главная | Панель администратора'
@@ -49,16 +58,20 @@ class StartPanel(ListView):
         return data
 
 
-
 class PubList(ListView):
     model =  Publication
     template_name = 'adminapp/publications.html'
 
     def get(self, *args, **kwargs):
-        if not self.request.user.role.id in [3, 4]:
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
             # return HttpResponseRedirect('/')
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
 
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Публикации | Панель администратора'
@@ -82,10 +95,15 @@ class UserList(ListView):
     template_name = 'adminapp/users.html'
 
     def get(self, *args, **kwargs):
-        if not self.request.user.role.id in [3, 4]:
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
             # return HttpResponseRedirect('/')
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
 
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Пользователи | Панель администратора'

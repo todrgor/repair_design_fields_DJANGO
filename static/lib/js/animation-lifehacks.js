@@ -76,13 +76,17 @@ function shareThePub() {
 }
 
 function new_complaint_was_sent() {
-  if ($('.new_complaint textarea').val() != '' ) {
+  if (!$('.new_complaint textarea').val().match(/^\s*$/)) {
+    $('.pub_one.lifehack#'+$opened_pub_additional_functions_id+' .pub_show_full').removeClass('pub_additional_functions_opened');
+    $('.pub_additional_functions_bg').removeClass('show');
+    $('.new_complaint').removeClass('show');
+
     $.ajax({
           type: "POST",
           url: "/admin/new_complaint/",
           data: {
             complaint_id : $opened_pub_additional_functions_id,
-            complaint_type : 'pub',
+            complaint_type : 11,
             complaint_text : $('.new_complaint textarea').val(),
           },
 
@@ -90,16 +94,13 @@ function new_complaint_was_sent() {
             alert('Жалоба принята, ждите решения модерации. Ответ Вы получите в уведомлении.');
           },
           error: function (data) {
-            alert("ошибка какая-то с жалобой");
+            alert("Какая-то ошибка с жалобой...");
           }
       });
 
-      $('.pub_one.lifehack#'+$is_opened_pub_additional_functions+' .pub_show_full').removeClass('pub_additional_functions_opened');
-      $('.pub_additional_functions_bg').removeClass('show');
+      $('.new_complaint textarea').val('');
       $is_opened_pub_additional_functions = 0;
       $opened_pub_additional_functions_id = 0;
-      $('.new_complaint').removeClass('show');
-      $('.new_complaint textarea').val('');
   } else {
     alert('Жалоба не отправлена, для начала напишите её!');
   }

@@ -60,16 +60,6 @@ class PubPhotos(models.Model):
         return str(self.photo) +' for '+ str(self.id_pub)
 
 class PubRoles(models.Model):
-    # PUB_ROLE_CHOICES = (
-    #     ('11', 'RepairPub'),
-    #     ('12', 'RepairLifehack'),
-    #     ('13', 'RepairBaseBook'),
-    #     ('21', 'DesignPub'),
-    #     ('22', 'DesignLifehack'),
-    #     ('31', 'ReportPub'),
-    #     ('32', 'ReportAccount'),
-    #     ('41', 'Notification'),
-    # )    choices=PUB_ROLE_CHOICES,
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id роли')
     name = models.CharField(max_length=135, verbose_name='Значение роли')
 

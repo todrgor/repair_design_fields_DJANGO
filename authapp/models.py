@@ -6,7 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # from repair_design_fields import settings
 
 # user : password : role
-# su1 : admin + superuser
+# su1 : : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
 # Astwim : generatorseen : watcher
 # authorONE : *_au_*thor : author
@@ -14,18 +14,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # ksyu : 1212ks12 : Watcher
 
 class User(AbstractUser):
-    # USER_ROLE_CHOICES = (
-    #     (0, 'SomethingGoesWrong'),
-    #     (11, 'RepairPub'),
-    #     (12', 'RepairLifehack'),
-    #     (13, 'RepairBaseBook'),
-    #     (21', 'DesignPub'),
-    #     (22, 'DesignLifehack'),
-    #     (31, 'ReportPub'),
-    #     (32, 'ReportAccount'),
-    #     (41, 'Notification'),
-    # )
-
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
@@ -48,7 +36,6 @@ class User(AbstractUser):
 
     @property
     def noties_old(self):
-        # user = User.objects.get(id=self.pk)
         noties_old = Notifications.objects.filter(user_receiver=self.pk, is_new=False).order_by('-when')[:20]
         return noties_old
 
@@ -69,11 +56,6 @@ class User(AbstractUser):
 
 
 class UserRoles(models.Model):
-    # USER_ROLE_CHOICES = (
-    #     (1, 'Watcher'),
-    #     (2, 'Author'),
-    #     (3, 'Admin'),
-    # )choices=USER_ROLE_CHOICES
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id роли')
     name = models.CharField(max_length=255, verbose_name='Значение роли')
 
