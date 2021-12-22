@@ -250,17 +250,18 @@
       <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
     </div>
   </div>
-  <div class="new_complaint"> <!-- написать жалобу -->
-    <h1>Жалоба на публикацию</h1>
-    <form>
+    <div class="new_complaint"> <!-- написать жалобу -->
+      <h1>Жалоба на публикацию</h1>
       <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
-      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent">
-    </form>
-  </div>
-  <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-    <h1>Ссылка на публикацию: </h1>
-    <a href="{% url 'pub:pub_one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
-  </div>
+      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
+      <!-- <form>
+      </form> -->
+    </div>
+
+    <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
+      <h1>Ссылка на публикацию: </h1>
+      <a href="{% url 'pub:pub_one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
+    </div>
   </div>
 {% endblock %}
 

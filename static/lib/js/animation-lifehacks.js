@@ -77,7 +77,7 @@ function shareThePub() {
 
 function new_complaint_was_sent() {
   if (!$('.new_complaint textarea').val().match(/^\s*$/)) {
-    $('.pub_one.lifehack#'+$opened_pub_additional_functions_id+' .pub_show_full').removeClass('pub_additional_functions_opened');
+    $('.pub_show_full').removeClass('pub_additional_functions_opened');
     $('.pub_additional_functions_bg').removeClass('show');
     $('.new_complaint').removeClass('show');
 
@@ -92,13 +92,13 @@ function new_complaint_was_sent() {
 
           success: function (data) {
             alert('Жалоба принята, ждите решения модерации. Ответ Вы получите в уведомлении.');
+            $('.new_complaint textarea').val('');
           },
           error: function (data) {
             alert("Какая-то ошибка с жалобой...");
           }
       });
 
-      $('.new_complaint textarea').val('');
       $is_opened_pub_additional_functions = 0;
       $opened_pub_additional_functions_id = 0;
   } else {

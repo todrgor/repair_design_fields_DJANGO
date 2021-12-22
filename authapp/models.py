@@ -20,6 +20,7 @@ class User(AbstractUser):
     age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(140)])
     phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона", validators=[MinValueValidator(1), MaxValueValidator(99999999999)])
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
+    reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на пользователя было жалоб')
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -149,12 +150,15 @@ class Notifications(models.Model):
 
 
 class ContactingSupport(models.Model):
+    title = models.CharField(max_length=99, verbose_name='Заголовок события', default='000')
     asked_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_question", verbose_name='Кто обратился в поддержку')
-    ask_content = models.ForeignKey('publicationapp.Publication', related_name="question_content", on_delete=models.CASCADE, verbose_name='Содержание обращения', default=0)
-    answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого')
-    answer_content = models.ForeignKey('publicationapp.Publication', related_name="answer_content", on_delete=models.CASCADE, verbose_name='Содержание ответа', default=0)
+    ask_content = models.CharField(max_length=1555, verbose_name='Содержание обращения')
+    ask_additional_info = models.CharField(max_length=99, verbose_name='Дополнительная информация к обращению', blank=True, null=True)
     when_asked = models.DateTimeField(verbose_name='Дата и время обращения в поддержку')
-    when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение')
+    answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого', blank=True, null=True)
+    answer_content = models.CharField(max_length=1555, verbose_name='Содержание ответа', blank=True, null=True)
+    comment_from_answered = models.CharField(max_length=1555, verbose_name='Комментарий к ответу', blank=True, null=True)
+    when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение', blank=True, null=True)
     role = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
 
     class Meta:
@@ -162,7 +166,7 @@ class ContactingSupport(models.Model):
         verbose_name_plural = 'Обращения в поддержку'
 
     def __str__(self):
-        return self.ask_content
+        return self.title
 
 class ContactingSupportTypes(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id вида обращения')

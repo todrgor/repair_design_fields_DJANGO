@@ -113,13 +113,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'Asia/Irkutsk'
 
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
+TIME_ZONE = 'Asia/Irkutsk'
 
 
 # Static files (CSS, JavaScript, Images)
