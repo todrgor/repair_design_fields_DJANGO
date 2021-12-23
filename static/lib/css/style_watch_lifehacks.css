@@ -320,7 +320,7 @@
     border-radius: 15px;
     border-bottom-right-radius: 0;
 }
-.new_complaint input {
+.new_complaint input[type="submit"] {
   width: 85%;
     border: none;
     border-radius: 10px;
@@ -332,8 +332,13 @@
     transition: 0.3s ease;
     cursor: pointer;
 }
+.new_complaint input[type="file"] {
+  margin: 0 auto 20px;
+  padding: 11px;
+}
 .new_complaint input::placeholder {}
-.new_complaint input:hover {
+
+.new_complaint input[type="submit"]:hover {
   background: #191919;
 }
 
@@ -446,43 +451,4 @@
 .statistics.show,
 .delete_the_pub.show {
   display: block;
-}
-.new_complaint form {
-  display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-.new_complaint textarea {
-  font-family: 'Roboto';
-    font-size: 15px;
-  width: 80%;
-    margin: 15px auto;
-    padding: 10px;
-    border: 2px solid gray;
-    border-radius: 15px;
-    border-bottom-right-radius: 0;
-}
-.new_complaint input {
-  width: 85%;
-    border: none;
-    border-radius: 10px;
-    background: #383838;
-    color: #fff;
-    font-size: 18px;
-    margin: 0 auto;
-    padding: 8px;
-    transition: 0.3s ease;
-    cursor: pointer;
-}
-.new_complaint input::placeholder {}
-.new_complaint input:hover {
-  background: #191919;
-}
-
-.share_the_pub p {
-  margin: 20px 0;
-    font-family: 'Roboto';
-    font-size: 22px;
-    color: #3f51b5;
-    text-decoration: underline 2px;
 }

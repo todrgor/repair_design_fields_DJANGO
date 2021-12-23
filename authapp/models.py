@@ -169,6 +169,19 @@ class ContactingSupport(models.Model):
     def __str__(self):
         return self.title
 
+
+class ContactingSupportPhotos(models.Model):
+    contacting_support_action = models.ForeignKey('ContactingSupport', verbose_name='id обращения', on_delete=models.CASCADE)
+    photo = models.ImageField(max_length=200, upload_to='contacting_support_media', verbose_name='Фотография обращения')
+
+    class Meta:
+        verbose_name = 'Фотография к обращению в поддержку'
+        verbose_name_plural = 'Фотографии к обращению в поддержку'
+
+    def __str__(self):
+        return 'обращение в поддержку: '+ str(self.contacting_support_action) + ', к нему фото: '+ str(self.photo)
+
+
 class ContactingSupportTypes(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id вида обращения')
     name = models.CharField(max_length=255, verbose_name='Значение вида обращения')

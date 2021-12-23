@@ -1,11 +1,14 @@
+from publicationapp.models import *
+from authapp.models import *
+
 from django.shortcuts import render
 from authapp.models import *
-from publicationapp.models import *
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 # from datetime import datetime
+from django.core.files.storage import FileSystemStorage
 
 
 @csrf_exempt
@@ -13,6 +16,9 @@ def NewComplaint(request):
     if request.user.is_authenticated:
         if request.is_ajax():
             complaint = request.POST
+            contacting_support = None
+            # print(str(request.POST))
+            # print(str(request.FILES))
 
             # если обращение -- жалоба на публикацию
             if int(complaint['complaint_type']) == 11:
@@ -24,25 +30,34 @@ def NewComplaint(request):
                 pub_complaint = Publication.objects.get(id=complaint['complaint_id'])
                 pub_complaint.reported_count +=1
                 pub_complaint.save()
-                ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), role=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
+                contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), role=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
                 noti=Publication.objects.create(title=('Ваша жалоба на публикацию «'+ pub_complaint.title +'» принята!'), role=PubRoles.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title=('На Вашу публикацию «'+ pub_complaint.title +'» поступила 1 новая жалоба.'), role=PubRoles.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=pub_complaint.author, noti_for_user=noti)
-                return JsonResponse({'result': True})
 
-            # если обращение -- жалоба на публикацию
+            # если обращение -- жалоба на пользователя
             if int(complaint['complaint_type']) == 12:
                 user_complaint = User.objects.get(id=complaint['complaint_id'])
                 user_complaint.reported_count +=1
                 user_complaint.save()
-                ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), role=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
+                contacting_support = ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), role=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
                 noti=Publication.objects.create(title=('Ваша жалоба на пользователя «'+ user_complaint.username +'» принята!'), role=PubRoles.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title=('На Ваш профиль поступила 1 новая жалоба.'), role=PubRoles.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=user_complaint, noti_for_user=noti)
+
+            # если обращение поступило вместе с фотками
+            if request.FILES and int(complaint['complaint_type']) in [11, 12]:
+                fs = FileSystemStorage()
+                for one_photo in request.FILES:
+                    # print(photo)
+                    fs.save(('contacting_support_media/' + one_photo), request.FILES[one_photo])
+                    ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + one_photo))
+
+            if int(complaint['complaint_type']) in [11, 12]:
                 return JsonResponse({'result': True})
 
 
