@@ -115,6 +115,11 @@ class AccountOneWatch(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AccountOneWatch, self).get_context_data(**kwargs)
+
+        opened_user = User.objects.get(id=self.kwargs['pk'])
+        opened_user.seen_count +=1
+        opened_user.save()
+
         user_role = User.objects.get(id=self.kwargs['pk']).role.id
         if self.request.user.is_authenticated:
             saved_urls = SavedPubs.objects.filter(saver_id=self.request.user)

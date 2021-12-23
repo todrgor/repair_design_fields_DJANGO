@@ -21,6 +21,7 @@ class User(AbstractUser):
     phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона", validators=[MinValueValidator(1), MaxValueValidator(99999999999)])
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
     reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на пользователя было жалоб')
+    seen_count = models.IntegerField(default=0, verbose_name='Сколько раз пользователя просматривали')
 
     class Meta:
         verbose_name = 'Пользователь'
