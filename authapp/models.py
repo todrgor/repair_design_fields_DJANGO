@@ -14,6 +14,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # ksyu : 1212ks12 : Watcher
 
 class User(AbstractUser):
+    # last_entry работает странно и ненадёжно
+
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
@@ -70,6 +72,8 @@ class UserRoles(models.Model):
 
 
 class UserSubscribes(models.Model):
+    # переделать нейминг и ввести правки в весь проект
+
     subscriber_id = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
     star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
 
@@ -82,6 +86,8 @@ class UserSubscribes(models.Model):
 
 
 class ExpertInfo(models.Model):
+    # переделать нейминг и ввести правки в весь проект
+
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
     count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
     knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж')
@@ -110,6 +116,8 @@ class ExpertInfo(models.Model):
 
 
 class SavedPubs(models.Model):
+    # переделать нейминг и ввести правки в весь проект
+
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
     saver_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
     pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
@@ -123,6 +131,8 @@ class SavedPubs(models.Model):
 
 
 class SeenPubs(models.Model):
+    # переделать нейминг и ввести правки в весь проект
+    
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
     watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
     pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)

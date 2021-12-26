@@ -43,24 +43,13 @@
           <form class="opened_filter_form" action="filter" method="get">
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
-              <p class="opened_filter_second_title">899 подобрано</p>
+              <p class="opened_filter_second_title">{{ pubs.count }} подобрано</p>
             </div>
             <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
               <div class="filters_on"> <!-- если есть 1+ фильтров -->
                 <div class="filter_one" id="fltr_cost">
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
-                </div>
-                <div class="filter_one" id="fltr_color">
-                   <!-- фильтер цвет -->
-                   <p>
-                     <span class="checked_colors_container">
-                       <span class="checked_colors_div checked_color_1" id="zero_none"></span>
-                       <span class="checked_colors_div checked_color_2"></span>
-                       <span class="checked_colors_div checked_color_3"></span>
-                     </span>
-                   </p>
-                   <div class="to_close_filter fltr_color"></div>
                 </div>
                 <div class="filter_one" id="fltr_sphere">
                    <p id="fltr_sphere_p">Фильтер выбранные сферы ремонта</p>

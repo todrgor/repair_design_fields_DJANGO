@@ -49,6 +49,8 @@ class Publication(models.Model):
         return str(self.title) + ', ' + str(self.role)
 
 class PubPhotos(models.Model):
+    # нейминг: правильнее будет просто pub + переименовать во всём проекте
+
     id_pub = models.ForeignKey('Publication', verbose_name='id публикации', on_delete=models.CASCADE)
     photo = models.ImageField(max_length=200, upload_to='pub_media', verbose_name='Фотографии публикации')
 
@@ -72,6 +74,8 @@ class PubRoles(models.Model):
 
 # вероятно, класс PubHasTags можно было и вовсе не делать, обойдясь tag_id = ManyToManyField('Publication')
 class PubHasTags(models.Model):
+    # нейминг: правильнее будет просто pub и просто tag + переименовать во всём проекте
+
     pub_id = models.ForeignKey('Publication', related_name='pub_id', on_delete=models.CASCADE, verbose_name='id публикации')
     tag_id = models.ForeignKey('TagName', on_delete=models.CASCADE, verbose_name='id тега')
 
@@ -83,6 +87,12 @@ class PubHasTags(models.Model):
         return str(self.pub_id) + ' has tag ' + str(self.tag_id)
 
 class TagName(models.Model):
+    # теги переделать:
+    # категории можно -- отдельная таблица
+    # в новой таблице только категорий добавить строку что-то типа verbose_name и verbose_name_plural -- это для красоты текста в фильтре
+    # роль публикции -- привязать к таблице ролей публикаций, не тупо запись с числом
+    # правильно будет -- не TagName, a TagValue, поэтому  везде не забудь переименовать имя используемой таблицы
+
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id тега')
     pub_role = models.PositiveIntegerField(verbose_name='роль публикации')
     tag_category = models.CharField(max_length=255, verbose_name='категория')

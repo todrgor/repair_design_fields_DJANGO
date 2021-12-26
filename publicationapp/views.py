@@ -266,6 +266,29 @@ class RepairsWatch(ListView):
     def get_queryset(self):
         return Publication.objects.filter(role=11)
 
+    def get_context_data(self, **kwargs):
+        context = super(RepairsWatch, self).get_context_data(**kwargs)
+
+        all_tags_for_this_pubs = TagName.objects.filter(pub_role=11)
+        tag_categories = []
+        for tag_one in all_tags_for_this_pubs:
+            if not tag_one.tag_category in tag_categories:
+                tag_categories.append(tag_one.tag_category)
+
+        for category in tag_categories:
+            print('Все теги категории ' + category + ':')
+            for tag_one in all_tags_for_this_pubs:
+                if tag_one.tag_category == category:
+                    print(tag_one.tag_name)
+            print()
+
+        print(str(tag_categories))
+        context.update({
+            'all_tags_for_this_pubs': all_tags_for_this_pubs,
+            'tag_categories': tag_categories,
+        })
+        return context
+
 
 class DesignsWatch(ListView):
     model = Publication
