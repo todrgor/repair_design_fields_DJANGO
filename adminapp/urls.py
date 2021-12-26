@@ -26,7 +26,7 @@ urlpatterns = [
     path('users/create/', authapp.CreateAccount, name='user_create_new'),
     path('pub/create/', publicationapp.CreateNewPub, name='pub_create_new'),
     path('pub/delete/<pk>/', publicationapp.DeletePub, name='pub_delete'),
-    path('pub/update/<pk>', publicationapp.UpdatePub, name='pub_update'),
+    path('pub/update/<pk>/', publicationapp.UpdatePub, name='pub_update'),
 
     path('new_complaint/', adminapp.NewComplaint, name='new_complaint'),
 ]

@@ -70,16 +70,16 @@
             <h4>Ваша роль в ИС:</h4>
             <p style="color: #000; font-size: 18px; padding: 6px; background: #dcdcdc; border-radius: 5px; width: 20%; text-align: center;">{{ edited_user.role.name }}</p>
             {% if edited_user.role.id == 1 %}
-              <a href="/become_an_author/">Стать автором публикаций</a>
-              <a href="/become_a_teammemder/">Работать в команде</a>
+              <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
+              <a href="{% url 'auth:become_a_teammemder' %}">Работать в команде</a>
             {% endif %}
             {% if edited_user.role.id == 2 %}
               <a href="">Обртиться в поддержку и перестать быть автором</a>
-              <a href="">Работать в команде</a>
+              <a href="{% url 'auth:become_a_teammemder' %}">Работать в команде</a>
             {% endif %}
             {% if edited_user.role.id == 3 %}
               <a href="">Обртиться в поддержку и перестать быть администратором</a>
-              <a href="">Стать автором публикаций</a>
+              <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
             {% endif %}
           {% else %}
             <h4>Роль пользователя {{ edited_user.username }} в ИС:</h4>

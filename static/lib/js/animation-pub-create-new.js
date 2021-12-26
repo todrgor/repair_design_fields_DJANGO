@@ -82,3 +82,16 @@ $('#id_cost_min, #id_cost_max').change(function () {
     $('#id_cost_max').val(min);
   }
 });
+
+$('#type_of_contacting_support').change(function () {
+  if ($('#type_of_contacting_support select').val() == '11') {
+    $('#complaint_pub').removeClass('hidden');
+    $('#complaint_account').addClass('hidden');
+  } else if ($('#type_of_contacting_support select').val() == '12') {
+    $('#complaint_pub').addClass('hidden');
+    $('#complaint_account').removeClass('hidden');
+  } else {
+    $('#complaint_pub').addClass('hidden');
+    $('#complaint_account').addClass('hidden');
+  }
+});

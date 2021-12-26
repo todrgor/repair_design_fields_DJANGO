@@ -110,26 +110,41 @@ function shareThePub() {
 
 function new_complaint_was_sent() {
   if (!$('.new_complaint textarea').val().match(/^\s*$/)) {
+    $photos = $('.new_complaint input[type="file"]')[0].files;
+    $data = new FormData();
+
     if ($('.pub_additional_functions_bg#author').hasClass('show')) {
-      $complaint_type = 12
+      $data.append( 'complaint_type', 12 );
       $('.additionalFunctions').removeClass('opened');
     }
     if ($('.pub_additional_functions_bg#pub').hasClass('show')) {
-      $complaint_type = 11
+      $data.append( 'complaint_type', 11 );
       $('.pub_show_full').removeClass('pub_additional_functions_opened');
     }
-    
+
     $('.new_complaint').removeClass('show');
     $('.pub_additional_functions_bg').removeClass('show');
 
+    if( typeof $photos != 'undefined' ) {
+      // заполняем объект данных файлами в подходящем для отправки формате
+      $.each( $photos, function( key, value ){
+        console.log('key: ', key, 'value: ', value.name, value);
+    		$data.append( value.name, value );
+    	});
+    }
+
+    $data.append( 'complaint_id', $opened_pub_additional_functions_id );
+    $data.append( 'complaint_text', $('.new_complaint textarea').val() );
     $.ajax({
           type: "POST",
           url: "/admin/new_complaint/",
-          data: {
-            complaint_id : $opened_pub_additional_functions_id,
-            complaint_type : $complaint_type,
-            complaint_text : $('.new_complaint textarea').val(),
-          },
+          data: $data,
+          files: $data,
+          dataType    : 'json',
+      		// отключаем обработку передаваемых данных, пусть передаются как есть
+      		processData : false,
+      		// отключаем установку заголовка типа запроса. Так jQuery скажет серверу что это строковой запрос
+      		contentType : false,
 
           success: function (data) {
             alert('Жалоба принята, ждите решения модерации. Ответ Вы получите в уведомлении.');

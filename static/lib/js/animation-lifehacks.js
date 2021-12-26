@@ -91,7 +91,6 @@ function new_complaint_was_sent() {
         console.log('key: ', key, 'value: ', value.name, value);
     		$data.append( value.name, value );
     	});
-      // добавим переменную для идентификации запроса
     }
 
     $data.append( 'complaint_id', $opened_pub_additional_functions_id );
@@ -117,8 +116,8 @@ function new_complaint_was_sent() {
           }
       });
 
-      $is_opened_pub_additional_functions = 0;
-      $opened_pub_additional_functions_id = 0;
+    $is_opened_pub_additional_functions = 0;
+    $opened_pub_additional_functions_id = 0;
   } else {
     alert('Жалоба не отправлена, для начала напишите её!');
   }

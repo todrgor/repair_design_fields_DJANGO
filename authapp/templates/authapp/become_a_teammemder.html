@@ -1,0 +1,62 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="/static/lib\css\style_header.css">
+  <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+  <link rel="stylesheet" href="/static/lib\css\style_pub_create_new.css">
+  <!-- <link rel="stylesheet" href="/static/lib\css\style_filter.css"> -->
+{% endblock %}
+
+{% block content %}
+  <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+    <div id="tags_count"></div>
+    <div id="fltr_cost_min"></div>
+    <div id="fltr_cost_max"></div>
+    <div id="fltr_cost_p"></div>
+    <div id="fltr_style_p"></div>
+    <div id="fltr_room_p"></div>
+    <div id="checked_styles_count"></div>
+    <div id="checked_rooms_count"></div>
+    <div class="opened_filter"></div>
+  </div>
+
+  <div class="page_title">
+      <p class="title_p">{{ title }}</p>
+  </div>
+
+  <div class="pubs_container">
+    <div class="pub_title pub_inp_one">
+      <p>Спасибо Вам за желание работать над проетом вместе с нами! Заполните заявку, расскажите о себе и Ваших умениях: чем бы вы могли быть полезны? Предоставьте контактные данные и ссылки на ресурсы с Вашими работами, проектами. Мы рассмотрим Вас, и возможно Вы станете частью нашй команды. В любом случае вы получите уведомление о результате нашего решения.</p>
+    </div>
+
+    <form class="" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="pub_description pub_inp_one">
+        <h4>Расскажите о себе и своих умениях</h4>
+        {{ form.desc }}
+        {{ form.desc.errors }}
+        <p>Какие у вас навыки админимтрирования сетей, менеджмента и владения ПК?</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Если у вас есть фотографии о Вас и/или Ваших навыках</h4>
+        {{ form.photos }}
+        {{ form.photos.errors }}
+      </div>
+
+      <input type="submit" name="send_application" value="Подать заявку" style="width:40%;">
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block scripts_individual %}
+<!-- <script src="/static/lib/js/animation-pub-create-new.js"></script>
+<script src="/static/lib/js/animation-designs.js"></script> -->
+{% endblock %}

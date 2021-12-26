@@ -410,7 +410,7 @@
     border-radius: 15px;
     border-bottom-right-radius: 0;
 }
-.new_complaint input {
+.new_complaint input[type="submit"] {
   width: 85%;
     border: none;
     border-radius: 10px;
@@ -422,8 +422,13 @@
     transition: 0.3s ease;
     cursor: pointer;
 }
+.new_complaint input[type="file"] {
+  margin: 0 auto 20px;
+  padding: 11px;
+}
 .new_complaint input::placeholder {}
-.new_complaint input:hover {
+
+.new_complaint input[type="submit"]:hover {
   background: #191919;
 }
 

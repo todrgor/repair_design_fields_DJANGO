@@ -15,6 +15,7 @@ from authapp.forms import RegisterForm, LoginForm
 from authapp.models import *
 from publicationapp.models import *
 from .forms import *
+from django.utils import timezone
 
 
 def DeleteAccount(request, pk):
@@ -270,3 +271,132 @@ def CreateAccount(request):
             return redirect('main')
     else:
         return redirect('main')
+
+
+def BecomeATeammember(request):
+    if request.user.role.id == 3:
+        return HttpResponse("Вы уже участник нашей команды, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
+
+    if request.method == 'POST':
+        if request.POST['desc']:
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль модератора от пользвователя «' + request.user.username +'»'), role=ContactingSupportTypes.objects.get(id=22), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info='', when_asked=timezone.now())
+            if request.FILES:
+                fs = FileSystemStorage()
+                photos = request.FILES.getlist('photos')
+                i_count = 0
+                for i in photos:
+                    fs.save(('contacting_support_media/' + photos[i_count].name), photos[i_count])
+                    ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
+                    i_count +=1
+
+            noti=Publication.objects.create(title=('Ваша заявка стать участником команды принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), role=PubRoles.objects.get(id=51), preview=(request.user.photo.name), content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            return redirect('/')
+
+    title = 'Стать частью команды «Ремонт и дизайн»'
+    form = BecomeATeammemberForm()
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return render(request, 'authapp/become_a_teammemder.html', context)
+
+
+def BecomeAnAuthor(request):
+    if request.user.role.id == 2:
+        return HttpResponse("Вы уже автор публикаций, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
+
+    if request.method == 'POST':
+        if request.POST['desc']:
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль автора от пользвователя «' + request.user.username +'»'), role=ContactingSupportTypes.objects.get(id=21), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info='', when_asked=timezone.now())
+
+            if request.POST['knowledge'] or request.POST['offer'] or request.POST['site'] or request.POST['address'] or request.POST['telegram'] or request.POST['whatsapp'] or request.POST['viber'] or request.POST['vk'] or request.POST['inst'] or request.POST['ok'] or request.POST['fb'] or request.POST['other']:
+                becomer_expert_info = ExpertInfo.objects.filter(expert_id=request.user.id)
+                if becomer_expert_info:
+                    becomer_expert_info = ExpertInfo.objects.get(expert_id=request.user.id)
+                else:
+                    becomer_expert_info = ExpertInfo.objects.create(expert_id=request.user)
+                becomer_expert_info.__dict__.update({'knowledge': request.POST['knowledge'], 'offer': request.POST['offer'], 'site': request.POST['site'], 'address': request.POST['address'], 'telegram': request.POST['telegram'], 'whatsapp': request.POST['whatsapp'], 'viber': request.POST['viber'], 'vk': request.POST['vk'], 'inst': request.POST['inst'], 'ok': request.POST['ok'], 'fb': request.POST['fb'], 'other': request.POST['other'], })
+                becomer_expert_info.save()
+
+            if request.FILES:
+                fs = FileSystemStorage()
+                photos = request.FILES.getlist('photos')
+                i_count = 0
+                for i in photos:
+                    fs.save(('contacting_support_media/' + photos[i_count].name), photos[i_count])
+                    ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
+                    i_count +=1
+
+            noti=Publication.objects.create(title=('Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), role=PubRoles.objects.get(id=51), preview=(request.user.photo.name), content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            return redirect('/')
+
+    title = 'Стать автором публикаций'
+    form = BecomeAnAuthorForm()
+    expert_info_form = UserExpertForm()
+    context = {
+        'title': title,
+        'form': form,
+        'expert_info_form': expert_info_form,
+    }
+    return render(request, 'authapp/become_an_author.html', context)
+
+
+def SendToSupport(request):
+    if request.method == 'POST':
+        if request.POST['desc']:
+            print(str(request.POST))
+            ask_additional_info = ''
+            if request.POST['type'] == '11':
+                pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
+                title = 'Жалоба на публикацию «'+ pub.title + '»'
+                ask_additional_info = request.POST['complaint_pub_id']
+                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=pub.preview.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=pub.preview.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+            if request.POST['type'] == '12':
+                account = User.objects.get(id=request.POST['complaint_account_id'])
+                title = 'Жалоба на пользователя «'+ account.username + '»'
+                ask_additional_info = request.POST['complaint_account_id']
+                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=account.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=account.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=account, noti_for_user=noti)
+            if request.POST['type'] == '21':
+                title = 'Заявка на роль автора от пользователя «'+ request.user.username + '»'
+                noti=Publication.objects.create(title='Ваша заявка на роль автора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            if request.POST['type'] == '22':
+                title = 'Заявка на роль модератора от пользователя «'+ request.user.username + '»'
+                noti=Publication.objects.create(title='Ваша заявка на участника команды (модератора) принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            if request.POST['type'] == '31':
+                title = 'Вопрос от пользователя «'+ request.user.username + '»'
+                noti=Publication.objects.create(title='Ваш вопрос принят. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            if request.POST['type'] == '32':
+                title = 'Идея и/или предложение от пользователя «'+ request.user.username + '»'
+                noti=Publication.objects.create(title='Ваша Идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+            contacting_support = ContactingSupport.objects.create(title=title, role=ContactingSupportTypes.objects.get(id=request.POST['type']), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=ask_additional_info, when_asked=timezone.now())
+            if request.FILES:
+                fs = FileSystemStorage()
+                photos = request.FILES.getlist('photos')
+                i_count = 0
+                for i in photos:
+                    fs.save(('contacting_support_media/' + photos[i_count].name), photos[i_count])
+                    ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
+                    i_count +=1
+
+            return redirect('/')
+
+    title = 'Обращение в поддержку'
+    form = SendToSupportForm()
+    context = {
+        'title': title,
+        'form': form,
+    }
+    return render(request, 'authapp/send_to_support.html', context)

@@ -1,0 +1,111 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="/static/lib\css\style_header.css">
+  <link rel="stylesheet" href="/static/lib\css\style_footer.css">
+  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+  <link rel="stylesheet" href="/static/lib\css\style_pub_create_new.css">
+  <!-- <link rel="stylesheet" href="/static/lib\css\style_filter.css"> -->
+{% endblock %}
+
+{% block content %}
+  <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+    <div id="tags_count"></div>
+    <div id="fltr_cost_min"></div>
+    <div id="fltr_cost_max"></div>
+    <div id="fltr_cost_p"></div>
+    <div id="fltr_style_p"></div>
+    <div id="fltr_room_p"></div>
+    <div id="checked_styles_count"></div>
+    <div id="checked_rooms_count"></div>
+    <div class="opened_filter"></div>
+  </div>
+
+  <div class="page_title">
+      <p class="title_p">{{ title }}</p>
+  </div>
+
+  <div class="pubs_container">
+    <div class="pub_title pub_inp_one">
+      <p>Спасибо Вам за желание размещать публикации в нашей ИС! Заполните заявку, расскажите о себе, Ваших умениях, чем бы вы могли быть полезны, и предоставьте контактные данные и ссылки на ресурсы с Вашими работами. Мы оценим Вашу опытность и либо дадим вам роль автора, либо откажем Вам. В любом случае вы получите уведомление о результате нашего решения.</p>
+    </div>
+
+    <form class="" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="pub_description pub_inp_one">
+        <h4>Почему нам стоит назначить Вас на роль автора?</h4>
+        {{ form.desc }}
+        {{ form.desc.errors }}
+        <p>Расскажите, где как и с кем Вы работали, в чём Вы опытны, и какой полезной информацией уже готовы поделиться. Не забудьте о подтверждении написанного — обязательно оставьте ссылки на ресурсы про Вас, Ваши работы и, если пожелаете, сслыки на что-нибудь ещё. Без подтверждения заявленного в заявке вероятность стать автором крайне низкая.</p>
+      </div>
+      <div class="pub_description pub_inp_one">
+        <h4>Если у вас есть фотографии о Вас и/или Ваших навыках</h4>
+        {{ form.photos }}
+        {{ form.photos.errors }}
+      </div>
+      <div class="pub_title pub_inp_one">
+        <h4 style="color: gray;">Далее – если Вы станете автором:</h4>
+        <p>В случае чего, информацию о себе можно будет изменить в настройках.</p>
+      </div>
+
+      <div class="pub_title pub_inp_one">
+        <h4>Ваши навыки, стаж и особенности:</h4>
+        {{ expert_info_form.knowledge }}
+        {{ expert_info_form.knowledge.errors }}
+        <p>Читатель должен понять, что у Вас достаточно опыта, чтобы обратиться к Вам за услугой для решения его проблемы.</p>
+      </div>
+      <div class="pub_title pub_inp_one">
+        <h4>Ваше уникальное торговое предложение:</h4>
+        {{ expert_info_form.offer }}
+        {{ expert_info_form.offer.errors }}
+        <p>Если будете размещать не только публикации, но и оказывать услуги по опыту.</p>
+      </div>
+      <div class="pub_title pub_inp_one">
+        <h4>Контактные данные:</h4>
+        {{ expert_info_form.site }}
+        {{ expert_info_form.site.errors }}
+        {{ expert_info_form.vk }}
+        {{ expert_info_form.vk.errors }}
+        {{ expert_info_form.ok }}
+        {{ expert_info_form.ok.errors }}
+        {{ expert_info_form.inst }}
+        {{ expert_info_form.inst.errors }}
+        {{ expert_info_form.fb }}
+        {{ expert_info_form.fb.errors }}
+        {{ expert_info_form.whatsapp }}
+        {{ expert_info_form.whatsapp.errors }}
+        {{ expert_info_form.viber }}
+        {{ expert_info_form.viber.errors }}
+        {{ expert_info_form.telegram }}
+        {{ expert_info_form.telegram.errors }}
+        <p>Необязательно всё заполнять, но очень приветствуется.</p>
+      </div>
+      <div class="pub_title pub_inp_one">
+        <h4>Адрес Вашего офиса:</h4>
+        {{ expert_info_form.address }}
+        {{ expert_info_form.address.errors }}
+        <p>Если офис есть, как и жажда клиентов.</p>
+      </div>
+      <div class="pub_title pub_inp_one">
+        <h4>Что-то дополнительно:</h4>
+        {{ expert_info_form.other }}
+        {{ expert_info_form.other.errors }}
+        <p>Необязательно заполнять, но тоже приветствуется.</p>
+      </div>
+
+      <input type="submit" name="send_application" value="Подать заявку" style="width:40%;">
+    </form>
+  </div>
+
+{% endblock %}
+
+{% block scripts_individual %}
+<!-- <script src="/static/lib/js/animation-pub-create-new.js"></script>
+<script src="/static/lib/js/animation-designs.js"></script> -->
+{% endblock %}

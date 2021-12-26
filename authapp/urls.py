@@ -12,4 +12,7 @@ urlpatterns = [
     path('one/<pk>/', authapp.AccountOneWatch.as_view(), name='account_one'),
     path('settings/<pk>/', authapp.UpdateAccount, name='settings'),
     path('delete/<pk>/', authapp.DeleteAccount, name='account_delete'),
+    path('become_a_teammemder/', authapp.BecomeATeammember, name='become_a_teammemder'),
+    path('become_an_author/', authapp.BecomeAnAuthor, name='become_an_author'),
+    path('send_to_support/', authapp.SendToSupport, name='send_to_support'),
 ]
