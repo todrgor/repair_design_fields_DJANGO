@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -9,7 +11,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView, UpdateView
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound, Http404
-
 
 from authapp.forms import RegisterForm, LoginForm
 from authapp.models import *
@@ -400,3 +401,44 @@ def SendToSupport(request):
         'form': form,
     }
     return render(request, 'authapp/send_to_support.html', context)
+
+
+def Search(request):
+    if 'search_input' in request.GET:
+        looking_for = request.GET['search_input']
+
+        # finded_experts = ExpertInfo.objects.filter(Q(knowledge__icontains=looking_for) | Q(offer__icontains=looking_for))
+        # finded_experts_list_id = []
+        # for expert in finded_experts:
+        #     finded_experts_list_id.append(expert.expert_id.id)
+        # finded_accounts = User.objects.filter(Q(username__icontains=looking_for) | Q(bio__icontains=looking_for) | Q(id__in=finded_experts_list_id))
+        finded_accounts = User.objects.filter(Q(username__icontains=looking_for) | Q(bio__icontains=looking_for))
+        finded_pubs = Publication.objects.filter(Q(title__icontains=looking_for) | Q(content_first_desc__icontains=looking_for) | Q(content_last_desc__icontains=looking_for), role__in=[11, 21, 31])
+        saved_pubs_urls = SavedPubs.objects.filter(saver_id=request.user)
+        saved_finded_pubs = [sp.pub_id.id for sp in saved_pubs_urls]
+        pub_has_tags = PubHasTags.objects.filter(pub_id__role__id=31, pub_id__id__in=finded_pubs)
+        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=request.user))]
+
+        finded_accounts_count = finded_accounts.count()
+        finded_pubs_count = finded_pubs.count()
+        finded_count = finded_accounts_count + finded_pubs_count
+
+        title = 'Ничего не найдено по запросу' + looking_for
+        if finded_count:
+            title = 'Найдено ' + str(finded_count) + ' результатов по запросу ' + looking_for
+
+        context = {
+            'looking_for': looking_for,
+            'finded_count': finded_count,
+            'finded_accounts': finded_accounts,
+            'finded_accounts_count': finded_accounts_count,
+            'finded_pubs': finded_pubs,
+            'pub_has_tags': pub_has_tags,
+            'saved_finded_pubs': saved_finded_pubs,
+            'subscribing_authors': subscribing_authors,
+            'finded_pubs_count': finded_pubs_count,
+            'title': title,
+        }
+        return render(request, 'authapp/search_results.html', context)
+    else:
+        return redirect('/')

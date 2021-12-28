@@ -21,7 +21,7 @@
           </a>
           <div class="header_search">
               <img src="/static/sources/SVG/search.svg" alt="">
-              <form class="" action="search.py" method="post">
+              <form class="" action="{% url 'search' %}" method="get">
                   <input type="text" name="search_input" value="" placeholder="Я ищу...">
               </form>
           </div>
@@ -165,7 +165,7 @@
             </div>
             <div class="footer_search">
                 <img src="/static/sources/SVG/search.svg" alt="">
-                <form class="" action="search.py" method="post">
+                <form class="" action="{% url 'search' %}" method="get">
                     <input type="text" name="search_input" value="" placeholder="Я ищу...">
                 </form>
             </div>

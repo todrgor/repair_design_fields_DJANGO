@@ -132,7 +132,7 @@ class SavedPubs(models.Model):
 
 class SeenPubs(models.Model):
     # переделать нейминг и ввести правки в весь проект
-    
+
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
     watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
     pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)

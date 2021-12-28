@@ -18,6 +18,7 @@ from repair_design_fields import settings
 from django.contrib import admin
 from django.urls import path, include
 import mainapp.views as mainapp
+import authapp.views as authapp
 
 urlpatterns = [
     path('', mainapp.main, name='main'),
@@ -26,6 +27,7 @@ urlpatterns = [
 	path('account/', include('authapp.urls', namespace='auth')),
     path('admin/', include('adminapp.urls', namespace='admin_mine')),
 	# path('adminRDF/', mainapp.adminRDF, name='adminRDF'),
+    path('search/', authapp.Search, name='search'),
 
 	path('adminDJANGO/', admin.site.urls),
 	# path('admin/', admin.site.urls),

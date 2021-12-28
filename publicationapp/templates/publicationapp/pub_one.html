@@ -119,7 +119,7 @@
     </div>
     <div class="pubs_container">
       <p class="description">
-        {{ pub.content_first_desc }}
+        {{ pub.content_first_desc|safe }}
       </p>
 
       {% for f in photos %}
@@ -127,7 +127,7 @@
       {% endfor %}
 
       <p class="description">
-        {{ pub.content_last_desc }}
+        {{ pub.content_last_desc|safe }}
       </p>
 
       <div class="pub_to_do">

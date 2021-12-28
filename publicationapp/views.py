@@ -21,7 +21,7 @@ def CreateNewPub(request):
                 preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
                 pub_created = Publication.objects.get(title=pub_post['title'], role=pub_post['role'], preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
                 if pub_post['role'] == '11' or pub_post['role'] == '21':
-                    if request.FILES['photo']:
+                    if 'photo' in request.FILES:
                         photos = request.FILES.getlist('photo')
                         i_count = 0
                         for i in photos:
