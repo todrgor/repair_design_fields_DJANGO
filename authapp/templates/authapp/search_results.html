@@ -67,7 +67,7 @@
                   <p class="pub_stats">👀 {{ pub.seen_count }}<br>
                                        ❤  {{ pub.saved_count }} </p>
                 </div>
-                <a href="" class="read_more" id="read_more">Читать ›</a>
+                <a href="{% url 'pub:pub_one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
               </div>
           {% endif %}
           {% if pub.role.id == 21 %}
