@@ -1,6 +1,7 @@
 from publicationapp.models import *
 from authapp.models import *
 
+from .forms import *
 from django.shortcuts import render
 from authapp.models import *
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
@@ -59,6 +60,132 @@ def NewComplaint(request):
 
             if int(complaint['complaint_type']) in [11, 12]:
                 return JsonResponse({'result': True})
+
+
+def LettersToSupport(request):
+    if request.user.is_authenticated:
+        if request.user.role.id in [3, 4]:
+            answer_form = AnswerForm()
+            if request.method == 'POST':
+                if not request.POST['answer'].isspace():
+                    answer = request.POST
+                    letter = ContactingSupport.objects.get(id=int(answer['ask_id']))
+                    # у меня проблема: при перезагрзке страницы request.POST полностью сохраняется,
+                    # из-за этого те же самые изменения создаются второй раз. единственное найденное
+                    # решение, которое очень похоже на кастыль -- проверять, есть ли уже в БД ответ
+                    # на это обрщание. рабоатает. но request.POST по-прежнему повторяется  
+                    if not letter.answer_content:
+                        letter_type = letter.role.id
+
+                        if letter_type in [21, 22, 31, 32]:
+                            letter.answer_content = answer['answer']
+                            letter.answered_by = request.user
+                            letter.when_answered = timezone.now()
+
+                            if letter_type in [21, 22]:
+                                if letter_type == 21:
+                                    role_name = 'роль автора'
+                                    role_id = 2
+                                if letter_type == 22:
+                                    role_name = 'роль админа'
+                                    role_id = 3
+                                if answer['change_role'] == 'Назначить новую роль':
+                                    decision = 'поздравляем! Теперь у Вас '+ role_name +'!'
+                                    letter.answer_additional_info = 1
+                                    letter_author = letter.asked_by
+                                    letter_author.role = UserRoles.objects.get(id=role_id)
+                                    letter_author.save()
+                                else:
+                                    decision = 'к сожалению, '+ role_name +' Вам не назначена.'
+                                    letter.answer_additional_info = 0
+                                noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея!", content_last_desc='', author=request.user)
+                            if letter_type == 31:
+                                noti=Publication.objects.create(title=('Ваш вопрос был рассмотрен. Ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея!", content_last_desc='', author=request.user)
+                            if letter_type == 32:
+                                noti=Publication.objects.create(title=('Спасибо Вам за Вашу идею! Идея была рассмотрена.  Ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Ждём ещё идей!", content_last_desc='', author=request.user)
+                            Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+
+                        letter.save()
+                        print(str(answer))
+                else:
+                    answer_form = AnswerForm({'answer': None})
+
+
+
+            ideas = ContactingSupport.objects.filter(role=32).exclude(answer_content=None)
+            new_ideas = ContactingSupport.objects.filter(role=32, answer_content=None)
+            new_ideas_count = new_ideas.count()
+            all_ideas_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=32)
+
+            questions = ContactingSupport.objects.filter(role=31).exclude(answer_content=None)
+            new_questions = ContactingSupport.objects.filter(role=31, answer_content=None)
+            new_questions_count = new_questions.count()
+            all_questions_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=31)
+
+            applications = ContactingSupport.objects.filter(role__in=[21, 22]).exclude(answer_content=None)
+            new_applications = ContactingSupport.objects.filter(role__in=[21, 22], answer_content=None)
+            new_applications_count = new_applications.count()
+            all_applications_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role__in=[21, 22])
+
+            reports = ContactingSupport.objects.filter(role__in=[11, 12]).exclude(answer_content=None)
+            new_reports = ContactingSupport.objects.filter(role__in=[11, 12], answer_content=None)
+            new_reports_count = new_reports.count()
+            all_reports_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role__in=[11, 12])
+
+            strange_letters = ContactingSupport.objects.filter(role=0).exclude(answer_content=None)
+            new_strange_letters = ContactingSupport.objects.filter(role=0, answer_content=None)
+            new_strange_letters_count = new_strange_letters.count()
+            all_strange_letters_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=0)
+
+            # print(ideas)
+            # print(new_ideas)
+            # print(questions)
+            # print(new_questions)
+            # print(applications)
+            # print(new_applications)
+            # print(reports)
+            # print(new_reports)
+            # print(strange_letters)
+            # print(new_strange_letters)
+
+            title = 'Обращения в поддержку'
+            if new_ideas or new_questions or new_applications or new_reports or new_strange_letters:
+                title = str(new_ideas_count + new_questions_count + new_applications_count + new_reports_count + new_strange_letters_count) + ' обращений ждут ответа | Обращения в поддержку'
+            content = {
+                'answer_form': answer_form,
+
+                'ideas': ideas,
+                'new_ideas': new_ideas,
+                'new_ideas_count': new_ideas_count,
+                'all_ideas_photos': all_ideas_photos,
+
+                'questions': questions,
+                'new_questions': new_questions,
+                'new_questions_count': new_questions_count,
+                'all_questions_photos': all_questions_photos,
+
+                'applications': applications,
+                'new_applications': new_applications,
+                'new_applications_count': new_applications_count,
+                'all_applications_photos': all_applications_photos,
+
+                'reports': reports,
+                'new_reports': new_reports,
+                'new_reports_count': new_reports_count,
+                'all_reports_photos': all_reports_photos,
+
+                'strange_letters': strange_letters,
+                'new_strange_letters': new_strange_letters,
+                'new_strange_letters_count': new_strange_letters_count,
+                'all_strange_letters_photos': all_strange_letters_photos,
+
+                'title': title,
+            }
+            return render(request, 'adminapp/letters_to_support.html', content)
+        else:
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+    else:
+        return HttpResponse("Сначала авторизируйтесь!")
 
 
 class StartPanel(ListView):

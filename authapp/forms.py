@@ -66,12 +66,16 @@ class LoginForm(AuthenticationForm):
 
 
 class BecomeATeammemberForm(forms.Form):
-    desc = forms.CharField(widget=forms.Textarea(attrs={'placeholder':"Расскажите про себя и свой опыт", 'title':"Чем Вы хороши? Какими знаниями и опытом обладаете?"}), label="Расскажите о себе и своих умениях")
+    desc = forms.CharField(error_messages = {
+                 'required':"Ваше обращение должно быть содержательным, а не просто состоять из пробелов!"
+                 }, widget=forms.Textarea(attrs={'placeholder':"Расскажите про себя и свой опыт", 'title':"Чем Вы хороши? Какими знаниями и опытом обладаете?"}), label="Расскажите о себе и своих умениях")
     photos = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True, 'title':"Загрузите фотографии о себе"}), label="Если есть фотографии к заявке", required=False)
 
 
 class BecomeAnAuthorForm(forms.Form):
-    desc = forms.CharField(widget=forms.Textarea(attrs={'placeholder':"Расскажите, почему именно Вас нужно назначить автором публикаций. Может быть, Вы работали в стойбате 10 лет и знаете всё об устройстве дома? Или к примеру Вы — дизайнер, который не хочет придерживаться определённых стилей и воплощать своё виденье?", 'title':"Расскажите о себе: кто вы? Зачем вам быть автором? И в чём ваша полезность?"}), label="Расскажите о себе: кто вы? Зачем вам быть автором? И в чём ваша полезность?")
+    desc = forms.CharField(error_messages = {
+                 'required':"Ваше обращение должно быть содержательным, а не просто состоять из пробелов!"
+                 }, widget=forms.Textarea(attrs={'placeholder':"Расскажите, почему именно Вас нужно назначить автором публикаций. Может быть, Вы работали в стойбате 10 лет и знаете всё об устройстве дома? Или к примеру Вы — дизайнер, который не хочет придерживаться определённых стилей и воплощать своё виденье?", 'title':"Расскажите о себе: кто вы? Зачем вам быть автором? И в чём ваша полезность?"}), label="Расскажите о себе: кто вы? Зачем вам быть автором? И в чём ваша полезность?")
     photos = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True, 'title':"Загрузите фотографии о себе"}), label="Если есть фотографии к заявке", required=False)
 
 
@@ -79,5 +83,7 @@ class SendToSupportForm(forms.Form):
     type = forms.ModelChoiceField(queryset=ContactingSupportTypes.objects.exclude(id=0), initial=5, label="Цель обращения", empty_label="Ещё не выбрано")
     complaint_account_id = forms.ModelChoiceField(queryset=User.objects.filter(), initial=0, label="Жалоба на пользователя", empty_label="Ещё не выбрано")
     complaint_pub_id = forms.ModelChoiceField(queryset=Publication.objects.filter(role__id__in=(11, 21, 31)), initial=0, label="Жалоба на публикацию", empty_label="Ещё не выбрано")
-    desc = forms.CharField(widget=forms.Textarea(attrs={'placeholder':"Расскажите нам, что случилось?", 'title':"У вас какая-либо идея или проблема?"}), label="У вас какая-либо идея или проблема?")
+    desc = forms.CharField(error_messages = {
+                 'required':"Ваше обращение должно быть содержательным, а не просто состоять из пробелов!"
+                 }, widget=forms.Textarea(attrs={'placeholder':"Расскажите нам, что случилось?", 'title':"У вас какая-либо идея или проблема?"}), label="У вас какая-либо идея или проблема?")
     photos = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True, 'title':"Загрузите фотографии к Вашему обращению"}), label="Если есть фотографии к Вашему обращению", required=False)

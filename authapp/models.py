@@ -168,13 +168,14 @@ class ContactingSupport(models.Model):
     when_asked = models.DateTimeField(verbose_name='Дата и время обращения в поддержку')
     answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого', blank=True, null=True)
     answer_content = models.CharField(max_length=1555, verbose_name='Содержание ответа', blank=True, null=True)
-    comment_from_answered = models.CharField(max_length=1555, verbose_name='Комментарий к ответу', blank=True, null=True)
+    answer_additional_info = models.CharField(max_length=1555, verbose_name='Комментарий к ответу', blank=True, null=True)
     when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение', blank=True, null=True)
     role = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
 
     class Meta:
         verbose_name = 'Обращение в поддержку'
         verbose_name_plural = 'Обращения в поддержку'
+        ordering = ('-when_asked',)
 
     def __str__(self):
         return self.title

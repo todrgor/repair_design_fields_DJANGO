@@ -21,6 +21,7 @@ app_name = 'adminapp'
 
 urlpatterns = [
     path('', adminapp.StartPanel.as_view(), name='main'),
+    path('letters_to_support/', adminapp.LettersToSupport, name='letters_to_support'),
     path('pubs/', adminapp.PubList.as_view(), name='pubs'),
     path('users/', adminapp.UserList.as_view(), name='users'),
     path('users/create/', authapp.CreateAccount, name='user_create_new'),

@@ -52,7 +52,7 @@
       {% endif %}
 
       {% if finded_pubs %}
-        <p onclick="toggleShow('repair')" class="result_type_container" id="repair">Найдено {{ finded_pubs_count }} публикаций о ремонте:
+        <p onclick="toggleShow('repair')" class="result_type_container" id="repair">Найдено {{ finded_pubs_count }} публикаций:
         <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
         <div class="pubs_container_one_type show" id="repair">
         {% for pub in finded_pubs %}
@@ -101,7 +101,7 @@
           {% if pub.role.id == 31 %}
             <div class="pub_one lifehack" id="{{ pub.id }}">
               <div class="media">
-                {% if '.mp4' in p.preview.url or '.mov' in p.preview.url %}
+                {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
                 <video class="paused" muted="muted" controls="controls" loop>
                   <source src="{{ pub.preview.url }}" type='video/mp4;'>
                   Тег video не поддерживается вашим браузером. Увы.

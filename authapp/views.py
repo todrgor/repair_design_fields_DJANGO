@@ -143,7 +143,7 @@ class AccountOneWatch(ListView):
             except ObjectDoesNotExist:
                 expert_info = None
 
-            expert_pubs = Publication.objects.filter(author=self.kwargs['pk'])
+            expert_pubs = Publication.objects.filter(author=self.kwargs['pk'], role__id__in=[11, 21, 31])
             pub_has_tags = PubHasTags.objects.filter(pub_id__in=expert_pubs)
         else:
             expert_info = None
@@ -347,8 +347,18 @@ def BecomeAnAuthor(request):
 def SendToSupport(request):
     if request.method == 'POST':
         if request.POST['desc']:
-            print(str(request.POST))
+            # print(str(request.POST))
+            if request.POST['desc'].isspace():
+                title = 'Обращение в поддержку'
+                form = SendToSupportForm({'desc': None, 'type': request.POST['type'],})
+                context = {
+                    'title': title,
+                    'form': form,
+                }
+                return render(request, 'authapp/send_to_support.html', context)
+
             ask_additional_info = ''
+
             if request.POST['type'] == '11':
                 pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
                 title = 'Жалоба на публикацию «'+ pub.title + '»'
@@ -357,6 +367,7 @@ def SendToSupport(request):
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=pub.preview.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+
             if request.POST['type'] == '12':
                 account = User.objects.get(id=request.POST['complaint_account_id'])
                 title = 'Жалоба на пользователя «'+ account.username + '»'
@@ -365,18 +376,22 @@ def SendToSupport(request):
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=account.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=account, noti_for_user=noti)
+
             if request.POST['type'] == '21':
                 title = 'Заявка на роль автора от пользователя «'+ request.user.username + '»'
                 noti=Publication.objects.create(title='Ваша заявка на роль автора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
             if request.POST['type'] == '22':
                 title = 'Заявка на роль модератора от пользователя «'+ request.user.username + '»'
                 noti=Publication.objects.create(title='Ваша заявка на участника команды (модератора) принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
             if request.POST['type'] == '31':
                 title = 'Вопрос от пользователя «'+ request.user.username + '»'
                 noti=Publication.objects.create(title='Ваш вопрос принят. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
             if request.POST['type'] == '32':
                 title = 'Идея и/или предложение от пользователя «'+ request.user.username + '»'
                 noti=Publication.objects.create(title='Ваша Идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=request.user.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)

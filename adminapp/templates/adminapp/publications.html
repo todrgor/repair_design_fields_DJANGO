@@ -28,7 +28,7 @@
 
   <div class="admin_menu_bg">
     <div class="admin_menu">
-      <a href="">Заявки и жалобы</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Заявки и жалобы</a>
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="">Публикации</a>
     </div>
@@ -39,8 +39,8 @@
       {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new">создать новую ›</a>{% endif %}
   </div>
    <div class="pubs_container">
-     <div class="pubs_container_one_type withBorder show" id='pubs'>
-         <table border="1" class="pubs">
+     <div class="pubs_container_one_type show" id='pubs'>
+         <table border="1" class="withBorder">
              <tr>
               {% if user.role.id == 4 %}
                  <th class="functions">Действия</th>
@@ -69,7 +69,7 @@
                      </div>
                  </td>
 
-                 <td class="photo_and_nickname"><img src="{{ p.author.photo.url }}" alt=""><a
+                 <td class="photo_and_nickname" style='align-items: center;'><img src="{{ p.author.photo.url }}" alt=""><a
                          href="{% url 'auth:account_one' pk=p.author.id %}">{{ p.author.username }}</a></td>
                 <td class="with200px">{{ p.role.name }}</td>
                 <td>{{ p.seen_count }}</td>

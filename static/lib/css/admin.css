@@ -319,11 +319,13 @@ table td.following ul.overflowX_auto {
 }
 
 .letters_to_support_text_and_img {
-  max-height: 190px;
+  max-height: 260px;
   overflow: auto;
+  padding: 10px 0;
 }
 .letters_to_support_text_and_img img {
-  max-width: 400px;
+  max-height: 250px;
+  border: 1px solid gray;
 }
 .letters_to_support_text_and_img textarea {
   width: 95%;
@@ -331,9 +333,12 @@ table td.following ul.overflowX_auto {
 }
 .letters_to_support_text_and_img input[type="submit"] {
   float: right;
+  padding: 5px 12px;
+    margin-right: 12px;
+    margin-bottom: 5px;
 }
 .admin_checked_the_letter {
-  margin: 25px auto;
+  margin: 5px auto 25px;
     text-align: center;
     color: #4c4c4c;
 }

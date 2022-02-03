@@ -9,6 +9,9 @@
     </title>
     {% block css %}
     {% endblock %}
+    {% block favicon %}
+      <link type="image/png" sizes="16x16" rel="icon" href="/static/sources/SVG/favicon.svg">
+    {% endblock %}
 </head>
 {% block bodystyle %}
 <body>
@@ -58,8 +61,8 @@
                       </div>
                   </div>
 
-                  <div class="notifications_container" onclick="open_noti({{ user.id }})">
-                      <button class="notifications_btn">
+                  <div class="notifications_container">
+                      <button class="notifications_btn" onclick="open_noti({{ user.id }})">
                           <div class="notifications_mini">
                               <div class="noti_logo"></div>
                               {% if user.new_noties_count %}

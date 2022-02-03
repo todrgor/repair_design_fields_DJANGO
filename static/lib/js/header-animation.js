@@ -64,7 +64,6 @@ $(document).click( function(event) {
 
     $('.avatar_container').removeClass('show_avtr_optns');
     $is_opened_avatar = 0;
-    console.log('sdsdaadafrfrg');
     console.log('$is_opened_avatar = 0;');
   }
 
@@ -79,7 +78,6 @@ $(document).click( function(event) {
 
     $('.notifications_container').removeClass('show_ntfctns_more');
     $is_opened_notifications = 0;
-    console.log('sdghdgdhkjhfjkch');
     console.log('$is_opened_notifications = 0;');
   }
 
@@ -91,7 +89,6 @@ $(document).click( function(event) {
 
     $('.opened_filter_big_bg').removeClass('opened_filter_big_bg_opened');
     $is_opened_filter_panel = 0;
-    console.log('$is_opened_filter_panel sdghdgdhkjhfjkch');
-    console.log('$is_opened_filter_panel =', $is_opened_filter_panel);
+    console.log('$is_opened_filter_panel = 0;');
   }
 });
