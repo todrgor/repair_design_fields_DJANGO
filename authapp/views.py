@@ -18,11 +18,11 @@ from publicationapp.models import *
 from .forms import *
 from django.utils import timezone
 
-
+# удаление учётной записи пользователя
 def DeleteAccount(request, pk):
     if request.user.is_authenticated:
         user = User.objects.get(id=pk)
-        if request.user.role.id == user.id or request.user.role.id == 4:
+        if request.user.id == user.id or request.user.role.id == 4:
             user_id = user.id
             user_name = user.username
             user_photo = user.photo.name
@@ -35,7 +35,7 @@ def DeleteAccount(request, pk):
             else:
                 return redirect('auth:logout')
 
-
+# включение-отключение получение уведомлений от автора
 def toggle_get_noti_from_author(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
@@ -62,6 +62,8 @@ def toggle_get_noti_from_author(request, pk):
             return JsonResponse({'result': result})
 
 
+# получение сигнала о том,
+# что новые уведомления открыты и прочитаны
 def new_noti_were_seen(request, pk):
     if request.is_ajax():
         if Notifications.objects.filter(user_receiver=request.user, is_new=True):
@@ -74,6 +76,7 @@ def new_noti_were_seen(request, pk):
         return JsonResponse({'result': result})
 
 
+# авторизация пользователя
 class UserLoginView(LoginView):
     template_name = "authapp/login.html"
     model = User
@@ -82,11 +85,12 @@ class UserLoginView(LoginView):
     form_class = LoginForm
 
 
+# выход из учётной записи пользователя
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('main')
 
 
-
+# регистрация пользователя
 class UserRegisterView(TemplateView):
     template_name = "authapp/register.html"
 
@@ -106,6 +110,7 @@ class UserRegisterView(TemplateView):
         return render(request, self.template_name, content)
 
 
+# просмотр одной странички пользователя
 class AccountOneWatch(ListView):
     model = User
     template_name = 'authapp/user_one.html'
@@ -160,6 +165,7 @@ class AccountOneWatch(ListView):
         return context
 
 
+# изменение учётной записи пользователя
 def UpdateAccount(request, pk):
     if request.user.is_authenticated:
         if request.user.role.id == 4 or request.user.id == int(pk):
@@ -226,10 +232,11 @@ def UpdateAccount(request, pk):
         return redirect('main')
 
 
+# создание учётной записи пользователя суперадмином
 def CreateAccount(request):
     if request.user.is_authenticated:
         edited_user = None
-        if request.user.role.id == 2 or request.user.role.id == 4:
+        if request.user.role.id == 4:
             form_user = UserForm()
             form_user_expert = UserExpertForm()
             if request.method == 'POST':
@@ -274,6 +281,7 @@ def CreateAccount(request):
         return redirect('main')
 
 
+# подать заявку на аминистратора
 def BecomeATeammember(request):
     if request.user.role.id == 3:
         return HttpResponse("Вы уже участник нашей команды, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
@@ -303,6 +311,7 @@ def BecomeATeammember(request):
     return render(request, 'authapp/become_a_teammemder.html', context)
 
 
+# подать заявку на автора
 def BecomeAnAuthor(request):
     if request.user.role.id == 2:
         return HttpResponse("Вы уже автор публикаций, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
@@ -344,6 +353,9 @@ def BecomeAnAuthor(request):
     return render(request, 'authapp/become_an_author.html', context)
 
 
+# подать обращение в поддержку: жалоба на пабликацию
+# или пользователя, заявка на автора публикаций
+# или администратора, а также вопрос или идея/предложение
 def SendToSupport(request):
     if request.method == 'POST':
         if request.POST['desc']:
@@ -418,6 +430,7 @@ def SendToSupport(request):
     return render(request, 'authapp/send_to_support.html', context)
 
 
+# поиск чего-либо
 def Search(request):
     if 'search_input' in request.GET:
         looking_for = request.GET['search_input']

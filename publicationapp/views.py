@@ -8,6 +8,7 @@ from publicationapp.models import *
 from .forms import *
 from django.core.files.storage import FileSystemStorage
 
+# создание новой публикации
 def CreateNewPub(request):
     if request.user.is_authenticated:
         if request.user.role.id == 2 or request.user.role.id == 4:
@@ -54,7 +55,6 @@ def CreateNewPub(request):
                 #     form.add_error(None, 'Ошибка создания публикции')
             title = 'Создать публикацию'
 
-
             content = {
                 'title': title,
                 'form': form,
@@ -66,6 +66,7 @@ def CreateNewPub(request):
         return redirect('main')
 
 
+# удаление публикации
 def DeletePub(request, pk):
     if request.user.is_authenticated:
         if request.user.role.id == 2 or request.user.role.id == 4:
@@ -91,6 +92,7 @@ def DeletePub(request, pk):
                 return redirect('pub:lifehacks')
 
 
+# редактирование публикации
 def UpdatePub(request, pk):
     if request.user.is_authenticated:
         if request.user.role.id == 2 or request.user.role.id == 4:
@@ -145,7 +147,6 @@ def UpdatePub(request, pk):
                     noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'» ! Суперпользователь: ' +request.user.username), role=PubRoles.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", content_last_desc='', author=request.user)
                     Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
-
                 return redirect('pub:pub_one', pk=pub.id)
 
             if pub.role.id == 11:
@@ -187,6 +188,7 @@ def UpdatePub(request, pk):
         return redirect('main')
 
 
+# просмотр публикции в "Избранном"
 class Saved(ListView):
     model = SavedPubs
     template_name = 'publicationapp/saved.html'
@@ -220,6 +222,7 @@ class Saved(ListView):
         return context
 
 
+# сохранение-удаление публикаций из "Избранного"
 def toggle_saved(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
@@ -250,6 +253,8 @@ def toggle_saved(request, pk):
             return JsonResponse({'result': result})
 
 
+# смена количества "репостов" публикации при
+# нажатии пользователем на "ссылка на публикацию"
 def change_shared_count(request, pk):
     if request.is_ajax():
         pub = Publication.objects.get(id=pk)
@@ -258,6 +263,7 @@ def change_shared_count(request, pk):
         return JsonResponse({'result': str(pub)})
 
 
+# просмотр публикаций про ремонт
 class RepairsWatch(ListView):
     model = Publication
     template_name = 'publicationapp/repairs.html'
@@ -290,6 +296,7 @@ class RepairsWatch(ListView):
         return context
 
 
+# просмотр публикаций про дизайн
 class DesignsWatch(ListView):
     model = Publication
     template_name = 'publicationapp/designs.html'
@@ -315,15 +322,7 @@ class DesignsWatch(ListView):
         return context
 
 
-def filter_lifehacks(request):
-    # это пока что ни черта не работает
-    sphera = request.POST.getlist('style_design', '')
-    fltr_cost_min = request.POST.get('cost_mini', '')
-    fltr_cost_max = request.POST.get('cost_max', '')
-
-    return HttpResponse('sphera: '+ str(sphera) +', fltr_cost_min:'+ fltr_cost_min +', fltr_cost_max:'+ fltr_cost_max)
-
-
+# просмотр публикаций-лайфхаков
 class LifehacksWatch(ListView):
     model = Publication
     # model = PubHasTags
@@ -353,6 +352,18 @@ class LifehacksWatch(ListView):
         })
         return context
 
+
+# фильтр публикаций-лайфхаков (сыро и неготово)
+def filter_lifehacks(request):
+    # это пока что ни черта не работает
+    sphera = request.POST.getlist('style_design', '')
+    fltr_cost_min = request.POST.get('cost_mini', '')
+    fltr_cost_max = request.POST.get('cost_max', '')
+
+    return HttpResponse('sphera: '+ str(sphera) +', fltr_cost_min:'+ fltr_cost_min +', fltr_cost_max:'+ fltr_cost_max)
+
+
+# фильтр публикаций-лайфхаков (сыро и неготово)
 class FilterLifehacks(ListView):
     # не работает, в неоплчиваемом отпуске
     # обязательно учесть проверку на авторизаацию
@@ -391,6 +402,8 @@ class FilterLifehacks(ListView):
         })
         return context
 
+
+# просмотр одной публикации
 class PubWatchOne(ListView):
     model = Publication
     template_name = 'publicationapp/pub_one.html'

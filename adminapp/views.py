@@ -11,7 +11,7 @@ from django.utils import timezone
 # from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 
-
+# получение жалобы на пользователя или публикацию через ajax
 @csrf_exempt
 def NewComplaint(request):
     if request.user.is_authenticated:
@@ -62,10 +62,13 @@ def NewComplaint(request):
                 return JsonResponse({'result': True})
 
 
+# все обращения в поддержку:
+# их вывод и обработка администраторами
 def LettersToSupport(request):
     if request.user.is_authenticated:
         if request.user.role.id in [3, 4]:
             answer_form = AnswerForm()
+            answer_to_report_form = AnswerToReportForm()
             if request.method == 'POST':
                 if not request.POST['answer'].isspace():
                     answer = request.POST
@@ -73,7 +76,7 @@ def LettersToSupport(request):
                     # у меня проблема: при перезагрзке страницы request.POST полностью сохраняется,
                     # из-за этого те же самые изменения создаются второй раз. единственное найденное
                     # решение, которое очень похоже на кастыль -- проверять, есть ли уже в БД ответ
-                    # на это обрщание. рабоатает. но request.POST по-прежнему повторяется  
+                    # на это обрщание. рабоатает. но request.POST по-прежнему повторяется
                     if not letter.answer_content:
                         letter_type = letter.role.id
 
@@ -109,7 +112,7 @@ def LettersToSupport(request):
                         print(str(answer))
                 else:
                     answer_form = AnswerForm({'answer': None})
-
+                    answer_to_report_form = AnswerToReportForm({'answer': None, 'decision': 'just_answer'})
 
 
             ideas = ContactingSupport.objects.filter(role=32).exclude(answer_content=None)
@@ -131,6 +134,10 @@ def LettersToSupport(request):
             new_reports = ContactingSupport.objects.filter(role__in=[11, 12], answer_content=None)
             new_reports_count = new_reports.count()
             all_reports_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role__in=[11, 12])
+            reported_pubs_list_id = [p.ask_additional_info for p in ContactingSupport.objects.filter(role=11)]
+            reported_users_list_id = [u.ask_additional_info for u in ContactingSupport.objects.filter(role=12)]
+            reported_pubs = Publication.objects.filter(id__in=reported_pubs_list_id)
+            reported_users = User.objects.filter(id__in=reported_users_list_id)
 
             strange_letters = ContactingSupport.objects.filter(role=0).exclude(answer_content=None)
             new_strange_letters = ContactingSupport.objects.filter(role=0, answer_content=None)
@@ -144,7 +151,9 @@ def LettersToSupport(request):
             # print(applications)
             # print(new_applications)
             # print(reports)
-            # print(new_reports)
+            # print(reported_pubs_list_id)
+            # print(reported_pubs)
+            # print(isinstance(1,str))
             # print(strange_letters)
             # print(new_strange_letters)
 
@@ -153,6 +162,7 @@ def LettersToSupport(request):
                 title = str(new_ideas_count + new_questions_count + new_applications_count + new_reports_count + new_strange_letters_count) + ' обращений ждут ответа | Обращения в поддержку'
             content = {
                 'answer_form': answer_form,
+                'answer_to_report_form': answer_to_report_form,
 
                 'ideas': ideas,
                 'new_ideas': new_ideas,
@@ -173,6 +183,8 @@ def LettersToSupport(request):
                 'new_reports': new_reports,
                 'new_reports_count': new_reports_count,
                 'all_reports_photos': all_reports_photos,
+                'reported_pubs': reported_pubs,
+                'reported_users': reported_users,
 
                 'strange_letters': strange_letters,
                 'new_strange_letters': new_strange_letters,
@@ -188,6 +200,7 @@ def LettersToSupport(request):
         return HttpResponse("Сначала авторизируйтесь!")
 
 
+# стартовая страница админа
 class StartPanel(ListView):
     model =  Publication
     template_name = 'adminapp/main.html'
@@ -196,7 +209,7 @@ class StartPanel(ListView):
         if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
-            # return HttpResponseRedirect('/')
+
         else:
             resp = super().get(*args, **kwargs)
             print('Finished processing GET request')
@@ -222,6 +235,7 @@ class StartPanel(ListView):
         return data
 
 
+# страница всех публикаций в ИС
 class PubList(ListView):
     model =  Publication
     template_name = 'adminapp/publications.html'
@@ -254,6 +268,7 @@ class PubList(ListView):
         return data
 
 
+# страница всех пользователей в ИС
 class UserList(ListView):
     model =  User
     template_name = 'adminapp/users.html'

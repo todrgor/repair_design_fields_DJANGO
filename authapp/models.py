@@ -12,6 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # authorONE : *_au_*thor : author
 # NewUser : MOYproektTHEbest : watcher
 # ksyu : 1212ks12 : Watcher
+# Gleb_Olivki : GlebKrasavchik99 : Watcher
 
 class User(AbstractUser):
     # last_entry работает странно и ненадёжно
@@ -164,11 +165,11 @@ class ContactingSupport(models.Model):
     title = models.CharField(max_length=99, verbose_name='Заголовок события', default='000')
     asked_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_question", verbose_name='Кто обратился в поддержку')
     ask_content = models.CharField(max_length=1555, verbose_name='Содержание обращения')
-    ask_additional_info = models.CharField(max_length=99, verbose_name='Дополнительная информация к обращению', blank=True, null=True)
+    ask_additional_info = models.IntegerField(max_length=99, verbose_name='Дополнительная информация к обращению', blank=True, null=True)
     when_asked = models.DateTimeField(verbose_name='Дата и время обращения в поддержку')
     answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого', blank=True, null=True)
     answer_content = models.CharField(max_length=1555, verbose_name='Содержание ответа', blank=True, null=True)
-    answer_additional_info = models.CharField(max_length=1555, verbose_name='Комментарий к ответу', blank=True, null=True)
+    answer_additional_info = models.IntegerField(max_length=1555, verbose_name='Дополнительная информация к ответу', blank=True, null=True)
     when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение', blank=True, null=True)
     role = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
 
