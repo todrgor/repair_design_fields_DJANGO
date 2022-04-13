@@ -8,6 +8,7 @@ from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
+from django.utils.formats import localize
 # from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 
@@ -69,7 +70,7 @@ def LettersToSupport(request):
         if request.user.role.id in [3, 4]:
             answer_form = AnswerForm()
             answer_to_report_form = AnswerToReportForm()
-            if request.method == 'POST':
+            if request.method == 'POST' and ContactingSupport.objects.filter(id=int(request.POST['ask_id'])).count() >0:
                 if not request.POST['answer'].isspace():
                     answer = request.POST
                     letter = ContactingSupport.objects.get(id=int(answer['ask_id']))
@@ -77,15 +78,78 @@ def LettersToSupport(request):
                     # из-за этого те же самые изменения создаются второй раз. единственное найденное
                     # решение, которое очень похоже на кастыль -- проверять, есть ли уже в БД ответ
                     # на это обрщание. рабоатает. но request.POST по-прежнему повторяется
+                    if letter.role.id == 0 and 'delete_letter' in answer:
+                        noti=Publication.objects.create(title=('Спасибо Вам за Ваше обращение! С Ваши обращением «' + letter.title + '», отправленным ' + str(localize(letter.when_asked)) + ', на каком-то этапе обработки что-то пошло не так... Оно было удалено. Если вопрос остаётся открытым, пожалуйста, сделайте обращение в поддержку ешё. Также: если что, на обращение был сделан ответ: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=letter.asked_by.photo.name, content_first_desc="Просим прощения за неудобства ❤", content_last_desc='', author=request.user)
+                        Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                        if not letter.answer_content:
+                            letter.answer_content = answer['answer']
+                            letter.answered_by = request.user
+                            letter.when_answered = timezone.now()
+                        letter.delete()
+
                     if not letter.answer_content:
                         letter_type = letter.role.id
 
-                        if letter_type in [21, 22, 31, 32]:
+                        if letter_type in [11, 12, 21, 22, 31, 32]:
                             letter.answer_content = answer['answer']
                             letter.answered_by = request.user
                             letter.when_answered = timezone.now()
 
+                            if letter_type in [11, 12]:
+                                letter.answer_additional_info = 0
+                                if letter_type == 11:
+                                    pub = Publication.objects.get(id = letter.ask_additional_info)
+                                    noti_preview = pub.preview.name
+                                    report_reason_receiver = pub.author
+                                if letter_type == 12:
+                                    user = User.objects.get(id = letter.ask_additional_info)
+                                    noti_preview = user.photo.name
+                                    report_reason_receiver = user
+
+                                if (not 'is_delete_pub' in answer and not 'is_deny_rules' in answer and not 'is_delete_account' in answer) or (letter_type == 11 and Publication.objects.get(id=letter.ask_additional_info).author.role.id == 4) or (letter_type == 12 and User.objects.get(id=letter.ask_additional_info).role.id == 4):
+                                    # print('ответ только сообщением')
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                                    noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=report_reason_receiver, noti_for_user=noti)
+
+                                else:
+                                    # print('ответ не только сообщением')
+                                    decision = ''
+                                    decision_for_report_reason_receiver = ''
+                                    if letter_type == 11 and 'is_delete_pub' in answer:
+                                        # print('+ удалить публикацию')
+                                        decision = 'безвозвратно удалить публикацию «' + pub.title + '»'
+                                        pub.delete()
+                                        letter.answer_additional_info += 10
+
+                                    if 'is_deny_rules' in answer and not 'is_delete_account' in answer:
+                                        # print('+ лишить роли')
+                                        if not decision or not decision.isspace():
+                                            decision += ' и '
+                                            decision_for_report_reason_receiver = decision
+                                        decision += 'понизить пользователя «' + report_reason_receiver.username + '» до роли "Пользователь-зритель"'
+                                        decision_for_report_reason_receiver += 'понизить Вас до роли "Пользователь-зритель"'
+                                        report_reason_receiver.role = UserRoles.objects.get(id=1)
+                                        report_reason_receiver.save()
+                                        letter.answer_additional_info += 100
+
+                                    if 'is_delete_account' in answer:
+                                        # print('+ удалить аккаунт')
+                                        if not decision or not decision.isspace():
+                                            decision += ' и '
+                                        decision += 'безвозвратно удалить пользователя «' + report_reason_receiver.username + '»'
+                                        report_reason_receiver.delete()
+                                        letter.answer_additional_info += 1000
+                                    else:
+                                        noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision_for_report_reason_receiver + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
+                                        Notifications.objects.create(user_receiver=report_reason_receiver, noti_for_user=noti)
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                                # print('report of type', letter_type)
+
                             if letter_type in [21, 22]:
+                                letter.ask_additional_info = 999
                                 if letter_type == 21:
                                     role_name = 'роль автора'
                                     role_id = 2
@@ -101,15 +165,34 @@ def LettersToSupport(request):
                                 else:
                                     decision = 'к сожалению, '+ role_name +' Вам не назначена.'
                                     letter.answer_additional_info = 0
-                                noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея!", content_last_desc='', author=request.user)
-                            if letter_type == 31:
-                                noti=Publication.objects.create(title=('Ваш вопрос был рассмотрен. Ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея!", content_last_desc='', author=request.user)
-                            if letter_type == 32:
-                                noti=Publication.objects.create(title=('Спасибо Вам за Вашу идею! Идея была рассмотрена.  Ответ от поддержки: ' + answer['answer']), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Ждём ещё идей!", content_last_desc='', author=request.user)
-                            Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                                noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
+                                Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+
+                            if letter_type in [31, 32]:
+                                if letter_type == 31:
+                                    noti=Publication.objects.create(title=('Ваш вопрос был рассмотрен. Ответ от поддержки: «' + answer['answer'] + '».'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
+                                if letter_type == 32:
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу идею! Идея была рассмотрена.  Ответ от поддержки: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Ждём ещё идей! ❤", content_last_desc='', author=request.user)
+                                Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+
+                        # if letter_type in [11, 12]:
+                        #     if ('is_just_answer' in answer) or (letter_type == 11 and Publication.objects.get(id=letter.ask_additional_info).author.role.id == 4) or (letter_type == 12 and User.objects.get(id=letter.ask_additional_info).role.id == 4):
+                        #         print('ответ только сообщением')
+                        #     else:
+                        #         print('ответ не только сообщением')
+                        #         if letter_type == 11 and 'is_delete_pub' in answer:
+                        #             print('+ удалить публикацию')
+                        #         if 'is_deny_rules' in answer:
+                        #             print('+ лишить роли')
+                        #         if 'is_delete_account' in answer:
+                        #             print('+ удалить аккаунт')
+                        #     print('report of type', letter_type)
 
                         letter.save()
                         print(str(answer))
+                        # print(str(answer.is_delete_pub))
+                        # print(str(answer.is_deny_rules))
+                        # print(str(answer.is_delete_account))
                 else:
                     answer_form = AnswerForm({'answer': None})
                     answer_to_report_form = AnswerToReportForm({'answer': None, 'decision': 'just_answer'})

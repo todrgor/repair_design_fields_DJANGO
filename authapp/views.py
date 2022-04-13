@@ -369,12 +369,12 @@ def SendToSupport(request):
                 }
                 return render(request, 'authapp/send_to_support.html', context)
 
-            ask_additional_info = ''
+            ask_additional_info = 0
 
             if request.POST['type'] == '11':
                 pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
                 title = 'Жалоба на публикацию «'+ pub.title + '»'
-                ask_additional_info = request.POST['complaint_pub_id']
+                ask_additional_info = int(request.POST['complaint_pub_id'])
                 noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=pub.preview.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=pub.preview.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
@@ -383,7 +383,7 @@ def SendToSupport(request):
             if request.POST['type'] == '12':
                 account = User.objects.get(id=request.POST['complaint_account_id'])
                 title = 'Жалоба на пользователя «'+ account.username + '»'
-                ask_additional_info = request.POST['complaint_account_id']
+                ask_additional_info = int(request.POST['complaint_account_id'])
                 noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', role=PubRoles.objects.get(id=51), preview=account.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.', role=PubRoles.objects.get(id=51), preview=account.photo.name, content_first_desc="Ожидайте ответа!", content_last_desc='', author=request.user)

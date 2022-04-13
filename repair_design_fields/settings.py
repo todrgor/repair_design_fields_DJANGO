@@ -111,15 +111,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
 
+TIME_ZONE = 'Asia/Irkutsk'
 
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
-TIME_ZONE = 'Asia/Irkutsk'
+
+DATE_FORMAT = 'd E Y' #26 ноября 2020
 
 
 # Static files (CSS, JavaScript, Images)
