@@ -156,17 +156,25 @@ def LettersToSupport(request):
                                 if letter_type == 22:
                                     role_name = 'роль админа'
                                     role_id = 3
-                                if answer['change_role'] == 'Назначить новую роль':
-                                    decision = 'поздравляем! Теперь у Вас '+ role_name +'!'
-                                    letter.answer_additional_info = 1
-                                    letter_author = letter.asked_by
-                                    letter_author.role = UserRoles.objects.get(id=role_id)
-                                    letter_author.save()
+
+                                if letter.asked_by.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
+                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому пока не можем. Просим простить нас ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                                    noti=Publication.objects.create(title=('Заявка на '+ role_name +' от пользователя «' + letter.asked_by.username + '» никак не может быть одобрена: на данный момент в системе всего 1 суперпользователь, поэтому опасно менять ему роль. Придётся подождать наследника и обратиться потом ещё. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому мы пока не можем. вот так вот ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
                                 else:
-                                    decision = 'к сожалению, '+ role_name +' Вам не назначена.'
-                                    letter.answer_additional_info = 0
-                                noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
-                                Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
+                                    if answer['change_role'] == 'Назначить новую роль':
+                                        decision = 'поздравляем! Теперь у Вас '+ role_name +'!'
+                                        letter.answer_additional_info = 1
+                                        letter_author = letter.asked_by
+                                        letter_author.role = UserRoles.objects.get(id=role_id)
+                                        letter_author.save()
+                                    else:
+                                        decision = 'к сожалению, '+ role_name +' Вам не назначена.'
+                                        letter.answer_additional_info = 0
+                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
+                                    Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
 
                             if letter_type in [31, 32]:
                                 if letter_type == 31:
