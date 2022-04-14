@@ -10,6 +10,7 @@ class Publication(models.Model):
     content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями', default='')
     content_last_desc =  models.TextField(verbose_name='Текст после фотографий', blank=True, null=True, default='')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
+    test_row = models.ManyToManyField('TagName', verbose_name='тестовая строка')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
     cost_min = models.PositiveIntegerField(blank=True, default=0, verbose_name='бюджет от')
     cost_max = models.PositiveIntegerField(blank=True, default=1, verbose_name='бюджет до')
