@@ -171,7 +171,7 @@ class ContactingSupport(models.Model):
     answer_content = models.CharField(max_length=1555, verbose_name='Содержание ответа', blank=True, null=True)
     answer_additional_info = models.IntegerField(verbose_name='Дополнительная информация к ответу', blank=True, null=True)
     when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение', blank=True, null=True)
-    role = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
+    type = models.ForeignKey('ContactingSupportTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид обращения в поддержку', blank=False)
 
     class Meta:
         verbose_name = 'Обращение в поддержку'

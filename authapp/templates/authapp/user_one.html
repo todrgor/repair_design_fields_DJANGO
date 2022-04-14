@@ -128,7 +128,7 @@
         <h1 class="author_pubs">Публикации автора:</h1>
         {% for pub in expert_pubs %}
 
-          {% if pub.role.id == 31 %} <!-- если это лайфхак -->
+          {% if pub.type.id == 31 %} <!-- если это лайфхак -->
             <div class="pub_one lifehack" id="{{ pub.id }}">
               <div class="media">
                 {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
@@ -209,7 +209,7 @@
             </div>
           {% endif %}
 
-          {% if pub.role.id == 21 %} <!-- если это публикация о дизайне -->
+          {% if pub.type.id == 21 %} <!-- если это публикация о дизайне -->
             <div class="pub_one design" id="{{ pub.id }}">
               <div class="img_from_pub">
                 <img src="{{ pub.preview.url }}" alt="">
@@ -240,7 +240,7 @@
               </div>
             </div>
           {% endif %}
-          {% if pub.role.id == 11 %} <!-- если это публикация о ремонте -->
+          {% if pub.type.id == 11 %} <!-- если это публикация о ремонте -->
             <div class="pub_one repair" id="{{ pub.id }}">
               <div class="img_from_pub">
                 <img src="{{ pub.preview.url }}" alt="">

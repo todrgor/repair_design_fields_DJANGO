@@ -41,7 +41,7 @@
     {% else %}
       <div class="pubs_container">
       {% for p in pubs %}
-        {% if p.pub_id.role.id == 11 %}
+        {% if p.pub_id.type.id == 11 %}
           <div class="pub_one repair" id="{{ p.pub_id.id }}">
             <div class="img_from_pub">
               <img src="{{ p.pub_id.preview.url }}" alt="">
@@ -61,7 +61,7 @@
             </div>
           </div>
         {% endif %}
-        {% if p.pub_id.role.id == 21 %}
+        {% if p.pub_id.type.id == 21 %}
           <div class="pub_one design" id="{{ p.pub_id.id }}">
             <div class="img_from_pub">
               <img src="{{ p.pub_id.preview.url }}" alt="">
@@ -83,7 +83,7 @@
             </div>
           </div>
         {% endif %}
-        {% if p.pub_id.role.id == 31 %}
+        {% if p.pub_id.type.id == 31 %}
           <div class="pub_one lifehack" id="{{ p.pub_id.id }}">
             <div class="media">
               {% if '.mp4' in p.pub_id.preview.url or '.mov' in p.pub_id.preview.url %}

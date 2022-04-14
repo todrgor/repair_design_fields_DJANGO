@@ -71,7 +71,7 @@
 
                  <td class="photo_and_nickname" style='align-items: center;'><img src="{{ p.author.photo.url }}" alt=""><a
                          href="{% url 'auth:account_one' pk=p.author.id %}">{{ p.author.username }}</a></td>
-                <td class="with200px">{{ p.role.name }}</td>
+                <td class="with200px">{{ p.type.name }}</td>
                 <td>{{ p.seen_count }}</td>
                  <td>{{ p.saved_count }}</td>
                  <td class="following">

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/static/lib\css\style_header.css">
   <link rel="stylesheet" href="/static/lib\css\style_footer.css">
   <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
-  {% if pub.role.id == 31 %}
+  {% if pub.type.id == 31 %}
     <link rel="stylesheet" href="/static/lib\css\style_watch_lifehacks.css">
   {% else %}
     <link rel="stylesheet" href="/static/lib\css\style_pub_one.css">
@@ -29,7 +29,7 @@
     <div class="opened_filter"></div>
   </div>
 
-  {% if pub.role.id == 31 %}
+  {% if pub.type.id == 31 %}
     <div class="pubs_container">
       <div class="page_title"> </div>
 
@@ -269,7 +269,7 @@
 
 {% block scripts_individual %}
   <script src="/static/lib/js/animation-pub-one.js"></script>
-  {% if pub.role.id == 31 %}
+  {% if pub.type.id == 31 %}
     <script src="/static/lib/js/animation-lifehacks.js"></script>
   {% endif %}
 {% endblock %}

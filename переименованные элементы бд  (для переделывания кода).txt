@@ -1,0 +1,9 @@
+model : atribute old name : atribute new name
+
+Publication : role : type
+ContactingSupport : role : type
+PubRoles --> PubTypes
+TagName : pub_role : pub_type
+
+css
+roles_and_tags --> types_and_tags

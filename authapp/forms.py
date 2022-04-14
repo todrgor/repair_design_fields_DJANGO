@@ -82,7 +82,7 @@ class BecomeAnAuthorForm(forms.Form):
 class SendToSupportForm(forms.Form):
     type = forms.ModelChoiceField(queryset=ContactingSupportTypes.objects.exclude(id=0), initial=5, label="Цель обращения", empty_label="Ещё не выбрано")
     complaint_account_id = forms.ModelChoiceField(queryset=User.objects.filter(), initial=0, label="Жалоба на пользователя", empty_label="Ещё не выбрано")
-    complaint_pub_id = forms.ModelChoiceField(queryset=Publication.objects.filter(role__id__in=(11, 21, 31)), initial=0, label="Жалоба на публикацию", empty_label="Ещё не выбрано")
+    complaint_pub_id = forms.ModelChoiceField(queryset=Publication.objects.filter(type__id__in=(11, 21, 31)), initial=0, label="Жалоба на публикацию", empty_label="Ещё не выбрано")
     desc = forms.CharField(error_messages = {
                  'required':"Ваше обращение должно быть содержательным, а не просто состоять из пробелов!"
                  }, widget=forms.Textarea(attrs={'placeholder':"Расскажите нам, что случилось?", 'title':"У вас какая-либо идея или проблема?"}), label="У вас какая-либо идея или проблема?")

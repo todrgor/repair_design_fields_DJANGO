@@ -16,9 +16,9 @@
 //   }
 // });
 
-$('input[name="pub_role"], .pub_roles select').change(function () {
-  if ($('#pub_role:checked').val() == 'repair' || $('.pub_roles select').val() == '11') {
-    console.log('pub_role = repair');
+$('input[name="pub_type"], .pub_types select').change(function () {
+  if ($('#pub_type:checked').val() == 'repair' || $('.pub_types select').val() == '11') {
+    console.log('pub_type = repair');
     $('.cost p:first').html('Бюджет на ремонт, ₽');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
     if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
@@ -36,8 +36,8 @@ $('input[name="pub_role"], .pub_roles select').change(function () {
     $('.pub_photos').removeClass('hidden');
   }
 
-  if ($('#pub_role:checked').val() == 'design' || $('.pub_roles select').val() == '21') {
-    console.log('pub_role = design');
+  if ($('#pub_type:checked').val() == 'design' || $('.pub_types select').val() == '21') {
+    console.log('pub_type = design');
     $('.cost p:first').html('Бюджет на дизайн, ₽');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
     if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
@@ -55,8 +55,8 @@ $('input[name="pub_role"], .pub_roles select').change(function () {
     $('.pub_photos').removeClass('hidden');
   }
 
-  if ($('#pub_role:checked').val() == 'lifehack' || $('.pub_roles select').val() == '31') {
-    console.log('pub_role = lifehack');
+  if ($('#pub_type:checked').val() == 'lifehack' || $('.pub_types select').val() == '31') {
+    console.log('pub_type = lifehack');
     $('.pub_preview.pub_inp_one h4:first').html('Файл:');
     $('.pub_description.pub_inp_one textarea').val('   ');
     $('.cost input').val(1);

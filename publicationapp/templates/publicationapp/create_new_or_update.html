@@ -40,10 +40,10 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        <div class="pub_roles">
+        <div class="pub_types">
           <h4>Вид публикации:</h4>
-          {{ form.role }}
-          {{ form.role.errors }}
+          {{ form.type }}
+          {{ form.type.errors }}
         </div>
         <div class="pub_title pub_inp_one">
           <h4>Заголовок:</h4>

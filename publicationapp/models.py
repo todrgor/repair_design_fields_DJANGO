@@ -5,7 +5,7 @@ from django.core.validators import FileExtensionValidator
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
-    role = models.ForeignKey('PubRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
+    type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
     preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'pdf'])], verbose_name='Превью')
     content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями', default='')
     content_last_desc =  models.TextField(verbose_name='Текст после фотографий', blank=True, null=True, default='')
@@ -47,7 +47,7 @@ class Publication(models.Model):
         self.save
 
     def __str__(self):
-        return str(self.title) + ', ' + str(self.role)
+        return str(self.title) + ', ' + str(self.type)
 
 class PubPhotos(models.Model):
     # нейминг: правильнее будет просто pub + переименовать во всём проекте
@@ -62,7 +62,7 @@ class PubPhotos(models.Model):
     def __str__(self):
         return str(self.photo) +' for '+ str(self.id_pub)
 
-class PubRoles(models.Model):
+class PubTypes(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id роли')
     name = models.CharField(max_length=135, verbose_name='Значение роли')
 
@@ -95,7 +95,7 @@ class TagName(models.Model):
     # правильно будет -- не TagName, a TagValue, поэтому  везде не забудь переименовать имя используемой таблицы
 
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id тега')
-    pub_role = models.PositiveIntegerField(verbose_name='роль публикации')
+    pub_type = models.PositiveIntegerField(verbose_name='роль публикации')
     tag_category = models.CharField(max_length=255, verbose_name='категория')
     tag_name = models.CharField(max_length=255, verbose_name='значение тега')
 
@@ -104,6 +104,6 @@ class TagName(models.Model):
         verbose_name_plural = 'Значения тегов'
 
     def __str__(self):
-        # return PubRoles.name(id = self.pub_role) + ' ' + self.tag_category + ': ' + self.tag_name
+        # return PubTypes.name(id = self.pub_type) + ' ' + self.tag_category + ': ' + self.tag_name
         # return self.tag_category + ': ' + self.tag_name
         return self.tag_name

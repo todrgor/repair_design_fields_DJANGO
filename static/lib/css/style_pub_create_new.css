@@ -44,19 +44,19 @@ input {
 select {
   width: 100%;
 }
-select[name="role"] {
+select[name="type"] {
   width: 42%;
 }
 
-.roles_and_tags {
+.types_and_tags {
   display: flex;
   margin: 0 0 20px;
 }
-.pub_roles,
+.pub_types,
 .pub_tags {
   width: 30%;
 }
-.at_first_choose_the_pub_role,
+.at_first_choose_the_pub_type,
 .pub_inp_one p {
   opacity: 0.8;
     font-size: 16px;
@@ -92,7 +92,7 @@ select[name="role"] {
       margin: 0 10px 5px 0;
 }
 
-.pub_roles,
+.pub_types,
 .pub_tags {
   margin: 0 0 27px;
 }

@@ -85,7 +85,7 @@
                       <p class="admin_checked_the_letter">Ответа ещё нет</p>
                       <form class="" action="" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ idea.role.id }}">
+                        <input type="hidden" name="ask_type" value="{{ idea.type.id }}">
                         <input type="hidden" name="ask_id" value="{{ idea.id }}">
                         {% if answer_form.answer.errors %}
                           <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
@@ -185,7 +185,7 @@
                       <p class="admin_checked_the_letter">Ответа ещё нет</p>
                       <form class="" action="" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ question.role.id }}">
+                        <input type="hidden" name="ask_type" value="{{ question.type.id }}">
                         <input type="hidden" name="ask_id" value="{{ question.id }}">
                         {% if answer_form.answer.errors %}
                           <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
@@ -265,10 +265,10 @@
                         <a href="{% url 'auth:account_one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
                           <a href="{% url 'auth:account_one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
-                          {% if application.role.id == 21 %}
+                          {% if application.type.id == 21 %}
                             <p style="color:gray;">▶ роль автора</p>
                           {% endif %}
-                          {% if application.role.id == 22 %}
+                          {% if application.type.id == 22 %}
                             <p style="color:gray;">▶ роль админа</p>
                           {% endif %}
                           <p style="color:gray;">{{ application.when_asked }}</p>
@@ -291,7 +291,7 @@
                       <p class="admin_checked_the_letter">Ответа ещё нет</p>
                       <form class="" action="" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ application.role.id }}">
+                        <input type="hidden" name="ask_type" value="{{ application.type.id }}">
                         <input type="hidden" name="ask_id" value="{{ application.id }}">
                         {% if answer_form.answer.errors %}
                           <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
@@ -318,10 +318,10 @@
                         <a href="{% url 'auth:account_one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
                           <a href="{% url 'auth:account_one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
-                          {% if application.role.id == 21 %}
+                          {% if application.type.id == 21 %}
                             <p style="color:gray;">▶ роль автора</p>
                           {% endif %}
-                          {% if application.role.id == 22 %}
+                          {% if application.type.id == 22 %}
                             <p style="color:gray;">▶ роль админа</p>
                           {% endif %}
                           <p style="color:gray;">{{ application.when_asked }}</p>
@@ -385,10 +385,10 @@
                         <a href="{% url 'auth:account_one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
                           <a href="{% url 'auth:account_one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
-                          {% if report.role.id == 11 %}
+                          {% if report.type.id == 11 %}
                             <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:pub_one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
                           {% endif %}
-                          {% if report.role.id == 12 %}
+                          {% if report.type.id == 12 %}
                             <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:account_one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
                           {% endif %}
                           <p style="color:gray;">{{ report.when_asked }}</p>
@@ -411,7 +411,7 @@
                       <p class="admin_checked_the_letter">Ответа ещё нет</p>
                       <form class="" action="" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ report.role.id }}">
+                        <input type="hidden" name="ask_type" value="{{ report.type.id }}">
                         <input type="hidden" name="ask_id" value="{{ report.id }}">
                         {% if answer_to_report_form.answer.errors %}
                           <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
@@ -422,7 +422,7 @@
                         {% endif %}
                         {{ answer_to_report_form.answer }}
 
-                        {% if report.role.id == 11 %}
+                        {% if report.type.id == 11 %}
                           {% for pub in reported_pubs %}
                             {% if pub.id == report.ask_additional_info %}
                               {% if pub.author.role.id != 4 %}
@@ -444,7 +444,7 @@
                           {% endfor %}
                         {% endif  %}
 
-                        {% if report.role.id == 12 %}
+                        {% if report.type.id == 12 %}
                           {% for user in reported_users %}
                             {% if user.id == report.ask_additional_info %}
                               {% if user.role.id != 4 %}
@@ -486,14 +486,14 @@
                         <div class="" style="display:block; width: 99%;">
                           <div class="" style="display:block; width: 99%;">
                             <a href="{% url 'auth:account_one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
-                            {% if report.role.id == 11 %}
+                            {% if report.type.id == 11 %}
                               {% if report.answer_additional_info != 10 and report.answer_additional_info != 110 and report.answer_additional_info != 1010 %}
                                 <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:pub_one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
                               {% else %}
                                 <p style="color:gray;"> {{ report.title }} </p>
                               {% endif %}
                             {% endif %}
-                            {% if report.role.id == 12 %}
+                            {% if report.type.id == 12 %}
                               {% if report.answer_additional_info != 1000 and report.answer_additional_info != 1010 %}
                                 <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:account_one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
                               {% else %}
@@ -593,7 +593,7 @@
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
                     <form class="" action="" method="post">
                       {% csrf_token %}
-                      <input type="hidden" name="ask_type" value="{{ strange_letter.role.id }}">
+                      <input type="hidden" name="ask_type" value="{{ strange_letter.type.id }}">
                       <input type="hidden" name="ask_id" value="{{ strange_letter.id }}">
                       {% if answer_form.answer.errors %}
                         <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
@@ -603,7 +603,7 @@
                         {{ answer_form.answer.errors }}
                       {% endif %}
                       {{ answer_form.answer }}
-                      <input type="submit" name="delete_letter" value="Отправить пользователю ответ и удалить обращение ">
+                      <input type="submit" name="make_answer" value="Отправить пользователю ответ и удалить обращение ">
                     </form>
                   </div>
                 </td>
@@ -644,10 +644,9 @@
                     </p>
                     <form class="" action="" method="post">
                       {% csrf_token %}
-                      <input type="hidden" name="ask_type" value="{{ strange_letter.role.id }}">
+                      <input type="hidden" name="ask_type" value="{{ strange_letter.type.id }}">
                       <input type="hidden" name="ask_id" value="{{ strange_letter.id }}">
-                      <input type="hidden" name="answer" value="{{ strange_letter.answer_content }}">
-                      <input type="submit" name="delete_letter" value="Удалить это обращение ">
+                      <input type="submit" name="delete_letter_to" value="Удалить это обращение ">
                     </form>
                   </div>
                 </td>

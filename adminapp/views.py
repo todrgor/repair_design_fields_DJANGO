@@ -32,11 +32,11 @@ def NewComplaint(request):
                 pub_complaint = Publication.objects.get(id=complaint['complaint_id'])
                 pub_complaint.reported_count +=1
                 pub_complaint.save()
-                contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), role=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
+                contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), type=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
-                noti=Publication.objects.create(title=('Ваша жалоба на публикацию «'+ pub_complaint.title +'» принята!'), role=PubRoles.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('Ваша жалоба на публикацию «'+ pub_complaint.title +'» принята!'), type=PubTypes.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('На Вашу публикацию «'+ pub_complaint.title +'» поступила 1 новая жалоба.'), role=PubRoles.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('На Вашу публикацию «'+ pub_complaint.title +'» поступила 1 новая жалоба.'), type=PubTypes.objects.get(id=51), preview=(pub_complaint.preview.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=pub_complaint.author, noti_for_user=noti)
 
             # если обращение -- жалоба на пользователя
@@ -44,11 +44,11 @@ def NewComplaint(request):
                 user_complaint = User.objects.get(id=complaint['complaint_id'])
                 user_complaint.reported_count +=1
                 user_complaint.save()
-                contacting_support = ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), role=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
+                contacting_support = ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), type=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
-                noti=Publication.objects.create(title=('Ваша жалоба на пользователя «'+ user_complaint.username +'» принята!'), role=PubRoles.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('Ваша жалоба на пользователя «'+ user_complaint.username +'» принята!'), type=PubTypes.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('На Ваш профиль поступила 1 новая жалоба.'), role=PubRoles.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('На Ваш профиль поступила 1 новая жалоба.'), type=PubTypes.objects.get(id=51), preview=(user_complaint.photo.name), content_first_desc="Ждите результата здесь, в уведомлениях", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=user_complaint, noti_for_user=noti)
 
             # если обращение поступило вместе с фотками
@@ -78,8 +78,8 @@ def LettersToSupport(request):
                     # из-за этого те же самые изменения создаются второй раз. единственное найденное
                     # решение, которое очень похоже на кастыль -- проверять, есть ли уже в БД ответ
                     # на это обрщание. рабоатает. но request.POST по-прежнему повторяется
-                    if letter.role.id == 0 and 'delete_letter' in answer:
-                        noti=Publication.objects.create(title=('Спасибо Вам за Ваше обращение! С Ваши обращением «' + letter.title + '», отправленным ' + str(localize(letter.when_asked)) + ', на каком-то этапе обработки что-то пошло не так... Оно было удалено. Если вопрос остаётся открытым, пожалуйста, сделайте обращение в поддержку ешё. Также: если что, на обращение был сделан ответ: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=letter.asked_by.photo.name, content_first_desc="Просим прощения за неудобства ❤", content_last_desc='', author=request.user)
+                    if letter.type.id == 0 and 'delete_letter' in answer:
+                        noti=Publication.objects.create(title=('Спасибо Вам за Ваше обращение! С Ваши обращением «' + letter.title + '», отправленным ' + str(localize(letter.when_asked)) + ', на каком-то этапе обработки что-то пошло не так... Оно было удалено. Если вопрос остаётся открытым, пожалуйста, сделайте обращение в поддержку ешё. Также: если что, на обращение был сделан ответ: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=letter.asked_by.photo.name, content_first_desc="Просим прощения за неудобства ❤", content_last_desc='', author=request.user)
                         Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
                         if not letter.answer_content:
                             letter.answer_content = answer['answer']
@@ -88,7 +88,7 @@ def LettersToSupport(request):
                         letter.delete()
 
                     if not letter.answer_content:
-                        letter_type = letter.role.id
+                        letter_type = letter.type.id
 
                         if letter_type in [11, 12, 21, 22, 31, 32]:
                             letter.answer_content = answer['answer']
@@ -108,9 +108,9 @@ def LettersToSupport(request):
 
                                 if (not 'is_delete_pub' in answer and not 'is_deny_rules' in answer and not 'is_delete_account' in answer) or (letter_type == 11 and Publication.objects.get(id=letter.ask_additional_info).author.role.id == 4) or (letter_type == 12 and User.objects.get(id=letter.ask_additional_info).role.id == 4):
                                     # print('ответ только сообщением')
-                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
-                                    noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=report_reason_receiver, noti_for_user=noti)
 
                                 else:
@@ -142,9 +142,9 @@ def LettersToSupport(request):
                                         report_reason_receiver.delete()
                                         letter.answer_additional_info += 1000
                                     else:
-                                        noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision_for_report_reason_receiver + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
+                                        noti=Publication.objects.create(title=(letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision_for_report_reason_receiver + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ❤", content_last_desc='', author=request.user)
                                         Notifications.objects.create(user_receiver=report_reason_receiver, noti_for_user=noti)
-                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=noti_preview, content_first_desc="Если решение не устраивает, можно подать жалобу ещё раз ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
                                 # print('report of type', letter_type)
 
@@ -158,9 +158,9 @@ def LettersToSupport(request):
                                     role_id = 3
 
                                 if letter.asked_by.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
-                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому пока не можем. Просим простить нас ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому пока не можем. Просим простить нас ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
-                                    noti=Publication.objects.create(title=('Заявка на '+ role_name +' от пользователя «' + letter.asked_by.username + '» никак не может быть одобрена: на данный момент в системе всего 1 суперпользователь, поэтому опасно менять ему роль. Придётся подождать наследника и обратиться потом ещё. С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому мы пока не можем. вот так вот ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Заявка на '+ role_name +' от пользователя «' + letter.asked_by.username + '» никак не может быть одобрена: на данный момент в системе всего 1 суперпользователь, поэтому опасно менять ему роль. Придётся подождать наследника и обратиться потом ещё. С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="По-другому мы пока не можем. вот так вот ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
 
                                 else:
@@ -173,14 +173,14 @@ def LettersToSupport(request):
                                     else:
                                         decision = 'к сожалению, '+ role_name +' Вам не назначена.'
                                         letter.answer_additional_info = 0
-                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
                                     Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
 
                             if letter_type in [31, 32]:
                                 if letter_type == 31:
-                                    noti=Publication.objects.create(title=('Ваш вопрос был рассмотрен. Ответ от поддержки: «' + answer['answer'] + '».'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Ваш вопрос был рассмотрен. Ответ от поддержки: «' + answer['answer'] + '».'), type=PubTypes.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤", content_last_desc='', author=request.user)
                                 if letter_type == 32:
-                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу идею! Идея была рассмотрена.  Ответ от поддержки: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), role=PubRoles.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Ждём ещё идей! ❤", content_last_desc='', author=request.user)
+                                    noti=Publication.objects.create(title=('Спасибо Вам за Вашу идею! Идея была рассмотрена.  Ответ от поддержки: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и дизайна»'), type=PubTypes.objects.get(id=51), preview=(letter.asked_by.photo.name), content_first_desc="Ждём ещё идей! ❤", content_last_desc='', author=request.user)
                                 Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
 
                         # if letter_type in [11, 12]:
@@ -206,34 +206,34 @@ def LettersToSupport(request):
                     answer_to_report_form = AnswerToReportForm({'answer': None, 'decision': 'just_answer'})
 
 
-            ideas = ContactingSupport.objects.filter(role=32).exclude(answer_content=None)
-            new_ideas = ContactingSupport.objects.filter(role=32, answer_content=None)
+            ideas = ContactingSupport.objects.filter(type=32).exclude(answer_content=None)
+            new_ideas = ContactingSupport.objects.filter(type=32, answer_content=None)
             new_ideas_count = new_ideas.count()
-            all_ideas_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=32)
+            all_ideas_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type=32)
 
-            questions = ContactingSupport.objects.filter(role=31).exclude(answer_content=None)
-            new_questions = ContactingSupport.objects.filter(role=31, answer_content=None)
+            questions = ContactingSupport.objects.filter(type=31).exclude(answer_content=None)
+            new_questions = ContactingSupport.objects.filter(type=31, answer_content=None)
             new_questions_count = new_questions.count()
-            all_questions_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=31)
+            all_questions_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type=31)
 
-            applications = ContactingSupport.objects.filter(role__in=[21, 22]).exclude(answer_content=None)
-            new_applications = ContactingSupport.objects.filter(role__in=[21, 22], answer_content=None)
+            applications = ContactingSupport.objects.filter(type__in=[21, 22]).exclude(answer_content=None)
+            new_applications = ContactingSupport.objects.filter(type__in=[21, 22], answer_content=None)
             new_applications_count = new_applications.count()
-            all_applications_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role__in=[21, 22])
+            all_applications_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type__in=[21, 22])
 
-            reports = ContactingSupport.objects.filter(role__in=[11, 12]).exclude(answer_content=None)
-            new_reports = ContactingSupport.objects.filter(role__in=[11, 12], answer_content=None)
+            reports = ContactingSupport.objects.filter(type__in=[11, 12]).exclude(answer_content=None)
+            new_reports = ContactingSupport.objects.filter(type__in=[11, 12], answer_content=None)
             new_reports_count = new_reports.count()
-            all_reports_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role__in=[11, 12])
-            reported_pubs_list_id = [p.ask_additional_info for p in ContactingSupport.objects.filter(role=11)]
-            reported_users_list_id = [u.ask_additional_info for u in ContactingSupport.objects.filter(role=12)]
+            all_reports_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type__in=[11, 12])
+            reported_pubs_list_id = [p.ask_additional_info for p in ContactingSupport.objects.filter(type=11)]
+            reported_users_list_id = [u.ask_additional_info for u in ContactingSupport.objects.filter(type=12)]
             reported_pubs = Publication.objects.filter(id__in=reported_pubs_list_id)
             reported_users = User.objects.filter(id__in=reported_users_list_id)
 
-            strange_letters = ContactingSupport.objects.filter(role=0).exclude(answer_content=None)
-            new_strange_letters = ContactingSupport.objects.filter(role=0, answer_content=None)
+            strange_letters = ContactingSupport.objects.filter(type=0).exclude(answer_content=None)
+            new_strange_letters = ContactingSupport.objects.filter(type=0, answer_content=None)
             new_strange_letters_count = new_strange_letters.count()
-            all_strange_letters_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__role=0)
+            all_strange_letters_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type=0)
 
             # print(ideas)
             # print(new_ideas)
@@ -309,7 +309,7 @@ class StartPanel(ListView):
 
     def get_context_data(self, **kwargs):
         title ='Главная | Панель администратора'
-        pubs = Publication.objects.filter(role__id__in=[11, 21, 31]).order_by('-pushed')[:3]
+        pubs = Publication.objects.filter(type__id__in=[11, 21, 31]).order_by('-pushed')[:3]
         noties = Notifications.objects.filter().order_by('-when')[:4]
         users = User.objects.filter().order_by('-last_entry')[:4]
         # applications =
@@ -344,7 +344,7 @@ class PubList(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Публикации | Панель администратора'
-        pubs = Publication.objects.filter(role__id__in=[11, 21, 31])
+        pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
         saved_urls = SavedPubs.objects.filter(pub_id__in = pubs)
         pub_has_tags = PubHasTags.objects.filter(pub_id__in = pubs)
         photos_urls = PubPhotos.objects.filter(id_pub__in = pubs)

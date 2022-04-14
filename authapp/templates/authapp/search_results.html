@@ -56,7 +56,7 @@
         <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span> </p>
         <div class="pubs_container_one_type show" id="repair">
         {% for pub in finded_pubs %}
-          {% if pub.role.id == 11 %}
+          {% if pub.type.id == 11 %}
               <div class="pub_one repair" id="{{ pub.id }}">
                 <div class="img_from_pub">
                   <img src="{{ pub.preview.url }}" alt="">
@@ -70,7 +70,7 @@
                 <a href="{% url 'pub:pub_one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
               </div>
           {% endif %}
-          {% if pub.role.id == 21 %}
+          {% if pub.type.id == 21 %}
             <div class="pub_one design" id="{{ pub.id }}">
               <div class="img_from_pub">
                 <img src="{{ pub.preview.url }}" alt="">
@@ -98,7 +98,7 @@
               </div>
             </div>
           {% endif %}
-          {% if pub.role.id == 31 %}
+          {% if pub.type.id == 31 %}
             <div class="pub_one lifehack" id="{{ pub.id }}">
               <div class="media">
                 {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}

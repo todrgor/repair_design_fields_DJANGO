@@ -4,7 +4,7 @@ function toggleShow(idPubContainer) {
 }
 
 function really_delete_pub(pub_id) {
-  $('.cancel_or_delete a').attr('href', 'pub/delete/'+pub_id);
+  $('.cancel_or_delete a').attr('href', '/pub/delete/'+pub_id);
   $('.pub_additional_functions_bg').addClass('show');
 }
 
