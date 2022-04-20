@@ -40,128 +40,113 @@
     <div class="pre_pre_opened_filter">
       <div class="pre__opened_filter">
         <div class="opened_filter">
-          <form class="opened_filter_form" action="filter" method="get">
+          <form class="opened_filter_form" action="" method="get">
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
               <p class="opened_filter_second_title">{{ pubs.count }} подобрано</p>
             </div>
             <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
               <div class="filters_on"> <!-- если есть 1+ фильтров -->
+                <div class="filter_one" id="fltr_ordering">
+                   <p id="fltr_ordering_p">Фильтер сортировка</p>
+                   <div class="to_close_filter fltr_ordering"></div>
+                </div>
                 <div class="filter_one" id="fltr_cost">
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
                 </div>
-                <div class="filter_one" id="fltr_sphere">
-                   <p id="fltr_sphere_p">Фильтер выбранные сферы ремонта</p>
-                   <div class="to_close_filter fltr_sphere"></div>
-                </div>
-                <div class="filter_one" id="fltr_style">
-                   <p id="fltr_style_p">Фильтер выбранный стиль</p>
-                   <div class="to_close_filter fltr_style"></div>
-                </div>
-                <div class="filter_one" id="fltr_room">
-                   <p id="fltr_room_p">Фильтер выбранная комната</p>
-                   <div class="to_close_filter fltr_room"></div>
-                </div>
+                {% for category in tag_categories %}
+                  <div class="filter_one" id="fltr_{{ category.id }}">
+                     <p id="fltr_{{ category.id }}_p">Фильтер {{ category.name }}</p>
+                     <div class="to_close_filter" id="{{ category.id }}"></div>
+                  </div>
+                {% endfor %}
                 <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
               </div>
               <div class="filters_off"> <!-- если ни оного фильтра не включено -->
                 <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
               </div>
             </div>
+            <div class="filter_mini_div ordering">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  <span class="category_name">Сортировка:</span>
+                </span>
+                <span class="button_span">
+                  <button type="button" name="button" class="triangle_to_open_and_hide button_and_submit__without__bgn_and_border">
+                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
+                </span>
+              </p>
+              <div class="labels" id="ordering">
+                <label>
+                  <input type="radio" name="ordering" value="by_new" {% if selected_filters.ordering == 'by_new' or not selected_filters.ordering %} checked {% endif %}>
+                  Сначала новые
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_old" {% if selected_filters.ordering == 'by_old' %} checked {% endif %}>
+                  Сначала старые
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_seen_count" {% if selected_filters.ordering == 'by_seen_count' %} checked {% endif %}>
+                  Болше всего просмотров
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_savest" {% if selected_filters.ordering == 'by_savest' %} checked {% endif %}>
+                  Сначала самые сохраняемые
+                  <!-- Сначала высокий % сохранений -->
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_shared_count" {% if selected_filters.ordering == 'by_shared_count' %} checked {% endif %}>
+                  Болше всего репостов
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_name" {% if selected_filters.ordering == 'by_name' %} checked {% endif %}>
+                  По наименованию
+                </label>
+                <label>
+                  <input type="radio" name="ordering" value="by_reports" {% if selected_filters.ordering == 'by_reports' %} checked {% endif %}>
+                  Сначала самые обжалованные
+                </label>
+              </div>
+            </div>
             <div class="filter_mini_div cost">
               <p class="opened_filter_text full_width">Бюджет на ремонт, ₽</p>
-              <input id="fltr_cost_min" type="number" name="cost_mini" value="" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
+              <input id="fltr_cost_min" type="number" name="cost_mini" value="{{ selected_filters.cost_mini }}" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
               <p style="font-size: 15px; font-weight: 900;">-</p>
-              <input id="fltr_cost_max" type="number" name="cost_max" value="" placeholder="15 000 000">
+              <input id="fltr_cost_max" type="number" name="cost_max" value="{{ selected_filters.cost_max }}" placeholder="15 000 000">
               <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
             </div>
-            <div class="filter_mini_div checked_spheres">
-              <p class="opened_filter_text full_width big_p">
-                <span class="big_p_parth">
-                  Ремонт чего:
-                  <span id="checked_spheres_count" class="checked_spheres_count">Любого</span>
-                </span>
-                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_spheres button_and_submit__without__bgn_and_border">
-                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
-                </button> </span>
-              </p>
-              <div class="spheres_labels_open">
-                <div class="spheres_any_one_label">
-                  <label> <span> <input type="checkbox" name="sphere_one" value="Сантехника" > </span><span>Сантехника</span> </label>
-                  <label class="any_one" style="max-width: 120px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">Ремонт любого</span> </label>
+            {% for category in tag_categories %}
+            <!-- див одной категории -->
+              <div class="filter_mini_div category" id="{{ category.id }}">
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth">
+                    <span class="category_name">{{ category.name }}:</span>
+                    <span class="count_checked">Любое</span>
+                  </span>
+                  <!-- треугольничек, скрывает и открывает чекбоксы -->
+                  <span class="button_span">
+                    <button type="button" name="button" class="triangle_to_open_and_hide button_and_submit__without__bgn_and_border">
+                    <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
+                  </span>
+                </p>
+                <div class="labels" id="{{ category.id }}">
+                  <!-- див с чекбоксами -->
+                  <label class="any_one">
+                    <span> <input type="checkbox" name="clear_category" value="any_one" id="{{ category.id }}"> </span>
+                    <span class="any_one__span">Очистить</span>
+                  </label>
+                  {% for tag in tags %}
+                    {% if tag.category == category %}
+                      <label>
+                        <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {{ filter }} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
+                        {{ tag.name }}
+                      </label>
+                    {% endif %}
+                  {% endfor %}
                 </div>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Отопление" > </span><span>Отопление</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Электропроводка" > </span><span>Электропроводка</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Стены и утепление" > </span><span>Стены и утепление</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Пол и фундамент" > </span><span>Пол и фундамент</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Потолок" > </span><span>Потолок</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Шумоизоляция" > </span><span>Шумоизоляция</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Лицевые поверхности" > </span><span>Лицевые поверхности</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Выравнивание" > </span><span>Выравнивание</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Двери, окна и замки" > </span><span>Двери, окна и замки</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Вентиляция" > </span><span>Вентиляция</span> </label>
-                <label> <span> <input type="checkbox" name="sphere_one" value="Планировка и перепланировка" > </span><span>Планировка и перепланировка</span> </label>
               </div>
-            </div>
-            <div class="filter_mini_div checked_styles">
-              <p class="opened_filter_text full_width big_p">
-                <span class="big_p_parth">
-                  Инструмент:
-                  <span id="checked_styles_count" class="checked_styles_count">Любой</span>
-                </span>
-                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_design_styles button_and_submit__without__bgn_and_border">
-                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
-                </button> </span>
-              </p>
-              <div class="styles_labels_open">
-                <div class="styles_any_one_label">
-                  <label style="max-width: 100px;"> <span> <input type="checkbox" name="style_design" value="Кувалда" > </span><span>Кувалда</span> </label>
-                  <label class="any_one" style="max-width: 144px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">Любой инструмент</span> </label>
-                </div>
-                <label> <span> <input type="checkbox" name="style_design" value="Молоток" > </span><span>Молоток</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Шруповёрт" > </span><span>Шруповёрт</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Шпаклёвка" > </span><span>Шпаклёвка</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Краска и кисти" > </span><span>Краска и кисти</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Клей" > </span><span>Клей</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Лом" > </span><span>Лом</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Сварочный аппарат" > </span><span>Сварочный аппарат</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Стеклорез" > </span><span>Стеклорез</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Плиткорез" > </span><span>Плиткорез</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Пила" > </span><span>Пила</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Наждачная бумага" > </span><span>Наждачная бумага</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Тесак" > </span><span>Тесак</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="Другое" > </span><span>Другое</span> </label>
-              </div>
-            </div>
-            <div class="filter_mini_div checked_rooms">
-              <p class="opened_filter_text full_width big_p">
-                <span class="big_p_parth">
-                  В помещении:
-                  <span id="checked_rooms_count" class="checked_rooms_count">В любом</span>
-                </span>
-                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_checked_rooms button_and_submit__without__bgn_and_border">
-                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
-                </button> </span>
-              </p>
-              <div class="checked_rooms_open">
-                <div class="check_any_one_room">
-                  <label style="max-width: 100px;"> <span> <input type="checkbox" name="checked_room" value="kitchen" > </span><span>Кухня</span> </label>
-                  <label class="any_one" style="max-width: 144px;"> <span> <input type="checkbox" name="checked_room" value="any_one"> </span><span class="any_one__span">Любое помещение</span> </label>
-                </div>
-                <label> <span> <input type="checkbox" name="checked_room" value="Туалет" > </span><span>Туалет</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Ванная" > </span><span>Ванная</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Гостинная" > </span><span>Гостинная</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Спальня" > </span><span>Спальня</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Личная комната" > </span><span>Личная комната</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Коридор" > </span><span>Коридор</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Балкон" > </span><span>Балкон</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Прихожая" > </span><span>Прихожая</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Офис" > </span><span>Офис</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Во всех" > </span><span>Во всех</span> </label>
-                <label> <span> <input type="checkbox" name="checked_room" value="Другое" > </span><span>Другое</span> </label>
-              </div>
-            </div>
+            {% endfor %}
             <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
             <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
             <div class="show_pubs">

@@ -127,6 +127,19 @@
               </div>
             </div>
           {% else %}
+          <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">
+            <div id="tags_count"></div>
+            <div id="fltr_cost_min"></div>
+            <div id="fltr_cost_max"></div>
+            <div id="fltr_cost_p"></div>
+            <div id="fltr_style_p"></div>
+            <div id="fltr_room_p"></div>
+            <div id="checked_styles_count"></div>
+            <div id="checked_rooms_count"></div>
+            <div class="notifications_opened avatar_options opened_filter"></div>
+
+          </div>
+
             <div class="user_didnt_log_in">
               <a href="{% url 'auth:login' %}" class="btn_udli">Войти</a>
               <a href="{% url 'auth:register' %}" class="btn_udli">Зарегистрироваться</a>
@@ -180,8 +193,8 @@
 
   {% block scripts_standart %}
     <script src="/static/lib/js/jQuery-3.6.0.js"></script>
+    <script src="/static/lib/js/header-animation.js"></script>
     {% if user.is_authenticated %}
-      <script src="/static/lib/js/header-animation.js"></script>
       <script src="/static/lib/js/from-footer-to-notifications.js"></script>
     {% endif %}
   {% endblock %}

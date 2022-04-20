@@ -8,6 +8,15 @@ from publicationapp.models import *
 from .forms import *
 from django.core.files.storage import FileSystemStorage
 
+
+# def is_number(s):
+#     try:
+#         float(s)
+#         return True
+#     except ValueError:
+#         return False
+
+
 # создание новой публикации
 def CreateNewPub(request):
     if request.user.is_authenticated:
@@ -263,6 +272,59 @@ def change_shared_count(request, pk):
         return JsonResponse({'result': str(pub)})
 
 
+# просмотр одной публикации
+class PubWatchOne(ListView):
+    model = Publication
+    template_name = 'publicationapp/pub_one.html'
+    context_object_name = 'pub'
+    allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
+
+    def get_queryset(self):
+        return Publication.objects.get(id=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(PubWatchOne, self).get_context_data(**kwargs)
+        pub = Publication.objects.get(id=self.kwargs['pk'])
+
+        saved_pubs = subscribing_authors =  None
+        if self.request.user.is_authenticated:
+            saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__id=self.kwargs['pk'])
+            saved_pubs = [sp.pub_id.id for sp in saved_urls]
+            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+            subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+
+            if not SeenPubs.objects.filter(watcher_id=self.request.user, pub_id=self.kwargs['pk']):
+                SeenPubs.objects.create(watcher_id=self.request.user, pub_id=Publication.objects.get(id=self.kwargs['pk']))
+            seen_url_object = SeenPubs.objects.get(watcher_id=self.request.user.id, pub_id=self.kwargs['pk'])
+            seen_url_object.count += 1
+            seen_url_object.save()
+
+        # обновление статистики у открываемой публикции
+        ages = 0
+        for e in SeenPubs.objects.filter(pub_id=self.kwargs['pk']):
+            if e.watcher_id.age:
+                ages += e.watcher_id.age
+        if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
+            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()
+        else:
+            pub.average_age_watchers = 0
+        if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
+            pub.average_age_savers = ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count()
+        else:
+            pub.average_age_savers = 0
+        pub.seen_count +=1
+        pub.save()
+
+        context.update({
+            'pub': pub,
+            'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
+            'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
+            'saved_pubs': saved_pubs,
+            'subscribing_authors': subscribing_authors,
+        })
+        return context
+
+
 # просмотр публикаций про ремонт
 class RepairsWatch(ListView):
     model = Publication
@@ -270,16 +332,56 @@ class RepairsWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        return Publication.objects.filter(type=11)
+        pubs = Publication.objects.filter(type=11)
+        if self.request.method == 'GET' and 'to_filter' in self.request.GET:
+            method_GET = self.request.GET
+
+            if method_GET['cost_mini']:
+                pubs = pubs.filter(cost_min__gte=method_GET['cost_mini'])
+            if method_GET['cost_max']:
+                pubs = pubs.filter(cost_min__lte=method_GET['cost_max'])
+
+            selected_tags = [unit for unit in method_GET if unit.isnumeric()]
+            if selected_tags:
+                pubs = pubs.filter(tags__in=selected_tags)
+
+            if method_GET['ordering'] == 'by_new':
+                pubs = pubs.order_by('-pushed')
+            if method_GET['ordering'] == 'by_old':
+                pubs = pubs.order_by('pushed')
+            if method_GET['ordering'] == 'by_seen_count':
+                pubs = pubs.order_by('-seen_count')
+            if method_GET['ordering'] == 'by_savest':
+                pubs = pubs.order_by('-saved_count')
+                # pubs = pubs.order_by('seen_count'/'saved_count')
+            if method_GET['ordering'] == 'by_shared_count':
+                pubs = pubs.order_by('-shared_count')
+            if method_GET['ordering'] == 'by_name':
+                pubs = pubs.order_by('-title')
+            if method_GET['ordering'] == 'by_reports':
+                pubs = pubs.order_by('-reported_count')
+
+            print (method_GET)
+        return pubs
 
     def get_context_data(self, **kwargs):
         context = super(RepairsWatch, self).get_context_data(**kwargs)
 
-        all_tags_for_this_pubs = TagName.objects.filter(pub_type=11)
+        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=11))
         tag_categories = []
-        for tag_one in all_tags_for_this_pubs:
-            if not tag_one.tag_category in tag_categories:
-                tag_categories.append(tag_one.tag_category)
+        for tag in tags:
+            if not tag.category in tag_categories:
+                tag_categories.append(tag.category)
+
+        print (tag_categories)
+
+        selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
+
+        # all_tags_for_this_pubs = TagName.objects.filter(pub_type=11)
+        # tag_categories = []
+        # for tag_one in all_tags_for_this_pubs:
+        #     if not tag_one.tag_category in tag_categories:
+        #         tag_categories.append(tag_one.tag_category)
 
         # for category in tag_categories:
         #     print('Все теги категории ' + category + ':')
@@ -288,9 +390,10 @@ class RepairsWatch(ListView):
         #             print(tag_one.tag_name)
         #     print()
 
-        print(str(tag_categories))
         context.update({
-            'all_tags_for_this_pubs': all_tags_for_this_pubs,
+            # 'all_tags_for_this_pubs': all_tags_for_this_pubs,
+            'selected_filters': selected_filters,
+            'tags': tags,
             'tag_categories': tag_categories,
         })
         return context
@@ -399,59 +502,5 @@ class FilterLifehacks(ListView):
             'filter_tag': filter_tag,
             'pubs': publications,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
-        })
-        return context
-
-
-# просмотр одной публикации
-class PubWatchOne(ListView):
-    model = Publication
-    template_name = 'publicationapp/pub_one.html'
-    context_object_name = 'pub'
-    allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
-
-    def get_queryset(self):
-        return Publication.objects.get(id=self.kwargs['pk'])
-
-    def get_context_data(self, **kwargs):
-        context = super(PubWatchOne, self).get_context_data(**kwargs)
-        pub = Publication.objects.get(id=self.kwargs['pk'])
-
-        if self.request.user.is_authenticated:
-            saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__id=self.kwargs['pk'])
-            saved_pubs = [sp.pub_id.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
-            subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
-
-            if not SeenPubs.objects.filter(watcher_id=self.request.user, pub_id=self.kwargs['pk']):
-                SeenPubs.objects.create(watcher_id=self.request.user, pub_id=Publication.objects.get(id=self.kwargs['pk']))
-            seen_url_object = SeenPubs.objects.get(watcher_id=self.request.user.id, pub_id=self.kwargs['pk'])
-            seen_url_object.count += 1
-            seen_url_object.save()
-        else:
-            saved_pubs = subscribing_authors =  None
-
-        # обновление статистики у открываемой публикции
-        ages = 0
-        for e in SeenPubs.objects.filter(pub_id=self.kwargs['pk']):
-            if e.watcher_id.age:
-                ages += e.watcher_id.age
-        if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
-            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()
-        else:
-            pub.average_age_watchers = 0
-        if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
-            pub.average_age_savers = ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count()
-        else:
-            pub.average_age_savers = 0
-        pub.seen_count +=1
-        pub.save()
-
-        context.update({
-            'pub': pub,
-            'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
-            'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
-            'saved_pubs': saved_pubs,
-            'subscribing_authors': subscribing_authors,
         })
         return context

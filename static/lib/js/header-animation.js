@@ -82,10 +82,10 @@ $(document).click( function(event) {
   }
 
   if (!event.target.classList.contains("filter_btn") &&
-  !event.target.classList.contains("dont_close_on_click") &&
-      !event.target.classList.contains("opened_filter") &&
-      !$('.opened_filter').is(":hover") &&
-      $is_opened_filter_panel == 1) {
+    !event.target.classList.contains("dont_close_on_click") &&
+    !event.target.classList.contains("opened_filter") &&
+    !$('.opened_filter').is(":hover") &&
+    $is_opened_filter_panel == 1) {
 
     $('.opened_filter_big_bg').removeClass('opened_filter_big_bg_opened');
     $is_opened_filter_panel = 0;

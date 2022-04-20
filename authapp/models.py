@@ -42,7 +42,7 @@ class User(AbstractUser):
     @property
     def noties_old(self):
         noties_old = Notifications.objects.filter(user_receiver=self.pk, is_new=False).order_by('-when')[:20]
-        return noties_old
+        return noties_old.all()
 
     @property
     def noties_count(self):

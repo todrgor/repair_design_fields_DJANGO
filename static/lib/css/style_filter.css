@@ -35,18 +35,27 @@
 
 .big_p_parth {
   display: flex;
-    justify-content: flex-start;
-    align-items: center;
+  width: 100%;
+  overflow: hidden;
+  align-items: center;
+}
+
+.category_name {
+  white-space: nowrap;
 }
 
 #checked_colors_count,
 #checked_styles_count,
 #checked_rooms_count,
-#checked_spheres_count {
+#checked_spheres_count,
+/* перечисления выше надо удалить нахрен потом */
+.count_checked {
+  white-space: nowrap;
   color: #5c535c;
-    font-family: 'Roboto';
-    transition: all 0.2s;
-    margin-left: 5px;
+  font-family: 'Roboto';
+  transition: all 0.2s;
+  margin-left: 5px;
+  margin-top: 1px;
 }
 
 .checked_colors_count,
@@ -89,7 +98,10 @@
 
 .styles_labels_open,
 .checked_rooms_open,
-.spheres_labels_open {
+.spheres_labels_open,
+/* перечисления выше надо удалить нахрен потом */
+.labels
+{
   display: flex;
     opacity: 1;
     width: 100%;
@@ -99,6 +111,7 @@
     border: 2px solid #d1d1d1;
     flex-direction: row;
     flex-wrap: wrap;
+    position: relative;
 }
 
 .styles_any_one_label,
@@ -110,6 +123,13 @@
 }
 
 .any_one {
+  max-width: 75px;
+  float: right;
+  background: linear-gradient(90deg, #f0f0f07d 0%, #f0f0f0 10%);
+  position: absolute;
+  right: 5px;
+  z-index: 5;
+  padding: 0 0 0 15px;
   margin-right: 5px;
 }
 .any_one__span {
@@ -128,7 +148,10 @@
 
 .styles_labels_open label,
 .checked_rooms_open label,
-.spheres_labels_open label {
+.spheres_labels_open label,
+/* перечисления выше надо удалить нахрен потом */
+.labels label
+{
   width: 100%;
     cursor: pointer;
     font-size: 15px;
@@ -151,6 +174,8 @@ label#author_style_design:hover {
 .checked_styles label:hover,
 .checked_rooms label:hover,
 .spheres_labels_open label:hover,
+/* перечисления выше надо удалить нахрен потом */
+.labels label:hover,
 .any_one__span:hover {
   color: #000;
 }
@@ -158,10 +183,18 @@ label#author_style_design:hover {
 .color_panel.hidden,
 .styles_labels_open.hidden,
 .checked_rooms_open.hidden,
-.spheres_labels_open.hidden {
+.spheres_labels_open.hidden,
+/* перечисления выше надо удалить нахрен потом */
+.labels.hidden
+{
   opacity: 0;
     height: 0px;
     display: none;
+}
+
+.button_span {
+  background: linear-gradient(90deg, #ffffff00 0%, #ffffff 10%);
+  padding: 0 0 0 4px;
 }
 
 .triangle_to_open_and_hide {
@@ -171,7 +204,7 @@ label#author_style_design:hover {
   float: right;
 }
 
-.triangle_to_open_and_hide img  {
+.triangle_to_open_and_hide img {
   width: 12px;
   transition: all 0.3s ease;
 }
@@ -180,7 +213,10 @@ label#author_style_design:hover {
 .triangle_to_open_and_hide.color_panel_hidden img,
 .triangle_to_open_and_hide.styles_labels_hidden img,
 .triangle_to_open_and_hide.checked_rooms_open_hidden img,
-.triangle_to_open_and_hide.spheres_labels_hidden img {
+.triangle_to_open_and_hide.spheres_labels_hidden img,
+/* перечисления выше надо удалить нахрен потом */
+.triangle_to_open_and_hide.labels_hidden img
+{
   transform: rotate(-90deg);
 }
 

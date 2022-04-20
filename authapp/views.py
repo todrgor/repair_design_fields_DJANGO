@@ -288,7 +288,7 @@ def BecomeATeammember(request):
 
     if request.method == 'POST':
         if request.POST['desc']:
-            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль модератора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=22), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info='', when_asked=timezone.now())
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль модератора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=22), asked_by=request.user, ask_content=request.POST['desc'], when_asked=timezone.now(), ask_additional_info=999)
             if request.FILES:
                 fs = FileSystemStorage()
                 photos = request.FILES.getlist('photos')
@@ -318,7 +318,7 @@ def BecomeAnAuthor(request):
 
     if request.method == 'POST':
         if request.POST['desc']:
-            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль автора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=21), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info='', when_asked=timezone.now())
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль автора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=21), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=999, when_asked=timezone.now())
 
             if request.POST['knowledge'] or request.POST['offer'] or request.POST['site'] or request.POST['address'] or request.POST['telegram'] or request.POST['whatsapp'] or request.POST['viber'] or request.POST['vk'] or request.POST['inst'] or request.POST['ok'] or request.POST['fb'] or request.POST['other']:
                 becomer_expert_info = ExpertInfo.objects.filter(expert_id=request.user.id)
