@@ -174,9 +174,12 @@
 
       <div class="pub_tags_container">
         {% for tag in pub.tags.all %}
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="
+          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}"
+          method="GET">
             <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
             <div class="pub_tag">
+              <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
               <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
                 type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
               <img src="/static/sources/SVG/search.svg" alt="">

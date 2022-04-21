@@ -13,12 +13,17 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page_title">
+  <div class="page_title" {% if not pubs %} style="margin-top: 130px;" {% endif %}>
+    {% if pubs %}
       <p class="title_p">Ремонтные решения:</p>
       <p class="count_pubs">{{ pubs.count }} публикации</p>
+    {% else %}
+      <p class="title_p">Не нашлось ни одной публикации...</p>
+      <p class="count_pubs" style="width: 65%; line-height: 25px;">Попробуйте поменять критерии фильтра, или сходить погулять и прийти попозже – возможно, будут опубликованы новые публикации, и как раз под Ваши критерии фильтра :)</p>
+    {% endif %}
   </div>
 
-  <div class="pubs_container">
+  <div class="pubs_container" {% if not pubs %} style="height: 650px;" {% endif %}>
     {% for p in pubs %}
 
         <div class="pub_one repair" id="{{ p.id }}">
@@ -47,10 +52,10 @@
             </div>
             <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
               <div class="filters_on"> <!-- если есть 1+ фильтров -->
-                <div class="filter_one" id="fltr_ordering">
+                <!-- <div class="filter_one" id="fltr_ordering">
                    <p id="fltr_ordering_p">Фильтер сортировка</p>
                    <div class="to_close_filter fltr_ordering"></div>
-                </div>
+                </div> -->
                 <div class="filter_one" id="fltr_cost">
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
@@ -58,13 +63,13 @@
                 {% for category in tag_categories %}
                   <div class="filter_one" id="fltr_{{ category.id }}">
                      <p id="fltr_{{ category.id }}_p">Фильтер {{ category.name }}</p>
-                     <div class="to_close_filter" id="{{ category.id }}"></div>
+                     <div class="to_close_filter fltr_some_category" id="{{ category.id }}"></div>
                   </div>
                 {% endfor %}
                 <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
               </div>
               <div class="filters_off"> <!-- если ни оного фильтра не включено -->
-                <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
+                <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Будут показаны все публикации</span></p>
               </div>
             </div>
             <div class="filter_mini_div ordering">
@@ -139,7 +144,7 @@
                   {% for tag in tags %}
                     {% if tag.category == category %}
                       <label>
-                        <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {{ filter }} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
+                        <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
                         {{ tag.name }}
                       </label>
                     {% endif %}
@@ -149,6 +154,10 @@
             {% endfor %}
             <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
             <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
+
+            <div class="get_filtered_pubs_count" style="display: none;">{% url 'pub:get_filtered_pubs_count' %}</div>
+            <input type="hidden" name="pub_type" value="11">
+
             <div class="show_pubs">
               <div class="show_pubs_container">
                 <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">

@@ -272,6 +272,47 @@ def change_shared_count(request, pk):
         return JsonResponse({'result': str(pub)})
 
 
+#   ОТФИЛЬТРОВАТЬ ПУБЛИКАЦИИ
+def filter_pubs (method_GET):
+    pubs = Publication.objects.filter(type=method_GET['pub_type'])
+
+    cost_mini = method_GET['cost_mini'] if 'cost_mini' in method_GET and method_GET['cost_mini'].isspace() else 0
+    cost_max  = method_GET['cost_max']  if 'cost_max'  in method_GET and method_GET['cost_max'].isspace()  else 0
+    cost_mini = 0 if cost_mini and cost_mini < 0 else cost_mini
+    cost_max = 0 if cost_max and cost_max < 0 else cost_max
+    if cost_mini and cost_max and cost_mini > cost_max:
+        a = cost_mini
+        cost_mini = cost_max
+        cost_max = a
+    pubs = pubs.filter(cost_min__gte=cost_mini) if cost_mini else pubs
+    pubs = pubs.filter(cost_min__lte=cost_max) if cost_max else pubs
+    # method_GET['cost_mini'] = cost_mini
+    # method_GET['cost_max'] = cost_max
+
+    selected_tags = [unit for unit in method_GET if unit.isnumeric()]
+    pubs = pubs.filter(tags__in=selected_tags) if selected_tags else pubs
+
+    if 'ordering' in method_GET:
+        pubs = pubs.order_by('-pushed') if method_GET['ordering'] == 'by_new' else pubs
+        pubs = pubs.order_by('pushed')if method_GET['ordering'] == 'by_old' else pubs
+        pubs = pubs.order_by('-seen_count')if method_GET['ordering'] == 'by_seen_count' else pubs
+        pubs = pubs.order_by('-saved_count') if method_GET['ordering'] == 'by_savest' else pubs
+        # pubs = pubs.order_by('seen_count'/'saved_count') if method_GET['ordering'] == 'by_savest' else pubs
+        pubs = pubs.order_by('-shared_count') if method_GET['ordering'] == 'by_shared_count' else pubs
+        pubs = pubs.order_by('-title') if method_GET['ordering'] == 'by_name' else pubs
+        pubs = pubs.order_by('-reported_count') if method_GET['ordering'] == 'by_reports' else pubs
+
+    pubs = pubs.distinct()
+    print('подобрано '+ str(pubs.count()) +' публикаций')
+    return pubs
+
+# AJAX: узнать количество подходящих
+# публикаций под заданные фильтры
+def get_filtered_pubs_count(request):
+    if request.is_ajax() and request.GET:
+        return JsonResponse({'pubs_count': filter_pubs(request.GET).count()})
+
+
 # просмотр одной публикации
 class PubWatchOne(ListView):
     model = Publication
@@ -332,36 +373,7 @@ class RepairsWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        pubs = Publication.objects.filter(type=11)
-        if self.request.method == 'GET' and 'to_filter' in self.request.GET:
-            method_GET = self.request.GET
-
-            if method_GET['cost_mini']:
-                pubs = pubs.filter(cost_min__gte=method_GET['cost_mini'])
-            if method_GET['cost_max']:
-                pubs = pubs.filter(cost_min__lte=method_GET['cost_max'])
-
-            selected_tags = [unit for unit in method_GET if unit.isnumeric()]
-            if selected_tags:
-                pubs = pubs.filter(tags__in=selected_tags)
-
-            if method_GET['ordering'] == 'by_new':
-                pubs = pubs.order_by('-pushed')
-            if method_GET['ordering'] == 'by_old':
-                pubs = pubs.order_by('pushed')
-            if method_GET['ordering'] == 'by_seen_count':
-                pubs = pubs.order_by('-seen_count')
-            if method_GET['ordering'] == 'by_savest':
-                pubs = pubs.order_by('-saved_count')
-                # pubs = pubs.order_by('seen_count'/'saved_count')
-            if method_GET['ordering'] == 'by_shared_count':
-                pubs = pubs.order_by('-shared_count')
-            if method_GET['ordering'] == 'by_name':
-                pubs = pubs.order_by('-title')
-            if method_GET['ordering'] == 'by_reports':
-                pubs = pubs.order_by('-reported_count')
-
-            print (method_GET)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=11)
         return pubs
 
     def get_context_data(self, **kwargs):
@@ -452,55 +464,5 @@ class LifehacksWatch(ListView):
             'subscribing_authors': subscribing_authors,
             'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
             # 'tags_for_filter': TagName.objects.filter(id__gt=3000000).filter(id__lt=3999999)
-        })
-        return context
-
-
-# фильтр публикаций-лайфхаков (сыро и неготово)
-def filter_lifehacks(request):
-    # это пока что ни черта не работает
-    sphera = request.POST.getlist('style_design', '')
-    fltr_cost_min = request.POST.get('cost_mini', '')
-    fltr_cost_max = request.POST.get('cost_max', '')
-
-    return HttpResponse('sphera: '+ str(sphera) +', fltr_cost_min:'+ fltr_cost_min +', fltr_cost_max:'+ fltr_cost_max)
-
-
-# фильтр публикаций-лайфхаков (сыро и неготово)
-class FilterLifehacks(ListView):
-    # не работает, в неоплчиваемом отпуске
-    # обязательно учесть проверку на авторизаацию
-    # а по хорошему не делать отдельного функционала для get-запроса, а просто делать if request.method == 'GET': pub.filteer(param=get['param'])
-    model = Publication
-    template_name = 'publicationapp/lifehacks_filtered.html'
-    context_object_name = 'pubs'
-    allow_empty = False
-    # slug_url_kwarg = 'your_lovely_slug' это памятка на будущее: чтобы класс типа View искал не slug (это стандартно), а то, что хочется - your_lovely_slug. касательно pk: pk_url_kwarg = your_lovely_pk
-
-    def get_queryset(self):
-        return Publication.objects.filter(type=31)
-
-    def get_context_data(self, **kwargs):
-        context = super(FilterLifehacks, self).get_context_data(**kwargs)
-        publications = Publication.objects.filter(type=31)
-
-        # request = self.kwargs['request']
-        if self.request.method == 'GET':
-            sphera = self.request.GET.getlist('style_design', '')
-            fltr_cost_min = self.request.GET.get('cost_mini', '')
-            fltr_cost_max = self.request.GET.get('cost_max', '')
-            if sphera != '':
-                filter_tag = PubHasTags.objects.filter(tag_id__in=sphera)
-            if fltr_cost_min != '':
-                publications = publications.filter(cost_min__gte=fltr_cost_min)
-            if fltr_cost_max != '':
-                publications = publications.filter(cost_max__lte=fltr_cost_max)
-        else:
-            filter_tag = PubHasTags.objects.all()
-
-        context.update({
-            'filter_tag': filter_tag,
-            'pubs': publications,
-            'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
         })
         return context

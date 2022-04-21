@@ -367,6 +367,7 @@ def SendToSupport(request):
                     'title': title,
                     'form': form,
                 }
+                # return render(request, 'authapp/send_to_support.html', context)
                 return render(request, 'authapp/send_to_support.html', context)
 
             ask_additional_info = 0
