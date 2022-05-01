@@ -123,15 +123,15 @@
   /*position: fixed;*/
   /*  right: 10%;*/
   /*  top: 65px;*/
-  /* margin-right: -30px; */
-    max-height: 94%;
-    height: 670px;
-    width: 30%;
-    max-width: 372px;
-    background: #ffffff;
-    padding-right: 0px;
-    border-radius: 20px;
-    /* box-shadow: 0px 0px 20px #8d8787; */
+  margin-right: -30px;
+  max-height: 94%;
+  height: 670px;
+  width: 30%;
+  max-width: 372px;
+  background: #ffffff;
+  padding-right: 0px;
+  border-radius: 20px;
+  /* box-shadow: 0px 0px 20px #8d8787; */
 }
 
 .opened_filter {
@@ -243,13 +243,14 @@
     cursor: pointer;
 }
 .to_close_filter{
+  margin-top: 2.5px;
   margin-left: 5px;
-    width: 10px;
-    height: 10px;
-    background: url(../../sources/SVG/close.png) no-repeat;
-    background-size: 10px 10px;
-    transition: all 0.3s ease;
-    cursor: pointer;
+  width: 10px;
+  height: 10px;
+  background: url(../../sources/SVG/close.png) no-repeat;
+  background-size: 10px 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .filter_one:hover {
@@ -308,11 +309,13 @@
   font-size: 18px;
   line-height: 20px;
   color: #949494;
-  margin-top: 12px;
+  margin-top: 4px;
+  margin-right: 10px;
   float: left;
 }
 
-.cost input{
+.cost input,
+.save_percent input {
   outline: none;
     width: 44%;
     height: 21px;

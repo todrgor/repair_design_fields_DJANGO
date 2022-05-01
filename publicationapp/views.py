@@ -7,6 +7,11 @@ from authapp.models import *
 from publicationapp.models import *
 from .forms import *
 from django.core.files.storage import FileSystemStorage
+from django.db.models.functions import Lower
+from django.db.models import Sum
+# from django.db.models import Q
+import operator
+
 
 
 # def is_number(s):
@@ -21,39 +26,63 @@ from django.core.files.storage import FileSystemStorage
 def CreateNewPub(request):
     if request.user.is_authenticated:
         if request.user.role.id in [2, 4]:
+            title = 'Создать публикацию'
             form = PubForm()
+            tags = Tag.objects.all()
+            tag_categories = {
+                'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
+                'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)),
+                'lihehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
+            }
+            empty_tag_categories_ids = []
+            selected_tags = None
+
+            # if request.method == 'POST':
+            #     print(request.POST)
+
             if request.method == 'POST':
-                form = PubForm(request.POST)
-                pub_post = request.POST
-                # try:
-                Publication.objects.create(title=pub_post['title'], type=PubTypes.objects.get(id=pub_post['type']), preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
+                method_POST = request.POST
+                form = PubForm(method_POST)
+
+                #   проверка, теги всех ли категорий
+                #   выбраны и переадресация обратно, если нет
+                selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=method_POST['type'])
+                selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
+                all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=method_POST['type']).values_list('category', flat=True))
+                for category in all_tag_categories_for_this_pub_type:
+                    if category.id not in selected_tags_categories_ids:
+                        empty_tag_categories_ids.append(category.id)
+                if empty_tag_categories_ids:
+                    content = {
+                        'title': title,
+                        'form': form,
+                        'tags': tags,
+                        'tag_categories': tag_categories,
+                        'empty_tag_categories_ids': empty_tag_categories_ids,
+                        'selected_tags': selected_tags,
+                        'action': 'create',
+                		}
+                    return render(request, 'publicationapp/create_new_or_update.html', content)
+
+                #   создание публикции
+                pub_created = Publication.objects.create(title=method_POST['title'].capitalize(), type=PubTypes.objects.get(id=method_POST['type']), preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=method_POST['content_first_desc'], content_last_desc=method_POST['content_last_desc'], author=User.objects.get(id=request.user.id))
+
+                #   сохранение превью и фотографий внутри публикции
                 fs = FileSystemStorage()
                 preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
-                pub_created = Publication.objects.get(title=pub_post['title'], type=pub_post['type'], preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=pub_post['content_first_desc'], content_last_desc=pub_post['content_last_desc'], author=User.objects.get(id=request.user.id))
-                if pub_post['type'] in ['11', '12']:
-                    if 'photo' in request.FILES:
-                        photos = request.FILES.getlist('photo')
-                        i_count = 0
-                        for i in photos:
-                            fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
-                            PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + photos[i_count].name))
-                            i_count +=1
+                if method_POST['type'] in ['11', '12'] and 'photo' in request.FILES:
+                    photos = request.FILES.getlist('photo')
+                    i_count = 0
+                    for i in photos:
+                        fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
+                        PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + photos[i_count].name))
+                        i_count +=1
 
-                if pub_post['type'] == '11':
-                    pub_created.cost_min = pub_post['cost_min']
-                    pub_created.cost_max = pub_post['cost_max']
-                    pub_created.save()
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_what_to']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_by_what']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_where']))
-                if pub_post['type'] == '21':
-                    pub_created.cost_min = pub_post['cost_min']
-                    pub_created.cost_max = pub_post['cost_max']
-                    pub_created.save()
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_design_room']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_design_style']))
-                if pub_post['type'] == '31':
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub_created.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
+                pub_created.tags.add(*selected_tags)
+                pub_created.cost_min = method_POST['cost_min']
+                pub_created.cost_max = method_POST['cost_max']
+                pub_created.save()
+
                 noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", content_last_desc='', author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Скорее открывайте её!", content_last_desc='', author=request.user)
@@ -62,11 +91,15 @@ def CreateNewPub(request):
                 return redirect('pub:pub_one', pk=pub_created.id)
                 # except:
                 #     form.add_error(None, 'Ошибка создания публикции')
-            title = 'Создать публикацию'
 
             content = {
                 'title': title,
                 'form': form,
+                'tags': tags,
+                'tag_categories': tag_categories,
+                'empty_tag_categories_ids': empty_tag_categories_ids,
+                'selected_tags': selected_tags,
+                'action': 'create',
         		}
             return render(request, 'publicationapp/create_new_or_update.html', content)
         else:
@@ -107,22 +140,45 @@ def UpdatePub(request, pk):
         if request.user.role.id in [2, 4]:
             pub = Publication.objects.get(id=pk)
             photos = PubPhotos.objects.filter(id_pub=pk)
-            tags = PubHasTags.objects.filter(pub_id=pk)
-
-            tag_repair_what_to = None
-            tag_repair_by_what = None
-            tag_repair_where = None
-            tag_design_room = None
-            tag_design_style = None
-            tag_lifehack_lifesphere = None
+            title = 'Отредактирвать публикацию пользователя ' + pub.author.username if request.user.role.id == 4 and pub.author != request.user else 'Отредактирвать публикацию'
+            form = PubForm()
+            tags = Tag.objects.filter(pub_type=pub.type)
+            tag_categories = {
+                'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 else None,
+                'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 else None,
+                'lihehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
+            }
+            empty_tag_categories_ids = []
+            selected_tags = pub.tags.all()
 
             if request.method == 'POST':
                 form = PubForm(request.POST)
-                pub_post = request.POST
-                pub.__dict__.update({'title': pub_post['title'], 'type': PubTypes.objects.get(id=pub_post['type']), 'preview': ('pub_media/' + str(request.FILES['preview'])), 'content_first_desc': pub_post['content_first_desc'], 'content_last_desc': pub_post['content_last_desc'], 'author': User.objects.get(id=request.user.id)})
+                method_POST = request.POST
+
+                #   проверка, теги всех ли категорий
+                #   выбраны и переадресация обратно, если нет
+                selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
+                selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
+                all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
+                for category in all_tag_categories_for_this_pub_type:
+                    if category.id not in selected_tags_categories_ids:
+                        empty_tag_categories_ids.append(category.id)
+                if empty_tag_categories_ids:
+                    content = {
+                        'title': title,
+                        'form': form,
+                        'tags': tags,
+                        'tag_categories': tag_categories,
+                        'empty_tag_categories_ids': empty_tag_categories_ids,
+                        'selected_tags': selected_tags,
+                        'action': 'edit',
+                		}
+                    return render(request, 'publicationapp/create_new_or_update.html', content)
+
+                pub.__dict__.update({'title': method_POST['title'].capitalize(), 'preview': ('pub_media/' + str(request.FILES['preview'])), 'content_first_desc': method_POST['content_first_desc'], 'content_last_desc': method_POST['content_last_desc']})
                 fs = FileSystemStorage()
                 preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
-                if pub_post['type'] in ['11', '12']:
+                if pub.type.id in [11, 12]:
                     if 'photo' in request.FILES:
                         photos = request.FILES.getlist('photo')
                         PubPhotos.objects.filter(id_pub=pub.id).delete()
@@ -131,20 +187,11 @@ def UpdatePub(request, pk):
                             fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
                             PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub.id), photo=('pub_media/' + photos[i_count].name))
                             i_count +=1
-                PubHasTags.objects.filter(pub_id=pub.id).delete()
-                if pub_post['type'] == '11':
-                    pub.cost_min = pub_post['cost_min']
-                    pub.cost_max = pub_post['cost_max']
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_what_to']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_by_what']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_repair_where']))
-                if pub_post['type'] == '21':
-                    pub.cost_min = pub_post['cost_min']
-                    pub.cost_max = pub_post['cost_max']
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_design_room']))
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_design_style']))
-                if pub_post['type'] == '31':
-                    PubHasTags.objects.create(pub_id=Publication.objects.get(id=pub.id), tag_id=TagName.objects.get(id=pub_post['tag_lifehack_lifesphere']))
+
+                pub.tags.clear()
+                pub.tags.add(*selected_tags)
+                pub.cost_min = method_POST['cost_min']
+                pub.cost_max = method_POST['cost_max']
                 pub.save()
 
                 if request.user.role.id == 2:
@@ -158,38 +205,26 @@ def UpdatePub(request, pk):
 
                 return redirect('pub:pub_one', pk=pub.id)
 
-            if pub.type.id == 11:
-                for t in tags:
-                    if t.tag_id.tag_category == 'Ремонт чего':
-                        tag_repair_what_to = t.tag_id.id
-                    if t.tag_id.tag_category == 'Инструмент':
-                        tag_repair_by_what = t.tag_id.id
-                    if t.tag_id.tag_category == 'В помещении':
-                        tag_repair_where = t.tag_id.id
-                form = PubForm({'title': pub.title, 'type': pub.type, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_repair_what_to': tag_repair_what_to, 'tag_repair_by_what': tag_repair_by_what, 'tag_repair_where': tag_repair_where, })
-
-            if pub.type.id == 21:
-                for t in tags:
-                    if t.tag_id.tag_category == 'Комната':
-                        tag_design_room = t.tag_id.id
-                    if t.tag_id.tag_category == 'Основной стиль':
-                        tag_design_style = t.tag_id.id
-                form = PubForm({'title': pub.title, 'type': pub.type, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_design_room': tag_design_room, 'tag_design_style': tag_design_style, })
-
-            if pub.type.id == 31:
-                for t in tags:
-                    if t.tag_id.tag_category == 'В сфере жизни':
-                        tag_lifehack_lifesphere = t.tag_id.id
-                form = PubForm({'title': pub.title, 'type': pub.type, 'preview': pub.preview, 'content_first_desc': pub.content_first_desc, 'content_last_desc': pub.content_last_desc, 'cost_min': pub.cost_min, 'cost_max': pub.cost_max, 'photo': photos, 'tag_lifehack_lifesphere': tag_lifehack_lifesphere, })
-
-            title = 'Отредактирвать публикацию'
-            if request.user.role.id == 4:
-                title = 'Отредактирвать публикацию пользователя ' + pub.author.username
+            form = PubForm({
+                'title': pub.title,
+                'type': pub.type,
+                'preview': pub.preview,
+                'content_first_desc': pub.content_first_desc,
+                'content_last_desc': pub.content_last_desc,
+                'cost_min': pub.cost_min,
+                'cost_max': pub.cost_max,
+                'photo': photos
+                })
 
             content = {
                 'title': title,
                 'form': form,
-            }
+                'tags': tags,
+                'tag_categories': tag_categories,
+                'empty_tag_categories_ids': empty_tag_categories_ids,
+                'selected_tags': selected_tags,
+                'action': 'edit',
+        		}
             return render(request, 'publicationapp/create_new_or_update.html', content)
         else:
             return redirect('main')
@@ -206,7 +241,7 @@ class Saved(ListView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return redirect('main')
-        return SavedPubs.objects.filter(saver_id=self.request.user).order_by('-when')
+        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver_id=self.request.user).values_list('pub_id', flat=True)).order_by('-pushed')
 
     def get_context_data(self, **kwargs):
         if self.request.user.is_authenticated:
@@ -216,7 +251,7 @@ class Saved(ListView):
         # у меня не получилось получить только некоторые записи тегов, пришось всей кучей. но работает :)
         # saved_pubs = SavedPubs.objects.filter(saver_id=self.request.user)
         # publications = Publication.objects.filter(id=SavedPubs.objects.filter(saver_id=self.request.user))
-        # # какого фига publications queryset получаают, а у PubHasTags точно так же не получается?
+        # # какого фига publications queryset получают, а у PubHasTags точно так же не получается?
         # print(saved_pubs)
         # print(str(publications))
         # print(PubHasTags.objects.filter(pub_id__in=publications))
@@ -226,7 +261,6 @@ class Saved(ListView):
 
         context.update({
             'subscribing_authors': subscribing_authors,
-            'pub_has_tags': PubHasTags.objects.filter(),
         })
         return context
 
@@ -274,37 +308,69 @@ def change_shared_count(request, pk):
 
 #   ОТФИЛЬТРОВАТЬ ПУБЛИКАЦИИ
 def filter_pubs (method_GET):
+    # print(method_GET)
     pubs = Publication.objects.filter(type=method_GET['pub_type'])
 
-    cost_mini = method_GET['cost_mini'] if 'cost_mini' in method_GET and method_GET['cost_mini'].isspace() else 0
-    cost_max  = method_GET['cost_max']  if 'cost_max'  in method_GET and method_GET['cost_max'].isspace()  else 0
+    #       cost
+    cost_mini = float(method_GET['cost_mini']) if 'cost_mini' in method_GET and method_GET['cost_mini'] and not method_GET['cost_mini'].isspace() else None
+    cost_max  = float(method_GET['cost_max'])  if 'cost_max'  in method_GET and method_GET['cost_max']  and not method_GET['cost_max'].isspace()  else None
     cost_mini = 0 if cost_mini and cost_mini < 0 else cost_mini
-    cost_max = 0 if cost_max and cost_max < 0 else cost_max
+    cost_max =  0 if cost_max  and cost_max  < 0 else cost_max
     if cost_mini and cost_max and cost_mini > cost_max:
         a = cost_mini
         cost_mini = cost_max
         cost_max = a
-    pubs = pubs.filter(cost_min__gte=cost_mini) if cost_mini else pubs
-    pubs = pubs.filter(cost_min__lte=cost_max) if cost_max else pubs
+    pubs = pubs.exclude(cost_max__lt=cost_mini) if cost_mini else pubs
+    pubs = pubs.exclude(cost_min__gt=cost_max)  if cost_max  else pubs
     # method_GET['cost_mini'] = cost_mini
     # method_GET['cost_max'] = cost_max
 
-    selected_tags = [unit for unit in method_GET if unit.isnumeric()]
-    pubs = pubs.filter(tags__in=selected_tags) if selected_tags else pubs
+    #       percent of savers by watchers
+    save_percent_mini = float(method_GET['save_percent_mini']) if 'save_percent_mini' in method_GET and method_GET['save_percent_mini'] and not method_GET['save_percent_mini'].isspace() else 0
+    save_percent_max  = float(method_GET['save_percent_max'])  if 'save_percent_max'  in method_GET and method_GET['save_percent_max']  and not method_GET['save_percent_max'].isspace()  else 100
+    # print (save_percent_mini, save_percent_max)
+    save_percent_mini = 0 if save_percent_mini < 0 else save_percent_mini
+    save_percent_max =  0 if save_percent_max  < 0 else save_percent_max
+    save_percent_mini = 100 if save_percent_mini > 100 else save_percent_mini
+    save_percent_max =  100 if save_percent_max > 100  else save_percent_max
+    if save_percent_mini and save_percent_max and save_percent_mini > save_percent_max:
+        a = save_percent_mini
+        save_percent_mini = save_percent_max
+        save_percent_max = a
+    ids_of_pubs_with_good_save_percent = [pub.id for pub in pubs if pub.seen_count and (pub.saved_count/pub.seen_count*100) >= save_percent_mini and (pub.saved_count/pub.seen_count*100) <= save_percent_max]
+    pubs = pubs.filter(id__in=ids_of_pubs_with_good_save_percent)
 
-    if 'ordering' in method_GET:
-        pubs = pubs.order_by('-pushed') if method_GET['ordering'] == 'by_new' else pubs
-        pubs = pubs.order_by('pushed')if method_GET['ordering'] == 'by_old' else pubs
-        pubs = pubs.order_by('-seen_count')if method_GET['ordering'] == 'by_seen_count' else pubs
-        pubs = pubs.order_by('-saved_count') if method_GET['ordering'] == 'by_savest' else pubs
-        # pubs = pubs.order_by('seen_count'/'saved_count') if method_GET['ordering'] == 'by_savest' else pubs
-        pubs = pubs.order_by('-shared_count') if method_GET['ordering'] == 'by_shared_count' else pubs
-        pubs = pubs.order_by('-title') if method_GET['ordering'] == 'by_name' else pubs
-        pubs = pubs.order_by('-reported_count') if method_GET['ordering'] == 'by_reports' else pubs
+    #       categories & tags
+    selected_tags = Tag.objects.filter(id__in=[unit for unit in method_GET if unit.isnumeric()])
+    if selected_tags:
+        # проход по каждой категории и фильтрация
+        # под выбранные теги именно этой категории
+        for category_id in selected_tags.values_list('category', flat=True).distinct():
+                pubs = pubs.filter(tags__in=selected_tags.filter(category=category_id))
 
     pubs = pubs.distinct()
-    print('подобрано '+ str(pubs.count()) +' публикаций')
+    print('подобрано '+ str(pubs.count()) +' публикаций, тип: ' + PubTypes.objects.get(id=method_GET['pub_type']).name)
+
+    #       ordering (сортировка по by_name возвращает list, не queryset)
+    if 'ordering' in method_GET:
+        pubs = pubs.order_by('-pushed')         if method_GET['ordering'] == 'by_new'          else pubs
+        pubs = pubs.order_by('pushed')          if method_GET['ordering'] == 'by_old'          else pubs
+        pubs = pubs.order_by('-seen_count')     if method_GET['ordering'] == 'by_seen_count'   else pubs
+        pubs = pubs.order_by('-saved_count')    if method_GET['ordering'] == 'by_savest'       else pubs
+        # pubs = pubs.order_by('seen_count'/'saved_count') if method_GET['ordering'] == 'by_savest' else pubs
+        pubs = pubs.order_by('-shared_count')   if method_GET['ordering'] == 'by_shared_count' else pubs
+        pubs = pubs.order_by('-reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
+        # ну почему сортировка по наименованию для русского языка не работает((((
+        pubs = pubs.order_by(Lower('title'))    if method_GET['ordering'] == 'by_name' else pubs
+        # pubs = sorted(pubs, key=operator.attrgetter('title')) if method_GET['ordering'] == 'by_name' else pubs
+
+    # [pub.id for pub in sorted(pubs, key=operator.attrgetter('title'))]
+    # print(pubs.order_by(Lower('title')))
+    # print(sorted(pubs, key=operator.attrgetter('title')))
+    # print(pubs.order_by(Lower('title').desc()))
+    # print(pubs.annotate(a=Lower('title')).order_by('a'))
     return pubs
+
 
 # AJAX: узнать количество подходящих
 # публикаций под заданные фильтры
@@ -341,24 +407,15 @@ class PubWatchOne(ListView):
             seen_url_object.save()
 
         # обновление статистики у открываемой публикции
-        ages = 0
-        for e in SeenPubs.objects.filter(pub_id=self.kwargs['pk']):
-            if e.watcher_id.age:
-                ages += e.watcher_id.age
-        if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
-            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()
-        else:
-            pub.average_age_watchers = 0
-        if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0:
-            pub.average_age_savers = ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count()
-        else:
-            pub.average_age_savers = 0
+
+        ages = (SeenPubs.objects.filter(pub_id=self.kwargs['pk']).aggregate(Sum('watcher_id__age')))['watcher_id__age__sum']
+        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()  if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0  else 0
+        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0 else 0
         pub.seen_count +=1
         pub.save()
 
         context.update({
             'pub': pub,
-            'pub_has_tags': PubHasTags.objects.filter(pub_id=self.kwargs['pk']),
             'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
@@ -380,33 +437,14 @@ class RepairsWatch(ListView):
         context = super(RepairsWatch, self).get_context_data(**kwargs)
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=11))
-        tag_categories = []
-        for tag in tags:
-            if not tag.category in tag_categories:
-                tag_categories.append(tag.category)
-
-        print (tag_categories)
-
+        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
-
-        # all_tags_for_this_pubs = TagName.objects.filter(pub_type=11)
-        # tag_categories = []
-        # for tag_one in all_tags_for_this_pubs:
-        #     if not tag_one.tag_category in tag_categories:
-        #         tag_categories.append(tag_one.tag_category)
-
-        # for category in tag_categories:
-        #     print('Все теги категории ' + category + ':')
-        #     for tag_one in all_tags_for_this_pubs:
-        #         if tag_one.tag_category == category:
-        #             print(tag_one.tag_name)
-        #     print()
 
         context.update({
             # 'all_tags_for_this_pubs': all_tags_for_this_pubs,
-            'selected_filters': selected_filters,
             'tags': tags,
             'tag_categories': tag_categories,
+            'selected_filters': selected_filters,
         })
         return context
 
@@ -418,21 +456,23 @@ class DesignsWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        return Publication.objects.filter(type=21)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=21)
+        return pubs
 
     def get_context_data(self, **kwargs):
         context = super(DesignsWatch, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=21)
-            saved_pubs = [sp.pub_id.id for sp in saved_urls]
-        else:
-            saved_pubs =  None
-        # print(all_pubs)
-        # print(saved_pubs)
-        # print(Publication.objects.filter(id__in=saved_pubs))
+        saved_pubs = [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=21)] if self.request.user.is_authenticated else None
+
+        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=21))
+        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
+        selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
+            # 'all_tags_for_this_pubs': all_tags_for_this_pubs,
             'saved_pubs': saved_pubs,
+            'tags': tags,
+            'tag_categories': tag_categories,
+            'selected_filters': selected_filters,
         })
         return context
 
@@ -440,29 +480,29 @@ class DesignsWatch(ListView):
 # просмотр публикаций-лайфхаков
 class LifehacksWatch(ListView):
     model = Publication
-    # model = PubHasTags
     template_name = 'publicationapp/lifehacks.html'
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        return Publication.objects.filter(type=31)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=31)
+        return pubs
 
     def get_context_data(self, **kwargs):
         context = super(LifehacksWatch, self).get_context_data(**kwargs)
-        publications = Publication.objects.filter(type=31)
 
-        if self.request.user.is_authenticated:
-            saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=31)
-            saved_pubs = [sp.pub_id.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
-            subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
-        else:
-            saved_pubs = subscribing_authors =  None
+        saved_pubs =          [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=31)] if self.request.user.is_authenticated else None
+        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=self.request.user))]     if self.request.user.is_authenticated else None
+
+        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=31))
+        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
+        selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
-            'pub_has_tags': PubHasTags.objects.filter(pub_id__in=publications),
-            # 'tags_for_filter': TagName.objects.filter(id__gt=3000000).filter(id__lt=3999999)
+
+            'tags': tags,
+            'tag_categories': tag_categories,
+            'selected_filters': selected_filters,
         })
         return context

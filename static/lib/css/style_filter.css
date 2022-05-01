@@ -5,6 +5,7 @@
 }
 .filters_on.show, .filter_one.show {
   display: flex;
+  align-items: flex-start;
 }
 
 .filters_off {

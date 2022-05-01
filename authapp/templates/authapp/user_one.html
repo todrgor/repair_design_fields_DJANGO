@@ -14,11 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  {% if opened_user.role.id == 2 and opened_user.role.id == 4 %}
-    <div class="pubs_container">
-  {% else %}
-    <div class="pubs_container" style="min-height: 600px;">
-  {% endif %}
+  <div class="pubs_container" {% if opened_user.role.id == 2 and opened_user.role.id == 4 %} style="min-height: 600px;" {% endif %}>
 
     <div class="ne_nuzhno_no_dlya_starogo_skripta_nuzhno" style="display: none;"><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
       <div class="pub_id" id="1"></div>
@@ -33,11 +29,7 @@
       <div class="opened_filter"></div>
     </div>
 
-    {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
-      <div class="photo_nickname_role_additionalFunctions">
-    {% else %}
-      <div class="photo_nickname_role_additionalFunctions" style="margin-top: 100px;">
-    {% endif %}
+    <div class="photo_nickname_role_additionalFunctions" {% if opened_user.role.id == 2 or opened_user.role.id == 4 %} style="margin-top: 100px;" {% endif %}>
       <img src="{{ opened_user.photo.url }}" alt="" class="user_photo">
       <div class="user_nickname_and_role">
         <h4 class="user_nikname">{{ opened_user.username }}</h4>
@@ -48,8 +40,10 @@
             Автор публикаций
           {% elif opened_user.role.id == 3 %}
             Администратор
-          {% elif opened_user.role.id == 4 %}
+          {% elif opened_user.role.id == 4 and opened_user.id == 1 %}
             СуперАдминистратор и создатель проекта
+          {% elif opened_user.role.id == 4 and opened_user.id != 1 %}
+            СуперАдминистратор
           {% else %}
             Какого-то фига у пользователя не определена его роль
           {% endif %}
@@ -193,9 +187,11 @@
                 </div>
                   <div class="pub_tags_container">
                     {% for tag in pub.tags.all %}
-                      <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                         <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
                         <div class="pub_tag">
+                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
                           <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
                             type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
                           <img src="/static/sources/SVG/search.svg" alt="">

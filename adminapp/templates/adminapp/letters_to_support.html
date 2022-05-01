@@ -29,15 +29,17 @@
 
   <div class="admin_menu_bg">
     <div class="admin_menu">
+      <a href="{% url 'admin_mine:main' %}">Главная</a>
       <a href="">Заявки и жалобы</a>
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+      <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
     </div>
   </div>
 
   <div class="page_title">
-      <p class="title_p">Панель администратора</p>
-      <p class="count_pubs">обращения в поддержку</p>
+      <p class="title_p">Обращения в поддержку</p>
+      <p class="count_pubs">панель администратора</p>
   </div>
 
   <div class="pubs_container">
@@ -343,7 +345,7 @@
                   <td style='min-width: 520px;'>
                     <div class="letters_to_support_text_and_img">
                       <p style="display: block; text-align: center;">
-                        {% if application.answer_additional_info == '1' %}
+                        {% if application.answer_additional_info == 1 %}
                           Роль изменена
                         {% else %}
                           Роль осталась прежней
@@ -522,20 +524,15 @@
                       <p style="display: block; text-align: center;">
                         {% if report.answer_additional_info == 0 %}
                           Просто ответ текстом
-                        {% endif %}
-                        {% if report.answer_additional_info == 10 %}
+                        {% elif report.answer_additional_info == 10 %}
                           Удаление публикации и ответ текстом
-                        {% endif %}
-                        {% if report.answer_additional_info == 100 %}
+                        {% elif report.answer_additional_info == 100 %}
                           Снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
-                        {% endif %}
-                        {% if report.answer_additional_info == 1000 %}
+                        {% elif report.answer_additional_info == 1000 %}
                           Удаление пользователя из жалобы и ответ текстом
-                        {% endif %}
-                        {% if report.answer_additional_info == 110 %}
+                        {% elif report.answer_additional_info == 110 %}
                           Удаление публикации, снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
-                        {% endif %}
-                        {% if report.answer_additional_info == 1010 %}
+                        {% elif report.answer_additional_info == 1010 %}
                           Удаление публикации и пользователя из жалобы и ответ текстом
                         {% endif %}
                       </p>

@@ -31,7 +31,7 @@
 
   <div class="page_title">
     <p class="title_p">Избранные публикации:</p>
-    <p class="count_pubs">{{ pubs.count }} публикации</p>
+    {% if pubs %}<p class="count_pubs">{{ pubs.count }} публикации</p>{% endif %}
   </div>
 
     {% if not pubs %}
@@ -40,87 +40,87 @@
         Пока что нет ни одной сохранённой публикации. Посмотрите, вам что-нибудь да понравится!</p>
     {% else %}
       <div class="pubs_container">
-      {% for p in pubs %}
-        {% if p.pub_id.type.id == 11 %}
-          <div class="pub_one repair" id="{{ p.pub_id.id }}">
+      {% for pub in pubs %}
+        {% if pub.type.id == 11 %}
+          <div class="pub_one repair" id="{{ pub.id }}">
             <div class="img_from_pub">
-              <img src="{{ p.pub_id.preview.url }}" alt="">
+              <img src="{{ pub.preview.url }}" alt="">
               <div class="img_black_gradient"> </div>
             </div>
             <div class="pub_info">
-              <p class="pub_title before_slides_ten">{{ p.pub_id.title }}</p>
-              <p class="pub_stats">👀 {{ p.pub_id.seen_count }}<br>
-                                   ❤  {{ p.pub_id.saved_count }} </p>
+              <p class="pub_title before_slides_ten">{{ pub.title }}</p>
+              <p class="pub_stats">👀 {{ pub.seen_count }}<br>
+                                   ❤  {{ pub.saved_count }} </p>
             </div>
             <div class="additional_functions">
               <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
-              <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R({{ p.pub_id.id }})">
+              <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R({{ pub.id }})">
                 <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
               </div>
-              <a href="{% url 'pub:pub_one' pk=p.pub_id.id %}" class="read_more" id="read_more">Читать ›</a>
+              <a href="{% url 'pub:pub_one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
             </div>
           </div>
         {% endif %}
-        {% if p.pub_id.type.id == 21 %}
-          <div class="pub_one design" id="{{ p.pub_id.id }}">
+        {% if pub.type.id == 21 %}
+          <div class="pub_one design" id="{{ pub.id }}">
             <div class="img_from_pub">
-              <img src="{{ p.pub_id.preview.url }}" alt="">
+              <img src="{{ pub.preview.url }}" alt="">
               <div class="img_black_gradient"> </div>
             </div>
             <div class="pub_info">
-              <p class="pub_title">{{ p.pub_id.title }}</p>
+              <p class="pub_title">{{ pub.title }}</p>
               <div class="div_pub_text">
-                <p class="pub_text">{{ p.pub_id.content_first_desc }}</p>
+                <p class="pub_text">{{ pub.content_first_desc }}</p>
               </div>
               <div class="pub_to_do">
-                <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D({{ p.pub_id.id }})">
+                <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D({{ pub.id }})">
                   <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
                 </div>
-                <a class="pub_show_full" href="{% url 'pub:pub_one' pk=p.pub_id.id %}">Подробнее •••</a>
+                <a class="pub_show_full" href="{% url 'pub:pub_one' pk=pub.id %}">Подробнее •••</a>
               </div>
               <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
               <div class="pub_tags"></div>
             </div>
           </div>
         {% endif %}
-        {% if p.pub_id.type.id == 31 %}
-          <div class="pub_one lifehack" id="{{ p.pub_id.id }}">
+        {% if pub.type.id == 31 %}
+          <div class="pub_one lifehack" id="{{ pub.id }}">
             <div class="media">
-              {% if '.mp4' in p.pub_id.preview.url or '.mov' in p.pub_id.preview.url %}
+              {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
               <video class="paused" muted="muted" controls="controls" loop>
-                <source src="{{ p.pub_id.preview.url }}" type='video/mp4;'>
+                <source src="{{ pub.preview.url }}" type='video/mp4;'>
                 Тег video не поддерживается вашим браузером. Увы.
               </video>
               {% else %}
-                <img src="{{ p.pub_id.preview.url }}" alt="">
+                <img src="{{ pub.preview.url }}" alt="">
               {% endif %}
               <div class="img_black_gradient"> </div>
             </div>
 
             <div class="pub_info">
               <div class="pub_to_do">
-                <a onclick="toggleRemovePubFromSaved_LH({{ p.pub_id.id }})" title="Удалить из «Избранного»">
+                <a onclick="toggleRemovePubFromSaved_LH({{ pub.id }})" title="Удалить из «Избранного»">
                   <div class="remove_pub_from_saved">
                     <img src="/static/sources/SVG/remove_from_saved.svg" alt="">
                   </div>
                 </a>
                 <div class="pub_author_cntnr">
                   <div class="pub_author">
-                    <a href="{% url 'auth:account_one' pk=p.pub_id.author.id %}"><img src="{{ p.pub_id.author.photo.url }}" alt=""></a>
+                    <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                     <div class="nickname_and_role">
                       <div class="nickname">
-                        <a href="{% url 'auth:account_one' pk=p.pub_id.author.id %}" class="nickname_link">{{ p.pub_id.author.username }}</a>
+                        <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                         {% if user.is_authenticated %}
-                          <a onclick="toggleGetNotiFromAuthor( {{ p.pub_id.author.id }} )" class="nickname_noti" id="{{ p.pub_id.author.id }}">
-                          {% if p.pub_id.author.id in subscribing_authors %}
-                            <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                          <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                          {% if pub.author.id in subscribing_authors %}
+                            <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                           {% else %}
-                            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                           {% endif %}
                         {% else %}
                           <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
-                          <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.pub_id.author.username }}"></div></a>
+                          <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                         {% endif %}
                         <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                       </div>
@@ -128,16 +128,18 @@
                     </div>
                   </div>
                 </div>
-                  <a onclick="togglePubAdditionalFunctions({{ p.pub_id.id }})"><div class="pub_show_full">•••</div></a>
+                  <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
               </div>
               <div class="div_pub_text">
-                <p class="pub_text">{{ p.pub_id.title }}</p>
+                <p class="pub_text">{{ pub.title }}</p>
               </div>
                 <div class="pub_tags_container">
-                  {% for tag in p.pub_id.tags.all %}
-                    <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+                  {% for tag in pub.tags.all %}
+                    <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                      <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                       <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
                       <div class="pub_tag">
+                        <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
                         <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
                           type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
                         <img src="/static/sources/SVG/search.svg" alt="">

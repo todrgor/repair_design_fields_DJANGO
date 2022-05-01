@@ -247,18 +247,21 @@
 } */
 
 .avatar_options_mini {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: center;
-    align-items: center;
-    justify-content: space-evenly;
-    color: #fff;
-    font-size: 17px;
-    letter-spacing: 0.03em;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+  justify-content: space-evenly;
+  color: #fff;
+  font-size: 17px;
+  letter-spacing: 0.03em;
 }
 
-.avatar_triangle {}
+.avatar_triangle {
+  margin-left: 8px;
+}
 
 .account_img {
     width: 40px;

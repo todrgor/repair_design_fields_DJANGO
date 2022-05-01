@@ -12,11 +12,25 @@
 {% endblock %}
 
 {% block content %}
+  <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">
+    <div id="tags_count"></div>
+    <div id="fltr_cost_min"></div>
+    <div id="fltr_cost_max"></div>
+    <div id="fltr_cost_p"></div>
+    <div id="fltr_style_p"></div>
+    <div id="fltr_room_p"></div>
+    <div id="checked_styles_count"></div>
+    <div id="checked_rooms_count"></div>
+    <div class="opened_filter"></div>
+  </div>
+
   <div class="admin_menu_bg">
     <div class="admin_menu">
+      <a href="">Главная</a>
       <a href="{% url 'admin_mine:letters_to_support' %}">Заявки и жалобы</a>
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+      <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
     </div>
   </div>
   <div class="page_title">
@@ -33,7 +47,7 @@
             <tr>
               <td><div class="pub_preview" style="background: url({{ p.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
               <td>
-                <p class="bold_text pub_title_">{{ p.title }}</p>
+                <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:pub_one' pk=p.id %}">{{ p.title }}</a></p>
                 <p class="pub_desc">{{ p.content_first_desc }}</p>
               </td>
             </tr>
@@ -51,7 +65,7 @@
                 <div class="photo_and_nickname">
                   <img src="{{ u.photo.url }}" alt="">
                   <div class="nickname_and_desc">
-                    <p class="bold_text">{{ u.username }}</p>
+                    <p class="bold_text"><a href="{% url 'auth:account_one' pk=u.id %}">{{ u.username }}</a></p>
                     {% if u.bio %}<p class="pub_desc">Статус: <span style="font-style: italic;">{{ u.bio }}</span></p>{% endif %}
                     {% if u.age %}<p class="pub_desc">Возраст: {{ u.age }}</p>{% endif %}
                     {% if u.phone_number %}<p class="pub_desc">Телефон: {{ u.phone_number }}</p>{% endif %}
@@ -63,7 +77,7 @@
         </table>
         {% if user.role.id == 4 %}<a href="">Создать нового пользвователя ›</a>{% endif %}
       </div>
-      <div class="last_pubs one_div_sdiol">
+      <!-- <div class="last_pubs one_div_sdiol">
         <p>Таблицы БД ›</p>
         <div class="one_div_sdiol body">
           <a href="">Публикации</a>
@@ -80,6 +94,157 @@
           <a href="">Подписки пользователей</a>
           <a href="">Экспертная информация пользователей</a>
         </div>
+      </div> -->
+
+
+      <div class="last_pubs one_div_sdiol" style="margin-top: {% if not new_letters_to_support %}-40px;{% else %}-23px;{% endif %} width: 290px;">
+        {% if not new_letters_to_support %}
+          <p>Последние отвеченные обращения в поддержку (0 неотвеченных сейчас) <span><a href="{% url 'admin_mine:letters_to_support' %}">открыть ›</a></span></p>
+          <div class="one_div_sdiol body">
+            <table border="1" class="withBorder">
+              {% for letter in answered_letters_to_support %}
+                <tr class="without_answer_yet">
+                  <td>
+                    <div class="letters_to_support_text_and_img">
+                      <div class="photo_and_nickname" style="align-items: center;">
+                        {% if letter.asked_by.id != None %}
+                          <a href="{% url 'auth:account_one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
+                        {% else %}
+                          <img src="/static/sources/SVG/not_specific.svg" alt="">
+                        {% endif %}
+                        <div style="display:block;">
+                          <p style="">
+                            {% if letter.asked_by.id != None %}
+                              <a class="bold_text" href="{% url 'auth:account_one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
+                            {% else %}
+                              <span style="opacity: 0.8; font-style: italic;">Удалённый пользователь</span>
+                            {% endif %}
+                            <span style="opacity: 0.8;">
+                              {% if letter.type.id == 11 or letter.type.id == 12 %}
+                                {{ letter.title }}
+                              {% else %}
+                                {{ letter.type.name }}
+                              {% endif %}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="ask_content" style="display: block; padding-left: 60px;">
+                        <p style="margin: 0;">
+                          {{ letter.ask_content }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="letters_to_support_text_and_img">
+                      <div class="photo_and_nickname" style="align-items: center;">
+                        {% if letter.answered_by.id != None %}
+                          <a href="{% url 'auth:account_one' pk=letter.answered_by.id %}"><img src="{{ letter.answered_by.photo.url }}" alt=""></a>
+                        {% else %}
+                          <img src="/static/sources/SVG/not_specific.svg" alt="">
+                        {% endif %}
+                        <div style="display:block;">
+                          <p style="">
+                            <span>Ответ от</span>
+                            {% if letter.answered_by.id != None %}
+                              <a class="bold_text" href="{% url 'auth:account_one' pk=letter.answered_by.id %}">{{ letter.answered_by.username }}</a>
+                            {% else %}
+                              <span style="opacity: 0.8; font-style: italic;">удалённого пользователя</span>
+                            {% endif %}
+                          </p>
+                          <p style="opacity: 0.8;">
+                            {% if letter.type.id == 21 or letter.type.id == 22 %}
+                              {% if letter.answer_additional_info == 1 %}
+                                Роль изменена
+                              {% else %}
+                                Роль осталась прежней
+                              {% endif %}
+                            {% elif letter.type.id == 11 or letter.type.id == 12 %}
+                              {% if letter.answer_additional_info == 0 %}
+                                Просто ответ текстом
+                              {% elif letter.answer_additional_info == 10 %}
+                                Удаление публикации и ответ текстом
+                              {% elif letter.answer_additional_info == 100 %}
+                                Снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
+                              {% elif letter.answer_additional_info == 1000 %}
+                                Удаление пользователя из жалобы и ответ текстом
+                              {% elif letter.answer_additional_info == 110 %}
+                                Удаление публикации, снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
+                              {% elif letter.answer_additional_info == 1010 %}
+                                Удаление публикации и пользователя из жалобы и ответ текстом
+                              {% endif %}
+                            {% endif %}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="ask_content" style="display: block; padding-left: 60px;">
+                        <p style="margin: 0;">
+                          {{ letter.answer_content }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% else %}
+          <p>Последние неотвеченные обращения в поддержку <span><a href="{% url 'admin_mine:letters_to_support' %}">открыть ›</a></span></p>
+          <div class="one_div_sdiol body">
+            <table border="1" class="withBorder">
+              {% for letter in new_letters_to_support %}
+                <tr class="without_answer_yet">
+                  <td>
+                    <div class="letters_to_support_text_and_img">
+                      <div class="photo_and_nickname" style="align-items: center;">
+                        <a href="{% url 'auth:account_one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
+                        <div style="display:block;">
+                          <p style="">
+                            <a class="bold_text" href="{% url 'auth:account_one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
+                            <span style="opacity: 0.8;">
+                              {% if letter.type.id == 11 or letter.type.id == 12 %}
+                                {{ letter.title }}
+                              {% else %}
+                                {{ letter.type.name }}
+                              {% endif %}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      <div class="ask_content" style="display: block; padding-left: 60px;">
+                        <p style="margin: 0;">
+                          {{ letter.ask_content }}
+                        </p>
+                        <p class="admin_checked_the_letter" style="text-align: left;">Ответа ещё нет</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% endif %}
+      </div>
+
+
+    </div>
+    <div class="tags_and_tag_categories some_divs_in_one_line">
+      <div class="title">
+        <h2>Теги и их категории</h2>
+      </div>
+      {% for category in tag_categories %}
+        <div class="category">
+            <p class="bold_text">{{ category.name }}</p>
+            {% for tag_group in tags %}
+              {% for tag in tag_group %}
+                {% if tag.category == category %}
+                  <p>{{ tag.name }}</p>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+        </div>
+      {% endfor %}
+      <div class="show_all">
+          <a href="{% url 'admin_mine:tags_and_tag_categories' %}" class="bold_text" style="color: #300330;">Посмотреть всё ›</a>
       </div>
     </div>
   </div>

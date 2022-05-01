@@ -10,7 +10,7 @@ def main(request):
 		new_notes_count = new_noties.count()
 	else:
 		old_noties = new_noties = notes_count = new_notes_count = None
-
+ 
 	content = {
 		'old_noties': old_noties,
 		'new_noties': new_noties,

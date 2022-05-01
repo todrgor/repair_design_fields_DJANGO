@@ -17,59 +17,33 @@
 // });
 
 $('input[name="pub_type"], .pub_types select').change(function () {
+  if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
+    $('.pub_description.pub_inp_one textarea').val('');
+  }
+
   if ($('#pub_type:checked').val() == 'repair' || $('.pub_types select').val() == '11') {
     console.log('pub_type = repair');
-    $('.cost p:first').html('Бюджет на ремонт, ₽');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
-    if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
-      $('.pub_description.pub_inp_one textarea').val('');
-    }
-    $('#budget.cost').addClass('show');
-    $('#repair.checked_spheres').addClass('show');
-    $('#repair.checked_styles').addClass('show');
-    $('#repair.checked_rooms').addClass('show');
-    $('#design.color').removeClass('show');
-    $('#design.checked_rooms').removeClass('show');
-    $('#design.checked_styles').removeClass('show');
-    $('#lifehack.checked_spheres').removeClass('show');
-    $('.pub_description').removeClass('hidden');
-    $('.pub_photos').removeClass('hidden');
+    $('.repair').addClass('show');
+    $('.design, .lifehack').removeClass('show');
+    $('.pub_description, .pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_type:checked').val() == 'design' || $('.pub_types select').val() == '21') {
     console.log('pub_type = design');
-    $('.cost p:first').html('Бюджет на дизайн, ₽');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
-    if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
-      $('.pub_description.pub_inp_one textarea').val('');
-    }
-    $('#budget.cost').addClass('show');
-    $('#repair.checked_spheres').removeClass('show');
-    $('#repair.checked_styles').removeClass('show');
-    $('#repair.checked_rooms').removeClass('show');
-    $('#design.color').addClass('show');
-    $('#design.checked_rooms').addClass('show');
-    $('#design.checked_styles').addClass('show');
-    $('#lifehack.checked_spheres').removeClass('show');
-    $('.pub_description').removeClass('hidden');
-    $('.pub_photos').removeClass('hidden');
+    $('.repair, .lifehack').removeClass('show');
+    $('.design').addClass('show');
+    $('.pub_description, .pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_type:checked').val() == 'lifehack' || $('.pub_types select').val() == '31') {
     console.log('pub_type = lifehack');
     $('.pub_preview.pub_inp_one h4:first').html('Файл:');
     $('.pub_description.pub_inp_one textarea').val('   ');
-    $('.cost input').val(1);
-    $('#budget.cost').removeClass('show');
-    $('#repair.checked_spheres').removeClass('show');
-    $('#repair.checked_styles').removeClass('show');
-    $('#repair.checked_rooms').removeClass('show');
-    $('#design.color').removeClass('show');
-    $('#design.checked_rooms').removeClass('show');
-    $('#design.checked_styles').removeClass('show');
-    $('#lifehack.checked_spheres').addClass('show');
-    $('.pub_description').addClass('hidden');
-    $('.pub_photos').addClass('hidden');
+    $('.repair, .design').removeClass('show');
+    $('.lifehack').addClass('show');
+    $('.pub_description, .pub_photos').addClass('hidden');
   }
 
 });

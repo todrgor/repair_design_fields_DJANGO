@@ -85,7 +85,8 @@ select[name="type"] {
   padding: 5px 10px;
 }
 
-.pub_title input {
+.pub_title input,
+.pub_title select {
   width: 40%;
       display: block;
       padding: 5px 10px;

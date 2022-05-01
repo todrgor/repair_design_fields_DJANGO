@@ -1,0 +1,187 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\admin.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+  <div id="tags_count"></div>
+  <div id="fltr_cost_min"></div>
+  <div id="fltr_cost_max"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div>
+</div>
+
+
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="{% url 'admin_mine:main' %}">Главная</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Заявки и жалобы</a>
+      <a href="{% url 'admin_mine:users' %}">Пользователи</a>
+      <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+      <a href="">Теги и их категории</a>
+    </div>
+  </div>
+  {% if tags and tag_categories %}
+    <div class="page_title">
+        <p class="title_p">Теги публикаций и их категории</p>
+        <p class="count_pubs">панель администратора</p>
+        {% if user.role.id == 4 %}
+          <div class="create_new_tag_or_category">
+            <p class="create_new category">Новая категория тегов ›</p>
+            <p class="create_new tag">Новый тег ›</p>
+          </div>
+        {% endif %}
+    </div>
+  {% endif %}
+   <div class="pubs_container" {% if not tags and tag_categories%}style="height: 700px;"{% endif %}>
+     {% if not tags and tag_categories %}
+       <p class="title_p">Всё куда-то делось – нет ни одного тега и категории...</p>
+       <p class="count_pubs" style="width: 65%; line-height: 25px;">Либо они все и правда были удалены, и тогда срочно создайте новые(!), либо возникла какая-то ошибка, некое недоразумение... И в этом случае всё тоже будет хорошо! Вот-вот всё разрешится! :)</p>
+     {% endif %}
+
+     {% if tag_categories %}
+       <div class="pubs_container_one_type show" id='categories'>
+         <p style="margin: 25px auto;"><span class="bold_text">Категории тегов</span><span style="color:gray;"> {{ tag_categories.count }} категорий</span>
+         </p>
+         <table border="1" class="categories">
+               <tr>
+                {% if user.role.id == 4 %}
+                   <th class="functions">Действия</th>
+                {% endif %}
+                   <th class="id">ID</th>
+                   <th>Название</th>
+                   <th>Теги в этой категории</th>
+               </tr>
+               {% for category in tag_categories %}
+                 <tr id="{{ category.id }}">
+                  {% if user.role.id == 4 %}
+                   <td class="functions">
+                     <p onclick="edit_category({{ category.id }})" id="edit">Редактировать</p>
+                     <p onclick="really_delete_category({{ category.id }})" id="really_delete">Удалить безвозвратно</p>
+                   </td>
+                  {% endif %}
+                  <td class="id">{{ category.id }}</td>
+                  <td class="name">{{ category.name }}</td>
+                  <td class="this_category_tags following">
+                    <ul>
+                      {% for tag in tags %}
+                        {% if tag.category == category %}
+                          <li><p style="display: block;">{{ tag.name }}</p></li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </td>
+                 </tr>
+               {% endfor %}
+           </table>
+       </div>
+     {% endif %}
+
+     {% if tags %}
+       <div class="pubs_container_one_type show" id='tags'>
+         <p style="margin: 25px auto;"><span class="bold_text">Теги</span><span style="color:gray;"> {{ tags.count }} тегов</span>
+         </p>
+         <table border="1" class="tags">
+               <tr>
+                {% if user.role.id == 4 %}
+                   <th class="functions">Действия</th>
+                {% endif %}
+                   <th class="id">ID</th>
+                   <th>Название</th>
+                   <th>Категория</th>
+                   <th>Для каких типов публикаций</th>
+                   <th>Публикации с этим тегом</th>
+               </tr>
+               {% for tag in tags %}
+                 <tr id="{{ tag.id }}">
+                  {% if user.role.id == 4 %}
+                   <td class="functions">
+                     <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
+                     <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
+                   </td>
+                  {% endif %}
+                  <td class="id">{{ tag.id }}</td>
+                  <td class="name">{{ tag.name }}</td>
+                  <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
+                  <td class="pub_types">
+                    {% for pub_type in tag.pub_type.all %}
+                      <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
+                    {% endfor %}
+                  </td>
+                  <td class="pubs following">
+                    <ul>
+                      {% for pub in pubs %}
+                        {% if tag in pub.tags.all %}
+                          <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                  </td>
+                 </tr>
+               {% endfor %}
+           </table>
+       </div>
+     {% endif %}
+
+  </div>
+  {% if user.role.id == 4 %}
+    <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
+      <div class="delete_tag_or_tag_category question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+        <form action="" method="POST">
+          <input type="hidden" name="tag_or_category_to_delete" value="">
+          <input type="hidden" name="object_id" value="">
+          <h1 class="title dont_close_on_click">Вы точно хотите удалить smthng?</h1>
+          <p style="margin: 20px 0;" class="description dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Это нельзя будет восстаноить.</p>
+          <div class="cancel_or_delete">
+            <p id="cancel_deleting">Отмена</p>
+            <button type="submit" id="delete">Удалить smthng</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="create_or_edit_tag_or_tag_category question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+        <form action="" method="POST">
+          <input type="hidden" name="to_create_or_edit" value="">
+          <input type="hidden" name="tag_or_category_to_create_or_edit" value="">
+          <input type="hidden" name="object_id" value="">
+          <h1 class="title dont_close_on_click">Создание/редактирование smthng</h1>
+          <p style="margin: 20px 0;" class="description dont_close_on_click">Это увидят и этим будут пользоваться.<br><span class="bold_text">Примечание:</span> при не всех заполненых полях никаких изменений или создания не будет. Пожалуйста, будьте бдительны :)</p>
+          <h4 class="title category_or_tag_name dont_close_on_click">Название</h4>
+          <input class="category_or_tag_name dont_close_on_click" type="text" name="category_or_tag_name" value="">
+          <h4 class="title category dont_close_on_click">Категория</h4>
+          <select class="category dont_close_on_click" name="category">
+            {% for category in tag_categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+          <h4 class="title pub_types dont_close_on_click">Для каких типов публикций</h4>
+          {% for pub_type in pub_types %}
+            <label class="one_pub_type dont_close_on_click"><input type="checkbox" name="pub_type_{{ pub_type.id }}" value="{{ pub_type.id }}" class="pub_type dont_close_on_click">{{ pub_type.name}}</label>
+          {% endfor %}
+          <div class="cancel_or_action">
+            <p id="cancel_creating_or_editing">Отмена</p>
+            <button type="submit" id="create_or_edit" class="dont_close_on_click">Создать/Отредактировать</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-admin.js"></script>
+{% endblock %}

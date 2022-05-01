@@ -14,38 +14,43 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page_title">
-        <p class="title_p">Лайфхаки:</p>
-        <p class="count_pubs">{{ pubs.count }} публикации</p>
+  <div class="page_title" {% if not pubs %} style="margin-top: 15%;" {% endif %}>
+    {% if pubs %}
+      <p class="title_p">Лайфхаки:</p>
+      <p class="count_pubs">{{ pubs.count }} публикации</p>
+    {% else %}
+      <p class="title_p">Не нашлось ни одной публикации...</p>
+      <p class="count_pubs" style="width: 65%; line-height: 25px;">Попробуйте поменять критерии фильтра, или сходить погулять и прийти попозже – возможно, будут опубликованы новые публикации, и как раз под Ваши критерии фильтра :)</p>
+    {% endif %}
   </div>
 
 
-  <div class="pubs_container">
-    {% for p in pubs %}
+  <div class="pubs_container"{% if not pubs %} style="height: 400px" {% endif %}>
+    {% for pub in pubs %}
 
-    <div class="pub_one lifehack" id="{{ p.id }}">
+    <div class="pub_one lifehack" id="{{ pub.id }}">
       <div class="media">
-        {% if '.mp4' in p.preview.url or '.mov' in p.preview.url %}
+        {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
         <video class="paused" muted="muted" controls="controls" loop>
-          <source src="{{ p.preview.url }}" type='video/mp4;'>
+          <source src="{{ pub.preview.url }}" type='video/mp4;'>
           Тег video не поддерживается вашим браузером. Увы.
         </video>
         {% else %}
-          <img src="{{ p.preview.url }}" alt="">
+          <img src="{{ pub.preview.url }}" alt="">
         {% endif %}
         <div class="img_black_gradient"> </div>
       </div>
 
       <div class="pub_info">
         <div class="pub_to_do">
-          {% if p.id in saved_pubs %}
+          {% if pub.id in saved_pubs %}
             <div class="user_just_saved_it pub_saved">
           {% else %}
             <div class="user_just_saved_it">
           {% endif %}
               <a onclick="
               {% if user.is_authenticated %}
-                toggleSavePub_LH( {{ p.id }} )
+                toggleSavePub_LH( {{ pub.id }} )
               {% else %}
                 YouHaveToLogin('сохранить публикацию')
               {% endif %}
@@ -53,21 +58,21 @@
             </div>
           <div class="pub_author_cntnr">
             <div class="pub_author">
-              <a href="{% url 'auth:account_one' pk=p.author.id %}"><img src="{{ p.author.photo.url }}" alt=""></a>
+              <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
               <div class="nickname_and_role">
                 <div class="nickname">
-                  <a href="{% url 'auth:account_one' pk=p.author.id %}" class="nickname_link">{{ p.author.username }}</a>
+                  <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                     {% if user.is_authenticated %}
-                      <a onclick="toggleGetNotiFromAuthor( {{ p.author.id }} )" class="nickname_noti" id="{{ p.author.id }}">
-                      {% if p.author.id in subscribing_authors %}
-                        <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                      <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                      {% if pub.author.id in subscribing_authors %}
+                        <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                       {% else %}
-                        <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                        <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                       {% endif %}
                     {% else %}
                       <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
-                      <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ p.author.username }}"></div></a>
+                      <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                     {% endif %}
                     <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                 </div>
@@ -77,102 +82,177 @@
           </div>
             <a onclick="
               {% if user.is_authenticated %}
-                togglePubAdditionalFunctions({{ p.id }})
+                togglePubAdditionalFunctions({{ pub.id }})
               {% else %}
                 YouHaveToLogin('подать жалобу или поделиться этой публикацией')
               {% endif %}
             "><div class="pub_show_full">•••</div></a>
         </div>
         <div class="div_pub_text">
-          <p class="pub_text">{{ p.title }}</p>
+          <p class="pub_text">{{ pub.title }}</p>
         </div>
-          <div class="pub_tags_container">
-            {% for tag in pub.tags.all %}
-              <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
-                <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
-                <div class="pub_tag">
-                  <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                    type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                  <img src="/static/sources/SVG/search.svg" alt="">
-                </div>
-              </form>
-            {% endfor%}
-          </div>
+        <div class="pub_tags_container">
+          {% for tag in pub.tags.all %}
+            <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+              <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+              <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
+              <div class="pub_tag">
+                <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
+                <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                  type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                <img src="/static/sources/SVG/search.svg" alt="">
+              </div>
+            </form>
+          {% endfor%}
+        </div>
       </div>
     </div>
 
     {% endfor %}
     </div>
 
-  <div class="opened_filter_big_bg">
-    <div class="pre_pre_opened_filter">
-      <div class="pre__opened_filter">
-        <div class="opened_filter">
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="get">{% csrf_token %}
-            <p class="opened_filter_title">Фильтры для публикаций</p>
-            <div class="opened_filter_under_title">
-              <p class="opened_filter_second_title">77 подобрано</p>
-            </div>
-            <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
-              <div class="filters_on"> <!-- если есть 1+ фильтров -->
-                <div class="filter_one" id="fltr_style">
-                   <p id="fltr_style_p">Фильтер сфера жизни</p>
-                   <div class="to_close_filter fltr_style"></div>
+    <div class="opened_filter_big_bg">
+      <div class="pre_pre_opened_filter">
+        <div class="pre__opened_filter">
+          <div class="opened_filter">
+            <form class="opened_filter_form" action="" method="get">
+              <p class="opened_filter_title">Фильтры для публикаций</p>
+              <div class="opened_filter_under_title">
+                <p class="opened_filter_second_title">{{ pubs.count }} подобрано</p>
+              </div>
+              <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
+                <div class="filters_on"> <!-- если есть 1+ фильтров -->
+                  <!-- <div class="filter_one" id="fltr_ordering">
+                     <p id="fltr_ordering_p">Фильтер сортировка</p>
+                     <div class="to_close_filter fltr_ordering"></div>
+                  </div> -->
+                  <div class="filter_one" id="fltr_cost">
+                     <p id="fltr_cost_p">Фильтер бюджет</p>
+                     <div class="to_close_filter fltr_cost"></div>
+                  </div>
+                  <div class="filter_one" id="fltr_save_percent">
+                     <p id="fltr_save_percent_p">Фильтер % просмотревших сохранили к себе</p>
+                     <div class="to_close_filter fltr_save_percent"></div>
+                  </div>
+                  {% for category in tag_categories %}
+                    <div class="filter_one" id="fltr_{{ category.id }}">
+                       <p id="fltr_{{ category.id }}_p">Фильтер {{ category.name }}</p>
+                       <div class="to_close_filter fltr_some_category" id="{{ category.id }}"></div>
+                    </div>
+                  {% endfor %}
+                  <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
                 </div>
-                <div class="filter_one" id="fltr_cost">
-                   <p id="fltr_cost_p">Фильтер % просмотревших сохранили к себе</p>
-                   <div class="to_close_filter fltr_cost"></div>
+                <div class="filters_off"> <!-- если ни оного фильтра не включено -->
+                  <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Будут показаны все публикации</span></p>
                 </div>
-                <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
               </div>
-              <div class="filters_off"> <!-- если ни оного фильтра не включено -->
-                <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
-              </div>
-            </div>
-            <div class="filter_mini_div checked_styles">
-              <p class="opened_filter_text full_width big_p">
-                <span class="big_p_parth">
-                  В сфере жизни:
-                  <span id="checked_styles_count" class="checked_styles_count">В любой</span>
-                </span>
-                <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_design_styles button_and_submit__without__bgn_and_border">
-                  <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
-                </button> </span>
-              </p>
-              <div class="styles_labels_open">
-                <div class="styles_any_one_label">
-                  <label> <span> <input type="checkbox" name="style_design" value="3101001" > </span><span>Быт и уборка</span> </label>
-                  <label class="any_one" style="max-width: 112px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">В любой сфере</span> </label>
+              <div class="filter_mini_div ordering">
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth">
+                    <span class="category_name">Сортировка:</span>
+                  </span>
+                  <span class="button_span">
+                    <button type="button" name="button" class="triangle_to_open_and_hide button_and_submit__without__bgn_and_border">
+                    <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
+                  </span>
+                </p>
+                <div class="labels" id="ordering">
+                  <label>
+                    <input type="radio" name="ordering" value="by_new" {% if selected_filters.ordering == 'by_new' or not selected_filters.ordering %} checked {% endif %}>
+                    Сначала новые
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_old" {% if selected_filters.ordering == 'by_old' %} checked {% endif %}>
+                    Сначала старые
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_seen_count" {% if selected_filters.ordering == 'by_seen_count' %} checked {% endif %}>
+                    Больше всего просмотров
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_savest" {% if selected_filters.ordering == 'by_savest' %} checked {% endif %}>
+                    Сначала самые сохраняемые
+                    <!-- Сначала высокий % сохранений -->
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_shared_count" {% if selected_filters.ordering == 'by_shared_count' %} checked {% endif %}>
+                    Больше нажатий «Поделиться»
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_name" {% if selected_filters.ordering == 'by_name' %} checked {% endif %}>
+                    По наименованию
+                  </label>
+                  <label>
+                    <input type="radio" name="ordering" value="by_reports" {% if selected_filters.ordering == 'by_reports' %} checked {% endif %}>
+                    Сначала самые обжалованные
+                  </label>
                 </div>
-                <label> <span> <input type="checkbox" name="style_design" value="3101002" > </span><span>Красота, дизайн и уют</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="3101003" > </span><span>Строительство и ремонт</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="3101004" > </span><span>Планирование дизайна или ремонта</span> </label>
-                <label> <span> <input type="checkbox" name="style_design" value="3101005" > </span><span>Другое</span> </label>
               </div>
-            </div>
-            <div class="filter_mini_div cost">
-              <p class="opened_filter_text full_width">Сколько просмотревших<br>сохранили к себе, %</p>
-              <input id="fltr_cost_min" type="number" min="0" max="100" name="cost_mini" value="" placeholder="0">
-              <p style="font-size: 15px; font-weight: 900;">-</p>
-              <input id="fltr_cost_max" type="number" min="0" max="100" name="cost_max" value="" placeholder="100">
-              <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
-            </div>
-            <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
-            <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
-            <div class="show_pubs">
-              <div class="show_pubs_container">
-                <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
-                <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
+              <div class="filter_mini_div cost">
+                <p class="opened_filter_text full_width">Финансовые затраты, ₽</p>
+                <input id="fltr_cost_min" type="number" name="cost_mini" value="{{ selected_filters.cost_mini }}" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
+                <p style="font-size: 15px; font-weight: 900;">-</p>
+                <input id="fltr_cost_max" type="number" name="cost_max" value="{{ selected_filters.cost_max }}" placeholder="15 000 000">
+                <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
               </div>
-            </div>
-          <!-- <div class="clear_hix_show_pubs"></div> -->
-          </form>
-        </div>
-      </div>
+              <div class="filter_mini_div save_percent">
+                <p class="opened_filter_text full_width">Сколько просмотревших<br>сохранили к себе, %</p>
+                <input id="save_percent_min" type="number" name="save_percent_mini" value="{{ selected_filters.save_percent_mini }}" placeholder="0">
+                <p style="font-size: 15px; font-weight: 900;">-</p>
+                <input id="save_percent_max" type="number" name="save_percent_max" value="{{ selected_filters.save_percent_max }}" placeholder="100">
+                <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
+              </div>
+              {% for category in tag_categories %}
+              <!-- див одной категории -->
+                <div class="filter_mini_div category" id="{{ category.id }}">
+                  <p class="opened_filter_text full_width big_p">
+                    <span class="big_p_parth">
+                      <span class="category_name">{{ category.name }}:</span>
+                      <span class="count_checked">Любое</span>
+                    </span>
+                    <!-- треугольничек, скрывает и открывает чекбоксы -->
+                    <span class="button_span">
+                      <button type="button" name="button" class="triangle_to_open_and_hide button_and_submit__without__bgn_and_border">
+                      <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
+                    </span>
+                  </p>
+                  <div class="labels" id="{{ category.id }}">
+                    <!-- див с чекбоксами -->
+                    <label class="any_one">
+                      <span> <input type="checkbox" name="clear_category" value="any_one" id="{{ category.id }}"> </span>
+                      <span class="any_one__span">Очистить</span>
+                    </label>
+                    {% for tag in tags %}
+                      {% if tag.category == category %}
+                        <label>
+                          <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
+                          {{ tag.name }}
+                        </label>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+              <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
+              <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
 
-      <!-- <div class="close_btn"></div> -->
+              <div class="get_filtered_pubs_count" style="display: none;">{% url 'pub:get_filtered_pubs_count' %}</div>
+              <input type="hidden" name="pub_type" value="31">
+
+              <div class="show_pubs">
+                <div class="show_pubs_container">
+                  <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
+                  <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
+                </div>
+              </div>
+            <!-- <div class="clear_hix_show_pubs"></div> -->
+            </form>
+          </div>
+        </div>
+
+        <!-- <div class="close_btn"></div> -->
+      </div>
     </div>
-  </div>
 
 	<div class="filter_and_gradient">
 		<div class="filter_and_gradient_container">

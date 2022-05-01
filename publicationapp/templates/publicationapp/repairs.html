@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page_title" {% if not pubs %} style="margin-top: 130px;" {% endif %}>
+  <div class="page_title" {% if not pubs %} style="margin-top: 15%;" {% endif %}>
     {% if pubs %}
       <p class="title_p">Ремонтные решения:</p>
       <p class="count_pubs">{{ pubs.count }} публикации</p>
@@ -23,7 +23,7 @@
     {% endif %}
   </div>
 
-  <div class="pubs_container" {% if not pubs %} style="height: 650px;" {% endif %}>
+  <div class="pubs_container" {% if not pubs %} style="height: 500px" {% endif %}>
     {% for p in pubs %}
 
         <div class="pub_one repair" id="{{ p.id }}">
@@ -60,6 +60,10 @@
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
                 </div>
+                <div class="filter_one" id="fltr_save_percent">
+                   <p id="fltr_save_percent_p">Фильтер % просмотревших сохранили к себе</p>
+                   <div class="to_close_filter fltr_save_percent"></div>
+                </div>
                 {% for category in tag_categories %}
                   <div class="filter_one" id="fltr_{{ category.id }}">
                      <p id="fltr_{{ category.id }}_p">Фильтер {{ category.name }}</p>
@@ -93,7 +97,7 @@
                 </label>
                 <label>
                   <input type="radio" name="ordering" value="by_seen_count" {% if selected_filters.ordering == 'by_seen_count' %} checked {% endif %}>
-                  Болше всего просмотров
+                  Больше всего просмотров
                 </label>
                 <label>
                   <input type="radio" name="ordering" value="by_savest" {% if selected_filters.ordering == 'by_savest' %} checked {% endif %}>
@@ -102,7 +106,7 @@
                 </label>
                 <label>
                   <input type="radio" name="ordering" value="by_shared_count" {% if selected_filters.ordering == 'by_shared_count' %} checked {% endif %}>
-                  Болше всего репостов
+                  Больше нажатий «Поделиться»
                 </label>
                 <label>
                   <input type="radio" name="ordering" value="by_name" {% if selected_filters.ordering == 'by_name' %} checked {% endif %}>
@@ -115,10 +119,17 @@
               </div>
             </div>
             <div class="filter_mini_div cost">
-              <p class="opened_filter_text full_width">Бюджет на ремонт, ₽</p>
+              <p class="opened_filter_text full_width">Финансовые затраты, ₽</p>
               <input id="fltr_cost_min" type="number" name="cost_mini" value="{{ selected_filters.cost_mini }}" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
               <p style="font-size: 15px; font-weight: 900;">-</p>
               <input id="fltr_cost_max" type="number" name="cost_max" value="{{ selected_filters.cost_max }}" placeholder="15 000 000">
+              <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
+            </div>
+            <div class="filter_mini_div save_percent">
+              <p class="opened_filter_text full_width">Сколько просмотревших<br>сохранили к себе, %</p>
+              <input id="save_percent_min" type="number" min="0" max="100" name="save_percent_mini" value="{{ selected_filters.save_percent_mini }}" placeholder="0">
+              <p style="font-size: 15px; font-weight: 900;">-</p>
+              <input id="save_percent_max" type="number" min="0" max="100" name="save_percent_max" value="{{ selected_filters.save_percent_max }}" placeholder="100">
               <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
             </div>
             {% for category in tag_categories %}

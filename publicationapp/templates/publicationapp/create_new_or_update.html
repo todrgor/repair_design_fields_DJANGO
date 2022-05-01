@@ -40,11 +40,14 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        <div class="pub_types">
-          <h4>Вид публикации:</h4>
-          {{ form.type }}
-          {{ form.type.errors }}
-        </div>
+        {% if action == 'create' %}
+          <div class="pub_types">
+            <h4>Вид публикации:</h4>
+            {{ form.type }}
+            {{ form.type.errors }}
+          </div>
+        {% endif %}
+
         <div class="pub_title pub_inp_one">
           <h4>Заголовок:</h4>
           {{ form.title }}
@@ -75,9 +78,9 @@
           {{ form.content_last_desc.errors }}<p>Сдеайте вывод по теме Вашей публикации. Можно пожелать хорошего настроения :3</p>
         </div>
         <div class="pub_tags">
-          <h4>Тэги:</h4>
+          <h4>Тэги к публикции:</h4>
           <div id="budget" class="filter_mini_div show cost">
-            <p class="opened_filter_text full_width">Бюджет на ремонт, ₽</p>
+            <p class="opened_filter_text full_width">Финансовые затраты, ₽</p>
             {{ form.cost_min }}
             <p style="font-size: 15px; font-weight: 900;">-</p>
             {{ form.cost_max }}
@@ -85,66 +88,89 @@
             {{ form.cost_max.errors }}
           </div>
 
-          <div id="repair" class="filter_mini_div show checked_spheres">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                Ремонт чего:
-              </span>
-            </p>
-            {{ form.tag_repair_what_to }}
-            {{ form.tag_repair_what_to.errors }}
-          </div>
+          {% for category in tag_categories.repair %}
+            <div class="filter_mini_div show repair">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  {{ category.name }}:
+                </span>
+              </p>
+              {% if category.id in empty_tag_categories_ids %}
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth" style="color: red;">
+                    Не выбрано ни одного тега этой категории! Нельзя так!
+                  </span>
+                </p>
+              {% endif %}
+              <div class="labels" id="{{ category.id }}">
+                <!-- див с чекбоксами -->
+                {% for tag in tags %}
+                  {% if tag.category == category %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
 
-          <div id="repair" class="filter_mini_div show checked_styles">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                Инструмент:
-              </span>
-            </p>
-            {{ form.tag_repair_by_what }}
-            {{ form.tag_repair_by_what.errors }}
-          </div>
+          {% for category in tag_categories.design %}
+            <div class="filter_mini_div design">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  {{ category.name }}:
+                </span>
+              </p>
+              {% if category.id in empty_tag_categories_ids %}
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth" style="color: red;">
+                    Не выбрано ни одного тега этой категории! Нельзя так!
+                  </span>
+                </p>
+              {% endif %}
+              <div class="labels" id="{{ category.id }}">
+                <!-- див с чекбоксами -->
+                {% for tag in tags %}
+                  {% if tag.category == category %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;">
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
 
-          <div id="repair" class="filter_mini_div show checked_rooms">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                В помещении:
-              </span>
-            </p>
-            {{ form.tag_repair_where }}
-            {{ form.tag_repair_where.errors }}
-          </div>
-
-          <div id="design" class="filter_mini_div checked_rooms">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                Комната:
-              </span>
-            </p>
-            {{ form.tag_design_room }}
-            {{ form.tag_design_room.errors }}
-          </div>
-
-          <div id="design" class="filter_mini_div checked_styles">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                Основной стиль:
-              </span>
-            </p>
-            {{ form.tag_design_style }}
-            {{ form.tag_design_style.errors }}
-          </div>
-
-          <div id="lifehack" class="filter_mini_div checked_spheres">
-            <p class="opened_filter_text full_width big_p">
-              <span class="big_p_parth">
-                В сфере жизни:
-              </span>
-            </p>
-            {{ form.tag_lifehack_lifesphere }}
-            {{ form.tag_lifehack_lifesphere.errors }}
-          </div>
-
+          {% for category in tag_categories.lihehack %}
+            <div class="filter_mini_div lifehack">
+              <p class="opened_filter_text full_width big_p">
+                <span class="big_p_parth">
+                  {{ category.name }}:
+                </span>
+              </p>
+              {% if category.id in empty_tag_categories_ids %}
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth" style="color: red;">
+                    Не выбрано ни одного тега этой категории! Нельзя так!
+                  </span>
+                </p>
+              {% endif %}
+              <div class="labels" id="{{ category.id }}">
+                <!-- див с чекбоксами -->
+                {% for tag in tags %}
+                  {% if tag.category == category %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;">
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
         </div>
 
         <input type="submit" name="create!" value="{{ title }}!">

@@ -1,22 +1,24 @@
 from django.db.models import Q
+# from django.db.models.functions import Lower
 
 from django.shortcuts import render, redirect
-from django.core.exceptions import ObjectDoesNotExist
 
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView, UpdateView
 
 from django.contrib.auth import logout, login
-from django.urls import reverse, reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
-from django.views.generic import TemplateView, UpdateView
 from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound, Http404
+from django.urls import reverse, reverse_lazy
 
 from authapp.forms import RegisterForm, LoginForm
 from authapp.models import *
 from publicationapp.models import *
 from .forms import *
 from django.utils import timezone
+
 
 # удаление учётной записи пользователя
 def DeleteAccount(request, pk):
@@ -35,6 +37,7 @@ def DeleteAccount(request, pk):
             else:
                 return redirect('auth:logout')
 
+
 # включение-отключение получение уведомлений от автора
 def toggle_get_noti_from_author(request, pk):
     if request.is_ajax():
@@ -42,14 +45,18 @@ def toggle_get_noti_from_author(request, pk):
             duplicate = UserSubscribes.objects.filter(subscriber_id=request.user, star_id=pk)
 
             if not duplicate:
-                record = UserSubscribes.objects.create(subscriber_id=request.user, star_id=User.objects.get(id=pk))
-                record.save()
-                result = 1
-
-                noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' подписался на уведомления о Ваших новых публикациях.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(star_id=pk).count() ) + " подписчиков"), content_last_desc='', author=request.user)
-                Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
-                noti=Publication.objects.create(title=('Теперь вы будете получить уведомления о новых публикациях пользователя '+ User.objects.get(id=pk).username), type=PubTypes.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber_id=request.user.id).count() ) + " источников уведомлений о публикациях"), content_last_desc='', author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                if request.user != User.objects.get(id=pk):
+                    record = UserSubscribes.objects.create(subscriber_id=request.user, star_id=User.objects.get(id=pk))
+                    record.save()
+                    result = 1
+                    noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' подписался на уведомления о Ваших новых публикациях.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(star_id=pk).count() ) + " подписчиков"), content_last_desc='', author=request.user)
+                    Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
+                    noti=Publication.objects.create(title=('Теперь вы будете получить уведомления о новых публикациях пользователя '+ User.objects.get(id=pk).username), type=PubTypes.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content_first_desc=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber_id=request.user.id).count() ) + " источников уведомлений о публикациях"), content_last_desc='', author=request.user)
+                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                else:
+                    result = 0
+                    noti=Publication.objects.create(title=('Вы пытались подписаться сами на себя. Давайте так не делать :)'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Не ну а шо вы в самый раз"), content_last_desc='', author=request.user)
+                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
             else:
                 duplicate.delete()
                 result = 0
@@ -149,16 +156,13 @@ class AccountOneWatch(ListView):
                 expert_info = None
 
             expert_pubs = Publication.objects.filter(author=self.kwargs['pk'], type__id__in=[11, 21, 31])
-            pub_has_tags = PubHasTags.objects.filter(pub_id__in=expert_pubs)
         else:
             expert_info = None
             expert_pubs = None
-            pub_has_tags = None
 
         context.update({
             'expert_info': expert_info,
             'expert_pubs': expert_pubs,
-            'pub_has_tags': pub_has_tags,
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
         })
@@ -171,38 +175,33 @@ def UpdateAccount(request, pk):
         if request.user.role.id == 4 or request.user.id == int(pk):
             edited_user = User.objects.get(id=pk)
             form_user = UserForm({'username': edited_user.username, 'photo': edited_user.photo.url, 'role': edited_user.role, 'bio': edited_user.bio, 'age': edited_user.age, 'phone_number': edited_user.phone_number, })
+            form_user_expert = UserExpertForm()
             if edited_user.role.id == 2:
-                edited_user_expert_info = ExpertInfo.objects.filter(expert_id=pk)
-                if edited_user_expert_info:
-                    edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk)
-                else:
-                    edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
-                    edited_user_expert_info.save()
+                edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk) if ExpertInfo.objects.filter(expert_id=pk) else ExpertInfo.objects.create(expert_id=edited_user).save()
                 form_user_expert = UserExpertForm({'knowledge': edited_user_expert_info.knowledge, 'offer': edited_user_expert_info.offer, 'site': edited_user_expert_info.site, 'address': edited_user_expert_info.address, 'telegram': edited_user_expert_info.telegram, 'whatsapp': edited_user_expert_info.whatsapp, 'viber': edited_user_expert_info.viber, 'vk': edited_user_expert_info.vk, 'inst': edited_user_expert_info.inst, 'ok': edited_user_expert_info.ok, 'fb': edited_user_expert_info.fb, 'other': edited_user_expert_info.other, })
-            else:
-                form_user_expert = UserExpertForm()
             edited_user_subs = UserSubscribes.objects.filter(subscriber_id=pk)
+
             if request.method == 'POST':
                 form_user = UserForm(request.POST)
-                edited_user_post = request.POST
+                method_POST = request.POST
+                edited_user.__dict__.update({'username': method_POST['username'], 'bio': method_POST['bio'], 'age': method_POST['age'], 'phone_number': method_POST['phone_number'], })
                 if 'photo' in request.FILES:
-                    edited_user.__dict__.update({'username': edited_user_post['username'], 'photo': ('users_avatars/' + str(request.FILES['photo'])), 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+                    edited_user.__dict__.update({'photo': ('users_avatars/' + str(request.FILES['photo'])), })
                     fs = FileSystemStorage()
                     photo_file = fs.save(('users_avatars/' + request.FILES['photo'].name), request.FILES['photo'])
-                else:
-                    edited_user.__dict__.update({'username': edited_user_post['username'], 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
-                edited_user.save()
-                if 'role' in edited_user_post:
-                    if edited_user_post['role'] == 2 or edited_user_post['role'] == "2":
-                        edited_user.role = UserRoles.objects.get(id=2)
-                        edited_user.save()
-                        edited_user_expert_info = ExpertInfo.objects.filter(expert_id=pk)
-                        if edited_user_expert_info:
-                            edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk)
-                        else:
-                            edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
-                        edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
+
+                if 'role' in method_POST and request.user.role.id == 4:
+                    if method_POST['role'] == "4" and User.objects.filter(role=UserRoles.objects.get(id=4)).count() > 1:
+                        edited_user.role = edited_user.role
+                    else:
+                        edited_user.role = UserRoles.objects.get(id=method_POST['role'])
+
+                    if method_POST['role'] == "2":
+                        edited_user_expert_info = ExpertInfo.objects.get(expert_id=pk) if ExpertInfo.objects.filter(expert_id=pk) else ExpertInfo.objects.create(expert_id=edited_user)
+                        edited_user_expert_info.__dict__.update({'knowledge': method_POST['knowledge'], 'offer': method_POST['offer'], 'site': method_POST['site'], 'address': method_POST['address'], 'telegram': method_POST['telegram'], 'whatsapp': method_POST['whatsapp'], 'viber': method_POST['viber'], 'vk': method_POST['vk'], 'inst': method_POST['inst'], 'ok': method_POST['ok'], 'fb': method_POST['fb'], 'other': method_POST['other'], })
                         edited_user_expert_info.save()
+
+                edited_user.save()
 
                 if request.user.id == edited_user.id:
                     noti=Publication.objects.create(title=('Аккаунт успешно отредактирован.'), type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content_first_desc=("Вы большой молодец"), content_last_desc='', author=request.user)
@@ -242,23 +241,23 @@ def CreateAccount(request):
             if request.method == 'POST':
                 print(request.POST['role'])
                 form_user = UserForm(request.POST)
-                edited_user_post = request.POST
-                edited_user = User.objects.create(username=edited_user_post['username'], age=edited_user_post['age'], phone_number=edited_user_post['phone_number'], role=UserRoles.objects.get(id=edited_user_post['role']) )
+                method_POST = request.POST
+                edited_user = User.objects.create(username=method_POST['username'], age=method_POST['age'], phone_number=method_POST['phone_number'], role=UserRoles.objects.get(id=method_POST['role']) )
                 if 'photo' in request.FILES:
-                    edited_user.__dict__.update({'username': edited_user_post['username'], 'photo': ('users_avatars/' + str(request.FILES['photo'])), 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+                    edited_user.__dict__.update({'username': method_POST['username'], 'photo': ('users_avatars/' + str(request.FILES['photo'])), 'bio': method_POST['bio'], 'age': method_POST['age'], 'phone_number': method_POST['phone_number'], })
                     fs = FileSystemStorage()
                     photo_file = fs.save(('users_avatars/' + request.FILES['photo'].name), request.FILES['photo'])
                 else:
-                    edited_user.__dict__.update({'username': edited_user_post['username'], 'bio': edited_user_post['bio'], 'age': edited_user_post['age'], 'phone_number': edited_user_post['phone_number'], })
+                    edited_user.__dict__.update({'username': method_POST['username'], 'bio': method_POST['bio'], 'age': method_POST['age'], 'phone_number': method_POST['phone_number'], })
                 edited_user.save()
-                if edited_user_post['role'] == 2 or edited_user_post['role'] == "2":
+                if method_POST['role'] in [2, "2"]:
                     edited_user_expert_info = ExpertInfo.objects.filter(expert_id=edited_user.id)
                     if edited_user_expert_info:
                         edited_user_expert_info = ExpertInfo.objects.get(expert_id=edited_user.id)
                     else:
                         edited_user_expert_info = ExpertInfo.objects.create(expert_id=edited_user)
                         edited_user_expert_info.save()
-                    edited_user_expert_info.__dict__.update({'knowledge': edited_user_post['knowledge'], 'offer': edited_user_post['offer'], 'site': edited_user_post['site'], 'address': edited_user_post['address'], 'telegram': edited_user_post['telegram'], 'whatsapp': edited_user_post['whatsapp'], 'viber': edited_user_post['viber'], 'vk': edited_user_post['vk'], 'inst': edited_user_post['inst'], 'ok': edited_user_post['ok'], 'fb': edited_user_post['fb'], 'other': edited_user_post['other'], })
+                    edited_user_expert_info.__dict__.update({'knowledge': method_POST['knowledge'], 'offer': method_POST['offer'], 'site': method_POST['site'], 'address': method_POST['address'], 'telegram': method_POST['telegram'], 'whatsapp': method_POST['whatsapp'], 'viber': method_POST['viber'], 'vk': method_POST['vk'], 'inst': method_POST['inst'], 'ok': method_POST['ok'], 'fb': method_POST['fb'], 'other': method_POST['other'], })
                     edited_user_expert_info.save()
 
                 noti=Publication.objects.create(title=('Успешно создан аккаунт пользователя '+ edited_user.username), type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content_first_desc=("Вы большой молодец, что расширяете нам базу пользователей"), content_last_desc='', author=request.user)
@@ -284,11 +283,11 @@ def CreateAccount(request):
 # подать заявку на аминистратора
 def BecomeATeammember(request):
     if request.user.role.id == 3:
-        return HttpResponse("Вы уже участник нашей команды, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
+        return HttpResponse("Вы уже участник нашей команды, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем? <a href='/'>На главную</a>")
 
     if request.method == 'POST':
         if request.POST['desc']:
-            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль модератора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=22), asked_by=request.user, ask_content=request.POST['desc'], when_asked=timezone.now(), ask_additional_info=999)
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль модератора от пользователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=22), asked_by=request.user, ask_content=request.POST['desc'], when_asked=timezone.now(), ask_additional_info=999)
             if request.FILES:
                 fs = FileSystemStorage()
                 photos = request.FILES.getlist('photos')
@@ -314,11 +313,11 @@ def BecomeATeammember(request):
 # подать заявку на автора
 def BecomeAnAuthor(request):
     if request.user.role.id == 2:
-        return HttpResponse("Вы уже автор публикаций, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем?")
+        return HttpResponse("Вы уже автор публикаций, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем? <a href='/'>На главную</a>")
 
     if request.method == 'POST':
         if request.POST['desc']:
-            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль автора от пользвователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=21), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=999, when_asked=timezone.now())
+            contacting_support = ContactingSupport.objects.create(title=('Заявка на роль автора от пользователя «' + request.user.username +'»'), type=ContactingSupportTypes.objects.get(id=21), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=999, when_asked=timezone.now())
 
             if request.POST['knowledge'] or request.POST['offer'] or request.POST['site'] or request.POST['address'] or request.POST['telegram'] or request.POST['whatsapp'] or request.POST['viber'] or request.POST['vk'] or request.POST['inst'] or request.POST['ok'] or request.POST['fb'] or request.POST['other']:
                 becomer_expert_info = ExpertInfo.objects.filter(expert_id=request.user.id)
@@ -436,9 +435,10 @@ def SendToSupport(request):
     return render(request, 'authapp/send_to_support.html', context)
 
 
-# поиск чего-либо
+# поиск среди пользователей и публикаций
 def Search(request):
     if 'search_input' in request.GET:
+        # looking_for = Lower(request.GET['search_input'])
         looking_for = request.GET['search_input']
 
         # finded_experts = ExpertInfo.objects.filter(Q(knowledge__icontains=looking_for) | Q(offer__icontains=looking_for))
@@ -446,11 +446,10 @@ def Search(request):
         # for expert in finded_experts:
         #     finded_experts_list_id.append(expert.expert_id.id)
         # finded_accounts = User.objects.filter(Q(username__icontains=looking_for) | Q(bio__icontains=looking_for) | Q(id__in=finded_experts_list_id))
-        finded_accounts = User.objects.filter(Q(username__icontains=looking_for) | Q(bio__icontains=looking_for))
-        finded_pubs = Publication.objects.filter(Q(title__icontains=looking_for) | Q(content_first_desc__icontains=looking_for) | Q(content_last_desc__icontains=looking_for), type__in=[11, 21, 31])
+        finded_accounts = User.objects.filter(id__in=[user.id for user in User.objects.all() if looking_for in str(user.username).lower() or looking_for in str(user.bio).lower()])
+        finded_pubs = Publication.objects.filter(id__in=[pub.id for pub in Publication.objects.filter(type__in=[11, 21, 31]) if looking_for in str(pub.title).lower() or looking_for in str(pub.content_first_desc).lower() or looking_for in str(pub.content_last_desc).lower()])
         saved_pubs_urls = SavedPubs.objects.filter(saver_id=request.user)
         saved_finded_pubs = [sp.pub_id.id for sp in saved_pubs_urls]
-        pub_has_tags = PubHasTags.objects.filter(pub_id__type__id=31, pub_id__id__in=finded_pubs)
         subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=request.user))]
 
         finded_accounts_count = finded_accounts.count()
@@ -467,7 +466,6 @@ def Search(request):
             'finded_accounts': finded_accounts,
             'finded_accounts_count': finded_accounts_count,
             'finded_pubs': finded_pubs,
-            'pub_has_tags': pub_has_tags,
             'saved_finded_pubs': saved_finded_pubs,
             'subscribing_authors': subscribing_authors,
             'finded_pubs_count': finded_pubs_count,

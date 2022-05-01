@@ -2,7 +2,7 @@ from django.urls import path
 import publicationapp.views as publicationapp
 import mainapp.views as mainapp
 
-app_name = 'publicationapp'
+app_name = 'publicationapp' 
 
 urlpatterns = [
     path('', mainapp.main, name='main'),

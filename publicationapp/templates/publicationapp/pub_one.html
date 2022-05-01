@@ -93,9 +93,11 @@
             </div>
               <div class="pub_tags_container">
                 {% for tag in pub.tags.all %}
-                  <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+                  <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                    <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                     <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
                     <div class="pub_tag">
+                      <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
                       <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
                         type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
                       <img src="/static/sources/SVG/search.svg" alt="">
@@ -175,8 +177,10 @@
       <div class="pub_tags_container">
         {% for tag in pub.tags.all %}
           <form class="opened_filter_form" action="
-          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}"
+          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
+          {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
           method="GET">
+            <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
             <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
             <div class="pub_tag">
               <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
@@ -188,7 +192,11 @@
         {% endfor%}
 
         {% if pub.cost_min %}
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="
+          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
+          {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+          method="GET">
+            <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
             <label style='display:none;'> <span> <input type="checkbox" name="cost_min" value="{{ pub.cost_min }}" > </span><span>{{ pub.cost_min }}</span> </label>
             <div class="pub_tag">
               <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
@@ -199,7 +207,11 @@
         {% endif %}
 
         {% if pub.cost_max %}
-          <form class="opened_filter_form" action="{% url 'pub:filter_lifehacks' %}" method="post">{% csrf_token %}
+          <form class="opened_filter_form" action="
+          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
+          {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+          method="GET">
+            <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
             <label style='display:none;'> <span> <input type="checkbox" name="cost_max" value="{{ pub.cost_max }}" > </span><span>{{ pub.cost_max }}</span> </label>
             <div class="pub_tag">
               <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"

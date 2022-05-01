@@ -3,7 +3,6 @@ from authapp.models import *
 
 from .forms import *
 from django.shortcuts import render
-from authapp.models import *
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
@@ -12,7 +11,7 @@ from django.utils.formats import localize
 # from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 
-# получение жалобы на пользователя или публикацию через ajax
+#   получение жалобы на пользователя или публикацию через ajax
 @csrf_exempt
 def NewComplaint(request):
     if request.user.is_authenticated:
@@ -63,8 +62,8 @@ def NewComplaint(request):
                 return JsonResponse({'result': True})
 
 
-# все обращения в поддержку:
-# их вывод и обработка администраторами
+#   все обращения в поддержку:
+#   их вывод и обработка администраторами
 def LettersToSupport(request):
     if request.user.is_authenticated:
         if request.user.role.id in [3, 4]:
@@ -286,12 +285,97 @@ def LettersToSupport(request):
             }
             return render(request, 'adminapp/letters_to_support.html', content)
         else:
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
     else:
-        return HttpResponse("Сначала авторизируйтесь!")
+        return HttpResponse("Сначала авторизируйтесь! <a href='/login/'>Авторизоваться</a>")
 
 
-# стартовая страница админа
+#    отображение, создание,
+#    редактирование и удаление тегов и их категорий
+@csrf_exempt
+def TagsAndTagCategories(request):
+    if request.user.is_authenticated:
+        if request.user.role.id in [4]:
+            if request.method == 'POST':
+                method_POST = request.POST
+
+                if (
+                    'to_create_or_edit' in method_POST and 'tag_or_category_to_create_or_edit' in method_POST and 'category_or_tag_name' in method_POST
+                    and method_POST['to_create_or_edit'] and method_POST['tag_or_category_to_create_or_edit'] and method_POST['category_or_tag_name']
+                    ):
+
+                    if method_POST['tag_or_category_to_create_or_edit'] == 'category':
+                        if method_POST['to_create_or_edit'] == 'create' and not TagCategory.objects.filter(name=method_POST['category_or_tag_name']):
+                            object = TagCategory.objects.create(name=method_POST['category_or_tag_name'])
+                            object_type = 'создана категория «'+ object.name +'»'
+                        if method_POST['to_create_or_edit'] == 'edit' and 'object_id' in method_POST and method_POST['object_id'] and TagCategory.objects.filter(id=method_POST['object_id']):
+                            object = TagCategory.objects.get(id=method_POST['object_id'])
+                            if object.name != method_POST['category_or_tag_name']:
+                                object.name = method_POST['category_or_tag_name']
+                                object.save()
+                                object_type = 'изменена категория «'+ object.name +'»'
+                        if object:
+                            noti=Publication.objects.create(title=('Успешно '+ object_type +'!'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc="Наверное умничкааа) А других уведомить и желательно ещё причину и возможности указать? А?", content_last_desc='', author=request.user)
+                            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+
+                    if method_POST['tag_or_category_to_create_or_edit'] == 'tag':
+                        selected_pub_types = [method_POST[item] for item in method_POST.keys() if 'pub_type_' in item]
+
+                        if method_POST['to_create_or_edit'] == 'create' and 'category' in method_POST and selected_pub_types and method_POST['category'] and not Tag.objects.filter(name=method_POST['category_or_tag_name']):
+                            object = Tag.objects.create(name=method_POST['category_or_tag_name'], category=TagCategory.objects.get(id=method_POST['category']))
+                            print(PubTypes.objects.filter(id__in=selected_pub_types))
+                            object.pub_type.set(PubTypes.objects.filter(id__in=selected_pub_types))
+                            object.save()
+                            object_type = 'создан тег «'+ object.name +'»'
+                        if method_POST['to_create_or_edit'] == 'edit' and 'object_id' in method_POST and method_POST['object_id'] and 'category' in method_POST and selected_pub_types and method_POST['category'] and Tag.objects.filter(id=method_POST['object_id']):
+                            object = Tag.objects.get(id=method_POST['object_id'])
+                            if object.name != method_POST['category_or_tag_name'] or object.category.id != int(method_POST['category']) or set(object.pub_type.all()) != set(PubTypes.objects.filter(id__in=selected_pub_types)):
+                                object.name = method_POST['category_or_tag_name']
+                                object.category = TagCategory.objects.get(id=method_POST['category'])
+                                object.pub_type.set(PubTypes.objects.filter(id__in=selected_pub_types))
+                                object.save()
+                                object_type = 'изменён тег «'+ object.name +'»'
+                        if object:
+                            noti=Publication.objects.create(title=('Успешно '+ object_type +'!'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc="Наверное умничкааа) А других уведомить и желательно ещё причину и возможности указать? А?", content_last_desc='', author=request.user)
+                            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+                if 'tag_or_category_to_delete' in method_POST and 'object_id' in method_POST and method_POST['tag_or_category_to_delete'] and method_POST['object_id']:
+                    if method_POST['tag_or_category_to_delete'] == 'category':
+                        object = TagCategory.objects.filter(id=method_POST['object_id'])
+                        if object:
+                            object = TagCategory.objects.get(id=method_POST['object_id'])
+                            object_type = 'удалена категория «'+ object.name +'»'
+                    if method_POST['tag_or_category_to_delete'] == 'tag':
+                        object = Tag.objects.filter(id=method_POST['object_id'])
+                        if object:
+                            object = Tag.objects.get(id=method_POST['object_id'])
+                            object_type = 'удалён тег «'+ object.name +'»'
+                    if object:
+                        noti=Publication.objects.create(title=('Успешно '+ object_type +'!'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc="Ну и зачем? А других уведомить и желательно ещё причину указать? А?", content_last_desc='', author=request.user)
+                        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                        object.delete()
+
+            title = 'Теги публикаций и их категории'
+            tags = Tag.objects.all()
+            tag_categories = TagCategory.objects.all()
+            pubs = Publication.objects.filter(type__in=[11, 21, 31])
+            pub_types = PubTypes.objects.filter(id__in=[11, 21, 31])
+
+            content = {
+                'title': title,
+                'tags': tags,
+                'tag_categories': tag_categories,
+                'pubs': pubs,
+                'pub_types': pub_types,
+            }
+            return render(request, 'adminapp/tags_and_tag_categories.html', content)
+        else:
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+    else:
+        return HttpResponse("Сначала авторизируйтесь! <a href='/login/'>Авторизоваться</a>")
+
+#   стартовая страница админа
 class StartPanel(ListView):
     model =  Publication
     template_name = 'adminapp/main.html'
@@ -299,8 +383,7 @@ class StartPanel(ListView):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
-
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
         else:
             resp = super().get(*args, **kwargs)
             print('Finished processing GET request')
@@ -314,19 +397,25 @@ class StartPanel(ListView):
         users = User.objects.filter().order_by('-last_entry')[:4]
         # applications =
         # complaints =
+        tag_categories = TagCategory.objects.all()[:4]
+        tags = [Tag.objects.filter(category=category)[:4] for category in tag_categories]
+        new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
+        answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
 
         data = {
+            # 'noties': noties,
             'title': title,
             'pubs': pubs,
-            'noties': noties,
             'users': users,
-    		# 'applications': applications,
-    		# 'complaints': complaints,
+            'new_letters_to_support': new_letters_to_support,
+            'answered_letters_to_support': answered_letters_to_support,
+    		'tags': tags,
+    		'tag_categories': tag_categories,
         }
         return data
 
 
-# страница всех публикаций в ИС
+#   страница всех публикаций в ИС
 class PubList(ListView):
     model =  Publication
     template_name = 'adminapp/publications.html'
@@ -334,7 +423,7 @@ class PubList(ListView):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
             # return HttpResponseRedirect('/')
         else:
             resp = super().get(*args, **kwargs)
@@ -346,14 +435,12 @@ class PubList(ListView):
         title ='Публикации | Панель администратора'
         pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
         saved_urls = SavedPubs.objects.filter(pub_id__in = pubs)
-        pub_has_tags = PubHasTags.objects.filter(pub_id__in = pubs)
         photos_urls = PubPhotos.objects.filter(id_pub__in = pubs)
 
         data = {
             'title': title,
             'pubs': pubs,
             'saved_urls': saved_urls,
-            'pub_has_tags': pub_has_tags,
             'photos_urls': photos_urls,
         }
         return data
@@ -367,7 +454,7 @@ class UserList(ListView):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
             print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. ")
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
             # return HttpResponseRedirect('/')
         else:
             resp = super().get(*args, **kwargs)
