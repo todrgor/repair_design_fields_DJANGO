@@ -286,7 +286,10 @@
 }
 
 .page_title {
-	height: 50px;
+  display: flex;
+    align-content: center;
+    align-items: center;
+	height: 55px;
     width: 80%;
     max-width: 1100px;
     margin: 15px auto 15px;
@@ -309,7 +312,7 @@
   font-size: 18px;
   line-height: 20px;
   color: #949494;
-  margin-top: 4px;
+  margin-top: 6px;
   margin-right: 10px;
   float: left;
 }

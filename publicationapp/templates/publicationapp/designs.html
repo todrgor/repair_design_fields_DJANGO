@@ -170,7 +170,15 @@
                     <span class="any_one__span">Очистить</span>
                   </label>
                   {% for tag in tags %}
-                    {% if tag.category == category %}
+                    {% if tag.category == category and tag.name != 'Другое' %}
+                      <label>
+                        <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
+                        {{ tag.name }}
+                      </label>
+                    {% endif %}
+                  {% endfor %}
+                  {% for tag in tags %}
+                    {% if tag.category == category and tag.name == 'Другое' %}
                       <label>
                         <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  {% for filter in selected_filters %} {% if tag.id|slugify == filter %} checked {% endif %} {% endfor %}>
                         {{ tag.name }}

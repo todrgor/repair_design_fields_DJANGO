@@ -82,6 +82,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег публикации'
         verbose_name_plural = 'Теги публикции'
+        ordering = ('name',)
 
     def __str__(self):
         return (self.name + ' (' + str(self.category.name) + ', ' + str(list(self.pub_type.values_list('name', flat=True))).replace("[", "").replace("]", "").replace("'", "") + ')')

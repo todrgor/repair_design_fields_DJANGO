@@ -80,7 +80,7 @@ class BecomeAnAuthorForm(forms.Form):
 
 
 class SendToSupportForm(forms.Form):
-    type = forms.ModelChoiceField(queryset=ContactingSupportTypes.objects.exclude(id=0), initial=5, label="Цель обращения", empty_label="Ещё не выбрано")
+    type = forms.ModelChoiceField(queryset=ContactingSupportTypes.objects.exclude(id=0), initial=32, label="Цель обращения", empty_label="Ещё не выбрано")
     complaint_account_id = forms.ModelChoiceField(queryset=User.objects.filter(), initial=0, label="Жалоба на пользователя", empty_label="Ещё не выбрано")
     complaint_pub_id = forms.ModelChoiceField(queryset=Publication.objects.filter(type__id__in=(11, 21, 31)), initial=0, label="Жалоба на публикацию", empty_label="Ещё не выбрано")
     desc = forms.CharField(error_messages = {

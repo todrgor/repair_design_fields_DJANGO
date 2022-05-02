@@ -108,7 +108,7 @@ select[name="type"] {
 input[type="submit"] {
   cursor: pointer;
     width: 30%;
-    margin: 0 0 30px;
+    margin: 0 0 10px;
     padding: 10px 0;
     background: #545454;
     color: #f8f8f8;

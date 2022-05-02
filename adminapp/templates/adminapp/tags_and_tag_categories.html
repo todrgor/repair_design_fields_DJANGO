@@ -106,32 +106,65 @@
                    <th>Для каких типов публикаций</th>
                    <th>Публикации с этим тегом</th>
                </tr>
-               {% for tag in tags %}
-                 <tr id="{{ tag.id }}">
-                  {% if user.role.id == 4 %}
-                   <td class="functions">
-                     <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
-                     <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
-                   </td>
-                  {% endif %}
-                  <td class="id">{{ tag.id }}</td>
-                  <td class="name">{{ tag.name }}</td>
-                  <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
-                  <td class="pub_types">
-                    {% for pub_type in tag.pub_type.all %}
-                      <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
-                    {% endfor %}
-                  </td>
-                  <td class="pubs following">
-                    <ul>
-                      {% for pub in pubs %}
-                        {% if tag in pub.tags.all %}
-                          <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
-                        {% endif %}
-                      {% endfor %}
-                    </ul>
-                  </td>
-                 </tr>
+               {% for category in tag_categories %}
+                 {% for tag in tags %}
+                   {% if tag.category == category and tag.name != 'Другое' %}
+                     <tr id="{{ tag.id }}">
+                      {% if user.role.id == 4 %}
+                       <td class="functions">
+                         <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
+                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
+                       </td>
+                      {% endif %}
+                      <td class="id">{{ tag.id }}</td>
+                      <td class="name">{{ tag.name }}</td>
+                      <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
+                      <td class="pub_types">
+                        {% for pub_type in tag.pub_type.all %}
+                          <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
+                        {% endfor %}
+                      </td>
+                      <td class="pubs following">
+                        <ul>
+                          {% for pub in pubs %}
+                            {% if tag in pub.tags.all %}
+                              <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
+                            {% endif %}
+                          {% endfor %}
+                        </ul>
+                      </td>
+                     </tr>
+                   {% endif %}
+                 {% endfor %}
+                 {% for tag in tags %}
+                   {% if tag.category == category and tag.name == 'Другое' %}
+                     <tr id="{{ tag.id }}">
+                      {% if user.role.id == 4 %}
+                       <td class="functions">
+                         <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
+                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
+                       </td>
+                      {% endif %}
+                      <td class="id">{{ tag.id }}</td>
+                      <td class="name">{{ tag.name }}</td>
+                      <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
+                      <td class="pub_types">
+                        {% for pub_type in tag.pub_type.all %}
+                          <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
+                        {% endfor %}
+                      </td>
+                      <td class="pubs following">
+                        <ul>
+                          {% for pub in pubs %}
+                            {% if tag in pub.tags.all %}
+                              <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
+                            {% endif %}
+                          {% endfor %}
+                        </ul>
+                      </td>
+                     </tr>
+                   {% endif %}
+                 {% endfor %}
                {% endfor %}
            </table>
        </div>

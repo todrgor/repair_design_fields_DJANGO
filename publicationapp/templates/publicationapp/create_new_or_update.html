@@ -105,7 +105,15 @@
               <div class="labels" id="{{ category.id }}">
                 <!-- див с чекбоксами -->
                 {% for tag in tags %}
-                  {% if tag.category == category %}
+                  {% if tag.category == category and tag.name != 'Другое' %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+                {% for tag in tags %}
+                  {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
                       <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
                       {{ tag.name }}
@@ -133,9 +141,17 @@
               <div class="labels" id="{{ category.id }}">
                 <!-- див с чекбоксами -->
                 {% for tag in tags %}
-                  {% if tag.category == category %}
+                  {% if tag.category == category and tag.name != 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;">
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+                {% for tag in tags %}
+                  {% if tag.category == category and tag.name == 'Другое' %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -144,7 +160,7 @@
             </div>
           {% endfor %}
 
-          {% for category in tag_categories.lihehack %}
+          {% for category in tag_categories.lifehack %}
             <div class="filter_mini_div lifehack">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
@@ -159,11 +175,19 @@
                 </p>
               {% endif %}
               <div class="labels" id="{{ category.id }}">
-                <!-- див с чекбоксами -->
+                <!-- див с чекбоксами лайфхак -->
                 {% for tag in tags %}
-                  {% if tag.category == category %}
+                  {% if tag.category == category and tag.name != 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;">
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      {{ tag.name }}
+                    </label>
+                  {% endif %}
+                {% endfor %}
+                {% for tag in tags %}
+                  {% if tag.category == category and tag.name == 'Другое' %}
+                    <label>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -175,6 +199,10 @@
 
         <input type="submit" name="create!" value="{{ title }}!">
       </form>
+
+      <div class="if_here_is_not_something_what_you_want" style="margin: -60px 0 20px 0px; font-size: 13px; display: flex; justify-content: flex-end;">
+          <p style="color: gray;">Если для лубликации чего-либо не хватает,<br>например каких-либо тегов или полей,<br>расскажите нам через <a href="{% url 'auth:send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
+      </div>
     </div>
   {% endif %}
 

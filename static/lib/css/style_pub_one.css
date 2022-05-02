@@ -280,7 +280,7 @@
   margin: 0 auto 10px;
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 85%;
   flex-wrap: wrap;
 }
 .pub_tag {

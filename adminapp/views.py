@@ -305,6 +305,7 @@ def TagsAndTagCategories(request):
                     ):
 
                     if method_POST['tag_or_category_to_create_or_edit'] == 'category':
+                        object = None
                         if method_POST['to_create_or_edit'] == 'create' and not TagCategory.objects.filter(name=method_POST['category_or_tag_name']):
                             object = TagCategory.objects.create(name=method_POST['category_or_tag_name'])
                             object_type = 'создана категория «'+ object.name +'»'
@@ -321,10 +322,9 @@ def TagsAndTagCategories(request):
 
                     if method_POST['tag_or_category_to_create_or_edit'] == 'tag':
                         selected_pub_types = [method_POST[item] for item in method_POST.keys() if 'pub_type_' in item]
-
-                        if method_POST['to_create_or_edit'] == 'create' and 'category' in method_POST and selected_pub_types and method_POST['category'] and not Tag.objects.filter(name=method_POST['category_or_tag_name']):
+                        object = None
+                        if method_POST['to_create_or_edit'] == 'create' and 'category' in method_POST and selected_pub_types and method_POST['category'] and not Tag.objects.filter(name=method_POST['category_or_tag_name'], category=method_POST['category']):
                             object = Tag.objects.create(name=method_POST['category_or_tag_name'], category=TagCategory.objects.get(id=method_POST['category']))
-                            print(PubTypes.objects.filter(id__in=selected_pub_types))
                             object.pub_type.set(PubTypes.objects.filter(id__in=selected_pub_types))
                             object.save()
                             object_type = 'создан тег «'+ object.name +'»'

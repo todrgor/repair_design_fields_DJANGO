@@ -262,29 +262,29 @@ $(document).ready(function() {
       }
     }
 
-    if (document.getElementById('fltr_cost_min').value != ''  || document.getElementById('fltr_cost_max').value != '') {
-      document.getElementById('fltr_cost_p').innerHTML = "Публикации ";
-      if (document.getElementById('fltr_cost_min').value != '') {
-        document.getElementById('fltr_cost_p').innerHTML += "от " + document.getElementById('fltr_cost_min').value.split("-").reverse().join(".");
-      }
-      if (document.getElementById('fltr_cost_min').value != '' && document.getElementById('fltr_cost_max').value != '') {
-        document.getElementById('fltr_cost_p').innerHTML += " ";
-      }
-      if (document.getElementById('fltr_cost_max').value != '') {
-        document.getElementById('fltr_cost_p').innerHTML += "до " + document.getElementById('fltr_cost_max').value.split("-").reverse().join(".");
-      }
-      if ((document.getElementById('fltr_cost_min').value != '' && document.getElementById('fltr_cost_max').value != '') &&
-          (Date.parse(document.getElementById('fltr_cost_max').value) < Date.parse(document.getElementById('fltr_cost_min').value))) {
-        a = document.getElementById('fltr_cost_min').value;
-        document.getElementById('fltr_cost_min').value = document.getElementById('fltr_cost_max').value;
-        document.getElementById('fltr_cost_max').value = a;
-        document.getElementById('fltr_cost_p').innerHTML = "Публикации от " + document.getElementById('fltr_cost_min').value.split("-").reverse().join(".");
-        document.getElementById('fltr_cost_p').innerHTML += " до " + document.getElementById('fltr_cost_max').value.split("-").reverse().join(".");
-      }
-      $('#fltr_cost').addClass('show');
-      $filters_on += 1;
-      console.log("from input +1");
-    }
+    // if (document.getElementById('fltr_cost_min').value != ''  || document.getElementById('fltr_cost_max').value != '') {
+    //   document.getElementById('fltr_cost_p').innerHTML = "Публикации ";
+    //   if (document.getElementById('fltr_cost_min').value != '') {
+    //     document.getElementById('fltr_cost_p').innerHTML += "от " + document.getElementById('fltr_cost_min').value.split("-").reverse().join(".");
+    //   }
+    //   if (document.getElementById('fltr_cost_min').value != '' && document.getElementById('fltr_cost_max').value != '') {
+    //     document.getElementById('fltr_cost_p').innerHTML += " ";
+    //   }
+    //   if (document.getElementById('fltr_cost_max').value != '') {
+    //     document.getElementById('fltr_cost_p').innerHTML += "до " + document.getElementById('fltr_cost_max').value.split("-").reverse().join(".");
+    //   }
+    //   if ((document.getElementById('fltr_cost_min').value != '' && document.getElementById('fltr_cost_max').value != '') &&
+    //       (Date.parse(document.getElementById('fltr_cost_max').value) < Date.parse(document.getElementById('fltr_cost_min').value))) {
+    //     a = document.getElementById('fltr_cost_min').value;
+    //     document.getElementById('fltr_cost_min').value = document.getElementById('fltr_cost_max').value;
+    //     document.getElementById('fltr_cost_max').value = a;
+    //     document.getElementById('fltr_cost_p').innerHTML = "Публикации от " + document.getElementById('fltr_cost_min').value.split("-").reverse().join(".");
+    //     document.getElementById('fltr_cost_p').innerHTML += " до " + document.getElementById('fltr_cost_max').value.split("-").reverse().join(".");
+    //   }
+    //   $('#fltr_cost').addClass('show');
+    //   $filters_on += 1;
+    //   console.log("from input +1");
+    // }
 
     if ($selected_styles >= 1) {
       if ($selected_styles == 1) {

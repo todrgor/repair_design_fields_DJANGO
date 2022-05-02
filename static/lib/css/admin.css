@@ -178,8 +178,11 @@ a:hover {
 .question_block input[type="checkbox"] {
   margin-right: 5px;
 }
-.question_block input[type="text"],
 .question_block select {
+  width: 99.3%;
+}
+.question_block input[type="text"] {
+  padding-left: 3px;
   width: 98%;
 }
 .cancel_or_delete,

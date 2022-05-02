@@ -17,8 +17,8 @@
 
 {% block content %}
   <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
-  <!-- <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">  -->
-    <!-- <div id="tags_count"></div>
+  <div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;">
+    <div id="tags_count"></div>
     <div id="fltr_cost_min"></div>
     <div id="fltr_cost_max"></div>
     <div id="fltr_cost_p"></div>
@@ -26,8 +26,8 @@
     <div id="fltr_room_p"></div>
     <div id="checked_styles_count"></div>
     <div id="checked_rooms_count"></div>
-    <div class="opened_filter"></div> -->
-  <!-- </div> -->
+    <div class="opened_filter"></div>
+  </div>
 
   <div class="page_title">
     <p class="title_p">Избранные публикации:</p>
@@ -135,17 +135,33 @@
               </div>
                 <div class="pub_tags_container">
                   {% for tag in pub.tags.all %}
-                    <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
-                      <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                      <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
-                      <div class="pub_tag">
-                        <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
-                        <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                          type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                        <img src="/static/sources/SVG/search.svg" alt="">
-                      </div>
-                    </form>
-                  {% endfor%}
+                    {% if tag.name != 'Другое' %}
+                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                        <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
+                        <div class="pub_tag">
+                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
+                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                          <img src="/static/sources/SVG/search.svg" alt="">
+                        </div>
+                      </form>
+                    {% endif %}
+                  {% endfor %}
+                  {% for tag in pub.tags.all %}
+                    {% if tag.name == 'Другое' %}
+                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                        <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
+                        <div class="pub_tag">
+                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
+                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                          <img src="/static/sources/SVG/search.svg" alt="">
+                        </div>
+                      </form>
+                    {% endif %}
+                  {% endfor %}
                   <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
                 </div>
               </div>
@@ -154,6 +170,7 @@
       {% endfor %}
     </div>
 
+      <!--
       <div class="opened_filter_big_bg">
         <div class="pre_pre_opened_filter">
           <div class="pre__opened_filter">
@@ -164,7 +181,9 @@
                   <p class="opened_filter_second_title">14 подобрано</p>
                 </div>
                 <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
+                  <!--
                   <div class="filters_on"> <!-- если есть 1+ фильтров -->
+                    <!--
                     <div class="filter_one" id="fltr_cost">
                        <p id="fltr_cost_p">Фильтер период сохранения</p>
                        <div class="to_close_filter fltr_cost"></div>
@@ -176,6 +195,7 @@
                     <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
                   </div>
                   <div class="filters_off"> <!-- если ни оного фильтра не включено -->
+                    <!--
                     <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
                   </div>
                 </div>
@@ -204,26 +224,34 @@
                   <p style="font-size: 15px; font-weight: 900;">-</p>
                   <input id="fltr_cost_max" type="date" name="cost_max" placeholder="2111-11-12">
                   <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
-                </div>
+                <!--
+              </div>
 
                 <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
                 <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
+                <!--
                 <div class="show_pubs">
                   <div class="show_pubs_container">
                     <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
                     <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
-                  </div>
+                  <!--
+                </div>
                 </div>
               <!-- <div class="clear_hix_show_pubs"></div> -->
-              </form>
+              <!--
+            </form>
             </div>
           </div>
+          -->
 
           <!-- <div class="close_btn"></div> -->
+        <!--
         </div>
       </div>
+      -->
 
-    	<div class="filter_and_gradient">
+    	<!--
+      <div class="filter_and_gradient">
     		<div class="filter_and_gradient_container">
     		  <button class="filter_button button_and_submit__without__bgn_and_border">
     			<div class="filter">
@@ -238,6 +266,7 @@
     		  </button>
     		</div>
       </div>
+      -->
 
       <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
         <div class="pub_additional_functions dont_close_on_click">

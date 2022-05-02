@@ -32,7 +32,7 @@ def CreateNewPub(request):
             tag_categories = {
                 'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
                 'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)),
-                'lihehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
+                'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
             }
             empty_tag_categories_ids = []
             selected_tags = None
@@ -146,7 +146,7 @@ def UpdatePub(request, pk):
             tag_categories = {
                 'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 else None,
                 'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 else None,
-                'lihehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
+                'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
             }
             empty_tag_categories_ids = []
             selected_tags = pub.tags.all()
