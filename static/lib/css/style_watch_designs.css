@@ -87,7 +87,7 @@
 .filter_tags_count {
   transition: all 0.4s ease;
   cursor: pointer;
-  max-width: 12px;
+  /* max-width: 12px; */
   max-height: 11px;
   padding: 8px;
   padding-bottom: 7.5px;

@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page_title" {% if not pubs %} style="margin-top: 15%;" {% endif %}>
+  <div class="page_title" {% if not pubs %} style="margin-top: 15%; align-content: flex-start; align-items: flex-start; flex-direction: column;" {% endif %}>
     {% if pubs %}
       <p class="title_p">Дизайнерские решения:</p>
       <p class="count_pubs">{{ pubs.count }} публикации</p>
@@ -38,17 +38,16 @@
               </p>
             </div>
             <div class="pub_to_do">
-              {% if p.id in saved_pubs %}
-                <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ p.id }} )">
-                  <img src="/static/sources/SVG/heart.svg" alt="">
-                  <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="Сохранено">
-                </div>
-              {% else %}
-                <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ p.id }} )">
-                  <img src="/static/sources/SVG/heart.svg" alt="">
-                  <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
-                </div>
-              {% endif %}
+              <div class="user_just_saved_it {% if p.id in saved_pubs %} pub_saved {% endif %}"
+                onclick="
+                  {% if user.is_authenticated %}
+                    toggleSavePub_D( {{ p.id }} )
+                  {% else %}
+                    YouHaveToLogin('сохранить публикацию')
+                  {% endif %}" title="Сохранить в «Избранное»">
+                <img src="/static/sources/SVG/heart.svg" alt="">
+                <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if p.id in saved_pubs %}Сохранено{% else %}В «Избранное»{% endif %}">
+              </div>
               <a class="pub_show_full" href="{% url 'pub:pub_one' pk=p.id %}">Подробнее •••</a>
             </div>
             <div class="pub_tags"></div>

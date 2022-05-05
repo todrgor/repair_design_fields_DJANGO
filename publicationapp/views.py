@@ -110,31 +110,30 @@ def CreateNewPub(request):
 
 # удаление публикации
 def DeletePub(request, pk):
-    if request.user.is_authenticated:
-        if request.user.role.id in [2, 4]:
-            pub = Publication.objects.get(id=pk)
-            type = pub.type.id
-            author = pub.author
-            pub.delete()
+    if request.user.is_authenticated and request.user.role.id in [2, 4]:
+        pub = Publication.objects.get(id=pk)
+        type = pub.type.id
+        author = pub.author
+        pub.delete()
 
-            if request.user.role.id == 2:
-                noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            if request.user.role.id == 4:
-                noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
-                Notifications.objects.create(user_receiver=author, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко его автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        if request.user.role.id == 2:
+            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        if request.user.role.id == 4:
+            noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=author, noti_for_user=noti)
+            noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко его автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
 
-            if type == 11:
-                return redirect('pub:repairs')
-            if type == 21:
-                return redirect('pub:designs')
-            if type == 31:
-                return redirect('pub:lifehacks')
+        if type == 11:
+            return redirect('pub:repairs')
+        if type == 21:
+            return redirect('pub:designs')
+        if type == 31:
+            return redirect('pub:lifehacks')
 
 
-# редактирование публикации
+#   редактирование публикации
 def UpdatePub(request, pk):
     if request.user.is_authenticated:
         if request.user.role.id in [2, 4]:
@@ -232,7 +231,7 @@ def UpdatePub(request, pk):
         return redirect('main')
 
 
-# просмотр публикции в "Избранном"
+#   просмотр публикции в "Избранном"
 class Saved(ListView):
     model = SavedPubs
     template_name = 'publicationapp/saved.html'
@@ -244,18 +243,10 @@ class Saved(ListView):
         return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver_id=self.request.user).values_list('pub_id', flat=True)).order_by('-pushed')
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_authenticated:
-            context = super(Saved, self).get_context_data(**kwargs)
-        else:
+        if not self.request.user.is_authenticated:
             return redirect('main')
-        # у меня не получилось получить только некоторые записи тегов, пришось всей кучей. но работает :)
-        # saved_pubs = SavedPubs.objects.filter(saver_id=self.request.user)
-        # publications = Publication.objects.filter(id=SavedPubs.objects.filter(saver_id=self.request.user))
-        # # какого фига publications queryset получают, а у PubHasTags точно так же не получается?
-        # print(saved_pubs)
-        # print(str(publications))
-        # print(PubHasTags.objects.filter(pub_id__in=publications))
 
+        context = super(Saved, self).get_context_data(**kwargs)
         subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
         subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
 
@@ -265,7 +256,7 @@ class Saved(ListView):
         return context
 
 
-# сохранение-удаление публикаций из "Избранного"
+#   сохранение-удаление публикаций из "Избранного"
 def toggle_saved(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
@@ -296,8 +287,24 @@ def toggle_saved(request, pk):
             return JsonResponse({'result': result})
 
 
-# смена количества "репостов" публикации при
-# нажатии пользователем на "ссылка на публикацию"
+#   зачисление публикаций-лайфхаков в "Просмотренные"
+def set_seen(request, pk):
+    if request.is_ajax():
+        pub = Publication.objects.get(id=pk)
+        pub.seen_count +=1
+        pub.save()
+
+        if request.user.is_authenticated:
+            user = request.user
+            seen_url_object = SeenPubs.objects.get(watcher_id=user, pub_id=pub) if SeenPubs.objects.filter(watcher_id=user, pub_id=pub) else SeenPubs.objects.create(watcher_id=user, pub_id=pub)
+            seen_url_object.count += 1
+            seen_url_object.save()
+
+        return JsonResponse({'result': 1})
+
+
+#   смена количества "репостов" публикации при
+#   нажатии пользователем на "ссылка на публикацию"
 def change_shared_count(request, pk):
     if request.is_ajax():
         pub = Publication.objects.get(id=pk)
@@ -372,14 +379,14 @@ def filter_pubs (method_GET):
     return pubs
 
 
-# AJAX: узнать количество подходящих
-# публикаций под заданные фильтры
+#   AJAX: узнать количество подходящих
+#   публикаций под заданные фильтры
 def get_filtered_pubs_count(request):
     if request.is_ajax() and request.GET:
         return JsonResponse({'pubs_count': filter_pubs(request.GET).count()})
 
 
-# просмотр одной публикации
+#       просмотр одной публикации
 class PubWatchOne(ListView):
     model = Publication
     template_name = 'publicationapp/pub_one.html'
@@ -395,28 +402,27 @@ class PubWatchOne(ListView):
 
         saved_pubs = subscribing_authors =  None
         if self.request.user.is_authenticated:
-            saved_urls = SavedPubs.objects.filter(saver_id=self.request.user, pub_id__id=self.kwargs['pk'])
+            user = self.request.user
+
+            saved_urls = SavedPubs.objects.filter(saver_id=user, pub_id=pub)
             saved_pubs = [sp.pub_id.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
+            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=user)
             subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
 
-            if not SeenPubs.objects.filter(watcher_id=self.request.user, pub_id=self.kwargs['pk']):
-                SeenPubs.objects.create(watcher_id=self.request.user, pub_id=Publication.objects.get(id=self.kwargs['pk']))
-            seen_url_object = SeenPubs.objects.get(watcher_id=self.request.user.id, pub_id=self.kwargs['pk'])
+            seen_url_object = SeenPubs.objects.get(watcher_id=user, pub_id=pub) if SeenPubs.objects.filter(watcher_id=user, pub_id=pub) else SeenPubs.objects.create(watcher_id=user, pub_id=pub)
             seen_url_object.count += 1
             seen_url_object.save()
 
-        # обновление статистики у открываемой публикции
-
+        #   обновление статистики у открываемой публикции
         ages = (SeenPubs.objects.filter(pub_id=self.kwargs['pk']).aggregate(Sum('watcher_id__age')))['watcher_id__age__sum']
-        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count()  if SeenPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0  else 0
-        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() if SavedPubs.objects.filter(pub_id=self.kwargs['pk']).count() != 0 else 0
+        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=pub).count()  if SeenPubs.objects.filter(pub_id=pub).count() != 0  else 0
+        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=pub).count() if SavedPubs.objects.filter(pub_id=pub).count() != 0 else 0
         pub.seen_count +=1
         pub.save()
 
         context.update({
             'pub': pub,
-            'photos': PubPhotos.objects.filter(id_pub=self.kwargs['pk']),
+            'photos': PubPhotos.objects.filter(id_pub=pub),
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
         })
@@ -460,8 +466,9 @@ class DesignsWatch(ListView):
         return pubs
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super(DesignsWatch, self).get_context_data(**kwargs)
-        saved_pubs = [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=21)] if self.request.user.is_authenticated else None
+        saved_pubs = [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=user, pub_id__type=21)] if user.is_authenticated else None
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=21))
         tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
@@ -484,14 +491,24 @@ class LifehacksWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
+
+        #   обновление статистики у открываемой публикции
+        for pub in Publication.objects.filter(type=31):
+            ages = (SeenPubs.objects.filter(pub_id=pub).aggregate(Sum('watcher_id__age')))['watcher_id__age__sum']
+            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=pub).count()  if SeenPubs.objects.filter(pub_id=pub).count() != 0  else 0
+            pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=pub).count() if SavedPubs.objects.filter(pub_id=pub).count() != 0 else 0
+            pub.seen_count +=1
+            pub.save()
+
         pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=31)
         return pubs
 
     def get_context_data(self, **kwargs):
         context = super(LifehacksWatch, self).get_context_data(**kwargs)
+        user = self.request.user
 
-        saved_pubs =          [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=self.request.user, pub_id__type=31)] if self.request.user.is_authenticated else None
-        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=self.request.user))]     if self.request.user.is_authenticated else None
+        saved_pubs =          [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=user, pub_id__type=31)] if user.is_authenticated else None
+        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=user))]     if user.is_authenticated else None
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=31))
         tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))

@@ -5,17 +5,18 @@ function TagsWereSelectedBeforeLoadingThePage() {
   UpdateSelectedTagsView();
   UpdateCostView();
   UpdateSavePercentView();
-  SelectedTagsCount();
+  // SelectedTagsCount(); до этого тыщу раз уже был вызван
 }
 
 function SelectedTagsCount() {
   var count = $('.filter_one.show').length;
+  console.log('count: ' + count);
   $('#tags_count').html(count);
   return count
 }
 
 function UpdateSelectedTagsView() {
-  if ($('.opened_filter :input[type="checkbox"]:checked').length > 0 || $('#fltr_cost_min')[0].value != ''  || $('#fltr_cost_max')[0].value != '' || $('#save_percent_min')[0].value != '' || $('#save_percent_max')[0].value != '') {
+  if ($('.opened_filter :input[type="checkbox"]:checked').length > 0 || $('#fltr_cost_min').val() != ''  || $('#fltr_cost_max').val() != '' || $('#save_percent_min').val() != '' || $('#save_percent_max').val() != '') {
     // console.log('win');
     $(".filters_on, .filter_tags_count").addClass('show');
     $(".filters_off").addClass('hidden');
@@ -47,6 +48,7 @@ function UpdateSelectedTagsView() {
     $('.opened_filter_second_title').html('');
     $('.show_pubs_container input[name="to_filter"]').val('Показать все публикации');
   }
+
   SelectedTagsCount();
 }
 
@@ -83,6 +85,7 @@ function UpdateCostView() {
       $('#fltr_cost_p')[0].innerHTML = "Бюджет от " + $('#fltr_cost_min')[0].value + "₽";
       $('#fltr_cost_p')[0].innerHTML += " до " + $('#fltr_cost_max')[0].value + "₽";
     }
+
     $('#fltr_cost').addClass('show');
     SelectedTagsCount();
     // console.log("from cost input +1");
@@ -124,6 +127,7 @@ function UpdateSavePercentView() {
       $('#fltr_save_percent_p')[0].innerHTML = "От " + $('#save_percent_min')[0].value + "%";
       $('#fltr_save_percent_p')[0].innerHTML += " до " + $('#save_percent_max')[0].value + "%";
     }
+
     $('#fltr_save_percent_p')[0].innerHTML += " сохранений";
     $('#fltr_save_percent').addClass('show');
     SelectedTagsCount();

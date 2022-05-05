@@ -5,7 +5,7 @@
 
 function toggleSavePub_D(idPub) {
   $.ajax({
-        url: "/pub/makesaved/" + idPub + "/",
+        url: "/pub/make_saved/" + idPub + "/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -131,7 +131,7 @@ function new_complaint_was_sent() {
             $('.new_complaint textarea').val('');
           },
           error: function (data) {
-            alert("Какая-то ошибка с жалобой...");
+            alert("Какая-то ошибка с жалобой... Попробуйте спустя время отправить снова!");
           }
       });
 

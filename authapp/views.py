@@ -282,6 +282,9 @@ def CreateAccount(request):
 
 # подать заявку на аминистратора
 def BecomeATeammember(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("Вы ещё не авторизированы, Вам стоит сначала <a href='/account/login/'>авторизоваться</a>. <a href='/'>На главную</a>")
+
     if request.user.role.id == 3:
         return HttpResponse("Вы уже участник нашей команды, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем? <a href='/'>На главную</a>")
 
@@ -312,6 +315,9 @@ def BecomeATeammember(request):
 
 # подать заявку на автора
 def BecomeAnAuthor(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("Вы ещё не авторизированы, Вам стоит сначала <a href='/account/login/'>авторизоваться</a>. <a href='/'>На главную</a>")
+
     if request.user.role.id == 2:
         return HttpResponse("Вы уже автор публикаций, Вам не нужно подаввать заявку на свою же роль. Ну вот зачем? <a href='/'>На главную</a>")
 
@@ -356,6 +362,9 @@ def BecomeAnAuthor(request):
 # или пользователя, заявка на автора публикаций
 # или администратора, а также вопрос или идея/предложение
 def SendToSupport(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("Вы ещё не авторизированы, Вам стоит сначала <a href='/account/login/'>авторизоваться</a>. <a href='/'>На главную</a>")
+
     if request.method == 'POST':
         if request.POST['desc']:
             # print(str(request.POST))
@@ -448,9 +457,9 @@ def Search(request):
         # finded_accounts = User.objects.filter(Q(username__icontains=looking_for) | Q(bio__icontains=looking_for) | Q(id__in=finded_experts_list_id))
         finded_accounts = User.objects.filter(id__in=[user.id for user in User.objects.all() if looking_for in str(user.username).lower() or looking_for in str(user.bio).lower()])
         finded_pubs = Publication.objects.filter(id__in=[pub.id for pub in Publication.objects.filter(type__in=[11, 21, 31]) if looking_for in str(pub.title).lower() or looking_for in str(pub.content_first_desc).lower() or looking_for in str(pub.content_last_desc).lower()])
-        saved_pubs_urls = SavedPubs.objects.filter(saver_id=request.user)
+        saved_pubs_urls = SavedPubs.objects.filter(saver_id=request.user) if request.user.is_authenticated else []
         saved_finded_pubs = [sp.pub_id.id for sp in saved_pubs_urls]
-        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=request.user))]
+        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=request.user))] if request.user.is_authenticated else None
 
         finded_accounts_count = finded_accounts.count()
         finded_pubs_count = finded_pubs.count()

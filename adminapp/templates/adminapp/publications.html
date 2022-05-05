@@ -29,7 +29,7 @@
   <div class="admin_menu_bg">
     <div class="admin_menu">
       <a href="{% url 'admin_mine:main' %}">Главная</a>
-      <a href="{% url 'admin_mine:letters_to_support' %}">Заявки и жалобы</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Обращения в поддержку</a>
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="">Публикации</a>
       <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
@@ -57,29 +57,29 @@
                  <th class="with200px">Ссылки на фотографии в публикации</th>
                  <th>Теги</th>
              </tr>
-             {% for p in pubs %}
-             <tr>
+             {% for pub in pubs %}
+             <tr id="{{ pub.id }}">
               {% if user.role.id == 4 %}
-                 <td class="functions"><a href="{% url 'pub:pub_edit' pk=p.id%}"><p id="edit">Редактировать</p></a>
-                     <p onclick="really_delete_pub({{ p.id }})" id="really_delete">Удалить безвозвратно</p></td>
+                 <td class="functions"><a href="{% url 'pub:pub_edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
+                     <p onclick="really_delete_pub({{pub.id }})" id="really_delete">Удалить безвозвратно</p></td>
               {% endif %}
-                 <td class="id">{{ p.id }}</td>
+                 <td class="id">{{pub.id }}</td>
                  <td class="width350px">
                      <div class="preview_and_pub_name">
-                         <img class="preview" src="{{ p.preview.url }}">
-                         <a href="{% url 'pub:pub_one' pk=p.id %}">{{ p.title }}</a>
+                         <img class="preview" src="{{pub.preview.url }}">
+                         <a href="{% url 'pub:pub_one' pk=pub.id %}" class="name">{{ pub.title }}</a>
                      </div>
                  </td>
 
-                 <td class="photo_and_nickname" style='align-items: center;'><img src="{{ p.author.photo.url }}" alt=""><a
-                         href="{% url 'auth:account_one' pk=p.author.id %}">{{ p.author.username }}</a></td>
-                <td class="with200px">{{ p.type.name }}</td>
-                <td>{{ p.seen_count }}</td>
-                 <td>{{ p.saved_count }}</td>
+                 <td class="photo_and_nickname" style='align-items: center;'><img src="{{pub.author.photo.url }}" alt=""><a
+                         href="{% url 'auth:account_one' pk=pub.author.id %}">{{ pub.author.username }}</a></td>
+                <td class="with200px">{{ pub.type.name }}</td>
+                <td>{{ pub.seen_count }}</td>
+                 <td>{{ pub.saved_count }}</td>
                  <td class="following">
                    <ul>
                     {% for su in saved_urls %}
-                      {% if su.pub_id.id == p.id %}
+                      {% if su.pub_id.id == pub.id %}
                         <li><a href="{% url 'auth:account_one' pk=su.saver_id.id %}">{{ su.saver_id.username }}</a></li>
                       {% endif %}
                     {% endfor %}
@@ -88,7 +88,7 @@
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for pu in photos_urls %}
-                         {% if pu.id_pub.id == p.id %}
+                         {% if pu.id_pub.id == pub.id %}
                            <li><a href="{{ pu.photo.url }}">{{ pu.photo.name }}</a></li>
                          {% endif %}
                        {% endfor %}
@@ -97,7 +97,7 @@
                  <td class="following">
                      <ul>
                        {% for pht in pub_has_tags %}
-                         {% if pht.pub_id.id == p.id %}
+                         {% if pht.pub_id.id == pub.id %}
                            <li>{{ pht.tag_id.tag_category }}: {{ pht.tag_id.tag_name }}</li>
                          {% endif %}
                        {% endfor %}

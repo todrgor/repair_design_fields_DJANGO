@@ -49,19 +49,19 @@
           {% endif %}
         </p>
       </div>
+
       {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
         {% if user.is_authenticated %}
-          <a onclick="toggleGetNotiFromAuthor( {{ opened_user.id }} )" class="nickname_noti" id="{{ opened_user.id }}">
-          {% if opened_user.id in subscribing_authors %}
-            <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
-          {% else %}
-            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
+          {% if user != opened_user %}
+            <a onclick="toggleGetNotiFromAuthor( {{ opened_user.id }} )" class="nickname_noti" id="{{ opened_user.id }}">
+            <div class="get_noti {% if opened_user.id in subscribing_authors %} noties_gotten {% endif %}" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
           {% endif %}
         {% else %}
           <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
           <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
         {% endif %}
       {% endif %}
+
       <p onclick="togglePubAdditionalFunctionsAuthor({{ opened_user.id }})" class="additionalFunctions">•••</p>
     </div>
     {% if opened_user.bio %}
@@ -124,6 +124,24 @@
 
           {% if pub.type.id == 31 %} <!-- если это лайфхак -->
             <div class="pub_one lifehack" id="{{ pub.id }}">
+              <div class="pub_url" style="display: none;">{% url 'pub:pub_one' pk=pub.id %}</div>
+              {% if user.is_authenticated %}
+                {% if pub.author == user or user.role.id == 4 %}
+                  <div class="info_for_author_or_admin" style="display: none;">
+                    <div class="edit_url">{% url 'pub:pub_edit' pk=pub.id %}</div>
+                    <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
+                    <div class="statistics">
+                      <p class="seen_count">{{ pub.seen_count }}</p>
+                      <p class="saved_count">{{ pub.saved_count }}</p>
+                      <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
+                      <p class="average_age_savers">{{ pub.average_age_savers }}</p>
+                      <p class="shared_count">{{ pub.shared_count }}</p>
+                      <p class="reported_count">{{ pub.reported_count }}</p>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+
               <div class="media">
                 {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
                 <video class="paused" muted="muted" controls="controls" loop>
@@ -138,13 +156,9 @@
 
               <div class="pub_info">
                 <div class="pub_to_do">
-                  {% if pub.id in saved_pubs %}
-                    <div class="user_just_saved_it pub_saved">
-                  {% else %}
-                    <div class="user_just_saved_it">
-                  {% endif %}
+                  <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}">
                     <a onclick="
-                    {% if opened_user.is_authenticated %}
+                    {% if user.is_authenticated %}
                       toggleSavePub_LH( {{ pub.id }} )
                     {% else %}
                       YouHaveToLogin('сохранить публикацию')
@@ -156,65 +170,60 @@
                       <a href="{% url 'auth:account_one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                       <div class="nickname_and_role">
                         <div class="nickname">
-                          <a href="{% url 'auth:account_one' pk=opened_user.id %}" class="nickname_link">{{ pub.author.username }}</a>
-                          {% if user.is_authenticated %}
-                            <a onclick="toggleGetNotiFromAuthor( {{ opened_user.id }} )" class="nickname_noti" id="{{ opened_user.id }}">
-                            {% if opened_user.id in subscribing_authors %}
-                              <div class="get_noti noties_gotten" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
+                          <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+
+                            {% if user.is_authenticated %}
+                              {% if user != pub.author %}
+                                <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                                <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                              {% endif %}
                             {% else %}
-                              <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
+                              <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
+                              <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                             {% endif %}
-                          {% else %}
-                            <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
-                            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
-                          {% endif %}
-                          <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                            <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                         </div>
                         <p class="role">Автор публикации</p>
                       </div>
                     </div>
                   </div>
-                    <a onclick="
-                      {% if opened_user.is_authenticated %}
-                        togglePubAdditionalFunctionsPub({{ pub.id }})
-                      {% else %}
-                        YouHaveToLogin('подать жалобу или поделиться этой публикацией')
-                      {% endif %}
-                    "><div class="pub_show_full">•••</div></a>
+                  <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
                 </div>
                 <div class="div_pub_text">
                   <p class="pub_text">{{ pub.title }}</p>
                 </div>
-                  <div class="pub_tags_container">
-                    {% for tag in pub.tags.all %}
-                      {% if tag.name != 'Другое' %}
-                        <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
-                          <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                          <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
-                          <div class="pub_tag">
-                            <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
-                            <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                              type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                            <img src="/static/sources/SVG/search.svg" alt="">
-                          </div>
-                        </form>
-                      {% endif %}
-                    {% endfor %}
-                    {% for tag in pub.tags.all %}
-                      {% if tag.name == 'Другое' %}
-                        <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
-                          <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                          <label style='display:none;'> <span> <input type="checkbox" name="style_design" value="{{ tag.id }}" > </span><span>{{ tag.category }}: {{ tag.name }}</span> </label>
-                          <div class="pub_tag">
-                            <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
-                            <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                              type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                            <img src="/static/sources/SVG/search.svg" alt="">
-                          </div>
-                        </form>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
+
+                <div class="pub_tags_container">
+
+                  {% for tag in pub.tags.all %}
+                    {% if tag.name != 'Другое' %}
+                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                        <div class="pub_tag">
+                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                          <img src="/static/sources/SVG/search.svg" alt="">
+                        </div>
+                      </form>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% for tag in pub.tags.all %}
+                    {% if tag.name == 'Другое' %}
+                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                        <div class="pub_tag">
+                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                          <img src="/static/sources/SVG/search.svg" alt="">
+                        </div>
+                      </form>
+                    {% endif %}
+                  {% endfor %}
+
+                </div>
               </div>
             </div>
           {% endif %}
@@ -250,6 +259,7 @@
               </div>
             </div>
           {% endif %}
+
           {% if pub.type.id == 11 %} <!-- если это публикация о ремонте -->
             <div class="pub_one repair" id="{{ pub.id }}">
               <div class="img_from_pub">
@@ -270,31 +280,63 @@
   </div>
 
 
-  <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
-    <div class="pub_additional_functions dont_close_on_click">
-      <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
-      <p class="dont_close_on_click" onclick="searchPubsLikeThis()" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">Искать похожее</p>
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+  <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
+    <div class="pub_additional_functions dont_close_on_click"  style="max-height: fit-content;">
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}">Подать жалобу<br>на пользователя</p>
     </div>
   </div>
 
-  <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
-    <div class="pub_additional_functions dont_close_on_click"  style="max-height: 24px;">
-      <p class="dont_close_on_click" onclick="openNewComplaintForm()">Подать жалобу</p>
+  <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
+    <div class="pub_additional_functions dont_close_on_click">
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+
+      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+        <input type="hidden" name="pub_type" value="31">
+        <div class="selected_tags" style="display: none;">
+          <!-- js поместит сюда input'ы всех тегов определённой публикации -->
+        </div>
+        <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+      </form>
+
+      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+      <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
+      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
+      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
     </div>
   </div>
+
   <div class="new_complaint"> <!-- написать жалобу -->
-    <h1>Подать жалобу</h1>
+    {% csrf_token %}
+    <h1>Жалоба на публикацию</h1>
     <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
     <p>Если у вас есть фотографии по теме:</p>
     <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
     <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-    <!-- <form>
-    </form> -->
+    <!-- <form> </form> -->
   </div>
+
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
-    <a style="text-decoration: underline; margin: 30px 0 10px; display: block;">repairandfields.com/ru/search?pubId=99</a>
+    <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
+  </div>
+
+  <div class="statistics"> <!-- посмотреть статистику по публикации -->
+    <h1>Статистика по публикации:</h1>
+    <p>Просмотров: <span class="seen_count"></span></p>
+    <p>Сохранений: <span class="saved_count"></span></p>
+    <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
+    <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
+    <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
+    <p>Жалоб на публикацию: <span class="reported_count"></span></p>
+  </div>
+
+  <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
+    <h1>Вы точно хотите удалить публикацию?</h1>
+    <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
+    <div class="cancel_or_delete">
+      <p id="cancel_deleting">Отмена</p>
+      <a href="" id="delete">Удалить публикацию</a>
+    </div>
   </div>
 
 {% endblock %}

@@ -9,10 +9,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # su1 : : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
 # Astwim : generatorseen : watcher
-# authorONE : *_au_*thor : author
+# authorONER : *_au_*thor : author
 # NewUser : MOYproektTHEbest : watcher
 # ksyu : 1212ks12 : Watcher
 # Gleb_Olivki : GlebKrasavchik99 : Watcher
+# Egor226 : Egor226 : author ????????????????
 
 class User(AbstractUser):
     # last_entry работает странно и ненадёжно

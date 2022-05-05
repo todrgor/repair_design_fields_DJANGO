@@ -2,7 +2,7 @@ jQuery(document).ready(function() {
 console.log('Высота экрана: ' + screen.height);
 var slides = document.getElementsByClassName('slide_r');
 var currentSlide = 0;
-var slideInterval = setInterval(nextSlide,4800);
+var slideInterval = setInterval(nextSlide, 4800);
 var navigation = document.getElementsByClassName('navigation');
 function nextSlide() {
   console.log('Scroll: ' + $(window).scrollTop());

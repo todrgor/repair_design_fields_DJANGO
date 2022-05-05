@@ -29,7 +29,7 @@
   <div class="admin_menu_bg">
     <div class="admin_menu">
       <a href="{% url 'admin_mine:main' %}">Главная</a>
-      <a href="{% url 'admin_mine:letters_to_support' %}">Заявки и жалобы</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Обращения в поддержку</a>
       <a href="">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
       <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
@@ -43,7 +43,7 @@
    <div class="pubs_container">
      <div class="pubs_container_one_type withBorder show" id='pubs'>
          <table border="1" class="pubs">
-             <tr>
+             <tr">
               {% if user.role.id == 4 %}
                  <th class="functions">Действия</th>
               {% endif %}
@@ -56,28 +56,28 @@
                  <th>Дата и время последней авторизации</th>
                  <th>Зарегистрировался</th>
              </tr>
-             {% for u in users %}
-             <tr>
+             {% for user in users %}
+             <tr id="{{ user.id }}">
               {% if user.role.id == 4 %}
-                 <td class="functions"><a href="{% url 'auth:settings' pk=u.id%}"><p id="edit">Редактировать</p></a>
-                     <p onclick="really_delete_account({{ u.id }})" id="really_delete">Удалить безвозвратно</p></td>
+                 <td class="functions"><a href="{% url 'auth:settings' pk=user.id%}"><p id="edit">Редактировать</p></a>
+                     <p onclick="really_delete_account({{ user.id }})" id="really_delete">Удалить безвозвратно</p></td>
               {% endif %}
-                 <td class="id">{{ u.id }}</td>
-                 <td class="photo_and_nickname"><img src="{{ u.photo.url }}" alt="">
+                 <td class="id">{{ user.id }}</td>
+                 <td class="photo_and_nickname"><img src="{{ user.photo.url }}" alt="">
                    <div class="info_container">
-                     <a href="{% url 'auth:account_one' pk=u.id %}" class="bold_text">{{ u.username }}</a>
-                     {% if u.bio %}<p>{{ u.bio }}</p>{% endif %}
-                     {% if u.bio %}<p>{{ u.age }} лет</p>{% endif %}
-                     {% if u.phone_number %}<p>тел.: {{ u.phone_number }}</p>{% endif %}
-                     {% if u.email %}<p>{{ u.email }}</p>{% endif %}
-                     <p style="color:gray;">{{ u.role.name }}</p>
+                     <a href="{% url 'auth:account_one' pk=user.id %}" class="bold_text name">{{ user.username }}</a>
+                     {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
+                     {% if user.bio %}<p>{{ user.age }} лет</p>{% endif %}
+                     {% if user.phone_number %}<p>тел.: {{ user.phone_number }}</p>{% endif %}
+                     {% if user.email %}<p>{{ user.email }}</p>{% endif %}
+                     <p style="color:gray;">{{ user.role.name }}</p>
                    </div>
                 </td>
 
                  <td class="following">
                      <ul>
                       {% for s in saved_urls %}
-                        {% if s.saver_id.id == u.id %}
+                        {% if s.saver_id.id == user.id %}
                           <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
                         {% endif %}
                       {% endfor %}
@@ -86,7 +86,7 @@
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in seen_urls %}
-                         {% if s.watcher_id.id == u.id %}
+                         {% if s.watcher_id.id == user.id %}
                            <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
                          {% endif %}
                        {% endfor %}
@@ -95,14 +95,14 @@
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in subscribed_urls %}
-                         {% if s.subscriber_id.id == u.id %}
+                         {% if s.subscriber_id.id == user.id %}
                            <li><a href="{% url 'auth:account_one' pk=s.star_id.id %}">{{ s.star_id.username }}</a></li>
                          {% endif %}
                        {% endfor %}
                      </ul>
                  </td>
-                 <td class="last_entry">{{ u.last_entry }}</td>
-                 <td class="last_entry">{{ u.date_joined }}</td>
+                 <td class="last_entry">{{ user.last_entry }}</td>
+                 <td class="last_entry">{{ user.date_joined }}</td>
              </tr>
              {% endfor %}
          </table>

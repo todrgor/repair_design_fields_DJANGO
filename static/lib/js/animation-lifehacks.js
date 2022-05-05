@@ -1,10 +1,11 @@
+
 function YouHaveToLogin(action) {
   alert('Вам нужно авторизоваться перед тем, как ' + action + '.')
 }
 
 function toggleSavePub_LH(idPub) {
   $.ajax({
-        url: "/pub/makesaved/" + idPub + "/",
+        url: "/pub/make_saved/" + idPub + "/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -43,11 +44,8 @@ function toggleGetNotiFromAuthor(idAccount) {
 }
 
 function openNewComplaintForm() {
-  // $opened_pub_additional_functions_id
-  $(' .new_complaint').addClass('show');
-  if ($('.share_the_pub').hasClass('show')) {
-    $('.share_the_pub').removeClass('show')
-  }
+  $('.share_the_pub, .statistics, .delete_the_pub').removeClass('show');
+  $('.new_complaint').addClass('show');
 }
 
 function new_complaint_was_sent() {
@@ -87,25 +85,23 @@ function new_complaint_was_sent() {
             $('.new_complaint textarea').val('');
           },
           error: function (data) {
-            alert("Какая-то ошибка с жалобой...");
+            alert("Какая-то ошибка с жалобой... Попробуйте спустя время отправить снова!");
           }
       });
 
-    $is_opened_pub_additional_functions = 0;
-    $opened_pub_additional_functions_id = 0;
+    $is_opened_pub_additional_functions = $opened_pub_additional_functions_id = 0;
   } else {
     alert('Жалоба не отправлена, для начала напишите её!');
   }
 }
 
 function shareThePub() {
+  server_url = 'http://127.0.0.1:8000';
+  pub_url = server_url + $('.lifehack#' + $opened_pub_additional_functions_id + ' .pub_url').html();
   // $opened_pub_additional_functions_id
-  $(' .share_the_pub').addClass('show');
-  $('.share_the_pub a').html('http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
-  $('.share_the_pub a').attr('href', 'http://127.0.0.1:8000/pub/one/'+ $opened_pub_additional_functions_id +'/')
-  if ($('.new_complaint').hasClass('show')) {
-    $('.new_complaint').removeClass('show')
-  }
+  $('.new_complaint, .statistics, .delete_the_pub').removeClass('show');
+  $('.share_the_pub').addClass('show');
+  $('.share_the_pub a').html(pub_url).attr('href', pub_url);
   $.ajax({
         url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
 
@@ -116,6 +112,26 @@ function shareThePub() {
           console.log("ошибка какая-то c увеличением счётчика репостов");
         }
     });
+}
+
+function showThePubStatistic() {
+  $('.statistics h1').html('Статистика по публикации «' + $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»:');
+  $('.statistics .seen_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .seen_count').html());
+  $('.statistics .saved_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .saved_count').html());
+  $('.statistics .average_age_watchers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_watchers').html());
+  $('.statistics .average_age_savers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_savers').html());
+  $('.statistics .shared_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .shared_count').html());
+  $('.statistics .reported_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .reported_count').html());
+  $('.new_complaint, .share_the_pub, .delete_the_pub').removeClass('show');
+  $('.statistics').addClass('show');
+}
+
+function deleteThePub() {
+  // $opened_pub_additional_functions_id;
+  $('.delete_the_pub h1').html('Вы точно хотите удалить публикацию «'+ $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»?');
+  $('.delete_the_pub a#delete').attr('href', $('.lifehack#'+ $opened_pub_additional_functions_id +' .delete_url').html());
+  $('.new_complaint, .share_the_pub, .statistics').removeClass('show');
+  $('.delete_the_pub').addClass('show');
 }
 
 function checkScrollForVideo() {
@@ -133,26 +149,108 @@ function checkScrollForVideo() {
         visible = visibleX * visibleY / (w * h);
 
     if (visible > fraction) {
-        $(this).removeClass('paused');
-        video.play();
-        console.log("видео начало воспроизвоиться");
+      $(this).removeClass('paused');
+      video.play();
     } else {
-        video.pause();
-        console.log("видео не начало / перестало воспроизвоиться");
-        $(this).addClass('paused');
+      $(this).addClass('paused');
+      video.pause();
     }
   })
 }
+
+
+$MillisecondsToSetThePubSeen = 2000;
+$scrollTopOld = $(window).scrollTop();
+$SeenPubsList = [];
+$AllPubsList = [];
+secundomer = false;
+$('.lifehack').each(function(){
+  var pub = $(this).get(0);
+  $AllPubsList.push(pub.id);
+})
+
+function startSecundomer() {
+  if (($SeenPubsList.length) < ($AllPubsList.length)) {
+    if (secundomer) {
+      clearInterval(secundomer); // остановить секндомер и запустить его снова
+    }
+    secundomer = setInterval(setThePubSeen, $MillisecondsToSetThePubSeen);
+  } else {
+    clearInterval(secundomer); // остановить секндомер
+    secundomer = false;
+  }
+}
+
+function setThePubSeen() {
+  var fraction = 0.85; // set the pub seen when 90% of the pub is visible.
+  $scrollTopNow = $(window).scrollTop();
+  if (($scrollTopOld == $scrollTopNow) || // если пользователь не скроллил или сделал это совсем чуть-чуть
+     (($scrollTopOld > $scrollTopNow) && (($scrollTopOld / $scrollTopNow) >= fraction)) ||
+     (($scrollTopOld < $scrollTopNow) && (($scrollTopNow / $scrollTopOld) >= fraction)))
+  {
+    $('.lifehack').each(function(){
+      var pub = $(this).get(0);
+      if ($.inArray(pub.id, $SeenPubsList) == -1) { // если публикация до этого не была видна
+        var x = pub.offsetLeft, y = pub.offsetTop, w = pub.offsetWidth, h = pub.offsetHeight, r = x + w, //right
+            b = y + h, //bottom
+            visibleX, visibleY, visible;
+
+            visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
+            visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
+
+            visible = visibleX * visibleY / (w * h);
+
+        if (visible >= fraction) { // если публикация достаточно в зоне видимости
+            $SeenPubsList.push(pub.id);
+            $.ajax({
+                  url: "/pub/set_seen/" + pub.id + "/",
+
+                  success: function (data) {
+                    console.log("+1 к счётчику просмотров публикации с ID:" +pub.id);
+                  },
+                  error: function (data) {
+                    console.log("ошибка какая-то c счётчиком просмотров, ID если что:" +pub.id);
+                  }
+              });
+        }
+      }
+    })
+  } else {  // если пользователь скроллил и не чуть-чуть
+    startSecundomer(); // то остановить секндомер и запустить его снова
+  }
+
+  console.log('SeenPubsList: ' + $SeenPubsList);
+  $scrollTopOld = $(window).scrollTop();
+}
+
 
 $is_opened_pub_additional_functions = 0;
 $opened_pub_additional_functions_id = 0;
 
 function togglePubAdditionalFunctions(idPub) {
-  $('.pub_one.lifehack#'+idPub+' .pub_show_full').toggleClass('pub_additional_functions_opened');
-  $('.pub_additional_functions_bg').toggleClass('show');
-  $('.pub_additional_functions').offset($('.pub_one.lifehack#'+idPub+' .pub_show_full').offset());
   $is_opened_pub_additional_functions = 1;
   $opened_pub_additional_functions_id = idPub;
+
+  $('.pub_additional_functions_bg .selected_tags').html('');
+  if ($('.lifehack#'+ idPub +' .selected_tag').length > 0 ) {
+    $('.pub_additional_functions_bg .opened_filter_form').css('display', 'block');
+    $('.lifehack#'+ idPub +' .selected_tag').each(function () {
+      $('.pub_additional_functions_bg .selected_tags').html(
+        $('.pub_additional_functions_bg .selected_tags').html() + ' <input type="hidden" name="'+ this.name +'" value="'+ this.value +'" class="selected_tag">'
+      );
+    })
+  } else {
+    $('.pub_additional_functions_bg .opened_filter_form').css('display', 'none');
+  }
+
+  if ($('.lifehack#'+ idPub +' .info_for_author_or_admin').length > 0) {
+    $('.pub_additional_functions .for_author_or_admin.edit').attr('href', $('.lifehack#'+ idPub +' .edit_url').html());
+    $('.pub_additional_functions .for_author_or_admin').addClass('show');
+  }
+
+  $('.pub_one.lifehack#'+ idPub +' .pub_show_full').toggleClass('pub_additional_functions_opened');
+  $('.pub_additional_functions_bg').toggleClass('show');
+  $('.pub_additional_functions').offset($('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset());
   console.log("Открыты дополнительные действия с публикацией под ID "+ idPub);
 }
 
@@ -160,11 +258,8 @@ function close_additional_functions() {
   if ($is_opened_pub_additional_functions == 1) {
     $idPub = $opened_pub_additional_functions_id;
     $('.pub_one.lifehack#'+$idPub+' .pub_show_full').removeClass('pub_additional_functions_opened');
-    $('.pub_additional_functions_bg').removeClass('show');
-    $is_opened_pub_additional_functions = 0;
-    $opened_pub_additional_functions_id = 0;
-    $('.new_complaint').removeClass('show');
-    $('.share_the_pub').removeClass('show');
+    $is_opened_pub_additional_functions = $opened_pub_additional_functions_id = 0;
+    $('.pub_additional_functions_bg, .new_complaint, .share_the_pub, .statistics, .delete_the_pub, .for_author_or_admin').removeClass('show');
     console.log("Закрылись дополнительные действия с публикацией с ID "+ $idPub);
   }
 }
@@ -190,7 +285,6 @@ function SelectedTagsCount() {
 
 function UpdateSelectedTagsView() {
   if ($('.opened_filter :input[type="checkbox"]:checked').length > 0 || $('#fltr_cost_min')[0].value != ''  || $('#fltr_cost_max')[0].value != '' || $('#save_percent_min')[0].value != '' || $('#save_percent_max')[0].value != '') {
-    // console.log('win');
     $(".filters_on, .filter_tags_count").addClass('show');
     $(".filters_off").addClass('hidden');
     $(".filter_btn, .filter").addClass('tags_count_showed');
@@ -291,9 +385,6 @@ function UpdateSavePercentView() {
     }
     if (($('#save_percent_min')[0].value != '' && $('#save_percent_max')[0].value != '') &&
         (parseFloat($('#save_percent_max')[0].value) < parseFloat($('#save_percent_min')[0].value))) {
-      console.log('save_percent_min -', $('#save_percent_min')[0].value);
-      console.log('save_percent_max -', $('#save_percent_max')[0].value);
-
       a = $('#save_percent_min')[0].value;
       $('#save_percent_min')[0].value = $('#save_percent_max')[0].value;
       $('#save_percent_max')[0].value = a;
@@ -303,15 +394,10 @@ function UpdateSavePercentView() {
     $('#fltr_save_percent_p')[0].innerHTML += " сохранений";
     $('#fltr_save_percent').addClass('show');
     SelectedTagsCount();
-    // console.log("from save_percent input +1");
   }
 }
 
 function UpdateOneTag(tag) {
-  // console.log('UpdateOneTag(tag) --');
-  // console.log($(tag));
-  // console.log(tag);
-
   category_id = $(tag).parents(".labels").first().attr('id');
   category_name = $('.filter_mini_div.category#' + category_id + ' .category_name').html();
   selected_tags_in_category = $(tag).parents(".labels").first().find(':input:checked');
@@ -338,78 +424,82 @@ function UpdateOneTag(tag) {
 
 $(document).ready(function() {
   checkScrollForVideo();
-  TagsWereSelectedBeforeLoadingThePage();
+  startSecundomer();
 
-  $(document).on('click', function(e) {
-    if ($(e.target).hasClass('pub_additional_functions_bg')) {
-      close_additional_functions();
-    }
-  });
+  if ($('.filter').length) {
+    TagsWereSelectedBeforeLoadingThePage();
 
-  $(".opened_filter :input[type='checkbox'], .opened_filter :input[type='number']").on('change', function() {
-    UpdateSelectedTagsView();
-  });
+    $(".opened_filter :input[type='checkbox'], .opened_filter :input[type='number']").on('change', function() {
+      UpdateSelectedTagsView();
+    });
 
-  $("#fltr_cost_min, #fltr_cost_max").on('change', function() {
-    UpdateCostView();
-  });
+    $("#fltr_cost_min, #fltr_cost_max").on('change', function() {
+      UpdateCostView();
+    });
 
-  $("#save_percent_min, #save_percent_max").on('change', function() {
-    UpdateSavePercentView();
-  });
+    $("#save_percent_min, #save_percent_max").on('change', function() {
+      UpdateSavePercentView();
+    });
 
-  $(".one_tag ").on('click change', function (tag) {
-    UpdateOneTag($(tag.currentTarget));
-  });
+    $(".one_tag ").on('click change', function (tag) {
+      UpdateOneTag($(tag.currentTarget));
+    });
 
-  $('.to_close_filter.fltr_cost').on('click', function() {
-    $('#fltr_cost').removeClass('show');
-    $('#fltr_cost_min')[0].value = $('#fltr_cost_max')[0].value = '';
-    UpdateSelectedTagsView();
-    console.log("#fltr_cost closed");
-  });
+    $('.to_close_filter.fltr_cost').on('click', function() {
+      $('#fltr_cost').removeClass('show');
+      $('#fltr_cost_min')[0].value = $('#fltr_cost_max')[0].value = '';
+      UpdateSelectedTagsView();
+      console.log("#fltr_cost closed");
+    });
 
-  $('.to_close_filter.fltr_save_percent').on('click', function() {
-    $('#fltr_save_percent').removeClass('show');
-    $('#save_percent_min')[0].value = $('#save_percent_max')[0].value = '';
-    UpdateSelectedTagsView();
-    console.log("#fltr_save_percent closed");
-  });
+    $('.to_close_filter.fltr_save_percent').on('click', function() {
+      $('#fltr_save_percent').removeClass('show');
+      $('#save_percent_min')[0].value = $('#save_percent_max')[0].value = '';
+      UpdateSelectedTagsView();
+      console.log("#fltr_save_percent closed");
+    });
 
-  $('.to_close_filter.fltr_some_category, :input[name="clear_category"]').on('click', function() {
-    category_id = this.id;
-    $('#fltr_' + category_id).removeClass('show');
-    $('#'+ category_id +'.labels :input').prop('checked', false);
-    UpdateSelectedTagsView();
-    $('#'+ category_id +'.category .count_checked').html("Любое");
-    console.log("id of closed just category:", this.id);
-  });
+    $('.to_close_filter.fltr_some_category, :input[name="clear_category"]').on('click', function() {
+      category_id = this.id;
+      $('#fltr_' + category_id).removeClass('show');
+      $('#'+ category_id +'.labels :input').prop('checked', false);
+      UpdateSelectedTagsView();
+      $('#'+ category_id +'.category .count_checked').html("Любое");
+      console.log("id of closed just category:", this.id);
+    });
 
-  $(".clear_filter").on('click', function() {
-    $(".opened_filter :input[type='checkbox']").prop('checked', false);
-    $('#fltr_cost_min')[0].value = $('#fltr_cost_max')[0].value = $('#save_percent_min')[0].value = $('#save_percent_max')[0].value = '';
-    UpdateSelectedTagsView();
-    $('.filter_one').removeClass('show');
-    $('.category .count_checked').html("Любое");
-    console.log("all inputs cleared");
-  });
+    $(".clear_filter").on('click', function() {
+      $(".opened_filter :input[type='checkbox']").prop('checked', false);
+      $('#fltr_cost_min')[0].value = $('#fltr_cost_max')[0].value = $('#save_percent_min')[0].value = $('#save_percent_max')[0].value = '';
+      UpdateSelectedTagsView();
+      $('.filter_one').removeClass('show');
+      $('.category .count_checked').html("Любое");
+      console.log("all inputs cleared");
+    });
 
-  $(".triangle_to_open_and_hide").on('click', function() {
-    $(this).parents(".filter_mini_div").first().find('.labels').first().toggleClass('hidden');
-    $(this).parents(".filter_mini_div").first().find('.triangle_to_open_and_hide').first().toggleClass('labels_hidden');
-  });
+    $(".triangle_to_open_and_hide").on('click', function() {
+      $(this).parents(".filter_mini_div").first().find('.labels').first().toggleClass('hidden');
+      $(this).parents(".filter_mini_div").first().find('.triangle_to_open_and_hide').first().toggleClass('labels_hidden');
+    });
+  }
 
+});
+
+$(document).on('click', function(e) {
+  if ($(e.target).hasClass('pub_additional_functions_bg')) {
+    console.log("pub_additional_functions_bg closed");
+    close_additional_functions();
+  }
 });
 
 $(window).scroll(function () {
   checkScrollForVideo();
   close_additional_functions();
+  startSecundomer();
 
   if ($(window).scrollTop() > 30) {
     $(".filter").addClass('user_scrolled');
-    console.log("(.filter).addClass('user_scrolled'");
   } else {
     $(".filter").removeClass('user_scrolled');
-    console.log("(.filter).removeClass('user_scrolled'");
   }
 });

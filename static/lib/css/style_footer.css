@@ -4,6 +4,7 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: system-ui;  /* на случай, если отвалится инет */
     font-family: "Open Sans", sans-serif;
     text-decoration: none;
     list-style: none;
