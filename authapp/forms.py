@@ -3,28 +3,43 @@ from django.contrib.auth.forms import forms, UserCreationForm, AuthenticationFor
 from authapp.models import User, UserRoles, ContactingSupportTypes
 from publicationapp.models import Publication
 
+from phonenumber_field.formfields import PhoneNumberField
+
+
+
 class UserForm(forms.Form):
-    role = forms.ModelChoiceField(queryset=UserRoles.objects.filter(), initial=1, label="Роль пользователя:", empty_label="Ещё не выбрано")
+    # role = forms.ModelChoiceField(queryset=UserRoles.objects.filter(), initial=1, label="Роль пользователя:", empty_label="Ещё не выбрано")
     username = forms.CharField(max_length=135, label="Никнейм:", widget=forms.TextInput(attrs={'placeholder': 'Ваш никнейм'}))
-    photo = forms.ImageField(widget=forms.ClearableFileInput(attrs={'title':"Загрузите свою аватарку"}), label="Аватар пользователя:", required=False)
+    photo = forms.ImageField(widget=forms.ClearableFileInput(attrs={'title': "Загрузите свою аватарку"}), label="Аватар пользователя:", required=False)
     bio = forms.CharField(max_length=135, label="Короткое самоописание или ваш актуальный статус:", widget=forms.TextInput(attrs={'placeholder': 'Короткое самоописание или статус'}), required=False)
-    age = forms.IntegerField(label="Ваш возраст:", widget=forms.TextInput(attrs={'placeholder':"Ваш возраст"}))
-    phone_number = forms.IntegerField(label="Ваш номер телефона:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона"}))
+    age = forms.IntegerField(label="Ваш возраст:", widget=forms.TextInput(attrs={'placeholder': "Ваш возраст", 'type': 'number'}), min_value=1, max_value=111)
+    phone_number = PhoneNumberField(label="Ваш номер телефона:", widget=forms.TextInput(attrs={'placeholder': "Номер телефона"}))
+
+    # class Meta:
+    #     model = User
+    #     fields = ('username', 'photo',  'phone_number', 'age')
+    #     error_messages = {
+    #         'phone_number': {
+    #             'taken': ("Пользователь с таким номером телефона уже существует. Пожалуйста, введите иной."),
+    #         },
+    #     }
 
 
 class UserExpertForm(forms.Form):
     knowledge = forms.CharField(max_length=1500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
     offer = forms.CharField(max_length=1500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
     site = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Ваш сайт'}), required=False)
+    bisness_phone_number = PhoneNumberField(label="Ваш номер телефона для клиентов:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона для клиентов"}), required=False)
     address = forms.CharField(max_length=300, label="Адрес:", widget=forms.TextInput(attrs={'placeholder': 'Адрес Вашего офиса'}), required=False)
-    telegram = forms.CharField(max_length=300, label="Телеграм:", widget=forms.TextInput(attrs={'placeholder': 'Телеграм'}), required=False)
+    telegram = forms.CharField(max_length=300, label="Telegram:", widget=forms.TextInput(attrs={'placeholder': 'Telegram'}), required=False)
     whatsapp = forms.CharField(max_length=300, label="WhatsApp:", widget=forms.TextInput(attrs={'placeholder': 'WhatsApp'}), required=False)
     viber = forms.CharField(max_length=300, label="Viber:", widget=forms.TextInput(attrs={'placeholder': 'Viber'}), required=False)
-    vk = forms.CharField(max_length=300, label="Вконтакте:", widget=forms.TextInput(attrs={'placeholder': 'Профиль вконтакте'}), required=False)
+    lol = forms.CharField(max_length=300, label="LifeOnLine:", widget=forms.TextInput(attrs={'placeholder': 'Профиль на LifeOnLine'}), required=False)
+    vk = forms.CharField(max_length=300, label="ВКонтакте:", widget=forms.TextInput(attrs={'placeholder': 'Профиль во ВКонтакте'}), required=False)
     inst = forms.CharField(max_length=300, label="Instagram:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Instagram'}), required=False)
-    ok = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Одноклассниках'}), required=False)
-    fb = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Профиль на Facebook'}), required=False)
-    other = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Если понадобится указать дополнительную информацию'}), required=False)
+    ok = forms.CharField(max_length=300, label="Одноклассники:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Одноклассниках'}), required=False)
+    twitter = forms.CharField(max_length=300, label="Twitter:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Twitter'}), required=False)
+    other = forms.CharField(max_length=300, label="Дополнительно:", widget=forms.TextInput(attrs={'placeholder': 'Если понадобится указать дополнительную информацию'}), required=False)
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -55,11 +70,7 @@ class LoginForm(AuthenticationForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
-
-            if not 'password' in field_name:
-                field.widget.attrs['placeholder'] = self.Meta.model._meta.get_field(field_name).verbose_name.capitalize
-            else:
-                field.widget.attrs['placeholder'] = 'Пароль'
+            field.widget.attrs['placeholder'] = self.Meta.model._meta.get_field(field_name).verbose_name.capitalize if not 'password' in field_name else 'Пароль'
 
             field.help_text = ''
             field.label = ''

@@ -397,8 +397,8 @@ class StartPanel(ListView):
         users = User.objects.filter().order_by('-last_entry')[:4]
         # applications =
         # complaints =
-        tag_categories = TagCategory.objects.all()[:4]
-        tags = [Tag.objects.filter(category=category)[:4] for category in tag_categories]
+        tag_categories = TagCategory.objects.all().order_by('id')[:4]
+        tags = [Tag.objects.filter(category=category).exclude(name='Авторский стиль (как видит сам автор, без придуманных стилей)')[:4] for category in tag_categories]
         new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
         answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
 

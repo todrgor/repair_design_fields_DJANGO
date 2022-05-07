@@ -94,19 +94,20 @@
             </div>
           </div>
           <div class="contact_info">
-            {% if opened_user.phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ opened_user.phone_number }}</p> {% endif %}
+            {% if expert_info.bisness_phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ expert_info.bisness_phone_number }}</p> {% endif %}
             {% if expert_info.site %} <p class="site"><img src="/static/sources/SVG/site.svg">{{ expert_info.site }}</p> {% endif %}
             {% if expert_info.telegram %} <p class="telegram"><img src="/static/sources/SVG/telegram.svg">{{ expert_info.telegram }}</p> {% endif %}
             {% if expert_info.whatsapp %} <p class="whatsapp"><img src="/static/sources/SVG/whatsapp.svg">{{ expert_info.whatsapp }}</p> {% endif %}
             {% if expert_info.viber %} <p class="viber"><img src="/static/sources/SVG/viber.svg">{{ expert_info.viber }}</p> {% endif %}
+            {% if expert_info.lol %} <p class="lol"><img src="/static/sources/SVG/lol.svg">{{ expert_info.lol }}</p> {% endif %}
             {% if expert_info.vk %} <p class="vk"><img src="/static/sources/SVG/vk.svg">{{ expert_info.vk }}</p> {% endif %}
             {% if expert_info.inst %} <p class="inst"><img src="/static/sources/SVG/instagram.svg">{{ expert_info.inst }}</p> {% endif %}
-            {% if expert_info.fb %} <p class="fb"><img src="/static/sources/SVG/facebook.svg">{{ expert_info.fb }}</p> {% endif %}
+            {% if expert_info.twitter %} <p class="twitter"><img src="/static/sources/SVG/twitter.svg">{{ expert_info.twitter }}</p> {% endif %}
             {% if expert_info.ok %} <p class="ok"><img src="/static/sources/SVG/odnoklassniki.svg">{{ expert_info.ok }}</p> {% endif %}
             {% if expert_info.address %} <p class="address"><img src="/static/sources/SVG/address.svg">{{ expert_info.address }}</p> {% endif %}
             {% if expert_info.other %} <p class="other"><img src="/static/sources/SVG/other.svg">{{ expert_info.other }}</p> {% endif %}
 
-            {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.vk is None and expert_info.inst is None and expert_info.fb is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
+            {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
               <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
             {% endif %}
           </div>

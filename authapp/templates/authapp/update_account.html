@@ -44,27 +44,44 @@
           {{ form_user.username }}
           {{ form_user.username.errors }}
         </div>
+
         <div class="pub_preview pub_inp_one">
           <h4>Аватарка:</h4>
-          {{ form_user.photo }}
-          {{ form_user.photo.errors }}
-          <p>Загружайте фото в соотношении 1:1. Файл желательно размером в 1MB. С другими размерами фото может некорректно отображаться.</p>
+          <div class="avatar">
+            <div class="avatar_now">
+              <p>На данный момент:</p>
+              <img src="{{ edited_user.photo.url }}" alt="" class="user_photo">
+              {% if not 'no_avatar.png' in edited_user.photo.url %}
+                <label class="delete_avatar"><input type="checkbox" name="delete_avatar" value="1"><p>удалить нынешнюю<br>фотографию</p></label>
+              {% endif %}
+            </div>
+
+            <div class="avatar_update">
+              {{ form_user.photo }}
+              {{ form_user.photo.errors }}
+              <p>Загружайте фото в соотношении 1:1. Файл желательно размером в 1MB. С другими размерами фото может некорректно отображаться.</p>
+            </div>
+          </div>
         </div>
+
         <div class="pub_title pub_inp_one">
           <h4>Коротко опишите себя:</h4>
           {{ form_user.bio }}
           {{ form_user.bio.errors }}
         </div>
+
         <div class="pub_title pub_inp_one">
           <h4>Номер телефона:</h4>
           {{ form_user.phone_number }}
           {{ form_user.phone_number.errors }}
         </div>
+
         <div class="pub_title pub_inp_one">
           <h4>Возраст:</h4>
           {{ form_user.age }}
           {{ form_user.age.errors }}
         </div>
+
         <div class="pub_title pub_inp_one">
           {% if edited_user.id == user.id %}
             <h4>Ваша роль в ИС:</h4>
@@ -73,20 +90,24 @@
               <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
               <a href="{% url 'auth:become_a_teammemder' %}">Работать в команде</a>
             {% endif %}
+
             {% if edited_user.role.id == 2 %}
-              <a href="">Обртиться в поддержку и перестать быть автором</a>
-              <a href="{% url 'auth:become_a_teammemder' %}">Работать в команде</a>
+              <a href="{% url 'auth:send_to_support' %}">Обртиться в поддержку и перестать быть автором</a>
+              <a href="{% url 'auth:become_a_teammemder' %}">Стать администратором</a>
             {% endif %}
+
             {% if edited_user.role.id == 3 %}
-              <a href="">Обртиться в поддержку и перестать быть администратором</a>
+              <a href="{% url 'auth:send_to_support' %}">Обртиться в поддержку и перестать быть администратором</a>
               <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
             {% endif %}
+
           {% else %}
             <h4>Роль пользователя {{ edited_user.username }} в ИС:</h4>
             {{ form_user.role }}
             {{ form_user.role.errors }}
           {% endif %}
         </div>
+
         {% if edited_user_subs %}
           <div class="pub_title pub_inp_one">
             <h4 style="margin: 0 0 10px">Уведомления получаются от:</h4>
@@ -107,51 +128,61 @@
             <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Ваш стаж, услуги и контакты:</p>
             <div class="pub_description pub_inp_one">
               <h4>Стаж:</h4>
-              {{ form_user_expert.knowledge }}
-              {{ form_user_expert.knowledge.errors }}
+              {{ form_expert_user.knowledge }}
+              {{ form_expert_user.knowledge.errors }}
             </div>
+
             <div class="pub_description pub_inp_one">
               <h4>Услуги:</h4>
-              {{ form_user_expert.offer }}
-              {{ form_user_expert.offer.errors }}
+              {{ form_expert_user.offer }}
+              {{ form_expert_user.offer.errors }}
             </div>
+
             <div class="pub_description pub_inp_one">
               <h4>Контакты:</h4>
               <p>Заполнять по желанию</p>
             </div>
+
             <div class="pub_title pub_inp_one">
-              {{ form_user_expert.site }}
-              {{ form_user_expert.site.errors }}
+              {{ form_expert_user.site }}
+              {{ form_expert_user.site.errors }}
 
-              {{ form_user_expert.address }}
-              {{ form_user_expert.address.errors }}
+              {{ form_expert_user.bisness_phone_number }}
+              {{ form_expert_user.bisness_phone_number.errors }}
 
-              {{ form_user_expert.telegram }}
-              {{ form_user_expert.telegram.errors }}
+              {{ form_expert_user.address }}
+              {{ form_expert_user.address.errors }}
 
-              {{ form_user_expert.whatsapp }}
-              {{ form_user_expert.whatsapp.errors }}
+              {{ form_expert_user.telegram }}
+              {{ form_expert_user.telegram.errors }}
 
-              {{ form_user_expert.viber }}
-              {{ form_user_expert.viber.errors }}
+              {{ form_expert_user.whatsapp }}
+              {{ form_expert_user.whatsapp.errors }}
 
-              {{ form_user_expert.vk }}
-              {{ form_user_expert.vk.errors }}
+              {{ form_expert_user.viber }}
+              {{ form_expert_user.viber.errors }}
 
-              {{ form_user_expert.inst }}
-              {{ form_user_expert.inst.errors }}
+              {{ form_expert_user.lol }}
+              {{ form_expert_user.lol.errors }}
 
-              {{ form_user_expert.ok }}
-              {{ form_user_expert.ok.errors }}
+              {{ form_expert_user.vk }}
+              {{ form_expert_user.vk.errors }}
 
-              {{ form_user_expert.fb }}
-              {{ form_user_expert.fb.errors }}
+              {{ form_expert_user.inst }}
+              {{ form_expert_user.inst.errors }}
+
+              {{ form_expert_user.ok }}
+              {{ form_expert_user.ok.errors }}
+
+              {{ form_expert_user.twitter }}
+              {{ form_expert_user.twitter.errors }}
 
             </div>
+
             <div class="pub_title pub_inp_one">
               <h4>Что-то дополнительно:</h4>
-              {{ form_user_expert.other }}
-              {{ form_user_expert.other.errors }}
+              {{ form_expert_user.other }}
+              {{ form_expert_user.other.errors }}
               <p>Необязательно заполнять, но тоже приветствуется.</p>
             </div>
           </div>
@@ -159,6 +190,10 @@
 
         <input type="submit" name="create!" value="Сохранить">
       </form>
+
+      <div class="if_here_is_not_something_what_you_want" style="margin: -60px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">
+        <p style="color: gray;">Если для Вас чего-либо не хватает,<br>например какой-либо дополнительной информации,<br>расскажите нам через <a href="{% url 'auth:send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
+      </div>
     </div>
   {% endif %}
 

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db import models
 from publicationapp.models import Publication
 from django.core.validators import MaxValueValidator, MinValueValidator
-# from repair_design_fields import settings
+from phonenumber_field.modelfields import PhoneNumberField
 
 # user : password : role
 # su1 : : admin + superuser
@@ -21,8 +21,8 @@ class User(AbstractUser):
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
-    age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(140)])
-    phone_number = models.PositiveIntegerField(null=True, blank=False, unique=True, verbose_name="Номер телефона", validators=[MinValueValidator(1), MaxValueValidator(99999999999)])
+    age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(111)])
+    phone_number = PhoneNumberField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
     reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на пользователя было жалоб')
     seen_count = models.IntegerField(default=0, verbose_name='Сколько раз пользователя просматривали')
@@ -91,6 +91,7 @@ class ExpertInfo(models.Model):
     # переделать нейминг и ввести правки в весь проект
 
     expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
+    bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
     count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
     knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж')
     offer = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Какую услугу предлагает')
@@ -99,10 +100,11 @@ class ExpertInfo(models.Model):
     telegram = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Telegram')
     whatsapp = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт WhatsApp')
     viber = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Viber')
-    vk = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль ВК')
-    inst = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Инстаграм')
+    lol = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль LifeOnLine')
+    vk = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль VK')
+    inst = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Instagram')
     ok = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Одноклассники')
-    fb = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль facebook')
+    twitter = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Facebook')
     other = models.CharField(blank=True, null=True, max_length=255, verbose_name='Дополнительная контактная информация при необходимости')
 
     class Meta:

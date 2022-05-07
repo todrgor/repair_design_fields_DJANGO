@@ -47,63 +47,67 @@
               {% if user.role.id == 4 %}
                  <th class="functions">Действия</th>
               {% endif %}
-                 <th class="id">ID</th>
-                 <th>Кто</th>
-                 <th>Сохранено</th>
-                 <th>Просмотрено</th>
-                 <th>Подписки</th>
-                 <!-- <th>Последние уведомления</th> -->
-                 <th>Дата и время последней авторизации</th>
-                 <th>Зарегистрировался</th>
+               <th class="id">ID</th>
+               <th>Кто</th>
+               <th>Сохранено</th>
+               <th>Просмотрено</th>
+               <th>Подписки</th>
+               <!-- <th>Последние уведомления</th> -->
+               <th>Дата и время последней авторизации</th>
+               <th>Зарегистрировался</th>
              </tr>
-             {% for user in users %}
-             <tr id="{{ user.id }}">
-              {% if user.role.id == 4 %}
-                 <td class="functions"><a href="{% url 'auth:settings' pk=user.id%}"><p id="edit">Редактировать</p></a>
-                     <p onclick="really_delete_account({{ user.id }})" id="really_delete">Удалить безвозвратно</p></td>
-              {% endif %}
-                 <td class="id">{{ user.id }}</td>
-                 <td class="photo_and_nickname"><img src="{{ user.photo.url }}" alt="">
+             {% for showing_user in users %}
+               <tr id="{{ showing_user.id }}">
+                {% if user.role.id == 4 %}
+                   <td class="functions"><a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit">Редактировать</p></a>
+                       <p onclick="really_delete_account({{ showing_user.id }})" id="really_delete">Удалить безвозвратно</p>
+                   </td>
+                {% endif %}
+                 <td class="id">{{ showing_user.id }}</td>
+                 <td class="photo_and_nickname"><img src="{{ showing_user.photo.url }}" alt="">
                    <div class="info_container">
-                     <a href="{% url 'auth:account_one' pk=user.id %}" class="bold_text name">{{ user.username }}</a>
-                     {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
-                     {% if user.bio %}<p>{{ user.age }} лет</p>{% endif %}
-                     {% if user.phone_number %}<p>тел.: {{ user.phone_number }}</p>{% endif %}
-                     {% if user.email %}<p>{{ user.email }}</p>{% endif %}
-                     <p style="color:gray;">{{ user.role.name }}</p>
+                     <a href="{% url 'auth:account_one' pk=showing_user.id %}" class="bold_text name">{{ showing_user.username }}</a>
+                     {% if showing_user.bio %}<p>{{ showing_user.bio }}</p>{% endif %}
+                     {% if showing_user.age %}<p>{{ showing_user.age }} лет</p>{% endif %}
+                     {% if showing_user.phone_number %}<p>тел.: {{ showing_user.phone_number }}</p>{% endif %}
+                     {% if showing_user.email %}<p>{{ showing_user.email }}</p>{% endif %}
+                     <p style="color:gray;">{{ showing_user.role.name }}</p>
                    </div>
                 </td>
 
                  <td class="following">
                      <ul>
                       {% for s in saved_urls %}
-                        {% if s.saver_id.id == user.id %}
+                        {% if s.saver_id.id == showing_user.id %}
                           <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
                         {% endif %}
                       {% endfor %}
                      </ul>
                  </td>
+
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in seen_urls %}
-                         {% if s.watcher_id.id == user.id %}
+                         {% if s.watcher_id.id == showing_user.id %}
                            <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
                          {% endif %}
                        {% endfor %}
                      </ul>
                  </td>
+
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in subscribed_urls %}
-                         {% if s.subscriber_id.id == user.id %}
+                         {% if s.subscriber_id.id == showing_user.id %}
                            <li><a href="{% url 'auth:account_one' pk=s.star_id.id %}">{{ s.star_id.username }}</a></li>
                          {% endif %}
                        {% endfor %}
                      </ul>
                  </td>
-                 <td class="last_entry">{{ user.last_entry }}</td>
-                 <td class="last_entry">{{ user.date_joined }}</td>
-             </tr>
+
+                 <td class="last_entry">{{ showing_user.last_entry }}</td>
+                 <td class="last_entry">{{ showing_user.date_joined }}</td>
+               </tr>
              {% endfor %}
          </table>
      </div>

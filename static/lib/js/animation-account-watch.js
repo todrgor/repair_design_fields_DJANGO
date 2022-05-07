@@ -1,3 +1,4 @@
+
 $('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $('.user_role').offset().left) - 88});
 $('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
 
@@ -304,6 +305,7 @@ function close_additional_functions() {
     $('.pub_one.lifehack#'+$idPub+' .pub_show_full').removeClass('pub_additional_functions_opened');
     $is_opened_pub_additional_functions = $opened_pub_additional_functions_id = 0;
     $('.pub_additional_functions_bg, .new_complaint, .share_the_pub, .statistics, .delete_the_pub, .for_author_or_admin').removeClass('show');
+    $('.photo_nickname_role_additionalFunctions .additionalFunctions').removeClass('opened');
     console.log("Закрылись дополнительные действия с публикацией с ID "+ $idPub);
   }
 }

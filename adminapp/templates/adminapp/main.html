@@ -56,6 +56,7 @@
         </table>
         {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}">Создать публикацию ›</a>{% endif %}
       </div>
+
       <div class="last_pubs one_div_sdiol">
         <p>Пользователи <span><a href="{% url 'admin_mine:users' %}">открыть ›</a></span></p>
         <table border="1" class="pubs withBorder">
@@ -75,7 +76,7 @@
             </tr>
           {% endfor %}
         </table>
-        {% if user.role.id == 4 %}<a href="">Создать нового пользвователя ›</a>{% endif %}
+        {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}">Создать нового пользвователя ›</a>{% endif %}
       </div>
       <!-- <div class="last_pubs one_div_sdiol">
         <p>Таблицы БД ›</p>
@@ -227,6 +228,7 @@
 
 
     </div>
+
     <div class="tags_and_tag_categories some_divs_in_one_line">
       <div class="title">
         <h2>Теги и их категории</h2>

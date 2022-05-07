@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     'accountapp',
     'publicationapp',
     'supportapp',
+
+    'phonenumber_field',
+    'ckeditor',
 ]
+
+PHONENUMBER_DB_FORMAT = "INTERNATIONAL"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

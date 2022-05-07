@@ -20,11 +20,44 @@
 }
 .pub_inp_one {
   font-weight: bold;
-    font-size: 24px;
-    line-height: 31px;
-    letter-spacing: 0.065em;
-    margin: 0 0 27px;
+  font-size: 24px;
+  line-height: 31px;
+  letter-spacing: 0.065em;
+  margin: 0 0 27px;
 }
+
+.pub_inp_one .avatar {
+  display: flex;
+  align-items: center;
+}
+.pub_inp_one .avatar_now p{
+  width: 100%;
+  margin: 10px 0;
+}
+.pub_inp_one .avatar_now img{
+  border-radius: 100%;
+  max-width: 150px;
+}
+.pub_inp_one .avatar_now label{
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: normal;
+  width: max-content;
+  font-weight: normal;
+}
+.pub_inp_one .avatar_now .delete_avatar input{
+  float: left;
+  margin-top: 10px;
+}
+.pub_inp_one .avatar_now .delete_avatar p{
+  margin: 0 0 0 23px;
+}
+.pub_inp_one .avatar_update {
+  margin-left: 20px;
+}
+
+
+
 .pub_inp_one h4 {
   margin-bottom: 0;
 }
