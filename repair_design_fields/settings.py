@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'mainapp',
     'adminapp',
     'authapp',
@@ -47,9 +48,9 @@ INSTALLED_APPS = [
 
     'phonenumber_field',
     'ckeditor',
+    'ckeditor_uploader',
+    'django.forms',  # для CKeditor
 ]
-
-PHONENUMBER_DB_FORMAT = "INTERNATIONAL"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -66,7 +67,8 @@ ROOT_URLCONF = 'repair_design_fields.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 'DIRS': [], # стандартно
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ], # для CKeditor
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -139,6 +141,7 @@ STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'static'),
 )
 
+
 LOGIN_REDIRECT_URL = 'main'
 
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
@@ -155,3 +158,37 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# --***     PLUGINS INFO    ***--
+
+PHONENUMBER_DB_FORMAT = "INTERNATIONAL"
+
+# CKEDITOR_UPLOAD_PATH = 'content/ckeditor/' # так сама консоль почему-то посоветовала
+CKEDITOR_UPLOAD_PATH = MEDIA_DIR + '/pub_media/'
+
+CKEDITOR_CONFIGS = { # full functional
+    "default": {
+        "removePlugins": "stylesheetparser",
+        'allowedContent': True,
+        'toolbar_Full': [
+        ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat' ],
+        ['Image', 'Flash', 'Table', 'HorizontalRule'],
+        ['TextColor', 'BGColor'],
+        ['Smiley','sourcearea', 'SpecialChar'],
+        [ 'Link', 'Unlink', 'Anchor' ],
+        [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ],
+        [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ],
+        [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ],
+        [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ],
+        [ 'Maximize', 'ShowBlocks' ]
+    ],
+    }
+}
+
+CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/" # стандартно (и даже правильно)
+
+CKEDITOR_RESTRICT_BY_USER = True # показывать только свои загруженные публикации, не все на сервере
+CKEDITOR_BROWSE_SHOW_DIRS = True # для отображения каталогов на странице «Обзор сервера»
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'

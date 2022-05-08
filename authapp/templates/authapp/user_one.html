@@ -120,7 +120,7 @@
       </div>
 
       {% if expert_pubs %}
-        <h1 class="author_pubs">Публикации автора:</h1>
+        <h1 class="author_pubs">{{ expert_pubs.count }} публикаций автора:</h1>
         {% for pub in expert_pubs %}
 
           {% if pub.type.id == 31 %} <!-- если это лайфхак -->
@@ -239,7 +239,7 @@
                 <p class="pub_title">{{pub.title}}</p>
                 <div class="div_pub_text">
                   <p class="pub_text">
-                    {{ pub.content_first_desc }}
+                    {{ pub.unstyled_content|safe|slice:"1000" }}
                   </p>
                 </div>
                 <div class="pub_to_do">

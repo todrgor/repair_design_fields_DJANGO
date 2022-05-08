@@ -26,34 +26,46 @@
   margin: 0 0 27px;
 }
 
-.pub_inp_one .avatar {
+.pub_inp_one .avatar,
+.pub_inp_one .preview {
   display: flex;
   align-items: center;
 }
-.pub_inp_one .avatar_now p{
+.pub_inp_one .avatar_now p,
+.pub_inp_one .preview_now p {
   width: 100%;
   margin: 10px 0;
 }
-.pub_inp_one .avatar_now img{
+.pub_inp_one .avatar_now img {
   border-radius: 100%;
   max-width: 150px;
 }
-.pub_inp_one .avatar_now label{
+.pub_inp_one .preview_now img,
+.pub_inp_one .preview_now video {
+  max-width: 220px;
+}
+.pub_inp_one .avatar_now label,
+.pub_inp_one .preview_now label {
   font-size: 14px;
   line-height: normal;
   letter-spacing: normal;
   width: max-content;
   font-weight: normal;
 }
-.pub_inp_one .avatar_now .delete_avatar input{
+.pub_inp_one .avatar_now .delete_avatar input {
   float: left;
   margin-top: 10px;
 }
 .pub_inp_one .avatar_now .delete_avatar p{
   margin: 0 0 0 23px;
 }
-.pub_inp_one .avatar_update {
+.pub_inp_one .avatar_update,
+.pub_inp_one .preview_update {
   margin-left: 20px;
+  margin-top: 30px;
+}
+.pub_inp_one .preview_update p {
+  width: fit-content;
 }
 
 

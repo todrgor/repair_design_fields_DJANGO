@@ -38,10 +38,10 @@
 
         <div class="media">
           {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
-          <video class="paused" muted="muted" controls="controls" loop>
-            <source src="{{ pub.preview.url }}" type='video/mp4;'>
-            Тег video не поддерживается вашим браузером. Увы.
-          </video>
+            <video class="paused" muted="muted" controls="controls" loop>
+              <source src="{{ pub.preview.url }}" type='video/mp4;'>
+              Тег video не поддерживается вашим браузером. Увы.
+            </video>
           {% else %}
             <img src="{{ pub.preview.url }}" alt="">
           {% endif %}
@@ -86,7 +86,7 @@
             <div class="div_pub_text">
               <p class="pub_text">{{ pub.title }}</p>
             </div>
-            
+
             <div class="pub_tags_container">
 
               {% for tag in pub.tags.all %}
@@ -134,17 +134,9 @@
       </div>
     </div>
     <div class="pubs_container">
-      <p class="description">
-        {{ pub.content_first_desc|safe }}
-      </p>
-
-      {% for f in photos %}
-        <img src="{{ f.photo.url }}" alt="" class="pub_img">
-      {% endfor %}
-
-      <p class="description">
-        {{ pub.content_last_desc|safe }}
-      </p>
+      <div class="pub_full_content">
+        {{ pub.content|safe }}
+      </div>
 
       <div class="pub_to_do">
         <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}" onclick="

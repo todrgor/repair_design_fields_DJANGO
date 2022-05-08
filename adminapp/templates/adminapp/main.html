@@ -43,12 +43,12 @@
         <p>Последние публикации <span><a href="{% url 'admin_mine:pubs' %}">открыть ›</a></span></p>
         <table border="1" class="pubs withBorder">
           <tbody>
-          {% for p in pubs %}
+          {% for pub in pubs %}
             <tr>
-              <td><div class="pub_preview" style="background: url({{ p.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
+              <td><div class="pub_preview" style="background: url({{ pub.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
               <td>
-                <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:pub_one' pk=p.id %}">{{ p.title }}</a></p>
-                <p class="pub_desc">{{ p.content_first_desc }}</p>
+                <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:pub_one' pk=pub.id %}">{{ pub.title }}</a></p>
+                {% if pub.content %}<p class="pub_desc">{{ pub.unstyled_content|safe|slice:"110" }}</p>{% endif %}
               </td>
             </tr>
           {% endfor %}

@@ -20,17 +20,36 @@ from django.urls import path, include
 import mainapp.views as mainapp
 import authapp.views as authapp
 
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from ckeditor_uploader import views as ckeditor_views
+
 urlpatterns = [
     path('', mainapp.main, name='main'),
     path('pub/', include('publicationapp.urls', namespace='pub')),
+    # path('pub/<pk>/', ...),
+    # path('repairs/', ...),
+    # path('designs/', ...),
+    # path('lifehacks/', ...),
+
 	# path('support/', include('supportapp.urls', namespace='support')),
+
 	path('account/', include('authapp.urls', namespace='auth')),
+    # path('login/', ...),
+    # path('logout/', ...),
+    # path('register/', ...),
+
     path('admin/', include('adminapp.urls', namespace='admin_mine')),
 	# path('adminRDF/', mainapp.adminRDF, name='adminRDF'),
+
     path('search/', authapp.Search, name='search'),
 
 	path('adminDJANGO/', admin.site.urls),
 	# path('admin/', admin.site.urls),
+
+    # path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('ckeditor/upload/', login_required(ckeditor_views.upload), name='ckeditor_upload'),
+    path('ckeditor/browse/', never_cache(login_required(ckeditor_views.browse)), name='ckeditor_browse'),
 ]
 
 if settings.DEBUG:

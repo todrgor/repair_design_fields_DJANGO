@@ -3,22 +3,23 @@ from django.db import models
 from repair_design_fields import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 # from django.db.models.functions import Lower
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
     preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'pdf'])], verbose_name='Превью')
-    content_first_desc =  models.TextField(verbose_name='Текст перед фотографиями', default='')
-    content_last_desc =  models.TextField(verbose_name='Текст после фотографий', blank=True, null=True, default='')
+    content = RichTextUploadingField(blank=True, null=True, verbose_name='Контент', default='')
     tags = models.ManyToManyField('Tag', verbose_name='Теги публикции')
     cost_min = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=0, verbose_name='бюджет от')
     cost_max = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=1, verbose_name='бюджет до')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
-    seen_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
-    saved_count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была сохранена')
-    reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на публикация было жалоб')
-    shared_count = models.IntegerField(default=0, verbose_name='Сколько раз нажали поделиться публикацией')
+    seen_count = models.IntegerField(default=0, verbose_name='Просмотров публикации')
+    saved_count = models.IntegerField(default=0, verbose_name='Публикация была сохранена столько раз')
+    reported_count = models.IntegerField(default=0, verbose_name='Жалоб на публикацию')
+    shared_count = models.IntegerField(default=0, verbose_name='"Поделиться" нажато раз')
     average_age_watchers = models.IntegerField(default=0, verbose_name='Средний возраст просмотревших')
     average_age_savers = models.IntegerField(default=0, verbose_name='Средний возраст сохранивших')
 
@@ -26,6 +27,21 @@ class Publication(models.Model):
         verbose_name = 'Публикация'
         verbose_name_plural = 'Публикации'
         ordering = ('-pushed',)
+
+    @property
+    def unstyled_content(self):  # пройтись по content и убрать все стили, оставить просто текст
+        content = self.content
+        to_remove = False
+
+        for i in range(len(content)):
+            if i < len(content):
+                if content[i] == '<':
+                    to_remove = True
+                if to_remove:
+                    if content[i] == '>':
+                        to_remove = False
+                    content = content[:i] +' '+ content[(i+1):]
+        return content
 
     def opened(self):
         self.seen_count +=1
@@ -86,19 +102,3 @@ class Tag(models.Model):
 
     def __str__(self):
         return (self.name + ' (' + str(self.category.name) + ', ' + str(list(self.pub_type.values_list('name', flat=True))).replace("[", "").replace("]", "").replace("'", "") + ')')
-
-
-# желательно, чтобы эти модели ниже
-# вскоре оказались ненужными
-class PubPhotos(models.Model):
-    # нейминг: правильнее будет просто pub + переименовать во всём проекте
-
-    id_pub = models.ForeignKey('Publication', verbose_name='id публикации', on_delete=models.CASCADE)
-    photo = models.ImageField(max_length=200, upload_to='pub_media', verbose_name='Фотографии публикации')
-
-    class Meta:
-        verbose_name = 'Фотография публикации'
-        verbose_name_plural = 'Фотографии публикации'
-
-    def __str__(self):
-        return str(self.photo) +' for '+ str(self.id_pub)

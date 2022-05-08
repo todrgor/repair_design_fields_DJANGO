@@ -72,7 +72,9 @@
             <div class="pub_info">
               <p class="pub_title">{{ pub.title }}</p>
               <div class="div_pub_text">
-                <p class="pub_text">{{ pub.content_first_desc }}</p>
+                <p class="pub_text">
+                  {{ pub.unstyled_content|safe|slice:"1000" }}
+                </p>
               </div>
               <div class="pub_to_do">
                 <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D({{ pub.id }})">

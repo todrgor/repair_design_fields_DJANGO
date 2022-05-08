@@ -50,16 +50,18 @@ $is_opened_delete_the_pub = 0;
 function togglePubAdditionalFunctions(idPub) {
   $('.pub_show_full').toggleClass('pub_additional_functions_opened');
   $('.pub_additional_functions_bg').toggleClass('show');
-  $('.pub_additional_functions').offset({top:( $('.pub_show_full').offset().top - 30  ), left:( $('.pub_show_full').offset().left + 30  )});
+  $('.pub_additional_functions').offset({top:( $('.pub_show_full').offset().top - 30  ), left:( $('.pub_show_full').offset().left - 5  )});
   $is_opened_pub_additional_functions = 1;
   $opened_pub_additional_functions_id = idPub;
   console.log("Открыты дополнительные действия с публикацией, ID:" +idPub);
 }
+
 function openNewComplaintForm() {
   // $opened_pub_additional_functions_id
   $('.new_complaint').addClass('show');
   $('.new_complaint').offset({top:( $('.pub_show_full').offset().top - 220  ), left:( $('.pub_show_full').offset().left - 220  )});
 }
+
 function shareThePub() {
   // $opened_pub_additional_functions_id
   $('.share_the_pub').addClass('show');
@@ -75,6 +77,7 @@ function shareThePub() {
         }
     });
 }
+
 function open_statistics() {
   $('.pub_additional_functions_bg').toggleClass('show');
   $('.statistics').addClass('show');
@@ -82,6 +85,7 @@ function open_statistics() {
   $is_opened_statistics = 1;
   $is_opened_pub_additional_functions = 1;
 }
+
 function user_tried_to_delete() {
   $('.pub_additional_functions_bg').toggleClass('show');
   $('.delete_the_pub').addClass('show');
@@ -89,6 +93,7 @@ function user_tried_to_delete() {
   $is_opened_delete_the_pub = 1;
   $is_opened_pub_additional_functions = 1;
 }
+
 function really_delete() {
   alert('Публикация удалена. Восстановить её не получится.');
   window.location.replace('watch_repairs.html');

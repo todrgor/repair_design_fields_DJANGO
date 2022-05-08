@@ -52,7 +52,12 @@ def CreateNewPub(request):
                 for category in all_tag_categories_for_this_pub_type:
                     if category.id not in selected_tags_categories_ids:
                         empty_tag_categories_ids.append(category.id)
-                if empty_tag_categories_ids:
+
+                # если не все категории тегов выбраны или нет превьюшки -- а ну-ка иди дозаполни
+                if empty_tag_categories_ids or not 'preview' in request.FILES:
+                    if not 'preview' in request.FILES:
+                        form.add_error('preview', 'Пожалуйста, загрузите превью!')
+
                     content = {
                         'title': title,
                         'form': form,
@@ -65,27 +70,28 @@ def CreateNewPub(request):
                     return render(request, 'publicationapp/create_new_or_update.html', content)
 
                 #   создание публикции
-                pub_created = Publication.objects.create(title=method_POST['title'].capitalize(), type=PubTypes.objects.get(id=method_POST['type']), preview=('pub_media/' + str(request.FILES['preview'])), content_first_desc=method_POST['content_first_desc'], content_last_desc=method_POST['content_last_desc'], author=User.objects.get(id=request.user.id))
+                pub_created = Publication.objects.create(
+                    title=method_POST['title'].capitalize(),
+                    type=PubTypes.objects.get(id=method_POST['type']),
+                    preview=('pub_media/' + str(request.FILES['preview'])),
+                    author=User.objects.get(id=request.user.id)
+                    )
+                if pub_created.type.id != 31:
+                    pub_created.content = method_POST['content']
+                    pub_created.save()
 
-                #   сохранение превью и фотографий внутри публикции
+                #   сохранение превью
                 fs = FileSystemStorage()
                 preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
-                if method_POST['type'] in ['11', '12'] and 'photo' in request.FILES:
-                    photos = request.FILES.getlist('photo')
-                    i_count = 0
-                    for i in photos:
-                        fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
-                        PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub_created.id), photo=('pub_media/' + photos[i_count].name))
-                        i_count +=1
 
                 pub_created.tags.add(*selected_tags)
                 pub_created.cost_min = method_POST['cost_min']
                 pub_created.cost_max = method_POST['cost_max']
                 pub_created.save()
 
-                noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content_first_desc="Скорее открывайте её!", content_last_desc='', author=request.user)
+                noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Скорее открывайте её!", author=request.user)
                 for s in UserSubscribes.objects.filter(star_id=pub_created.author.id):
                     Notifications.objects.create(user_receiver=s.subscriber_id, noti_for_user=noti)
                 return redirect('pub:pub_one', pk=pub_created.id)
@@ -108,7 +114,106 @@ def CreateNewPub(request):
         return redirect('main')
 
 
-# удаление публикации
+#   редактирование публикации
+def UpdatePub(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('main')
+    if not request.user.role.id in [2, 4]:
+        return redirect('main')
+
+    pub = Publication.objects.get(id=pk)
+    title = 'Отредактирвать публикацию «' + pub.title +'» от пользователя «' + pub.author.username +'»' if request.user.role.id == 4 and pub.author != request.user else 'Отредактирвать публикацию «' + pub.title +'»'
+    form = PubForm()
+    pub_preview = pub.preview
+    pub_type = pub.type.id
+    tags = Tag.objects.filter(pub_type=pub.type)
+    tag_categories = {
+        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 else None,
+        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 else None,
+        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
+    }
+    empty_tag_categories_ids = []
+    selected_tags = pub.tags.all()
+
+    if request.method == 'POST':
+        form = PubForm(request.POST)
+        method_POST = request.POST
+
+        #   проверка, теги всех ли категорий
+        #   выбраны и переадресация обратно, если нет
+        selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
+        selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
+        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
+        for category in all_tag_categories_for_this_pub_type:
+            if category.id not in selected_tags_categories_ids:
+                empty_tag_categories_ids.append(category.id)
+        if empty_tag_categories_ids:
+            content = {
+                'title': title,
+                'form': form,
+                'pub_preview': pub_preview,
+                'pub_type': pub_type,
+                'tags': tags,
+                'tag_categories': tag_categories,
+                'empty_tag_categories_ids': empty_tag_categories_ids,
+                'selected_tags': selected_tags,
+                'action': 'edit',
+        		}
+            return render(request, 'publicationapp/create_new_or_update.html', content)
+
+        if 'preview' in request.FILES and request.FILES['preview']:
+            fs = FileSystemStorage()
+            preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
+            pub.preview = 'pub_media/' + str(request.FILES['preview'])
+
+        if pub.title != method_POST['title']:
+            pub.title = method_POST['title'].capitalize()
+        if pub.content != method_POST['content'] and pub.type.id != 31:
+            pub.content = method_POST['content']
+        if set(pub.tags.all()) != set(selected_tags):
+            pub.tags.clear()
+            pub.tags.add(*selected_tags)
+        if pub.cost_min != method_POST['cost_min']:
+            pub.cost_min = method_POST['cost_min']
+        if pub.cost_max != method_POST['cost_max']:
+            pub.cost_max = method_POST['cost_max']
+        pub.save()
+
+        if request.user == pub.author:
+            noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'»!'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        if request.user.role.id == 4 and request.user != pub.author:
+            noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Автор ' +pub.author.username+ ' получит уведомление об этом'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: ' +request.user.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+
+        return redirect('pub:pub_one', pk=pub.id)
+
+    form = PubForm({
+        'title': pub.title,
+        'type': pub.type,
+        'preview': pub.preview,
+        'content': pub.content,
+        'cost_min': pub.cost_min,
+        'cost_max': pub.cost_max,
+        })
+
+    content = {
+        'title': title,
+        'form': form,
+        'pub_preview': pub_preview,
+        'pub_type': pub_type,
+        'tags': tags,
+        'tag_categories': tag_categories,
+        'empty_tag_categories_ids': empty_tag_categories_ids,
+        'selected_tags': selected_tags,
+        'action': 'edit',
+		}
+    return render(request, 'publicationapp/create_new_or_update.html', content)
+
+
+#   удаление публикации
 def DeletePub(request, pk):
     if request.user.is_authenticated and request.user.role.id in [2, 4]:
         pub = Publication.objects.get(id=pk)
@@ -117,12 +222,12 @@ def DeletePub(request, pk):
         pub.delete()
 
         if request.user.role.id == 2:
-            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
         if request.user.role.id == 4:
-            noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
             Notifications.objects.create(user_receiver=author, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко его автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Можно создать новую, ещй лучше!", content_last_desc='', author=request.user)
+            noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко его автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
 
         if type == 11:
@@ -131,104 +236,6 @@ def DeletePub(request, pk):
             return redirect('pub:designs')
         if type == 31:
             return redirect('pub:lifehacks')
-
-
-#   редактирование публикации
-def UpdatePub(request, pk):
-    if request.user.is_authenticated:
-        if request.user.role.id in [2, 4]:
-            pub = Publication.objects.get(id=pk)
-            photos = PubPhotos.objects.filter(id_pub=pk)
-            title = 'Отредактирвать публикацию пользователя ' + pub.author.username if request.user.role.id == 4 and pub.author != request.user else 'Отредактирвать публикацию'
-            form = PubForm()
-            tags = Tag.objects.filter(pub_type=pub.type)
-            tag_categories = {
-                'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 else None,
-                'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 else None,
-                'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
-            }
-            empty_tag_categories_ids = []
-            selected_tags = pub.tags.all()
-
-            if request.method == 'POST':
-                form = PubForm(request.POST)
-                method_POST = request.POST
-
-                #   проверка, теги всех ли категорий
-                #   выбраны и переадресация обратно, если нет
-                selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
-                selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
-                all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
-                for category in all_tag_categories_for_this_pub_type:
-                    if category.id not in selected_tags_categories_ids:
-                        empty_tag_categories_ids.append(category.id)
-                if empty_tag_categories_ids:
-                    content = {
-                        'title': title,
-                        'form': form,
-                        'tags': tags,
-                        'tag_categories': tag_categories,
-                        'empty_tag_categories_ids': empty_tag_categories_ids,
-                        'selected_tags': selected_tags,
-                        'action': 'edit',
-                		}
-                    return render(request, 'publicationapp/create_new_or_update.html', content)
-
-                pub.__dict__.update({'title': method_POST['title'].capitalize(), 'preview': ('pub_media/' + str(request.FILES['preview'])), 'content_first_desc': method_POST['content_first_desc'], 'content_last_desc': method_POST['content_last_desc']})
-                fs = FileSystemStorage()
-                preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
-                if pub.type.id in [11, 12]:
-                    if 'photo' in request.FILES:
-                        photos = request.FILES.getlist('photo')
-                        PubPhotos.objects.filter(id_pub=pub.id).delete()
-                        i_count = 0
-                        for i in photos:
-                            fs.save(('pub_media/' + photos[i_count].name), photos[i_count])
-                            PubPhotos.objects.create(id_pub=Publication.objects.get(id=pub.id), photo=('pub_media/' + photos[i_count].name))
-                            i_count +=1
-
-                pub.tags.clear()
-                pub.tags.add(*selected_tags)
-                pub.cost_min = method_POST['cost_min']
-                pub.cost_max = method_POST['cost_max']
-                pub.save()
-
-                if request.user.role.id == 2:
-                    noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", content_last_desc='', author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                if request.user.role.id == 4:
-                    noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'» ! Автор ' +pub.author.username+ ' получит уведомление об этом'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", content_last_desc='', author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                    noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'» ! Суперпользователь: ' +request.user.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", content_last_desc='', author=request.user)
-                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
-
-                return redirect('pub:pub_one', pk=pub.id)
-
-            form = PubForm({
-                'title': pub.title,
-                'type': pub.type,
-                'preview': pub.preview,
-                'content_first_desc': pub.content_first_desc,
-                'content_last_desc': pub.content_last_desc,
-                'cost_min': pub.cost_min,
-                'cost_max': pub.cost_max,
-                'photo': photos
-                })
-
-            content = {
-                'title': title,
-                'form': form,
-                'tags': tags,
-                'tag_categories': tag_categories,
-                'empty_tag_categories_ids': empty_tag_categories_ids,
-                'selected_tags': selected_tags,
-                'action': 'edit',
-        		}
-            return render(request, 'publicationapp/create_new_or_update.html', content)
-        else:
-            return redirect('main')
-    else:
-        return redirect('main')
 
 
 #   просмотр публикции в "Избранном"
@@ -279,9 +286,9 @@ def toggle_saved(request, pk):
             # }
 
             # result = render_to_string('newsapp/includes/likes_block.html', context)
-            noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content_first_desc="Просто напоминание и благодарность за использование нашей ИС.", content_last_desc='', author=request.user)
+            noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content_first_desc=("Теперь у публикации " + str( SavedPubs.objects.filter(pub_id=pub.id).count() ) + " сохранений"), content_last_desc='', author=request.user)
+            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub_id=pub.id).count() ) + " сохранений"), author=request.user)
             Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
             return JsonResponse({'result': result})
@@ -422,7 +429,6 @@ class PubWatchOne(ListView):
 
         context.update({
             'pub': pub,
-            'photos': PubPhotos.objects.filter(id_pub=pub),
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
         })

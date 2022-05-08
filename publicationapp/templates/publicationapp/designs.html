@@ -23,32 +23,32 @@
   </div>
 
   <div class="pubs_container" {% if not pubs %} style="height: 500px" {% endif %}>
-    {% for p in pubs %}
+    {% for pub in pubs %}
 
-        <div class="pub_one design" id="{{ p.id }}">
+        <div class="pub_one design" id="{{ pub.id }}">
           <div class="img_from_pub">
-            <img src="{{ p.preview.url }}" alt="">
+            <img src="{{ pub.preview.url }}" alt="">
             <div class="img_black_gradient"> </div>
           </div>
           <div class="pub_info">
-            <p class="pub_title">{{ p.title }}</p>
+            <p class="pub_title">{{ pub.title }}</p>
             <div class="div_pub_text">
               <p class="pub_text">
-                {{ p.content_first_desc }}
+                {{ pub.unstyled_content|safe|slice:"1000" }}
               </p>
             </div>
             <div class="pub_to_do">
-              <div class="user_just_saved_it {% if p.id in saved_pubs %} pub_saved {% endif %}"
+              <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}"
                 onclick="
                   {% if user.is_authenticated %}
-                    toggleSavePub_D( {{ p.id }} )
+                    toggleSavePub_D( {{ pub.id }} )
                   {% else %}
                     YouHaveToLogin('сохранить публикацию')
                   {% endif %}" title="Сохранить в «Избранное»">
                 <img src="/static/sources/SVG/heart.svg" alt="">
-                <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if p.id in saved_pubs %}Сохранено{% else %}В «Избранное»{% endif %}">
+                <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if pub.id in saved_pubs %}Сохранено{% else %}В «Избранное»{% endif %}">
               </div>
-              <a class="pub_show_full" href="{% url 'pub:pub_one' pk=p.id %}">Подробнее •••</a>
+              <a class="pub_show_full" href="{% url 'pub:pub_one' pk=pub.id %}">Подробнее •••</a>
             </div>
             <div class="pub_tags"></div>
           </div>

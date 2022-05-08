@@ -31,8 +31,8 @@
         <p>Но вы можете подать заявку на получение роли <a href="">автора</a> или <a href="">сотрудника</a>.</p>
     </div>
   {% else %}
-    <div class="page_title">
-        <p class="title_p">{{ title }}</p>
+    <div class="page_title" style="margin: 30px auto; height: fit-content;">
+        <p class="title_p" style="width: 70%;">{{ title }}</p>
     </div>
 
     <div class="pubs_container">
@@ -41,7 +41,7 @@
         {{ form.non_field_errors }}
 
         {% if action == 'create' %}
-          <div class="pub_types">
+          <div class="pub_types" style="display: none;">
             <h4>Вид публикации:</h4>
             {{ form.type }}
             {{ form.type.errors }}
@@ -54,29 +54,51 @@
           {{ form.title.errors }}
           <p>Максимальная длина текста — 135 символов.</p>
         </div>
+
         <div class="pub_preview pub_inp_one">
-          <h4>Превью:</h4>
-          {{ form.preview }}
-          {{ form.preview.errors }}
-          <p>Идеальный размер изображения — 1350×405 пикселей.<br>С другими размерами фото может некорректно отображаться.</p>
+          <h4>{% if pub_type == 31  %}
+              Файл:
+            {% else %}
+              Превью:
+            {% endif %}</h4>
+
+          {% if pub_preview  %}
+            <div class="preview">
+              <div class="preview_now">
+                <p>На данный момент:</p>
+                {% if '.mp4' in pub_preview.url or '.mov' in pub_preview.url %}
+                  <video class="paused" muted="muted" controls="controls" loop>
+                    <source src="{{ pub_preview.url }}" type='video/mp4;'>
+                    Тег video не поддерживается вашим браузером. Увы.
+                  </video>
+                {% else %}
+                  <img src="{{ pub_preview.url }}" alt="">
+                {% endif %}
+              </div>
+
+              <div class="preview_update">
+          {% endif %}
+
+                {{ form.preview }}
+                {{ form.preview.errors }}
+                <p>Идеальный размер изображения — 1350×405 пикселей.<br>С другими размерами фото может некорректно отображаться.</p>
+
+          {% if pub_preview  %}
+                </div>
+            </div>
+          {% endif %}
         </div>
-        <div class="pub_description pub_inp_one">
-          <h4>Описание перед фотографиями:</h4>
-          {{ form.content_first_desc }}
-          {{ form.content_first_desc.errors }}
-          <p>Сдеайте текстовое описание Вашей публикации. Расскажите о важном в выбранной теме, упомяните используемые фото.</p>
-        </div>
-        <div class="pub_photos pub_inp_one">
-          <h4>Фотографии публикации:</h4>
-          {{ form.photo }}
-          {{ form.photo.errors }}
-          <p>Идеальный размер изображения — 1100×580 пикселей. С другими размерами фото могут некорректно отображаться.</p>
-        </div>
-        <div class="pub_description pub_inp_one">
-          <h4>Описание после фотографий:</h4>
-          {{ form.content_last_desc }}
-          {{ form.content_last_desc.errors }}<p>Сдеайте вывод по теме Вашей публикации. Можно пожелать хорошего настроения :3</p>
-        </div>
+
+        {% if pub_type != 31  %}
+          <div class="pub_description pub_inp_one">
+            <h4>Наполнение:</h4>
+            <p style="width: max-content;">Жгите! Сделайте читателю интересную информатифную полезную неводяную статью 📝</p>
+            {{ form.media }}
+            {{ form.content }}
+            {{ form.content.errors }}
+          </div>
+        {% endif %}
+
         <div class="pub_tags">
           <h4>Тэги к публикции:</h4>
           <div id="budget" class="filter_mini_div show cost">
@@ -112,6 +134,7 @@
                     </label>
                   {% endif %}
                 {% endfor %}
+
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
@@ -125,7 +148,7 @@
           {% endfor %}
 
           {% for category in tag_categories.design %}
-            <div class="filter_mini_div design">
+            <div class="filter_mini_div show design">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
@@ -148,6 +171,7 @@
                     </label>
                   {% endif %}
                 {% endfor %}
+
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
@@ -161,7 +185,7 @@
           {% endfor %}
 
           {% for category in tag_categories.lifehack %}
-            <div class="filter_mini_div lifehack">
+            <div class="filter_mini_div show lifehack">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
@@ -184,6 +208,7 @@
                     </label>
                   {% endif %}
                 {% endfor %}
+
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
@@ -197,7 +222,7 @@
           {% endfor %}
         </div>
 
-        <input type="submit" name="create!" value="{{ title }}!">
+        <input type="submit" name="create!" value="Отредактирвать">
       </form>
 
       <div class="if_here_is_not_something_what_you_want" style="margin: -60px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">

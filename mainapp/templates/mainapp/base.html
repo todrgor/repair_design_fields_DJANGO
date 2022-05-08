@@ -85,7 +85,7 @@
                               {% for nn in user.noties_new %}
                                 <div class="notification_one noti_new">
                                     <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
-                                    <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
+                                    <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title }}</p>
                                     <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
                                 </div>
                               {% endfor %}
@@ -96,7 +96,7 @@
                               {% for nn in user.noties_old %}
                                 <div class="notification_one noti_old">
                                     <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
-                                    <p class="content_noti" title="{{ nn.noti_for_user.content_first_desc }}">{{ nn.noti_for_user.title }}</p>
+                                    <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title }}</p>
                                     <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
                                 </div>
                               {% endfor %}

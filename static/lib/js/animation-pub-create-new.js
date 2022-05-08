@@ -17,10 +17,6 @@
 // });
 
 $('input[name="pub_type"], .pub_types select').change(function () {
-  if ($('.pub_description.pub_inp_one textarea').val() == '   ') {
-    $('.pub_description.pub_inp_one textarea').val('');
-  }
-
   if ($('#pub_type:checked').val() == 'repair' || $('.pub_types select').val() == '11') {
     console.log('pub_type = repair');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
@@ -40,7 +36,6 @@ $('input[name="pub_type"], .pub_types select').change(function () {
   if ($('#pub_type:checked').val() == 'lifehack' || $('.pub_types select').val() == '31') {
     console.log('pub_type = lifehack');
     $('.pub_preview.pub_inp_one h4:first').html('Файл:');
-    $('.pub_description.pub_inp_one textarea').val('   ');
     $('.repair, .design').removeClass('show');
     $('.lifehack').addClass('show');
     $('.pub_description, .pub_photos').addClass('hidden');
