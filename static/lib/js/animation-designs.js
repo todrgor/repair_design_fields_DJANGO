@@ -1,6 +1,6 @@
 function toggleSavePub_D(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {

@@ -27,7 +27,7 @@
 
   {% if edited_user.id != user.id and user.role.id != 4 %}
     <div class="page_title">
-        <p class="title_p">Вам сюда нельзя! Попытались они чужой аккаунт отредактировать, ага)</p>
+      <p class="title_p">Вам сюда нельзя! Попытались они чужой аккаунт отредактировать, ага)</p>
     </div>
   {% else %}
     <div class="page_title">
@@ -37,12 +37,14 @@
     <div class="pubs_container">
       <form class="" action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.non_field_errors }}
+        {{ form_user.non_field_errors }}
+        {{ form_expert_user.non_field_errors }}
 
         <div class="pub_title pub_inp_one">
           <h4>Никнейм:</h4>
           {{ form_user.username }}
           {{ form_user.username.errors }}
+          <p style="width: 60%">Никнейм должен быть уникальным (чтобы ни у кого не был такой же)</p>
         </div>
 
         <div class="pub_preview pub_inp_one">
@@ -68,41 +70,53 @@
           <h4>Коротко опишите себя:</h4>
           {{ form_user.bio }}
           {{ form_user.bio.errors }}
+          <p>Можно рассказать о своём статусе, настроении или например об своих основных предпочтениях. </p>
         </div>
 
         <div class="pub_title pub_inp_one">
           <h4>Номер телефона:</h4>
           {{ form_user.phone_number }}
           {{ form_user.phone_number.errors }}
+          <p style="width: 50%">Телефон должен быть уникальным (чтобы ни у кого не был такой же), состоять из 11 цифр и начинаться на знак «+».</p>
         </div>
 
         <div class="pub_title pub_inp_one">
           <h4>Возраст:</h4>
           {{ form_user.age }}
           {{ form_user.age.errors }}
+          <p>От 1 года до 111 лет.</p>
         </div>
 
         <div class="pub_title pub_inp_one">
           {% if edited_user.id == user.id %}
-            <h4>Ваша роль в ИС:</h4>
-            <p style="color: #000; font-size: 18px; padding: 6px; background: #dcdcdc; border-radius: 5px; width: 20%; text-align: center;">{{ edited_user.role.name }}</p>
+            <h4>Ваша роль:</h4>
+            {% if edited_user.role.id == 4 and not edited_user.is_only_one_superuser %}
+              {{ form_user.role }}
+              {{ form_user.role.errors }}
+            {% else %}
+              <p style="color: #000; font-size: 18px; padding: 6px; background: #dcdcdc; border-radius: 5px; width: 20%; text-align: center;">{{ edited_user.role.name }}</p>
+              {% if edited_user.role.id == 4 and edited_user.is_only_one_superuser %}
+                <p style="margin-top: 15px">Вы – единственный суперпользователь, поэтому пока что не можете сменить свою роль.</p>
+              {% endif %}
+            {% endif %}
+
             {% if edited_user.role.id == 1 %}
-              <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
-              <a href="{% url 'auth:become_a_teammemder' %}">Работать в команде</a>
+              <a href="{% url 'become_an_author' %}">Стать автором публикаций</a>
+              <a href="{% url 'become_a_teammemder' %}">Работать в команде</a>
             {% endif %}
 
             {% if edited_user.role.id == 2 %}
-              <a href="{% url 'auth:send_to_support' %}">Обртиться в поддержку и перестать быть автором</a>
-              <a href="{% url 'auth:become_a_teammemder' %}">Стать администратором</a>
+              <a href="{% url 'send_to_support' %}">Обртиться в поддержку и перестать быть автором</a>
+              <a href="{% url 'become_a_teammemder' %}">Стать администратором</a>
             {% endif %}
 
             {% if edited_user.role.id == 3 %}
-              <a href="{% url 'auth:send_to_support' %}">Обртиться в поддержку и перестать быть администратором</a>
-              <a href="{% url 'auth:become_an_author' %}">Стать автором публикаций</a>
+              <a href="{% url 'send_to_support' %}">Обртиться в поддержку и перестать быть администратором</a>
+              <a href="{% url 'become_an_author' %}">Стать автором публикаций</a>
             {% endif %}
 
           {% else %}
-            <h4>Роль пользователя {{ edited_user.username }} в ИС:</h4>
+            <h4>Роль пользователя «{{ edited_user.username }}» в ИС:</h4>
             {{ form_user.role }}
             {{ form_user.role.errors }}
           {% endif %}
@@ -112,95 +126,158 @@
           <div class="pub_title pub_inp_one">
             <h4 style="margin: 0 0 10px">Уведомления получаются от:</h4>
             {% for s in edited_user_subs %}
-              <div class="user_one" id="{{ s.star_id.id }}">
-                <a href="{% url 'auth:account_one' pk=s.star_id.id %}" class="user_link">
-                  <img src="{{ s.star_id.photo.url }}" alt="" class="user_photo">
-                  <p class="user_nikname">{{ s.star_id.username }}</p>
+              <div class="user_one" id="{{ s.star.id }}">
+                <a href="{% url 'auth:one' pk=s.star.id %}" class="user_link">
+                  <img src="{{ s.star.photo.url }}" alt="" class="user_photo">
+                  <p class="user_nikname">{{ s.star.username }}</p>
                 </a>
-                <p class="cancel_following" onclick="cancel_following({{ s.star_id.id }})">Отписаться</p>
+                <p class="cancel_following" onclick="cancel_following({{ s.star.id }})">Отписаться</p>
               </div>
             {% endfor %}
           </div>
         {% endif %}
 
-        {% if edited_user.role.id == 2 or user.role.id == 4 %}
-          <div class="expert_inputs {% if edited_user.role.id == 2 %} show {% endif %}">
+        {% if edited_user.role.id == 2 or edited_user.role.id == 4 or user.role.id == 4 %}
+          <div class="expert_inputs {% if edited_user.role.id == 2 or edited_user.role.id == 4 %} show {% endif %}">
             <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Ваш стаж, услуги и контакты:</p>
             <div class="pub_description pub_inp_one">
               <h4>Стаж:</h4>
               {{ form_expert_user.knowledge }}
               {{ form_expert_user.knowledge.errors }}
+              <p>Читатель должен понять, что у Вас достаточно опыта, чтобы обратиться к Вам за услугой для решения его проблемы.</p>
             </div>
 
             <div class="pub_description pub_inp_one">
               <h4>Услуги:</h4>
               {{ form_expert_user.offer }}
               {{ form_expert_user.offer.errors }}
+              <p>Если будете размещать не только публикации, но и оказывать квалифициорванные услуги.</p>
             </div>
 
-            <div class="pub_description pub_inp_one">
+            <div class="pub_title pub_inp_one contact_info">
               <h4>Контакты:</h4>
-              <p>Заполнять по желанию</p>
-            </div>
+              <p style="margin-bottom: 10px;">Укажите, по каким контактам клиент сможет с Вами связаться. Заполнять по желанию.</p>
 
-            <div class="pub_title pub_inp_one">
-              {{ form_expert_user.site }}
-              {{ form_expert_user.site.errors }}
+              <p>
+                <img src="/static/sources/SVG/site.svg">
+                {{ form_expert_user.site }}
+                {{ form_expert_user.site.errors }}
+              </p>
 
-              {{ form_expert_user.bisness_phone_number }}
-              {{ form_expert_user.bisness_phone_number.errors }}
+              <p>
+                <img src="/static/sources/SVG/telephone.svg">
+                {{ form_expert_user.bisness_phone_number }}
+                {{ form_expert_user.bisness_phone_number.errors }}
+              </p>
 
-              {{ form_expert_user.address }}
-              {{ form_expert_user.address.errors }}
+              <p>
+                <img src="/static/sources/SVG/telegram.svg">
+                {{ form_expert_user.telegram }}
+                {{ form_expert_user.telegram.errors }}
+              </p>
 
-              {{ form_expert_user.telegram }}
-              {{ form_expert_user.telegram.errors }}
+              <p>
+                <img src="/static/sources/SVG/whatsapp.svg">
+                {{ form_expert_user.whatsapp }}
+                {{ form_expert_user.whatsapp.errors }}
+              </p>
 
-              {{ form_expert_user.whatsapp }}
-              {{ form_expert_user.whatsapp.errors }}
+              <p>
+                <img src="/static/sources/SVG/viber.svg">
+                {{ form_expert_user.viber }}
+                {{ form_expert_user.viber.errors }}
+              </p>
 
-              {{ form_expert_user.viber }}
-              {{ form_expert_user.viber.errors }}
+              <p>
+                <img src="/static/sources/SVG/lol.svg">
+                {{ form_expert_user.lol }}
+                {{ form_expert_user.lol.errors }}
+              </p>
 
-              {{ form_expert_user.lol }}
-              {{ form_expert_user.lol.errors }}
+              <p>
+                <img src="/static/sources/SVG/vk.svg">
+                {{ form_expert_user.vk }}
+                {{ form_expert_user.vk.errors }}
+              </p>
 
-              {{ form_expert_user.vk }}
-              {{ form_expert_user.vk.errors }}
+              <p>
+                <img src="/static/sources/SVG/instagram.svg">
+                {{ form_expert_user.inst }}
+                {{ form_expert_user.inst.errors }}
+              </p>
 
-              {{ form_expert_user.inst }}
-              {{ form_expert_user.inst.errors }}
+              <p>
+                <img src="/static/sources/SVG/twitter.svg">
+                {{ form_expert_user.twitter }}
+                {{ form_expert_user.twitter.errors }}
+              </p>
 
-              {{ form_expert_user.ok }}
-              {{ form_expert_user.ok.errors }}
+              <p>
+                <img src="/static/sources/SVG/odnoklassniki.svg">
+                {{ form_expert_user.ok }}
+                {{ form_expert_user.ok.errors }}
+              </p>
 
-              {{ form_expert_user.twitter }}
-              {{ form_expert_user.twitter.errors }}
+              <p>
+                <img src="/static/sources/SVG/address.svg">
+                {{ form_expert_user.address }}
+                {{ form_expert_user.address.errors }}
+              </p>
 
-            </div>
+              <p>
+                <img src="/static/sources/SVG/other.svg">
+                {{ form_expert_user.other }}
+                {{ form_expert_user.other.errors }}
+              </p>
 
-            <div class="pub_title pub_inp_one">
-              <h4>Что-то дополнительно:</h4>
-              {{ form_expert_user.other }}
-              {{ form_expert_user.other.errors }}
-              <p>Необязательно заполнять, но тоже приветствуется.</p>
             </div>
           </div>
         {% endif %}
 
+        <div class="pub_description pub_inp_one">
+          <h4>Поменять пароль:</h4>
+          <p>Поменять пароль можно по <a href="{% url 'auth:change_password' pk=edited_user.id %}">ссылке.</a></p>
+        </div>
+
         <input type="submit" name="create!" value="Сохранить">
       </form>
 
-      <div class="if_here_is_not_something_what_you_want" style="margin: -60px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">
-        <p style="color: gray;">Если для Вас чего-либо не хватает,<br>например какой-либо дополнительной информации,<br>расскажите нам через <a href="{% url 'auth:send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
+      <div class="if_here_is_not_something_what_you_want"
+          style="
+            margin: {% if user == edited_user and user.role.id == 4 and user.is_only_one_superuser  %}-170{% else %}-135{% endif %}px 0 30px 0px;
+            font-size: 13px; display: flex; justify-content: flex-start; width: fit-content; position: relative; left: 70%; flex-direction: column;">
+
+        <p style="color: gray;">Если для Вас чего-либо не хватает,<br>например какой-либо дополнительной информации,<br>расскажите нам через <a href="{% url 'send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
+
+        {% if user == edited_user and user.role.id != 4   or   user.role.id == 4 and edited_user.role.id != 4   or   user == edited_user and user.role.id == 4 and not user.is_only_one_superuser %}
+          <p style="color: gray; margin-top: 15px;">Также Вы можете <span class="delete_account" onclick="deleteTheUser()">{% if user == edited_user %}удалить свой аккаунт{% else %}удалить аккаунт этого пользователя{% endif %}</span></p>
+        {% endif %}
+        {% if user == edited_user and user.role.id == 4 and user.is_only_one_superuser  %}
+          <p style="color: gray; margin-top: 15px;">Вы не можете удалить свой аккаунт, поскольку<br>на данный момент Вы – единственный суперпользователь,<br>без которого этот сайт и вся Вселенная схлопнутся.</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+  {% endif %}
+
+  {% if user == edited_user and user.role.id != 4   or   user.role.id == 4 and edited_user.role.id != 4   or   user == edited_user and user.role.id == 4 and not user.is_only_one_superuser %}
+    <div class="additional_functions_bg" id="author">
+    </div>
+
+    <div class="delete_the_user"> <!-- подтверждение удаления пользователя -->
+      <h1>Вы точно хотите удалить {% if user == edited_user %}свой аккаунт{% else %}пользователя «{{ edited_user.username }}»{% endif %}?</h1>
+      <p style="margin: 20px 0;">Его нельзя будет восстаноить. Никак.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" class="cancel">Отмена</p>
+        <a href="{% url 'auth:delete' pk=edited_user.id%}" id="delete">Удалить пользователя</a>
       </div>
     </div>
   {% endif %}
 
-
 {% endblock %}
 
 {% block scripts_individual %}
-<script src="/static/lib/js/animation-account-edit.js"></script>
-<script src="/static/lib/js/animation-create-account.js"></script>
+  <script src="/static/lib/js/animation-account-edit.js"></script>
+  <script src="/static/lib/js/animation-create-account.js"></script>
 {% endblock %}

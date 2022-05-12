@@ -21,23 +21,28 @@ $('input[name="pub_type"], .pub_types select').change(function () {
     console.log('pub_type = repair');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
     $('.repair').addClass('show');
+    $('.pub_content').addClass('show');
     $('.design, .lifehack').removeClass('show');
+    $('.design input, .lifehack input').prop('checked', false);
     $('.pub_description, .pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_type:checked').val() == 'design' || $('.pub_types select').val() == '21') {
     console.log('pub_type = design');
     $('.pub_preview.pub_inp_one h4:first').html('Превью:');
-    $('.repair, .lifehack').removeClass('show');
     $('.design').addClass('show');
+    $('.pub_content').addClass('show');
+    $('.repair, .lifehack').removeClass('show');
+    $('.repair input, .lifehack input').prop('checked', false);
     $('.pub_description, .pub_photos').removeClass('hidden');
   }
 
   if ($('#pub_type:checked').val() == 'lifehack' || $('.pub_types select').val() == '31') {
     console.log('pub_type = lifehack');
     $('.pub_preview.pub_inp_one h4:first').html('Файл:');
-    $('.repair, .design').removeClass('show');
+    $('.repair, .design, .pub_content').removeClass('show');
     $('.lifehack').addClass('show');
+    $('.repair input, .design input').prop('checked', false);
     $('.pub_description, .pub_photos').addClass('hidden');
   }
 

@@ -8,8 +8,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
-    type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=1, verbose_name='Вид публикации', blank=False)
-    preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'pdf'])], verbose_name='Превью')
+    type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид публикации', blank=False)
+    preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'gif'])], verbose_name='Превью')
     content = RichTextUploadingField(blank=True, null=True, verbose_name='Контент', default='')
     tags = models.ManyToManyField('Tag', verbose_name='Теги публикции')
     cost_min = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=0, verbose_name='бюджет от')
@@ -42,6 +42,28 @@ class Publication(models.Model):
                         to_remove = False
                     content = content[:i] +' '+ content[(i+1):]
         return content
+
+    @property
+    def img_urls_list(self):  # пройтись по content и получить все img
+        content = self.content
+        img_urls_list = []
+        is_taking_img_url = False
+        is_removing_style = False
+
+        for i in range(len(content)):
+            if i+5 < len(content):
+                if content[i] == 's' and content[(i+1):(i+5)] == 'rc="':
+                    is_taking_img_url = True
+                    src = ''
+                    i+=5
+                    while is_taking_img_url:
+                        src += content[i]
+                        if is_taking_img_url and content[i] == '"' and content[(i-5):i] != 'src="':
+                            is_taking_img_url = False
+                            img_urls_list.append(src)
+                        i+=1
+        print (img_urls_list)
+        return img_urls_list
 
     def opened(self):
         self.seen_count +=1

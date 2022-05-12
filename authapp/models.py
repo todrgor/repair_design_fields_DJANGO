@@ -8,9 +8,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 # user : password : role
 # su1 : : admin + superuser
 # 18091ikhgc : zxzxzx12 : watcher
-# Astwim : generatorseen : watcher
+# Astwim : request.POST : watcher
 # authorONER : *_au_*thor : author
 # NewUser : MOYproektTHEbest : watcher
+# 222 : 222 : admin
 # ksyu : 1212ks12 : Watcher
 # Gleb_Olivki : GlebKrasavchik99 : Watcher
 # Egor226 : Egor226 : author ????????????????
@@ -36,26 +37,29 @@ class User(AbstractUser):
 
     @property
     def noties_new(self):
-        # user = User.objects.get(id=self.pk)
-        noties_new = Notifications.objects.filter(user_receiver=self.pk, is_new=True).order_by('-when')
-        return noties_new
+        return Notifications.objects.filter(user_receiver=self.pk, is_new=True).order_by('-when')
 
     @property
     def noties_old(self):
-        noties_old = Notifications.objects.filter(user_receiver=self.pk, is_new=False).order_by('-when')[:20]
-        return noties_old.all()
+        return Notifications.objects.filter(user_receiver=self.pk, is_new=False).order_by('-when')[:20]
 
     @property
     def noties_count(self):
-        user = User.objects.get(id=self.pk)
-        noties_count = user.noties_new.count() + user.noties_old.count()
-        return noties_count
+        return self.noties_new.count() + self.noties_old.count()
 
     @property
     def new_noties_count(self):
-        user = User.objects.get(id=self.pk)
-        new_noties_count = user.noties_new.count()
-        return new_noties_count
+        return self.noties_new.count()
+
+    @property
+    def is_only_one_superuser(self):
+        if self.role.id != 4:
+            return -1
+        count = User.objects.filter(role=4).count()
+        if count == 1:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)
@@ -76,70 +80,91 @@ class UserRoles(models.Model):
 class UserSubscribes(models.Model):
     # переделать нейминг и ввести правки в весь проект
 
-    subscriber_id = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
-    star_id = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
+    subscriber = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
+    star = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
 
     class Meta:
         verbose_name = 'Подписка пользователя'
         verbose_name_plural = 'Подписки пользователей'
 
     def __str__(self):
-        return 'Subscriber ' + str(self.subscriber_id) + ' follows ' + str(self.star_id)
+        return 'Subscriber ' + str(self.subscriber) + ' follows ' + str(self.star)
 
 
 class ExpertInfo(models.Model):
     # переделать нейминг и ввести правки в весь проект
 
-    expert_id = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
-    bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
+    expert_account = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
     count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
-    knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж')
-    offer = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Какую услугу предлагает')
-    site = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на сайт')
-    address = models.CharField(blank=True, null=True, max_length=255, verbose_name='Адрес')
-    telegram = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Telegram')
-    whatsapp = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт WhatsApp')
-    viber = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Viber')
-    lol = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль LifeOnLine')
-    vk = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль VK')
-    inst = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Instagram')
-    ok = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Одноклассники')
-    twitter = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Facebook')
-    other = models.CharField(blank=True, null=True, max_length=255, verbose_name='Дополнительная контактная информация при необходимости')
+    bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
+    knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж', default='')
+    offer = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Какую услугу предлагает', default='')
+    site = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на сайт', default='')
+    address = models.CharField(blank=True, null=True, max_length=255, verbose_name='Адрес', default='')
+    telegram = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Telegram', default='')
+    whatsapp = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт WhatsApp', default='')
+    viber = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Viber', default='')
+    lol = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль LifeOnLine', default='')
+    vk = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль VK', default='')
+    inst = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Instagram', default='')
+    ok = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Одноклассники', default='')
+    twitter = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на профиль Facebook', default='')
+    other = models.CharField(blank=True, null=True, max_length=255, verbose_name='Дополнительная контактная информация при необходимости', default='')
 
     class Meta:
         verbose_name = 'Экспертная информация о пользователе'
         verbose_name_plural = 'Экспертная информация о пользователе'
+
+    @property
+    def is_not_empty(self):
+        empty_list = ['', None]
+        answer = (
+            not self.bisness_phone_number in empty_list or
+            not self.knowledge in empty_list or
+            not self.offer in empty_list or
+            not self.site in empty_list or
+            not self.address in empty_list or
+            not self.telegram in empty_list or
+            not self.whatsapp in empty_list or
+            not self.viber in empty_list or
+            not self.lol in empty_list or
+            not self.vk in empty_list or
+            not self.inst in empty_list or
+            not self.ok in empty_list or
+            not self.twitter in empty_list or
+            not self.other in empty_list
+        )
+        return answer
 
     def count_follovers_changed(self, change_count):
         count_follovers += change_count
         self.save
 
     def __str__(self):
-        return 'Expert ' + str(self.expert_id) + ', offer: ' + str(self.offer)
+        return 'Expert ' + str(self.expert_account) + ', offer: ' + str(self.offer)
 
 
 class SavedPubs(models.Model):
     # переделать нейминг и ввести правки в весь проект
 
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
-    saver_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
-    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    saver = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
+    pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
 
     class Meta:
         verbose_name = 'Сохранённая публикация'
         verbose_name_plural = 'Сохранённые публикации'
 
     def __str__(self):
-        return 'saver ' + str(self.saver_id) + ' saved pub ' + str(self.pub_id)
+        return 'saver ' + str(self.saver) + ' saved pub ' + str(self.pub)
 
 
 class SeenPubs(models.Model):
     # переделать нейминг и ввести правки в весь проект
 
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
-    watcher_id = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
-    pub_id = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    watcher = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
+    pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
     count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
 
     class Meta:
@@ -147,7 +172,7 @@ class SeenPubs(models.Model):
         verbose_name_plural = 'Просмотренные публикации'
 
     def __str__(self):
-        return 'pub ' + str(self.pub_id) + ' seen by ' + str(self.watcher_id)
+        return 'pub ' + str(self.pub) + ' seen by ' + str(self.watcher)
 
 
 class Notifications(models.Model):

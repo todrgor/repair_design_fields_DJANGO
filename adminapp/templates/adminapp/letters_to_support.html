@@ -39,7 +39,7 @@
 
   <div class="page_title">
       <p class="title_p">Обращения в поддержку</p>
-      <p class="count_pubs">панель администратора</p>
+      <p class="count_pubs">{{ all_new_letters_count }} новых, {{ all_letters_count }} всего</p>
   </div>
 
   <div class="pubs_container">
@@ -64,9 +64,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block;">
-                          <a href="{% url 'auth:account_one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
                           <p style="color:gray;">{{ idea.when_asked }}</p>
                         </div>
                       </div>
@@ -110,9 +110,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block;">
-                          <a href="{% url 'auth:account_one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
                           <p style="color:gray;">{{ idea.when_asked }}</p>
                         </div>
                       </div>
@@ -131,7 +131,7 @@
 
                   <td style='min-width: 520px;'>
                     <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:account_one' pk=idea.answered_by.id %}">{{ idea.answered_by.username }}</a>, <span style="color:gray;">{{ idea.when_asked }}</span></p>
+                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=idea.answered_by.id %}">{{ idea.answered_by.username }}</a>, <span style="color:gray;">{{ idea.when_asked }}</span></p>
                       <p style="display: block; padding-left: 25px;">
                         {{ idea.answer_content }}
                       </p>
@@ -164,9 +164,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block;">
-                          <a href="{% url 'auth:account_one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
                           <p style="color:gray;">{{ question.when_asked }}</p>
                         </div>
                       </div>
@@ -210,9 +210,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block;">
-                          <a href="{% url 'auth:account_one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
                           <p style="color:gray;">{{ question.when_asked }}</p>
                         </div>
                       </div>
@@ -231,7 +231,7 @@
 
                   <td style='min-width: 520px;'>
                     <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:account_one' pk=question.answered_by.id %}">{{ question.answered_by.username }}</a>, <span style="color:gray;">{{ question.when_asked }}</span></p>
+                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=question.answered_by.id %}">{{ question.answered_by.username }}</a>, <span style="color:gray;">{{ question.when_asked }}</span></p>
                       <p style="display: block; padding-left: 25px;">
                         {{ question.answer_content }}
                       </p>
@@ -264,9 +264,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:account_one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
                           {% if application.type.id == 21 %}
                             <p style="color:gray;">▶ роль автора</p>
                           {% endif %}
@@ -317,9 +317,9 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:account_one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
                           {% if application.type.id == 21 %}
                             <p style="color:gray;">▶ роль автора</p>
                           {% endif %}
@@ -351,7 +351,7 @@
                           Роль осталась прежней
                         {% endif %}
                       </p>
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:account_one' pk=application.answered_by.id %}">{{ application.answered_by.username }}</a>, <span style="color:gray;">{{ application.when_asked }}</span></p>
+                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=application.answered_by.id %}">{{ application.answered_by.username }}</a>, <span style="color:gray;">{{ application.when_asked }}</span></p>
                       <p style="display: block; padding-left: 25px;">
                         {{ application.answer_content }}
                       </p>
@@ -384,14 +384,14 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:account_one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
+                          <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
                           {% if report.type.id == 11 %}
-                            <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:pub_one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
+                            <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
                           {% endif %}
                           {% if report.type.id == 12 %}
-                            <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:account_one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
+                            <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
                           {% endif %}
                           <p style="color:gray;">{{ report.when_asked }}</p>
                         </div>
@@ -484,20 +484,20 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         <p>от</p>
-                        <a href="{% url 'auth:account_one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
                         <div class="" style="display:block; width: 99%;">
                           <div class="" style="display:block; width: 99%;">
-                            <a href="{% url 'auth:account_one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
+                            <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
                             {% if report.type.id == 11 %}
                               {% if report.answer_additional_info != 10 and report.answer_additional_info != 110 and report.answer_additional_info != 1010 %}
-                                <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:pub_one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
+                                <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
                               {% else %}
                                 <p style="color:gray;"> {{ report.title }} </p>
                               {% endif %}
                             {% endif %}
                             {% if report.type.id == 12 %}
                               {% if report.answer_additional_info != 1000 and report.answer_additional_info != 1010 %}
-                                <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:account_one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
+                                <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
                               {% else %}
                                 <p style="color:gray;"> {{ report.title }} </p>
                               {% endif %}
@@ -536,7 +536,7 @@
                           Удаление публикации и пользователя из жалобы и ответ текстом
                         {% endif %}
                       </p>
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:account_one' pk=report.answered_by.id %}">{{ report.answered_by.username }}</a>, <span style="color:gray;">{{ report.when_asked }}</span></p>
+                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=report.answered_by.id %}">{{ report.answered_by.username }}</a>, <span style="color:gray;">{{ report.when_asked }}</span></p>
                       <p style="display: block; padding-left: 25px;">
                         {{ report.answer_content }}
                       </p>
@@ -566,9 +566,9 @@
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
                       <p>от</p>
-                      <a href="{% url 'auth:account_one' pk=strange_letter.asked_by.id %}"><img src="{{ strange_letter.asked_by.photo.url }}" alt=""></a>
+                      <a href="{% url 'auth:one' pk=strange_letter.asked_by.id %}"><img src="{{ strange_letter.asked_by.photo.url }}" alt=""></a>
                       <div class="" style="display:block;">
-                        <a href="{% url 'auth:account_one' pk=strange_letter.asked_by.id %}">{{ strange_letter.asked_by.username }}</a>
+                        <a href="{% url 'auth:one' pk=strange_letter.asked_by.id %}">{{ strange_letter.asked_by.username }}</a>
                         <p style="color:gray;">{{ strange_letter.title }}</p>
                         <p style="color:gray;">{{ strange_letter.when_asked }}</p>
                       </div>
@@ -613,9 +613,9 @@
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
                       <p>от</p>
-                      <a href="{% url 'auth:account_one' pk=strange_letter.asked_by.id %}"><img src="{{ strange_letter.asked_by.photo.url }}" alt=""></a>
+                      <a href="{% url 'auth:one' pk=strange_letter.asked_by.id %}"><img src="{{ strange_letter.asked_by.photo.url }}" alt=""></a>
                       <div class="" style="display:block;">
-                        <a href="{% url 'auth:account_one' pk=strange_letter.asked_by.id %}">{{ strange_letter.asked_by.username }}</a>
+                        <a href="{% url 'auth:one' pk=strange_letter.asked_by.id %}">{{ strange_letter.asked_by.username }}</a>
                         <p style="color:gray;">{{ strange_letter.title }}</p>
                         <p style="color:gray;">{{ strange_letter.when_asked }}</p>
                       </div>
@@ -635,7 +635,7 @@
 
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
-                    <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:account_one' pk=strange_letter.answered_by.id %}">{{ strange_letter.answered_by.username }}</a>, <span style="color:gray;">{{ strange_letter.when_asked }}</span></p>
+                    <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=strange_letter.answered_by.id %}">{{ strange_letter.answered_by.username }}</a>, <span style="color:gray;">{{ strange_letter.when_asked }}</span></p>
                     <p style="display: block; padding-left: 25px;">
                       {{ strange_letter.answer_content }}
                     </p>

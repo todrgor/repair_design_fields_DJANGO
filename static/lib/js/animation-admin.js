@@ -1,3 +1,4 @@
+
 function toggleShow(idPubContainer) {
   $(".pubs_container_one_type#"+idPubContainer).toggleClass('show');
   $(".result_type_container#"+idPubContainer+" .triangle_to_open_and_hide").toggleClass('dontShow');
@@ -13,7 +14,7 @@ function really_delete_pub(pub_id) {
 function really_delete_account(user_id) {
   name = $('table tr#'+ user_id +' .info_container a.name').html();
   $('.question_block h1').html('Вы точно хотите удалить пользователя «'+ name +'»?');
-  $('.cancel_or_delete a').attr('href', '/account/delete/'+user_id);
+  $('.cancel_or_delete a').attr('href', '/account/'+ user_id +'/delete/');
   $('.pub_additional_functions_bg, .question_block').addClass('show');
 }
 

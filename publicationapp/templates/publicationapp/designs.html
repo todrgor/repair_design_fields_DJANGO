@@ -48,7 +48,7 @@
                 <img src="/static/sources/SVG/heart.svg" alt="">
                 <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if pub.id in saved_pubs %}Сохранено{% else %}В «Избранное»{% endif %}">
               </div>
-              <a class="pub_show_full" href="{% url 'pub:pub_one' pk=pub.id %}">Подробнее •••</a>
+              <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
             </div>
             <div class="pub_tags"></div>
           </div>

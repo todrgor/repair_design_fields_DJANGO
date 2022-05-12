@@ -34,7 +34,7 @@
       <div class="page_title"> </div>
 
       <div class="pub_one lifehack" id="{{ pub.id }}">
-        <div class="pub_url" style="display: none;">{% url 'pub:pub_one' pk=pub.id %}</div>
+        <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
 
         <div class="media">
           {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
@@ -61,10 +61,10 @@
             </div>
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                 <div class="nickname_and_role">
                   <div class="nickname">
-                    <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                    <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                       {% if user.is_authenticated %}
                         {% if user != pub.author %}
@@ -91,7 +91,7 @@
 
               {% for tag in pub.tags.all %}
                 {% if tag.name != 'Другое' %}
-                  <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                  <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                     <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                     <div class="pub_tag">
                       <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -105,7 +105,7 @@
 
               {% for tag in pub.tags.all %}
                 {% if tag.name == 'Другое' %}
-                  <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                  <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                     <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                     <div class="pub_tag">
                       <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -126,7 +126,7 @@
     </div>
   {% else %}
 
-    <div class="pub_url" style="display: none;">{% url 'pub:pub_one' pk=pub.id %}</div>
+    <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
 
     <div class="preview" style="background: url({{ pub.preview.url }}); background-position: center; background-size: cover;">
       <div class="preview_cntnr">
@@ -141,7 +141,7 @@
       <div class="pub_to_do">
         <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}" onclick="
         {% if user.is_authenticated %}
-          toggleSavePub_LH( {{ pub.id }} )
+          toggleSavePub_D( {{ pub.id }} )
         {% else %}
           YouHaveToLogin('сохранить публикацию')
         {% endif %}" title="Сохранить в «Избранное»">
@@ -150,10 +150,10 @@
         </div>
         <div class="pub_author_cntnr">
           <div class="pub_author">
-            <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+            <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
             <div class="nickname_and_role">
               <div class="nickname">
-                <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                   {% if user.is_authenticated %}
                     {% if user != pub.author %}
@@ -177,8 +177,8 @@
         {% for tag in pub.tags.all %}
           {% if tag.name != 'Другое' %}
             <form class="opened_filter_form" action="
-            {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
-            {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+            {% if pub.type.id == 11 %} {% url 'repairs' %} {% endif %}
+            {% if pub.type.id == 21 %} {% url 'designs' %} {% endif %}"
             method="GET">
               <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
               <div class="pub_tag">
@@ -194,8 +194,8 @@
         {% for tag in pub.tags.all %}
           {% if tag.name == 'Другое' %}
             <form class="opened_filter_form" action="
-            {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
-            {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+            {% if pub.type.id == 11 %} {% url 'repairs' %} {% endif %}
+            {% if pub.type.id == 21 %} {% url 'designs' %} {% endif %}"
             method="GET">
               <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
               <div class="pub_tag">
@@ -210,8 +210,8 @@
 
         {% if pub.cost_min %}
           <form class="opened_filter_form" action="
-          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
-          {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+          {% if pub.type.id == 11 %} {% url 'repairs' %} {% endif %}
+          {% if pub.type.id == 21 %} {% url 'designs' %} {% endif %}"
           method="GET">
             <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
             <div class="pub_tag">
@@ -224,8 +224,8 @@
 
         {% if pub.cost_max %}
           <form class="opened_filter_form" action="
-          {% if pub.type.id == 11 %} {% url 'pub:repairs' %} {% endif %}
-          {% if pub.type.id == 21 %} {% url 'pub:designs' %} {% endif %}"
+          {% if pub.type.id == 11 %} {% url 'repairs' %} {% endif %}
+          {% if pub.type.id == 21 %} {% url 'designs' %} {% endif %}"
           method="GET">
             <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
             <div class="pub_tag">
@@ -247,7 +247,7 @@
         <h4>Управление:</h4>
         <a onclick="open_statistics()"><p id="statistics">Статистика</p></a>
         <a onclick="user_tried_to_delete()"><p id="delete">Удалить</p></a>
-        <a href="{% url 'pub:pub_edit' pk=pub.id %}"><p id="edit">Редактировать</p></a>
+        <a href="{% url 'pub:edit' pk=pub.id %}"><p id="edit">Редактировать</p></a>
       </div>
 
       <div class="statistics"> <!-- посмотреть статистику по публикации -->
@@ -262,9 +262,9 @@
 
       <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
         <h1>Вы точно хотите удалить публикацию?</h1>
-        <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
+        <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
         <div class="cancel_or_delete">
-          <p id="cancel_deleting">Отмена</p>
+          <p id="cancel_deleting" class="cancel">Отмена</p>
           <a href="{% url 'pub:delete' pk=pub.id %}" id="delete">Удалить публикацию</a>
         </div>
       </div>
@@ -273,9 +273,7 @@
 
   <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
     <div class="pub_additional_functions dont_close_on_click">
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
-
-      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
         <input type="hidden" name="pub_type" value="31">
         <div class="selected_tags" style="display: none;">
           <!-- js поместит сюда input'ы всех тегов определённой публикации -->
@@ -284,6 +282,7 @@
       </form>
 
       <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
     </div>
   </div>
 
@@ -299,7 +298,7 @@
 
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
-    <a href="{% url 'pub:pub_one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
+    <a href="{% url 'pub:one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
   </div>
 
 </div>

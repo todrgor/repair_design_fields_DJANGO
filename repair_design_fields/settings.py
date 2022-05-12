@@ -162,7 +162,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --***     PLUGINS INFO    ***--
 
-PHONENUMBER_DB_FORMAT = "INTERNATIONAL"
+PHONENUMBER_DB_FORMAT = 'INTERNATIONAL'
 
 # CKEDITOR_UPLOAD_PATH = 'content/ckeditor/' # так сама консоль почему-то посоветовала
 CKEDITOR_UPLOAD_PATH = MEDIA_DIR + '/pub_media/'

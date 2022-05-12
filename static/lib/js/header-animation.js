@@ -21,7 +21,7 @@ function open_noti(idAccount) {
       $is_opened_notifications = 0;
     }
     $.ajax({
-          url: "/account/NewNotiWereSeen/" + idAccount + "/",
+          url: "/account/" + idAccount + "/NewNotiWereSeen/",
 
           success: function (data) {
               if (data.result == 0) {

@@ -1,6 +1,6 @@
 function toggleRemovePubFromSaved_D(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -30,7 +30,7 @@ function toggleRemovePubFromSaved_D(idPub) {
 
 function toggleRemovePubFromSaved_R (idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -58,7 +58,7 @@ function toggleRemovePubFromSaved_R (idPub) {
 
 function toggleRemovePubFromSaved_LH(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -86,7 +86,7 @@ function toggleRemovePubFromSaved_LH(idPub) {
 
 function toggleGetNotiFromAuthor(idAccount) {
   $.ajax({
-        url: "/account/getNotifications/" + idAccount + "/",
+        url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -169,7 +169,7 @@ function shareThePub() {
   $('.share_the_pub').addClass('show');
   $('.share_the_pub a').html(pub_url).attr('href', pub_url);
   $.ajax({
-        url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
+        url: "/pub/" + $opened_pub_additional_functions_id + "/change_shared_count/",
 
         success: function (data) {
           console.log("Успех c увеличением счётчика репостов");
@@ -271,7 +271,7 @@ function setThePubSeen() {
         if (visible >= fraction) { // если публикация достаточно в зоне видимости
             $SeenPubsList.push(pub.id);
             $.ajax({
-                  url: "/pub/set_seen/" + pub.id + "/",
+                  url: "/pub/" + pub.id + "/set_seen/",
 
                   success: function (data) {
                     console.log("+1 к счётчику просмотров публикации с ID:" +pub.id);
@@ -340,7 +340,7 @@ $(document).ready(function() {
 
 
 $(document).on('click', function(e) {
-  if ($(e.target).hasClass('pub_additional_functions_bg')) {
+  if ($(e.target).hasClass('pub_additional_functions_bg')  || $(e.target).hasClass('cancel')) {
     console.log("pub_additional_functions_bg closed");
     close_additional_functions();
   }

@@ -37,10 +37,10 @@
   </div>
   {% if tags and tag_categories %}
     <div class="page_title">
-        <p class="title_p">Теги публикаций и их категории</p>
-        <p class="count_pubs">панель администратора</p>
+        <p class="title_p" style="width: max-content;">Теги публикаций и их категории</p>
+        <p class="count_pubs" style="width: 20%; margin: 0 5% 0 2%; float: none;">всего {{ tag_categories.count }} категорий и {{ tags.count }} тегов сейчас</p>
         {% if user.role.id == 4 %}
-          <div class="create_new_tag_or_category">
+          <div class="create_new_tag_or_category" style="width: 20%; height: auto; margin-top: -5px; margin-left: 0;">
             <p class="create_new category">Новая категория тегов ›</p>
             <p class="create_new tag">Новый тег ›</p>
           </div>
@@ -128,7 +128,7 @@
                         <ul>
                           {% for pub in pubs %}
                             {% if tag in pub.tags.all %}
-                              <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
+                              <li><a href="{% url 'pub:one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
                             {% endif %}
                           {% endfor %}
                         </ul>
@@ -153,11 +153,12 @@
                           <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
                         {% endfor %}
                       </td>
+
                       <td class="pubs following">
                         <ul>
                           {% for pub in pubs %}
                             {% if tag in pub.tags.all %}
-                              <li><a href="{% url 'pub:pub_one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
+                              <li><a href="{% url 'pub:one' pk=pub.id %}" class="black_url url_hover_text_decoration"><p style="display: block;">{{ pub.title }}</p></a></li>
                             {% endif %}
                           {% endfor %}
                         </ul>
@@ -178,9 +179,9 @@
           <input type="hidden" name="tag_or_category_to_delete" value="">
           <input type="hidden" name="object_id" value="">
           <h1 class="title dont_close_on_click">Вы точно хотите удалить smthng?</h1>
-          <p style="margin: 20px 0;" class="description dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Это нельзя будет восстаноить.</p>
+          <p style="margin: 20px 0;" class="description dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Это нельзя будет восстаноить. Никак.</p>
           <div class="cancel_or_delete">
-            <p id="cancel_deleting">Отмена</p>
+            <p id="cancel_deleting" class="cancel">Отмена</p>
             <button type="submit" id="delete">Удалить smthng</button>
           </div>
         </form>

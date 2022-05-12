@@ -37,8 +37,8 @@
   </div>
   <div class="page_title">
       <p class="title_p">Публикации</p>
-      <p class="count_pubs">панель администратора</p>
-      {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new" style="margin-left: 46%;">создать новую ›</a>{% endif %}
+      <p class="count_pubs">всего {{ pubs.count }}</p>
+      {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new" style="margin-left: 59%;">создать новую ›</a>{% endif %}
   </div>
    <div class="pubs_container">
      <div class="pubs_container_one_type show" id='pubs'>
@@ -60,46 +60,42 @@
              {% for pub in pubs %}
              <tr id="{{ pub.id }}">
               {% if user.role.id == 4 %}
-                 <td class="functions"><a href="{% url 'pub:pub_edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
+                 <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
                      <p onclick="really_delete_pub({{pub.id }})" id="really_delete">Удалить безвозвратно</p></td>
               {% endif %}
                  <td class="id">{{pub.id }}</td>
                  <td class="width350px">
                      <div class="preview_and_pub_name">
                          <img class="preview" src="{{pub.preview.url }}">
-                         <a href="{% url 'pub:pub_one' pk=pub.id %}" class="name">{{ pub.title }}</a>
+                         <a href="{% url 'pub:one' pk=pub.id %}" class="name">{{ pub.title }}</a>
                      </div>
                  </td>
 
                  <td class="photo_and_nickname" style='align-items: center;'><img src="{{pub.author.photo.url }}" alt=""><a
-                         href="{% url 'auth:account_one' pk=pub.author.id %}">{{ pub.author.username }}</a></td>
+                         href="{% url 'auth:one' pk=pub.author.id %}">{{ pub.author.username }}</a></td>
                 <td class="with200px">{{ pub.type.name }}</td>
                 <td>{{ pub.seen_count }}</td>
                  <td>{{ pub.saved_count }}</td>
                  <td class="following">
                    <ul>
                     {% for su in saved_urls %}
-                      {% if su.pub_id.id == pub.id %}
-                        <li><a href="{% url 'auth:account_one' pk=su.saver_id.id %}">{{ su.saver_id.username }}</a></li>
+                      {% if su.pub.id == pub.id %}
+                        <li><a href="{% url 'auth:one' pk=su.saver.id %}">{{ su.saver.username }}</a></li>
                       {% endif %}
                     {% endfor %}
                    </ul>
                  </td>
                  <td class="following">
                      <ul class="overflowX_auto">
-                       {% for pu in photos_urls %}
-                         {% if pu.id_pub.id == pub.id %}
-                           <li><a href="{{ pu.photo.url }}">{{ pu.photo.name }}</a></li>
-                         {% endif %}
+                       {% for img_url in pub.img_urls_list %}
+                         <li><a href="{{ img_url }}">{{ img_url }}</a></li>
                        {% endfor %}
                      </ul>
                  </td>
                  <td class="following">
                      <ul>
-                       {% for pht in pub_has_tags %}
-                         {% if pht.pub_id.id == pub.id %}
-                           <li>{{ pht.tag_id.tag_category }}: {{ pht.tag_id.tag_name }}</li>
-                         {% endif %}
+                       {% for tag in pub.tags.all %}
+                         <li>{{ tag.category }}: {{ tag.name }}</li>
                        {% endfor %}
                      </ul>
                  </td>
@@ -112,9 +108,9 @@
   <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
     <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
       <h1 class="dont_close_on_click">Вы точно хотите удалить публикацию?</h1>
-      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Публикацию нельзя будет восстаноить.</p>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Публикацию нельзя будет восстаноить. Никак.</p>
       <div class="cancel_or_delete">
-        <p id="cancel_deleting" >Отмена</p>
+        <p id="cancel_deleting" class="cancel">Отмена</p>
         <a href="pub/delete/#>" id="delete">Удалить публикацию</a>
       </div>
     </div>

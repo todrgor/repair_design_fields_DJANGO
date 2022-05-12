@@ -1,5 +1,5 @@
 from django.views.generic.list import ListView
-from django.http import HttpResponse, JsonResponse, HttpResponseNotFound, Http404
+from django.http import JsonResponse, HttpResponse, HttpResponseNotFound, Http404
 # from django.views.generic.detail import DetailView
 
 from django.shortcuts import render, redirect
@@ -24,79 +24,42 @@ import operator
 
 # создание новой публикации
 def CreateNewPub(request):
-    if request.user.is_authenticated:
-        if request.user.role.id in [2, 4]:
-            title = 'Создать публикацию'
-            form = PubForm()
-            tags = Tag.objects.all()
-            tag_categories = {
-                'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
-                'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)),
-                'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
-            }
-            empty_tag_categories_ids = []
-            selected_tags = None
+    if not request.user.is_authenticated:
+        return redirect('main')
+    if not request.user.role.id in [2, 4]:
+        return redirect('main')
 
-            # if request.method == 'POST':
-            #     print(request.POST)
+    title = 'Создать публикацию'
+    form = PubForm()
+    tags = Tag.objects.all()
+    tag_categories = {
+        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
+        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)),
+        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
+    }
+    empty_tag_categories_ids = []
+    selected_tags = None
 
-            if request.method == 'POST':
-                method_POST = request.POST
-                form = PubForm(method_POST)
+    # if request.method == 'POST':
+    #     print(request.POST)
 
-                #   проверка, теги всех ли категорий
-                #   выбраны и переадресация обратно, если нет
-                selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=method_POST['type'])
-                selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
-                all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=method_POST['type']).values_list('category', flat=True))
-                for category in all_tag_categories_for_this_pub_type:
-                    if category.id not in selected_tags_categories_ids:
-                        empty_tag_categories_ids.append(category.id)
+    if request.method == 'POST':
+        method_POST = request.POST
+        form = PubForm(method_POST)
 
-                # если не все категории тегов выбраны или нет превьюшки -- а ну-ка иди дозаполни
-                if empty_tag_categories_ids or not 'preview' in request.FILES:
-                    if not 'preview' in request.FILES:
-                        form.add_error('preview', 'Пожалуйста, загрузите превью!')
+        #   проверка, теги всех ли категорий
+        #   выбраны и переадресация обратно, если нет
+        selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=method_POST['type'])
+        selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
+        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=method_POST['type']).values_list('category', flat=True))
+        for category in all_tag_categories_for_this_pub_type:
+            if category.id not in selected_tags_categories_ids:
+                empty_tag_categories_ids.append(category.id)
 
-                    content = {
-                        'title': title,
-                        'form': form,
-                        'tags': tags,
-                        'tag_categories': tag_categories,
-                        'empty_tag_categories_ids': empty_tag_categories_ids,
-                        'selected_tags': selected_tags,
-                        'action': 'create',
-                		}
-                    return render(request, 'publicationapp/create_new_or_update.html', content)
-
-                #   создание публикции
-                pub_created = Publication.objects.create(
-                    title=method_POST['title'].capitalize(),
-                    type=PubTypes.objects.get(id=method_POST['type']),
-                    preview=('pub_media/' + str(request.FILES['preview'])),
-                    author=User.objects.get(id=request.user.id)
-                    )
-                if pub_created.type.id != 31:
-                    pub_created.content = method_POST['content']
-                    pub_created.save()
-
-                #   сохранение превью
-                fs = FileSystemStorage()
-                preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
-
-                pub_created.tags.add(*selected_tags)
-                pub_created.cost_min = method_POST['cost_min']
-                pub_created.cost_max = method_POST['cost_max']
-                pub_created.save()
-
-                noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Скорее открывайте её!", author=request.user)
-                for s in UserSubscribes.objects.filter(star_id=pub_created.author.id):
-                    Notifications.objects.create(user_receiver=s.subscriber_id, noti_for_user=noti)
-                return redirect('pub:pub_one', pk=pub_created.id)
-                # except:
-                #     form.add_error(None, 'Ошибка создания публикции')
+        # если не все категории тегов выбраны или нет превьюшки -- а ну-ка иди дозаполни
+        if empty_tag_categories_ids or not 'preview' in request.FILES:
+            if not 'preview' in request.FILES:
+                form.add_error('preview', 'Пожалуйста, загрузите превью!')
 
             content = {
                 'title': title,
@@ -108,10 +71,46 @@ def CreateNewPub(request):
                 'action': 'create',
         		}
             return render(request, 'publicationapp/create_new_or_update.html', content)
-        else:
-            return redirect('main')
-    else:
-        return redirect('main')
+
+        #   создание публикции
+        pub_created = Publication.objects.create(
+            title=method_POST['title'].capitalize(),
+            type=PubTypes.objects.get(id=method_POST['type']),
+            preview=('pub_media/' + str(request.FILES['preview'])),
+            author=User.objects.get(id=request.user.id)
+            )
+        if pub_created.type.id != 31:
+            pub_created.content = method_POST['content']
+            pub_created.save()
+
+        #   сохранение превью
+        fs = FileSystemStorage()
+        preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
+
+        pub_created.tags.add(*selected_tags)
+        pub_created.cost_min = method_POST['cost_min']
+        pub_created.cost_max = method_POST['cost_max']
+        pub_created.save()
+
+        noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
+        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Скорее открывайте её!", author=request.user)
+        for s in UserSubscribes.objects.filter(star=pub_created.author.id):
+            Notifications.objects.create(user_receiver=s.subscriber, noti_for_user=noti)
+        return redirect('pub:one', pk=pub_created.id)
+        # except:
+        #     form.add_error(None, 'Ошибка создания публикции')
+
+    content = {
+        'title': title,
+        'form': form,
+        'tags': tags,
+        'tag_categories': tag_categories,
+        'empty_tag_categories_ids': empty_tag_categories_ids,
+        'selected_tags': selected_tags,
+        'action': 'create',
+		}
+    return render(request, 'publicationapp/create_new_or_update.html', content)
 
 
 #   редактирование публикации
@@ -126,11 +125,11 @@ def UpdatePub(request, pk):
     form = PubForm()
     pub_preview = pub.preview
     pub_type = pub.type.id
-    tags = Tag.objects.filter(pub_type=pub.type)
+    tags = Tag.objects.filter(pub_type=pub.type) if request.user.role.id != 4 else Tag.objects.all()
     tag_categories = {
-        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 else None,
-        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 else None,
-        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 else None,
+        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 or request.user.role.id == 4 else None,
+        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 or request.user.role.id == 4 else None,
+        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 or request.user.role.id == 4 else None,
     }
     empty_tag_categories_ids = []
     selected_tags = pub.tags.all()
@@ -141,6 +140,9 @@ def UpdatePub(request, pk):
 
         #   проверка, теги всех ли категорий
         #   выбраны и переадресация обратно, если нет
+        if request.user.role.id == 4 and 'type' in method_POST and method_POST['type']:
+            pub.type = PubTypes.objects.get(id=method_POST['type'])
+
         selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
         selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
         all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
@@ -188,7 +190,7 @@ def UpdatePub(request, pk):
             noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: ' +request.user.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
             Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
-        return redirect('pub:pub_one', pk=pub.id)
+        return redirect('pub:one', pk=pub.id)
 
     form = PubForm({
         'title': pub.title,
@@ -231,11 +233,11 @@ def DeletePub(request, pk):
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
 
         if type == 11:
-            return redirect('pub:repairs')
+            return redirect('repairs')
         if type == 21:
-            return redirect('pub:designs')
+            return redirect('designs')
         if type == 31:
-            return redirect('pub:lifehacks')
+            return redirect('lifehacks')
 
 
 #   просмотр публикции в "Избранном"
@@ -247,15 +249,15 @@ class Saved(ListView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return redirect('main')
-        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver_id=self.request.user).values_list('pub_id', flat=True)).order_by('-pushed')
+        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver=self.request.user).values_list('pub', flat=True)).order_by('-pushed')
 
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
             return redirect('main')
 
         context = super(Saved, self).get_context_data(**kwargs)
-        subscribes_urls = UserSubscribes.objects.filter(subscriber_id=self.request.user)
-        subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+        subscribes_urls = UserSubscribes.objects.filter(subscriber=self.request.user)
+        subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
         context.update({
             'subscribing_authors': subscribing_authors,
@@ -267,10 +269,10 @@ class Saved(ListView):
 def toggle_saved(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
-            duplicate = SavedPubs.objects.filter(saver_id=request.user, pub_id=pk)
+            duplicate = SavedPubs.objects.filter(saver=request.user, pub=pk)
 
             if not duplicate:
-                record = SavedPubs.objects.create(saver_id=request.user, pub_id=Publication.objects.get(id=pk))
+                record = SavedPubs.objects.create(saver=request.user, pub=Publication.objects.get(id=pk))
                 record.save()
                 result = 1
             else:
@@ -278,7 +280,7 @@ def toggle_saved(request, pk):
                 result = 0
 
             pub = Publication.objects.get(id=pk)
-            pub.saved_count = SavedPubs.objects.filter(pub_id__id=pk).count()
+            pub.saved_count = SavedPubs.objects.filter(pub__id=pk).count()
             pub.save()
             # context = {
             #     'user': request.user,
@@ -288,7 +290,7 @@ def toggle_saved(request, pk):
             # result = render_to_string('newsapp/includes/likes_block.html', context)
             noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub_id=pub.id).count() ) + " сохранений"), author=request.user)
+            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
             Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
             return JsonResponse({'result': result})
@@ -303,7 +305,7 @@ def set_seen(request, pk):
 
         if request.user.is_authenticated:
             user = request.user
-            seen_url_object = SeenPubs.objects.get(watcher_id=user, pub_id=pub) if SeenPubs.objects.filter(watcher_id=user, pub_id=pub) else SeenPubs.objects.create(watcher_id=user, pub_id=pub)
+            seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
             seen_url_object.count += 1
             seen_url_object.save()
 
@@ -411,19 +413,19 @@ class PubWatchOne(ListView):
         if self.request.user.is_authenticated:
             user = self.request.user
 
-            saved_urls = SavedPubs.objects.filter(saver_id=user, pub_id=pub)
-            saved_pubs = [sp.pub_id.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber_id=user)
-            subscribing_authors = [sa.star_id.id for sa in subscribes_urls]
+            saved_urls = SavedPubs.objects.filter(saver=user, pub=pub)
+            saved_pubs = [sp.pub.id for sp in saved_urls]
+            subscribes_urls = UserSubscribes.objects.filter(subscriber=user)
+            subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
-            seen_url_object = SeenPubs.objects.get(watcher_id=user, pub_id=pub) if SeenPubs.objects.filter(watcher_id=user, pub_id=pub) else SeenPubs.objects.create(watcher_id=user, pub_id=pub)
+            seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
             seen_url_object.count += 1
             seen_url_object.save()
 
         #   обновление статистики у открываемой публикции
-        ages = (SeenPubs.objects.filter(pub_id=self.kwargs['pk']).aggregate(Sum('watcher_id__age')))['watcher_id__age__sum']
-        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=pub).count()  if SeenPubs.objects.filter(pub_id=pub).count() != 0  else 0
-        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=pub).count() if SavedPubs.objects.filter(pub_id=pub).count() != 0 else 0
+        ages = (SeenPubs.objects.filter(pub=self.kwargs['pk']).aggregate(Sum('watcher__age')))['watcher__age__sum']
+        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
+        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub=pub).count() if SavedPubs.objects.filter(pub=pub).count() != 0 else 0
         pub.seen_count +=1
         pub.save()
 
@@ -474,7 +476,7 @@ class DesignsWatch(ListView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super(DesignsWatch, self).get_context_data(**kwargs)
-        saved_pubs = [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=user, pub_id__type=21)] if user.is_authenticated else None
+        saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=21)] if user.is_authenticated else None
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=21))
         tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
@@ -500,9 +502,9 @@ class LifehacksWatch(ListView):
 
         #   обновление статистики у открываемой публикции
         for pub in Publication.objects.filter(type=31):
-            ages = (SeenPubs.objects.filter(pub_id=pub).aggregate(Sum('watcher_id__age')))['watcher_id__age__sum']
-            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub_id=pub).count()  if SeenPubs.objects.filter(pub_id=pub).count() != 0  else 0
-            pub.average_age_savers =   ages / SavedPubs.objects.filter(pub_id=pub).count() if SavedPubs.objects.filter(pub_id=pub).count() != 0 else 0
+            ages = (SeenPubs.objects.filter(pub=pub).aggregate(Sum('watcher__age')))['watcher__age__sum']
+            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
+            pub.average_age_savers =   ages / SavedPubs.objects.filter(pub=pub).count() if SavedPubs.objects.filter(pub=pub).count() != 0 else 0
             pub.seen_count +=1
             pub.save()
 
@@ -513,8 +515,8 @@ class LifehacksWatch(ListView):
         context = super(LifehacksWatch, self).get_context_data(**kwargs)
         user = self.request.user
 
-        saved_pubs =          [sp.pub_id.id for sp in SavedPubs.objects.filter(saver_id=user, pub_id__type=31)] if user.is_authenticated else None
-        subscribing_authors = [sa.star_id.id for sa in (UserSubscribes.objects.filter(subscriber_id=user))]     if user.is_authenticated else None
+        saved_pubs =          [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=31)] if user.is_authenticated else None
+        subscribing_authors = [sa.star.id for sa in (UserSubscribes.objects.filter(subscriber=user))]     if user.is_authenticated else None
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=31))
         tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))

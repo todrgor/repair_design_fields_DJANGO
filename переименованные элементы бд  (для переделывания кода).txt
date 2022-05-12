@@ -7,3 +7,16 @@ TagName : pub_role : pub_type
 
 css
 roles_and_tags --> types_and_tags
+
+///
+
+UserSubscribes : subscriber_id : subscriber
+UserSubscribes : star_id : star
+
+ExpertInfo : expert_id : expert_account
+
+SavedPubs : saver_id : saver
+SavedPubs : pub_id : pub
+
+SeenPubs : pub_id : pub
+SeenPubs : watcher_id : watcher

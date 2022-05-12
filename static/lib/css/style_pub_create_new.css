@@ -26,50 +26,6 @@
   margin: 0 0 27px;
 }
 
-.pub_inp_one .avatar,
-.pub_inp_one .preview {
-  display: flex;
-  align-items: center;
-}
-.pub_inp_one .avatar_now p,
-.pub_inp_one .preview_now p {
-  width: 100%;
-  margin: 10px 0;
-}
-.pub_inp_one .avatar_now img {
-  border-radius: 100%;
-  max-width: 150px;
-}
-.pub_inp_one .preview_now img,
-.pub_inp_one .preview_now video {
-  max-width: 220px;
-}
-.pub_inp_one .avatar_now label,
-.pub_inp_one .preview_now label {
-  font-size: 14px;
-  line-height: normal;
-  letter-spacing: normal;
-  width: max-content;
-  font-weight: normal;
-}
-.pub_inp_one .avatar_now .delete_avatar input {
-  float: left;
-  margin-top: 10px;
-}
-.pub_inp_one .avatar_now .delete_avatar p{
-  margin: 0 0 0 23px;
-}
-.pub_inp_one .avatar_update,
-.pub_inp_one .preview_update {
-  margin-left: 20px;
-  margin-top: 30px;
-}
-.pub_inp_one .preview_update p {
-  width: fit-content;
-}
-
-
-
 .pub_inp_one h4 {
   margin-bottom: 0;
 }
@@ -152,22 +108,29 @@ select[name="type"] {
 }
 input[type="submit"] {
   cursor: pointer;
-    width: 30%;
-    margin: 0 0 10px;
-    padding: 10px 0;
-    background: #545454;
-    color: #f8f8f8;
-    border: none;
-    border-radius: 10px;
+  width: 30%;
+  margin: 0 0 10px;
+  padding: 10px 0;
+  background: #545454;
+  color: #f8f8f8;
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 50px;
 }
 input[type="submit"]:hover {
   background: gray;
 }
 
-.filter_mini_div {
+.filter_mini_div,
+.pub_content {
   display: none;
 }
-.filter_mini_div.show {
+.pub_content.show {
+  display: flex;
+  flex-direction: column;
+}
+.filter_mini_div.show,
+.pub_content.show {
   display: flex;
 }
 
@@ -226,10 +189,153 @@ p.cancel_following.dont_cancel:hover {
 
 
 
-/* для создания нового пользователя */
+/* для создания/редактирования пользователя */
 .expert_inputs {
   display: none;
 }
 .expert_inputs.show {
   display: inherit;
+}
+
+.contact_info p {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.contact_info img {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.pub_inp_one .avatar,
+.pub_inp_one .preview {
+  display: flex;
+  align-items: center;
+}
+.pub_inp_one .avatar_now p,
+.pub_inp_one .preview_now p {
+  width: 100%;
+  margin: 10px 0;
+}
+.pub_inp_one .avatar_now img {
+  border-radius: 100%;
+  max-width: 150px;
+}
+.pub_inp_one .preview_now img,
+.pub_inp_one .preview_now video {
+  max-width: 220px;
+}
+.pub_inp_one .avatar_now label,
+.pub_inp_one .preview_now label {
+  font-size: 14px;
+  line-height: normal;
+  letter-spacing: normal;
+  width: max-content;
+  font-weight: normal;
+}
+.pub_inp_one .avatar_now .delete_avatar input {
+  float: left;
+  margin-top: 10px;
+}
+.pub_inp_one .avatar_now .delete_avatar p{
+  margin: 0 0 0 23px;
+}
+.pub_inp_one .avatar_update,
+.pub_inp_one .preview_update {
+  margin: auto;
+  margin-top: 6%;
+  margin-left: 20px;
+}
+.pub_inp_one .preview_update p {
+  width: fit-content;
+}
+.delete_account {
+  opacity: 1;
+  color: #bd1c1c;
+  cursor: pointer;
+}
+.delete_account:hover {
+  color: white;
+  background: red;
+  padding: 6px 9px;
+  border-radius: 8px;
+}
+.additional_functions_bg {
+    opacity: 0.5;
+    display: none;
+    transition: 0.5s ease;
+    width: 100%;
+    height: 100%;
+    padding-top: calc(10% + 2px);
+    padding-right: 17%;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    background: #23232347;
+}
+.additional_functions_bg.show {
+    z-index: 11;
+    opacity: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+.delete_the_user {
+    text-align: center;
+    position: fixed;
+    top: 150px;
+    right: 14%;
+    margin: 0 auto;
+    z-index: 15;
+    background: #fff;
+    padding: 30px 5px;
+    border-radius: 30px;
+    width: 500px;
+    box-shadow: 0px 0px 80px #8c8c8c;
+    display: none;
+    /* transition: 0.3s ease; */
+}
+.delete_the_user.show {
+    display: block;
+}
+.cancel_or_delete {
+    display: flex;
+    margin: 50px auto 0;
+    width: calc(100% - 40px);
+    justify-content: space-between;
+}
+.cancel_or_delete p,
+.cancel_or_delete p:hover {
+  background: #d6e6c4;
+  color: green;
+}
+.cancel_or_delete p,
+.cancel_or_delete a {
+  background: #e6e6e6;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  width: calc(50% - 29px);
+  color: gray;
+}
+#delete:hover {
+  color: red;
+  background: #ffd2d2;
+}
+
+
+.change_password label {
+  opacity: 1;
+  cursor: auto;
+  font-size: 21px;
+  letter-spacing: 0;
+}
+
+.change_password .helptext {
+  font-size: 18px;
+  letter-spacing: 0;
+  font-weight: 500;
 }

@@ -31,7 +31,7 @@
 
   <div class="pubs_container">
     <div class="pub_title pub_inp_one">
-      <p>Спасибо Вам за желание размещать публикации в нашей ИС! Заполните заявку, расскажите о себе, Ваших умениях, чем бы вы могли быть полезны, и предоставьте контактные данные и ссылки на ресурсы с Вашими работами. Мы оценим Вашу опытность и либо дадим вам роль автора, либо откажем Вам. В любом случае вы получите уведомление о результате нашего решения.</p>
+      <p>Спасибо Вам за желание размещать публикации в нашей ИС! Заполните заявку, расскажите о себе, Ваших умениях, чем бы Вы могли быть полезны, и предоставьте контактные данные и ссылки на ресурсы с Вашими работами. Мы оценим Вашу опытность и либо дадим Вам роль автора, либо откажем Вам. В любом случае Вы получите уведомление о результате нашего решения.</p>
     </div>
 
     <form class="" action="" method="post" enctype="multipart/form-data">
@@ -44,11 +44,13 @@
         {{ form.desc.errors }}
         <p>Расскажите, где как и с кем Вы работали, в чём Вы опытны, и какой полезной информацией уже готовы поделиться. Не забудьте о подтверждении написанного — обязательно оставьте ссылки на ресурсы про Вас, Ваши работы и, если пожелаете, сслыки на что-нибудь ещё. Без подтверждения заявленного в заявке вероятность стать автором крайне низкая.</p>
       </div>
+
       <div class="pub_description pub_inp_one">
         <h4>Если у вас есть фотографии о Вас и/или Ваших навыках</h4>
         {{ form.photos }}
         {{ form.photos.errors }}
       </div>
+
       <div class="pub_title pub_inp_one">
         <h4 style="color: gray;">Далее – если Вы станете автором:</h4>
         <p>В случае чего, информацию о себе можно будет изменить в настройках.</p>
@@ -60,43 +62,89 @@
         {{ expert_info_form.knowledge.errors }}
         <p>Читатель должен понять, что у Вас достаточно опыта, чтобы обратиться к Вам за услугой для решения его проблемы.</p>
       </div>
+
       <div class="pub_title pub_inp_one">
         <h4>Ваше уникальное торговое предложение:</h4>
         {{ expert_info_form.offer }}
         {{ expert_info_form.offer.errors }}
-        <p>Если будете размещать не только публикации, но и оказывать услуги по опыту.</p>
+        <p>Если будете размещать не только публикации, но и оказывать квалифицированные услуги.</p>
       </div>
-      <div class="pub_title pub_inp_one">
-        <h4>Контактные данные:</h4>
-        {{ expert_info_form.site }}
-        {{ expert_info_form.site.errors }}
-        {{ expert_info_form.vk }}
-        {{ expert_info_form.vk.errors }}
-        {{ expert_info_form.ok }}
-        {{ expert_info_form.ok.errors }}
-        {{ expert_info_form.inst }}
-        {{ expert_info_form.inst.errors }}
-        {{ expert_info_form.fb }}
-        {{ expert_info_form.fb.errors }}
-        {{ expert_info_form.whatsapp }}
-        {{ expert_info_form.whatsapp.errors }}
-        {{ expert_info_form.viber }}
-        {{ expert_info_form.viber.errors }}
-        {{ expert_info_form.telegram }}
-        {{ expert_info_form.telegram.errors }}
-        <p>Необязательно всё заполнять, но очень приветствуется.</p>
-      </div>
-      <div class="pub_title pub_inp_one">
-        <h4>Адрес Вашего офиса:</h4>
-        {{ expert_info_form.address }}
-        {{ expert_info_form.address.errors }}
-        <p>Если офис есть, как и жажда клиентов.</p>
-      </div>
-      <div class="pub_title pub_inp_one">
-        <h4>Что-то дополнительно:</h4>
-        {{ expert_info_form.other }}
-        {{ expert_info_form.other.errors }}
-        <p>Необязательно заполнять, но тоже приветствуется.</p>
+
+      <div class="pub_title pub_inp_one contact_info">
+        <h4>Контакты:</h4>
+        <p style="margin-bottom: 10px;">Укажите, по каким контактам клиент сможет с Вами связаться. Заполнять по желанию.</p>
+
+        <p>
+          <img src="/static/sources/SVG/site.svg">
+          {{ expert_info_form.site }}
+          {{ expert_info_form.site.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/telephone.svg">
+          {{ expert_info_form.bisness_phone_number }}
+          {{ expert_info_form.bisness_phone_number.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/telegram.svg">
+          {{ expert_info_form.telegram }}
+          {{ expert_info_form.telegram.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/whatsapp.svg">
+          {{ expert_info_form.whatsapp }}
+          {{ expert_info_form.whatsapp.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/viber.svg">
+          {{ expert_info_form.viber }}
+          {{ expert_info_form.viber.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/lol.svg">
+          {{ expert_info_form.lol }}
+          {{ expert_info_form.lol.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/vk.svg">
+          {{ expert_info_form.vk }}
+          {{ expert_info_form.vk.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/instagram.svg">
+          {{ expert_info_form.inst }}
+          {{ expert_info_form.inst.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/twitter.svg">
+          {{ expert_info_form.twitter }}
+          {{ expert_info_form.twitter.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/odnoklassniki.svg">
+          {{ expert_info_form.ok }}
+          {{ expert_info_form.ok.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/address.svg">
+          {{ expert_info_form.address }}
+          {{ expert_info_form.address.errors }}
+        </p>
+
+        <p>
+          <img src="/static/sources/SVG/other.svg">
+          {{ expert_info_form.other }}
+          {{ expert_info_form.other.errors }}
+        </p>
       </div>
 
       <input type="submit" name="send_application" value="Подать заявку" style="width:40%; margin-bottom: 50px;">

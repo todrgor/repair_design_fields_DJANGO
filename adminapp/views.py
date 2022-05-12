@@ -281,6 +281,8 @@ def LettersToSupport(request):
                 'new_strange_letters_count': new_strange_letters_count,
                 'all_strange_letters_photos': all_strange_letters_photos,
 
+                'all_new_letters_count': ContactingSupport.objects.filter(answer_content=None).count(),
+                'all_letters_count': ContactingSupport.objects.filter().count(),
                 'title': title,
             }
             return render(request, 'adminapp/letters_to_support.html', content)
@@ -288,6 +290,108 @@ def LettersToSupport(request):
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
     else:
         return HttpResponse("Сначала авторизируйтесь! <a href='/login/'>Авторизоваться</a>")
+
+
+#   стартовая страница админа
+class StartPanel(ListView):
+    model =  Publication
+    template_name = 'adminapp/main.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
+
+    def get_context_data(self, **kwargs):
+        title ='Главная | Панель администратора'
+        pubs = Publication.objects.filter(type__id__in=[11, 21, 31]).order_by('-pushed')[:3]
+        noties = Notifications.objects.filter().order_by('-when')[:4]
+        users = User.objects.filter().order_by('-last_entry')[:4]
+        # applications =
+        # complaints =
+        tag_categories = TagCategory.objects.all().order_by('id')[:4]
+        tags = [Tag.objects.filter(category=category).exclude(name='Авторский стиль (как видит сам автор, без придуманных стилей)')[:4] for category in tag_categories]
+        new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
+        answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
+
+        data = {
+            # 'noties': noties,
+            'title': title,
+            'pubs': pubs,
+            'users': users,
+            'new_letters_to_support': new_letters_to_support,
+            'answered_letters_to_support': answered_letters_to_support,
+    		'tags': tags,
+    		'tag_categories': tag_categories,
+        }
+        return data
+
+
+#   страница всех публикаций в ИС
+class PubList(ListView):
+    model =  Publication
+    template_name = 'adminapp/publications.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        title ='Публикации | Панель администратора'
+        pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
+        saved_urls = SavedPubs.objects.filter(pub__in = pubs)
+
+        data = {
+            'title': title,
+            'pubs': pubs,
+            'saved_urls': saved_urls,
+        }
+        return data
+
+
+# страница всех пользователей в ИС
+class UserList(ListView):
+    model =  User
+    template_name = 'adminapp/users.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+        else:
+            resp = super().get(*args, **kwargs)
+            print('Finished processing GET request')
+            print(str(resp))
+            return resp
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        title ='Пользователи | Панель администратора'
+        users = User.objects.filter().order_by('-last_entry')
+        saved_urls = SavedPubs.objects.filter()
+        seen_urls = SeenPubs.objects.filter()
+        subscribed_urls = UserSubscribes.objects.filter()
+        noties = Notifications.objects.filter()
+
+        data = {
+            'title': title,
+            'users': users,
+            'saved_urls': saved_urls,
+            'seen_urls': seen_urls,
+            'subscribed_urls': subscribed_urls,
+            'noties': noties,
+        }
+        return data
 
 
 #    отображение, создание,
@@ -374,106 +478,3 @@ def TagsAndTagCategories(request):
             return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
     else:
         return HttpResponse("Сначала авторизируйтесь! <a href='/login/'>Авторизоваться</a>")
-
-#   стартовая страница админа
-class StartPanel(ListView):
-    model =  Publication
-    template_name = 'adminapp/main.html'
-
-    def get(self, *args, **kwargs):
-        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
-            print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
-        else:
-            resp = super().get(*args, **kwargs)
-            print('Finished processing GET request')
-            print(str(resp))
-            return resp
-
-    def get_context_data(self, **kwargs):
-        title ='Главная | Панель администратора'
-        pubs = Publication.objects.filter(type__id__in=[11, 21, 31]).order_by('-pushed')[:3]
-        noties = Notifications.objects.filter().order_by('-when')[:4]
-        users = User.objects.filter().order_by('-last_entry')[:4]
-        # applications =
-        # complaints =
-        tag_categories = TagCategory.objects.all().order_by('id')[:4]
-        tags = [Tag.objects.filter(category=category).exclude(name='Авторский стиль (как видит сам автор, без придуманных стилей)')[:4] for category in tag_categories]
-        new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
-        answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
-
-        data = {
-            # 'noties': noties,
-            'title': title,
-            'pubs': pubs,
-            'users': users,
-            'new_letters_to_support': new_letters_to_support,
-            'answered_letters_to_support': answered_letters_to_support,
-    		'tags': tags,
-    		'tag_categories': tag_categories,
-        }
-        return data
-
-
-#   страница всех публикаций в ИС
-class PubList(ListView):
-    model =  Publication
-    template_name = 'adminapp/publications.html'
-
-    def get(self, *args, **kwargs):
-        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
-            print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
-            # return HttpResponseRedirect('/')
-        else:
-            resp = super().get(*args, **kwargs)
-            print('Finished processing GET request')
-            print(str(resp))
-            return resp
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        title ='Публикации | Панель администратора'
-        pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
-        saved_urls = SavedPubs.objects.filter(pub_id__in = pubs)
-
-        data = {
-            'title': title,
-            'pubs': pubs,
-            'saved_urls': saved_urls,
-        }
-        return data
-
-
-# страница всех пользователей в ИС
-class UserList(ListView):
-    model =  User
-    template_name = 'adminapp/users.html'
-
-    def get(self, *args, **kwargs):
-        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
-            print('проникновение туда, куда нельзя')
-            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
-            # return HttpResponseRedirect('/')
-        else:
-            resp = super().get(*args, **kwargs)
-            print('Finished processing GET request')
-            print(str(resp))
-            return resp
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        title ='Пользователи | Панель администратора'
-        users = User.objects.filter().order_by('-last_entry')
-        saved_urls = SavedPubs.objects.filter()
-        seen_urls = SeenPubs.objects.filter()
-        subscribed_urls = UserSubscribes.objects.filter()
-        noties = Notifications.objects.filter()
-
-        data = {
-            'title': title,
-            'users': users,
-            'saved_urls': saved_urls,
-            'seen_urls': seen_urls,
-            'subscribed_urls': subscribed_urls,
-            'noties': noties,
-        }
-        return data

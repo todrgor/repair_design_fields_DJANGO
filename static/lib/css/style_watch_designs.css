@@ -8,6 +8,7 @@
   justify-content: center;
   z-index: 8;
 }
+
 .filter_and_gradient_container {
   width: 80%;
   max-width: 1100px;
@@ -31,14 +32,18 @@
   transition: all 0.4s ease;
   margin: 10px 0 0 0;
 }
-.filter_p, .filter_logo {
+
+.filter_p,
+.filter_logo {
   transition: all 0.4s ease;
 }
 
-.filter.user_scrolled, .filter.tags_count_showed.user_scrolled {
+.filter.user_scrolled,
+.filter.tags_count_showed.user_scrolled {
     margin: 10px -80px 0 0;
 }
-.filter.user_scrolled .filter_p {
+.filter.user_scrolled
+.filter_p {
     display: none;
 }
 .filter.user_scrolled .filter_tags_count {
@@ -68,22 +73,27 @@
   cursor: pointer;
   /* box-shadow: 0px 0px 20px #8d8787; */
 }
+
 .filter_btn.tags_count_showed {
   padding-right: 20px;
 }
+
 .filter_btn p {
   font-family: "Roboto", sans-serif;
   font-size: 14px;
   line-height: 16px;
   color: #FFFFFF;
 }
+
 .filter img {
   margin-right: 6px;
   transition: all 0.4s ease;
 }
+
 .filter:hover >  .filter_btn img {
   transform: rotate(-25deg);
 }
+
 .filter_tags_count {
   transition: all 0.4s ease;
   cursor: pointer;
@@ -98,6 +108,7 @@
   margin: -20px 0 0 -20px;
   display: none;
 }
+
 .filter_tags_count.show {
   display: inherit;
 }
@@ -160,6 +171,7 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
     display: none;
 }
+
 .opened_filter::-webkit-scrollbar-thumb:window-inactive {
    background: gray;
    display: none;
@@ -216,6 +228,7 @@
     transition: all 0.55s ease;
     max-height: 25px;
 }
+
 .clear_filter:hover {
   color: black;
 }
@@ -242,6 +255,7 @@
     font-family: 'Roboto';
     cursor: pointer;
 }
+
 .to_close_filter{
   margin-top: 2.5px;
   margin-left: 5px;
@@ -271,12 +285,14 @@
   margin: 0 0 20px;
 }
 
-.opened_filter_text, .filter_to_filter {
+.opened_filter_text,
+.filter_to_filter {
   font-size: 15px;
   letter-spacing: 0;
   margin: 0 0 5px;
   font-family: 'Roboto';
 }
+
 .full_width {
   width: 100%;
 }
@@ -305,6 +321,7 @@
   float: left;
   margin-right: 10px;
 }
+
 .count_pubs {
   font-family: "Open Sans", sans-serif;
   font-style: normal;
@@ -351,10 +368,12 @@ input::-webkit-inner-spin-button {
 .pubs_container {
   width: 80%;
   max-width: 1100px;
+  min-height: 600px;
   margin: 0 auto;
     display: flex;
   flex-direction: column;
 }
+
 .pub_one {
   display: grid;
   border-radius: 18px;
@@ -427,6 +446,7 @@ input::-webkit-inner-spin-button {
   letter-spacing: 0.065em;
   margin: 0 0 27px;
 }
+
 .pub_text {
   min-height: 180px;
   max-height: 180px;
@@ -478,9 +498,11 @@ input::-webkit-inner-spin-button {
   background: linear-gradient(0deg, rgb(22 21 21 / 82%), rgb(22 21 21 / 26%)), radial-gradient(82.88% 1513.02% at 8.1% 50%, #BE0D0D 0%, rgb(137 0 49 / 78%) 31.25%, rgb(66 0 76 / 78%) 61.46%, rgba(8, 16, 46, 0.22) 93.23%), rgba(0, 0, 0, 0.66);
   transition: all 0.3s ease;
 }
+
 .user_just_saved_it.pub_saved {
   background: linear-gradient(0deg, rgb(22 21 21 / 23%), rgb(22 21 21 / 76%)), radial-gradient(82.88% 1513.02% at 8.1% 50%, #d20000 0%, rgb(151 25 70) 31.25%, rgb(72 0 84 / 64%) 61.46%, #3f51b5 93.23%), rgb(18 56 169 / 66%);
 }
+
 .user_just_saved_it:hover  {
   background: linear-gradient(0deg, rgba(22, 21, 21, 0.2), rgba(22, 21, 21, 0.2)), radial-gradient(82.88% 1513.02% at 8.1% 50%, #BE0D4D 0%, rgba(151, 25, 108, 0.65) 31.25%, rgba(38, 54, 109, 0.28) 61.46%, rgba(8, 16, 46, 0.22) 93.23%), rgba(26, 7, 7, 0.66);
 }
@@ -505,49 +527,59 @@ input.user_just_saved_it_smbt {
 .h1_index {
   margin: 20px auto;
 }
+
 .variants {
   display: flex;
   margin: 0 0 100px;
 }
+
 .variant_one {
   width: 33%;
 }
+
 .variant_one_img {
   width: 340px;
     height: 340px;
     border-radius: 100%;
     margin: 20px auto;
 }
+
 .variant_one_img#repair {
   background: url(../../images/watch_repairs/2.jpeg);
   background-size: 360px;
     background-position: center;
 }
+
 .variant_one_img#design {
   background: url(../../images/slider-1/9.png);
   background-size: 360px;
     background-position: center;
 }
+
 .variant_one_img#lifehacks {
   background: url(../../images/watch_lifehacks/95.png);
   background-size: 390px;
     background-position: center;
 }
+
 .variant_one h4 {
   margin: 10px 0;
     text-align: center;
 }
+
 .variant_one p {
   width: 80%;
     margin: 0 auto;
     text-align: justify;
 }
+
 .variant_one a {
   color: #444;
     display: block;
     margin: 10px 0 0;
     text-align: center;
 }
+
 .variant_one a:hover {
   color: #000;
   text-decoration: underline;

@@ -5,7 +5,7 @@
 
 function toggleSavePub_D(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -25,7 +25,7 @@ function toggleSavePub_D(idPub) {
 
 function toggleGetNotiFromAuthor(idAccount) {
   $.ajax({
-        url: "/account/getNotifications/" + idAccount + "/",
+        url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -67,7 +67,7 @@ function shareThePub() {
   $('.share_the_pub').addClass('show');
   $('.share_the_pub').offset({top:( $('.pub_show_full').offset().top - 40  ), left:( $('.pub_show_full').offset().left - 220  )});
   $.ajax({
-        url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
+        url: "/pub/" + $opened_pub_additional_functions_id + "/change_shared_count/",
 
         success: function (data) {
           console.log("Успех c увеличением счётчика репостов");
@@ -150,7 +150,7 @@ function new_complaint_was_sent() {
 
 $(document).on('click', function(e) {
   if ($is_opened_pub_additional_functions == 1) {
-    if ($(e.target).hasClass('pub_additional_functions_bg')) {
+    if ($(e.target).hasClass('pub_additional_functions_bg') || $(e.target).hasClass('cancel')) {
       $idPub = $opened_pub_additional_functions_id;
       $('.pub_show_full').removeClass('pub_additional_functions_opened');
       $('.pub_additional_functions_bg').toggleClass('show');

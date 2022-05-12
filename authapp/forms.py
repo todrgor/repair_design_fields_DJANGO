@@ -8,7 +8,7 @@ from phonenumber_field.formfields import PhoneNumberField
 
 
 class UserForm(forms.Form):
-    # role = forms.ModelChoiceField(queryset=UserRoles.objects.filter(), initial=1, label="Роль пользователя:", empty_label="Ещё не выбрано")
+    role = forms.ModelChoiceField(queryset=UserRoles.objects.filter(), initial=1, label="Роль пользователя:", empty_label="Ещё не выбрано", required=False)
     username = forms.CharField(max_length=135, label="Никнейм:", widget=forms.TextInput(attrs={'placeholder': 'Ваш никнейм'}))
     photo = forms.ImageField(widget=forms.ClearableFileInput(attrs={'title': "Загрузите свою аватарку"}), label="Аватар пользователя:", required=False)
     bio = forms.CharField(max_length=135, label="Короткое самоописание или ваш актуальный статус:", widget=forms.TextInput(attrs={'placeholder': 'Короткое самоописание или статус'}), required=False)
@@ -39,7 +39,8 @@ class UserExpertForm(forms.Form):
     inst = forms.CharField(max_length=300, label="Instagram:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Instagram'}), required=False)
     ok = forms.CharField(max_length=300, label="Одноклассники:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Одноклассниках'}), required=False)
     twitter = forms.CharField(max_length=300, label="Twitter:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Twitter'}), required=False)
-    other = forms.CharField(max_length=300, label="Дополнительно:", widget=forms.TextInput(attrs={'placeholder': 'Если понадобится указать дополнительную информацию'}), required=False)
+    other = forms.CharField(max_length=300, label="Дополнительно:", widget=forms.Textarea(attrs={'placeholder': 'Дополнительня контактная информация', 'style': 'height: 25px; width: calc(40% + 1.7px); min-width: 270px; min-height: 15px;'}), required=False)
+
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -59,6 +60,10 @@ class RegisterForm(UserCreationForm):
                     field.widget.attrs['placeholder'] = 'Повторите пароль'
             field.help_text = ''
             field.label = ''
+
+
+class UserPasswordForm(forms.Form):
+    password = forms.CharField(label="Пароль:", widget=forms.TextInput(attrs={'placeholder': 'Пароль'}))
 
 
 class LoginForm(AuthenticationForm):

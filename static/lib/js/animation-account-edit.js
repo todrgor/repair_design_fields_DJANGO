@@ -1,6 +1,6 @@
 function cancel_following(idAccount) {
   $.ajax({
-        url: "/account/getNotifications/" + idAccount + "/",
+        url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -19,3 +19,19 @@ function cancel_following(idAccount) {
         }
     });
 }
+
+function deleteTheUser() {
+  $('.additional_functions_bg, .delete_the_user').addClass('show');
+}
+
+function close_additional_functions() {
+  $('.additional_functions_bg, .delete_the_user').removeClass('show');
+  console.log("Закрылись дополнительные действия с публикацией с ID ");
+}
+
+$(document).on('click', function(e) {
+  if ($(e.target).hasClass('additional_functions_bg') || $(e.target).hasClass('cancel')) {
+    console.log("additional_functions_bg closed");
+    close_additional_functions();
+  }
+});

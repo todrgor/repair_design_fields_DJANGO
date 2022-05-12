@@ -40,22 +40,26 @@
         {{ form.type }}
         {{ form.type.errors }}
       </div>
+
       <div class="pub_description pub_inp_one hidden" style="width: 50%;" id="complaint_account">
         <h4>Выберите пользователя:</h4>
         {{ form.complaint_account_id }}
         {{ form.complaint_account_id.errors }}
       </div>
+
       <div class="pub_description pub_inp_one hidden" style="width: 50%;" id="complaint_pub">
         <h4>Выберите публикацию:</h4>
         {{ form.complaint_pub_id }}
         {{ form.complaint_pub_id.errors }}
       </div>
+
       <div class="pub_description pub_inp_one">
         <h4>Текст Вашего обращения:</h4>
         {{ form.desc.errors }}
         {{ form.desc }}
         <p>Каждое обращение будет рассмотрено и с его учётом будут приняты какие-либо меры, о которых автор обращения получит уведомление.</p>
       </div>
+
       <div class="pub_description pub_inp_one">
         <h4>Если у вас есть фотографии по теме:</h4>
         {{ form.photos }}

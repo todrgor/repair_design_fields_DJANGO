@@ -29,11 +29,11 @@
     {% for pub in pubs %}
 
       <div class="pub_one lifehack" id="{{ pub.id }}">
-        <div class="pub_url" style="display: none;">{% url 'pub:pub_one' pk=pub.id %}</div>
+        <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
         {% if user.is_authenticated %}
           {% if pub.author == user or user.role.id == 4 %}
             <div class="info_for_author_or_admin" style="display: none;">
-              <div class="edit_url">{% url 'pub:pub_edit' pk=pub.id %}</div>
+              <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
               <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
               <div class="statistics">
                 <p class="seen_count">{{ pub.seen_count }}</p>
@@ -72,10 +72,10 @@
             </div>
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href="{% url 'auth:account_one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                 <div class="nickname_and_role">
                   <div class="nickname">
-                    <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                    <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                       {% if user.is_authenticated %}
                         {% if user != pub.author %}
@@ -102,7 +102,7 @@
 
             {% for tag in pub.tags.all %}
               {% if tag.name != 'Другое' %}
-                <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                   <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                   <div class="pub_tag">
                     <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -116,7 +116,7 @@
 
             {% for tag in pub.tags.all %}
               {% if tag.name == 'Другое' %}
-                <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                   <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                   <div class="pub_tag">
                     <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -304,9 +304,7 @@
 
   <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
     <div class="pub_additional_functions dont_close_on_click">
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
-
-      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
         <input type="hidden" name="pub_type" value="31">
         <div class="selected_tags" style="display: none;">
           <!-- js поместит сюда input'ы всех тегов определённой публикации -->
@@ -315,6 +313,8 @@
       </form>
 
       <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+
       <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
       <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
       <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
@@ -348,9 +348,9 @@
 
   <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
     <h1>Вы точно хотите удалить публикацию?</h1>
-    <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
+    <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
     <div class="cancel_or_delete">
-      <p id="cancel_deleting">Отмена</p>
+      <p id="cancel_deleting" class="cancel">Отмена</p>
       <a href="" id="delete">Удалить публикацию</a>
     </div>
   </div>

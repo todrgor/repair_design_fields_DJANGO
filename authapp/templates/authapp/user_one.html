@@ -14,8 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="pubs_container" {% if opened_user.role.id == 2 and opened_user.role.id == 4 %} style="min-height: 600px;" {% endif %}>
-
+  <div class="pubs_container">
     <div class="ne_nuzhno_no_dlya_starogo_skripta_nuzhno" style="display: none;"><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
       <div class="pub_id" id="1"></div>
       <div id="tags_count"></div>
@@ -29,7 +28,7 @@
       <div class="opened_filter"></div>
     </div>
 
-    <div class="photo_nickname_role_additionalFunctions" {% if opened_user.role.id == 2 or opened_user.role.id == 4 %} style="margin-top: 100px;" {% endif %}>
+    <div class="photo_nickname_role_additionalFunctions">
       <img src="{{ opened_user.photo.url }}" alt="" class="user_photo">
       <div class="user_nickname_and_role">
         <h4 class="user_nikname">{{ opened_user.username }}</h4>
@@ -62,8 +61,11 @@
         {% endif %}
       {% endif %}
 
-      <p onclick="togglePubAdditionalFunctionsAuthor({{ opened_user.id }})" class="additionalFunctions">•••</p>
+      {% if user != opened_user %}
+        <p onclick="togglePubAdditionalFunctionsAuthor({{ opened_user.id }})" class="additionalFunctions">•••</p>
+      {% endif %}
     </div>
+
     {% if opened_user.bio %}
       <p class="bio notNone">— {{ opened_user.bio }}</p>
       <p class="bio None" style="display:none"></p>
@@ -74,7 +76,7 @@
 
     {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
       <div class="expert_info_and_offer_and_contact_info">
-        {% if expert_info %}
+        {% if expert_info.is_not_empty %}
           <div class="expert_info_and_offer">
             <div class="expert_info">
               <h4>Стаж:</h4>
@@ -84,6 +86,7 @@
                   <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
             </div>
+
             <div class="offer">
               <h4>Услуга:</h4>
                 {% if expert_info.offer %}
@@ -92,10 +95,12 @@
                   <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
             </div>
+
           </div>
+
           <div class="contact_info">
-            {% if expert_info.bisness_phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ expert_info.bisness_phone_number }}</p> {% endif %}
             {% if expert_info.site %} <p class="site"><img src="/static/sources/SVG/site.svg">{{ expert_info.site }}</p> {% endif %}
+            {% if expert_info.bisness_phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ expert_info.bisness_phone_number }}</p> {% endif %}
             {% if expert_info.telegram %} <p class="telegram"><img src="/static/sources/SVG/telegram.svg">{{ expert_info.telegram }}</p> {% endif %}
             {% if expert_info.whatsapp %} <p class="whatsapp"><img src="/static/sources/SVG/whatsapp.svg">{{ expert_info.whatsapp }}</p> {% endif %}
             {% if expert_info.viber %} <p class="viber"><img src="/static/sources/SVG/viber.svg">{{ expert_info.viber }}</p> {% endif %}
@@ -107,14 +112,15 @@
             {% if expert_info.address %} <p class="address"><img src="/static/sources/SVG/address.svg">{{ expert_info.address }}</p> {% endif %}
             {% if expert_info.other %} <p class="other"><img src="/static/sources/SVG/other.svg">{{ expert_info.other }}</p> {% endif %}
 
-            {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
+            {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
               <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
             {% endif %}
           </div>
         {% else %}
           <div class="expert_info">
             <h4 style="width: 50%; margin: 0 auto; opacity: 0.5;">
-              Нет информации о стаже, услугах и контактах этого автора</h4>
+              Нет информации о стаже, услугах и контактах этого автора
+            </h4>
           </div>
         {% endif %}
       </div>
@@ -125,11 +131,11 @@
 
           {% if pub.type.id == 31 %} <!-- если это лайфхак -->
             <div class="pub_one lifehack" id="{{ pub.id }}">
-              <div class="pub_url" style="display: none;">{% url 'pub:pub_one' pk=pub.id %}</div>
+              <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
               {% if user.is_authenticated %}
                 {% if pub.author == user or user.role.id == 4 %}
                   <div class="info_for_author_or_admin" style="display: none;">
-                    <div class="edit_url">{% url 'pub:pub_edit' pk=pub.id %}</div>
+                    <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
                     <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
                     <div class="statistics">
                       <p class="seen_count">{{ pub.seen_count }}</p>
@@ -168,10 +174,10 @@
                   </div>
                   <div class="pub_author_cntnr">
                     <div class="pub_author">
-                      <a href="{% url 'auth:account_one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                      <a href="{% url 'auth:one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                       <div class="nickname_and_role">
                         <div class="nickname">
-                          <a href="{% url 'auth:account_one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                          <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
                             {% if user.is_authenticated %}
                               {% if user != pub.author %}
@@ -198,7 +204,7 @@
 
                   {% for tag in pub.tags.all %}
                     {% if tag.name != 'Другое' %}
-                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                         <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                         <div class="pub_tag">
                           <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -212,7 +218,7 @@
 
                   {% for tag in pub.tags.all %}
                     {% if tag.name == 'Другое' %}
-                      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
+                      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
                         <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
                         <div class="pub_tag">
                           <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
@@ -243,6 +249,7 @@
                   </p>
                 </div>
                 <div class="pub_to_do">
+
                   {% if pub.id in saved_pubs %}
                     <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ pub.id }} )">
                       <img src="/static/sources/SVG/heart.svg" alt="">
@@ -254,7 +261,8 @@
                       <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
                     </div>
                   {% endif %}
-                  <a class="pub_show_full" href="{% url 'pub:pub_one' pk=pub.id %}">Подробнее •••</a>
+
+                  <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
                 </div>
                 <div class="pub_tags"></div>
               </div>
@@ -272,7 +280,7 @@
                 <p class="pub_stats">👀 {{ pub.seen_count }}<br>
                                      ❤  {{ pub.saved_count }} </p>
               </div>
-              <a href="{% url 'pub:pub_one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
+              <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
             </div>
           {% endif %}
         {% endfor %}
@@ -281,30 +289,73 @@
   </div>
 
 
-  <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
-    <div class="pub_additional_functions dont_close_on_click"  style="max-height: fit-content;">
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}">Подать жалобу<br>на пользователя</p>
+  {% if user != opened_user %}
+    <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
+      <div class="pub_additional_functions dont_close_on_click"  style="max-height: fit-content;">
+        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}">Подать жалобу<br>на пользователя</p>
+        {% if user.role.id == 4 and opened_user.role.id != 4 %}
+          <a href="{% url 'auth:settings' pk=opened_user.id%}" class="dont_close_on_click edit">Редактировать</a>
+          <p class="dont_close_on_click delete" onclick="deleteTheUser()">Удалить</p>
+        {% endif %}
+      </div>
     </div>
-  </div>
 
-  <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
-    <div class="pub_additional_functions dont_close_on_click">
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
-
-      <form class="opened_filter_form" action="{% url 'pub:lifehacks' %}" method="GET">
-        <input type="hidden" name="pub_type" value="31">
-        <div class="selected_tags" style="display: none;">
-          <!-- js поместит сюда input'ы всех тегов определённой публикации -->
+    {% if user.role.id == 4 and opened_user.role.id != 4 %}
+      <div class="delete_the_user"> <!-- подтверждение удаления пользователя -->
+        <h1>Вы точно хотите удалить пользователя?</h1>
+        <p style="margin: 20px 0;">Его нельзя будет восстаноить. Никак.</p>
+        <div class="cancel_or_delete">
+          <p id="cancel_deleting" class="cancel">Отмена</p>
+          <a href="{% url 'auth:delete' pk=opened_user.id%}" id="delete">Удалить пользователя</a>
         </div>
-        <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
-      </form>
+      </div>
+    {% endif %}
+  {% endif %}
 
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-      <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
-      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
-      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
+  {% if expert_pubs %}
+    <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
+      <div class="pub_additional_functions dont_close_on_click">
+        <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+          <input type="hidden" name="pub_type" value="31">
+          <div class="selected_tags" style="display: none;">
+            <!-- js поместит сюда input'ы всех тегов определённой публикации -->
+          </div>
+          <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+        </form>
+
+        <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
+        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+
+        <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
+        <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
+        <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
+      </div>
     </div>
-  </div>
+
+    <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
+      <h1>Ссылка на публикацию: </h1>
+      <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
+    </div>
+
+    <div class="statistics"> <!-- посмотреть статистику по публикации -->
+      <h1>Статистика по публикации:</h1>
+      <p>Просмотров: <span class="seen_count"></span></p>
+      <p>Сохранений: <span class="saved_count"></span></p>
+      <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
+      <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
+      <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
+      <p>Жалоб на публикацию: <span class="reported_count"></span></p>
+    </div>
+
+    <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
+      <h1>Вы точно хотите удалить публикацию?</h1>
+      <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" class="cancel">Отмена</p>
+        <a href="" id="delete">Удалить публикацию</a>
+      </div>
+    </div>
+  {% endif %}
 
   <div class="new_complaint"> <!-- написать жалобу -->
     {% csrf_token %}
@@ -314,30 +365,6 @@
     <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
     <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
     <!-- <form> </form> -->
-  </div>
-
-  <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-    <h1>Ссылка на публикацию: </h1>
-    <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
-  </div>
-
-  <div class="statistics"> <!-- посмотреть статистику по публикации -->
-    <h1>Статистика по публикации:</h1>
-    <p>Просмотров: <span class="seen_count"></span></p>
-    <p>Сохранений: <span class="saved_count"></span></p>
-    <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
-    <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
-    <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
-    <p>Жалоб на публикацию: <span class="reported_count"></span></p>
-  </div>
-
-  <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
-    <h1>Вы точно хотите удалить публикацию?</h1>
-    <p style="margin: 20px 0;">Её нельзя будет восстаноить.</p>
-    <div class="cancel_or_delete">
-      <p id="cancel_deleting">Отмена</p>
-      <a href="" id="delete">Удалить публикацию</a>
-    </div>
   </div>
 
 {% endblock %}

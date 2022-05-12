@@ -1,3 +1,11 @@
 cd C:\Users\ОКЕАА\repair_design_fields_DJANGO
 venv\Scripts\activate
 python manage.py runserver
+
+some different nice edits (read more)
++ urls beauty update
++ ordered & advanced func buttoms in lifehacks pubs & user pages
++ fix 'cancel' bag
++ fix user creating & updating animation bag
++ password change func
++ renamed some fields to look normal

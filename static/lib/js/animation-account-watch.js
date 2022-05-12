@@ -9,7 +9,7 @@ function YouHaveToLogin(action) {
 
 function toggleSavePub_LH(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -29,7 +29,7 @@ function toggleSavePub_LH(idPub) {
 
 function toggleSavePub_D(idPub) {
   $.ajax({
-        url: "/pub/make_saved/" + idPub + "/",
+        url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -51,7 +51,7 @@ function toggleSavePub_D(idPub) {
 
 function toggleGetNotiFromAuthor(idAccount) {
   $.ajax({
-        url: "/account/getNotifications/" + idAccount + "/",
+        url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
@@ -72,9 +72,7 @@ function toggleGetNotiFromAuthor(idAccount) {
 function openNewComplaintForm() {
   // $opened_pub_additional_functions_id
   $(' .new_complaint').addClass('show');
-  if ($('.share_the_pub').hasClass('show')) {
-    $('.share_the_pub').removeClass('show')
-  }
+  $('.delete_the_pub, .share_the_pub, .statistics').removeClass('show');
 }
 
 function new_complaint_was_sent() {
@@ -91,10 +89,7 @@ function new_complaint_was_sent() {
       $('.pub_show_full').removeClass('pub_additional_functions_opened');
     }
 
-    $('.new_complaint').removeClass('show');
-    $('.pub_additional_functions_bg').removeClass('show');
-
-    if( typeof $photos != 'undefined' ) {
+    if ( typeof $photos != 'undefined' ) {
       // заполняем объект данных файлами в подходящем для отправки формате
       $.each( $photos, function( key, value ){
         console.log('key: ', key, 'value: ', value.name, value);
@@ -124,8 +119,7 @@ function new_complaint_was_sent() {
           }
       });
 
-      $is_opened_pub_additional_functions = 0;
-      $opened_pub_additional_functions_id = 0;
+      close_additional_functions();
   } else {
     alert('Жалоба не отправлена, для начала напишите её!');
   }
@@ -135,11 +129,11 @@ function shareThePub() {
   server_url = 'http://127.0.0.1:8000';
   pub_url = server_url + $('.lifehack#' + $opened_pub_additional_functions_id + ' .pub_url').html();
   // $opened_pub_additional_functions_id
-  $('.new_complaint, .statistics, .delete_the_pub').removeClass('show');
+  $('.new_complaint, .statistics, .delete_the_pub, .delete_the_user').removeClass('show');
   $('.share_the_pub').addClass('show');
   $('.share_the_pub a').html(pub_url).attr('href', pub_url);
   $.ajax({
-        url: "/pub/change_shared_count/" + $opened_pub_additional_functions_id + "/",
+        url: "/pub/" + $opened_pub_additional_functions_id + "/change_shared_count/",
 
         success: function (data) {
           console.log("Успех c увеличением счётчика репостов");
@@ -158,15 +152,20 @@ function showThePubStatistic() {
   $('.statistics .average_age_savers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_savers').html());
   $('.statistics .shared_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .shared_count').html());
   $('.statistics .reported_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .reported_count').html());
-  $('.new_complaint, .share_the_pub, .delete_the_pub').removeClass('show');
+  $('.delete_the_user, .new_complaint, .share_the_pub, .delete_the_pub').removeClass('show');
   $('.statistics').addClass('show');
+}
+
+function deleteTheUser() {
+  $('.delete_the_pub, .new_complaint, .share_the_pub, .statistics').removeClass('show');
+  $('.delete_the_user').addClass('show');
 }
 
 function deleteThePub() {
   // $opened_pub_additional_functions_id;
   $('.delete_the_pub h1').html('Вы точно хотите удалить публикацию «'+ $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»?');
   $('.delete_the_pub a#delete').attr('href', $('.lifehack#'+ $opened_pub_additional_functions_id +' .delete_url').html());
-  $('.new_complaint, .share_the_pub, .statistics').removeClass('show');
+  $('.delete_the_user, .new_complaint, .share_the_pub, .statistics').removeClass('show');
   $('.delete_the_pub').addClass('show');
 }
 
@@ -240,7 +239,7 @@ function setThePubSeen() {
         if (visible >= fraction) { // если публикация достаточно в зоне видимости
             $SeenPubsList.push(pub.id);
             $.ajax({
-                  url: "/pub/set_seen/" + pub.id + "/",
+                  url: "/pub/" + pub.id + "/set_seen/",
 
                   success: function (data) {
                     console.log("+1 к счётчику просмотров публикации с ID:" +pub.id);
@@ -304,7 +303,7 @@ function close_additional_functions() {
     $idPub = $opened_pub_additional_functions_id;
     $('.pub_one.lifehack#'+$idPub+' .pub_show_full').removeClass('pub_additional_functions_opened');
     $is_opened_pub_additional_functions = $opened_pub_additional_functions_id = 0;
-    $('.pub_additional_functions_bg, .new_complaint, .share_the_pub, .statistics, .delete_the_pub, .for_author_or_admin').removeClass('show');
+    $('.pub_additional_functions_bg, .delete_the_user, .new_complaint, .share_the_pub, .statistics, .delete_the_pub, .for_author_or_admin').removeClass('show');
     $('.photo_nickname_role_additionalFunctions .additionalFunctions').removeClass('opened');
     console.log("Закрылись дополнительные действия с публикацией с ID "+ $idPub);
   }
@@ -317,7 +316,7 @@ $(document).ready(function() {
 });
 
 $(document).on('click', function(e) {
-  if ($(e.target).hasClass('pub_additional_functions_bg')) {
+  if ($(e.target).hasClass('pub_additional_functions_bg') || $(e.target).hasClass('cancel')) {
     console.log("pub_additional_functions_bg closed");
     close_additional_functions();
   }

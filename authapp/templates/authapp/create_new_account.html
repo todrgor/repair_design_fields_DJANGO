@@ -27,7 +27,7 @@
 
   {% if edited_user.id != user.id and user.role.id != 4 %}
     <div class="page_title">
-        <p class="title_p">Вам сюда нельзя! Попытались они чужой аккаунт отредактировать, ага)</p>
+      <p class="title_p">Вам сюда нельзя! Попытались они аккаунт создать, ага)</p>
     </div>
   {% else %}
     <div class="page_title">
@@ -43,6 +43,7 @@
           <h4>Никнейм:</h4>
           {{ form_user.username }}
           {{ form_user.username.errors }}
+          <p style="width: 60%">Никнейм должен быть уникальным (чтобы ни у кого не был такой же).</p>
         </div>
 
         <div class="pub_preview pub_inp_one">
@@ -56,24 +57,33 @@
           <h4>Короткое описание:</h4>
           {{ form_user.bio }}
           {{ form_user.bio.errors }}
+          <p>Можно рассказать о своём статусе, настроении или например об своих основных предпочтениях. </p>
         </div>
 
         <div class="pub_title pub_inp_one">
           <h4>Номер телефона:</h4>
           {{ form_user.phone_number }}
           {{ form_user.phone_number.errors }}
+          <p style="width: 50%">Телефон должен быть уникальным (чтобы ни у кого не был такой же), состоять из 11 цифр и начинаться на знак «+».</p>
         </div>
 
         <div class="pub_title pub_inp_one">
           <h4>Возраст:</h4>
           {{ form_user.age }}
           {{ form_user.age.errors }}
+          <p>От 1 года до 111 лет.</p>
         </div>
 
         <div class="pub_title pub_inp_one">
-          <h4>Роль пользователя в ИС:</h4>
+          <h4>Роль пользователя:</h4>
           {{ form_user.role }}
           {{ form_user.role.errors }}
+        </div>
+
+        <div class="pub_title pub_inp_one">
+          <h4>Пароль:</h4>
+          {{ form_user_password.password }}
+          {{ form_user_password.password.errors }}
         </div>
 
         <div class="expert_inputs">
@@ -83,63 +93,96 @@
             <h4>Стаж:</h4>
             {{ form_expert_user.knowledge }}
             {{ form_expert_user.knowledge.errors }}
+            <p>Читатель должен понять, что у Вас достаточно опыта, чтобы обратиться к Вам за услугой для решения его проблемы.</p>
           </div>
 
           <div class="pub_description pub_inp_one">
             <h4>Услуги:</h4>
             {{ form_expert_user.offer }}
             {{ form_expert_user.offer.errors }}
+            <p>Если будете размещать не только публикации, но и оказывать квалифицированные услуги.</p>
           </div>
 
-          <div class="pub_description pub_inp_one">
+          <div class="pub_title pub_inp_one contact_info">
             <h4>Контакты:</h4>
-            <p>Заполнять по желанию</p>
+            <p style="margin-bottom: 10px;">Укажите, по каким контактам клиент сможет с Вами связаться. Заполнять по желанию.</p>
+
+            <p>
+              <img src="/static/sources/SVG/site.svg">
+              {{ form_expert_user.site }}
+              {{ form_expert_user.site.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/telephone.svg">
+              {{ form_expert_user.bisness_phone_number }}
+              {{ form_expert_user.bisness_phone_number.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/telegram.svg">
+              {{ form_expert_user.telegram }}
+              {{ form_expert_user.telegram.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/whatsapp.svg">
+              {{ form_expert_user.whatsapp }}
+              {{ form_expert_user.whatsapp.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/viber.svg">
+              {{ form_expert_user.viber }}
+              {{ form_expert_user.viber.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/lol.svg">
+              {{ form_expert_user.lol }}
+              {{ form_expert_user.lol.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/vk.svg">
+              {{ form_expert_user.vk }}
+              {{ form_expert_user.vk.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/instagram.svg">
+              {{ form_expert_user.inst }}
+              {{ form_expert_user.inst.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/twitter.svg">
+              {{ form_expert_user.twitter }}
+              {{ form_expert_user.twitter.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/odnoklassniki.svg">
+              {{ form_expert_user.ok }}
+              {{ form_expert_user.ok.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/address.svg">
+              {{ form_expert_user.address }}
+              {{ form_expert_user.address.errors }}
+            </p>
+
+            <p>
+              <img src="/static/sources/SVG/other.svg">
+              {{ form_expert_user.other }}
+              {{ form_expert_user.other.errors }}
+            </p>
+
           </div>
-
-          <div class="pub_title pub_inp_one">
-            {{ form_expert_user.site }}
-            {{ form_expert_user.site.errors }}
-
-            {{ form_expert_user.bisness_phone_number }}
-            {{ form_expert_user.bisness_phone_number.errors }}
-
-            {{ form_expert_user.address }}
-            {{ form_expert_user.address.errors }}
-
-            {{ form_expert_user.telegram }}
-            {{ form_expert_user.telegram.errors }}
-
-            {{ form_expert_user.whatsapp }}
-            {{ form_expert_user.whatsapp.errors }}
-
-            {{ form_expert_user.viber }}
-            {{ form_expert_user.viber.errors }}
-
-            {{ form_expert_user.lol }}
-            {{ form_expert_user.lol.errors }}
-
-            {{ form_expert_user.vk }}
-            {{ form_expert_user.vk.errors }}
-
-            {{ form_expert_user.inst }}
-            {{ form_expert_user.inst.errors }}
-
-            {{ form_expert_user.ok }}
-            {{ form_expert_user.ok.errors }}
-
-            {{ form_expert_user.twitter }}
-            {{ form_expert_user.twitter.errors }}
-          </div>
-
-          <div class="pub_title pub_inp_one">
-            <h4>Что-то дополнительно:</h4>
-            {{ form_expert_user.other }}
-            {{ form_expert_user.other.errors }}
-            <p>Необязательно заполнять, но тоже приветствуется.</p>
-          </div>
-
         </div>
-        <input type="submit" name="create!" value="Создать пользователя" style="margin-bottom: 50px;">
+
+        <input type="submit" name="create!" value="Создать пользователя">
       </form>
     </div>
   {% endif %}

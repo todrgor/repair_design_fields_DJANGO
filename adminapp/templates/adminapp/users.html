@@ -37,8 +37,8 @@
   </div>
   <div class="page_title">
       <p class="title_p">Пользователи</p>
-      <p class="count_pubs">панель администратора</p>
-      {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}" class="create_new" style="margin-left: 43%;">создать нового ›</a>{% endif %}
+      <p class="count_pubs">всего {{ users.count }}</p>
+      {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}" class="create_new" style="margin-left: 56%;">создать нового ›</a>{% endif %}
   </div>
    <div class="pubs_container">
      <div class="pubs_container_one_type withBorder show" id='pubs'>
@@ -56,17 +56,22 @@
                <th>Дата и время последней авторизации</th>
                <th>Зарегистрировался</th>
              </tr>
+
              {% for showing_user in users %}
                <tr id="{{ showing_user.id }}">
                 {% if user.role.id == 4 %}
-                   <td class="functions"><a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit">Редактировать</p></a>
-                       <p onclick="really_delete_account({{ showing_user.id }})" id="really_delete">Удалить безвозвратно</p>
+                   <td class="functions">
+                    <a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit">Редактировать</p></a>
+                    {% if showing_user.role.id == 4 and not showing_user.is_only_one_superuser and showing_user == user or showing_user.role.id != 4 %}
+                      <p onclick="really_delete_account({{ showing_user.id }})" id="really_delete">Удалить безвозвратно</p>
+                    {% endif %}
                    </td>
                 {% endif %}
+
                  <td class="id">{{ showing_user.id }}</td>
                  <td class="photo_and_nickname"><img src="{{ showing_user.photo.url }}" alt="">
                    <div class="info_container">
-                     <a href="{% url 'auth:account_one' pk=showing_user.id %}" class="bold_text name">{{ showing_user.username }}</a>
+                     <a href="{% url 'auth:one' pk=showing_user.id %}" class="bold_text name">{{ showing_user.username }}</a>
                      {% if showing_user.bio %}<p>{{ showing_user.bio }}</p>{% endif %}
                      {% if showing_user.age %}<p>{{ showing_user.age }} лет</p>{% endif %}
                      {% if showing_user.phone_number %}<p>тел.: {{ showing_user.phone_number }}</p>{% endif %}
@@ -78,8 +83,8 @@
                  <td class="following">
                      <ul>
                       {% for s in saved_urls %}
-                        {% if s.saver_id.id == showing_user.id %}
-                          <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
+                        {% if s.saver.id == showing_user.id %}
+                          <li><a href="{% url 'pub:one' pk=s.pub.id %}">{{ s.pub.title }}</a></li>
                         {% endif %}
                       {% endfor %}
                      </ul>
@@ -88,8 +93,8 @@
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in seen_urls %}
-                         {% if s.watcher_id.id == showing_user.id %}
-                           <li><a href="{% url 'pub:pub_one' pk=s.pub_id.id %}">{{ s.pub_id.title }}</a></li>
+                         {% if s.watcher.id == showing_user.id %}
+                           <li><a href="{% url 'pub:one' pk=s.pub.id %}">{{ s.pub.title }}</a></li>
                          {% endif %}
                        {% endfor %}
                      </ul>
@@ -98,8 +103,8 @@
                  <td class="following">
                      <ul class="overflowX_auto">
                        {% for s in subscribed_urls %}
-                         {% if s.subscriber_id.id == showing_user.id %}
-                           <li><a href="{% url 'auth:account_one' pk=s.star_id.id %}">{{ s.star_id.username }}</a></li>
+                         {% if s.subscriber.id == showing_user.id %}
+                           <li><a href="{% url 'auth:one' pk=s.star.id %}">{{ s.star.username }}</a></li>
                          {% endif %}
                        {% endfor %}
                      </ul>
@@ -116,9 +121,9 @@
   <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
     <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
       <h1 class="dont_close_on_click">Вы точно хотите удалить аккаунт?</h1>
-      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить.</p>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить. Никак.</p>
       <div class="cancel_or_delete">
-        <p id="cancel_deleting" >Отмена</p>
+        <p id="cancel_deleting" class="cancel">Отмена</p>
         <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
       </div>
     </div>

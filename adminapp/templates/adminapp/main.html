@@ -47,7 +47,7 @@
             <tr>
               <td><div class="pub_preview" style="background: url({{ pub.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
               <td>
-                <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:pub_one' pk=pub.id %}">{{ pub.title }}</a></p>
+                <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:one' pk=pub.id %}">{{ pub.title }}</a></p>
                 {% if pub.content %}<p class="pub_desc">{{ pub.unstyled_content|safe|slice:"110" }}</p>{% endif %}
               </td>
             </tr>
@@ -66,7 +66,7 @@
                 <div class="photo_and_nickname">
                   <img src="{{ u.photo.url }}" alt="">
                   <div class="nickname_and_desc">
-                    <p class="bold_text"><a href="{% url 'auth:account_one' pk=u.id %}">{{ u.username }}</a></p>
+                    <p class="bold_text"><a href="{% url 'auth:one' pk=u.id %}">{{ u.username }}</a></p>
                     {% if u.bio %}<p class="pub_desc">Статус: <span style="font-style: italic;">{{ u.bio }}</span></p>{% endif %}
                     {% if u.age %}<p class="pub_desc">Возраст: {{ u.age }}</p>{% endif %}
                     {% if u.phone_number %}<p class="pub_desc">Телефон: {{ u.phone_number }}</p>{% endif %}
@@ -109,14 +109,14 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         {% if letter.asked_by.id != None %}
-                          <a href="{% url 'auth:account_one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
+                          <a href="{% url 'auth:one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
                         {% else %}
                           <img src="/static/sources/SVG/not_specific.svg" alt="">
                         {% endif %}
                         <div style="display:block;">
                           <p style="">
                             {% if letter.asked_by.id != None %}
-                              <a class="bold_text" href="{% url 'auth:account_one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
+                              <a class="bold_text" href="{% url 'auth:one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
                             {% else %}
                               <span style="opacity: 0.8; font-style: italic;">Удалённый пользователь</span>
                             {% endif %}
@@ -139,7 +139,7 @@
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         {% if letter.answered_by.id != None %}
-                          <a href="{% url 'auth:account_one' pk=letter.answered_by.id %}"><img src="{{ letter.answered_by.photo.url }}" alt=""></a>
+                          <a href="{% url 'auth:one' pk=letter.answered_by.id %}"><img src="{{ letter.answered_by.photo.url }}" alt=""></a>
                         {% else %}
                           <img src="/static/sources/SVG/not_specific.svg" alt="">
                         {% endif %}
@@ -147,7 +147,7 @@
                           <p style="">
                             <span>Ответ от</span>
                             {% if letter.answered_by.id != None %}
-                              <a class="bold_text" href="{% url 'auth:account_one' pk=letter.answered_by.id %}">{{ letter.answered_by.username }}</a>
+                              <a class="bold_text" href="{% url 'auth:one' pk=letter.answered_by.id %}">{{ letter.answered_by.username }}</a>
                             {% else %}
                               <span style="opacity: 0.8; font-style: italic;">удалённого пользователя</span>
                             {% endif %}
@@ -197,10 +197,10 @@
                   <td>
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
-                        <a href="{% url 'auth:account_one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
+                        <a href="{% url 'auth:one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
                         <div style="display:block;">
                           <p style="">
-                            <a class="bold_text" href="{% url 'auth:account_one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
+                            <a class="bold_text" href="{% url 'auth:one' pk=letter.asked_by.id %}">{{ letter.asked_by.username }}</a>
                             <span style="opacity: 0.8;">
                               {% if letter.type.id == 11 or letter.type.id == 12 %}
                                 {{ letter.title }}

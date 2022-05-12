@@ -9,6 +9,7 @@
     </title>
     {% block css %}
     {% endblock %}
+
     {% block favicon %}
       <link type="image/png" sizes="16x16" rel="icon" href="/static/sources/SVG/favicon.svg">
     {% endblock %}
@@ -16,6 +17,7 @@
 {% block bodystyle %}
 <body>
 {% endblock %}
+
   {% block header %}
     <div class="header_bg">
       <div class="header">
@@ -31,11 +33,12 @@
           {% if user.is_authenticated %}
             <div class="user_logged_in">
               <div class="header_content">
-                  <a href="{% url 'pub:repairs' %}" class="not_heart">Ремонт</a>
-                  <a href="{% url 'pub:designs' %}" class="not_heart">Дизайн</a>
-                  <a href="{% url 'pub:lifehacks' %}" class="not_heart">Лайфхаки</a>
-                  <a href="{% url 'pub:saved' %}" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
+                  <a href="{% url 'repairs' %}" class="not_heart">Ремонт</a>
+                  <a href="{% url 'designs' %}" class="not_heart">Дизайн</a>
+                  <a href="{% url 'lifehacks' %}" class="not_heart">Лайфхаки</a>
+                  <a href="{% url 'saved' %}" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
               </div>
+
               <div class="role_buttoms">
                   {% if user.role.id == 3 or user.role.id == 4 %}
                     <a href="{% url 'admin_mine:main' %}" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
@@ -44,6 +47,7 @@
                     <a href="{% url 'pub:create_new' %}" class="create_new_pub" title="Нажмите, чтобы создать публикацию"></a>
                   {% endif %}
               </div>
+
               <div class="avatar_and_notifications">
                   <div class="avatar_container">
                       <button class="avatar_btn">
@@ -53,11 +57,12 @@
                               <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                           </div>
                       </button>
+
                       <div id="avtr_optns" class="avatar_options">
-                          <a href="{% url 'auth:account_one' pk=user.id %}">Мой профиль</a>
+                          <a href="{% url 'auth:one' pk=user.id %}">Мой профиль</a>
                           <a href="{% url 'auth:settings' pk=user.id %}">Настройки</a>
-                          <a href="/help/">Помощь</a>
-                          <a href="{% url 'auth:logout' %}">Выйти</a>
+                          <a href="{% url 'send_to_support' %}">Поддержка</a>
+                          <a href="{% url 'logout' %}">Выйти</a>
                       </div>
                   </div>
 
@@ -76,28 +81,30 @@
                               {% endif %}
                           </div>
                       </button>
+
                       <div class="notifications_opened">
                         {% if user.noties_count > 0 %}
                           <div class="last_noti">
                             <p class="title_notifications_opened">Уведомления:</p>
 
                             {% if user.noties_new %}
+                              <p class="title_seen_notifications_opened" style="padding-top: 0px;">Новые:</p>
                               {% for nn in user.noties_new %}
                                 <div class="notification_one noti_new">
-                                    <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
-                                    <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title }}</p>
-                                    <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
+                                  <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                  <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title|safe }}</p>
+                                  <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
                                 </div>
                               {% endfor %}
                             {% endif %}
 
                             {% if user.noties_old %}
-                              <p class="title_seen_notifications_opened">Просмотренные уведомления:</p>
+                              <p class="title_seen_notifications_opened">Просмотренные:</p>
                               {% for nn in user.noties_old %}
                                 <div class="notification_one noti_old">
-                                    <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
-                                    <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title }}</p>
-                                    <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
+                                  <div class="noti_one_logo" style="background: url({{ nn.noti_for_user.preview.url }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                  <p class="content_noti" title="{{ nn.noti_for_user.content }}">{{ nn.noti_for_user.title|safe }}</p>
+                                  <p class="when_happend_noti">{{ nn.noti_for_user.pushed }}</p>
                                 </div>
                               {% endfor %}
 
@@ -105,6 +112,7 @@
                                 <p class="title_notifications_opened" style="color: gray; margin: 30px auto 0; text-align: center; width: 70%; font-size: 17px;">
                                   Пока что это все уведомления.
                                 </p>
+
                                 <p class="title_seen_notifications_opened" style="text-align: center; width: 80%; margin: 0 auto; font-size: 15px;">
                                   Попользуйтесь информационной системой, и вам в уведомлении что-нибудь да придёт :)
                                 </p>
@@ -115,8 +123,9 @@
                           <p class="title_notifications_opened" style="color: gray; margin: 130px auto 0; text-align: center; width: 70%; font-size: 25px;">
                             Пока что у вас ни одного уведомления.
                           </p>
+
                           <p class="title_seen_notifications_opened" style="text-align: center; width: 80%; margin: 0 auto; font-size: 15px;">
-                            Попользуйтесь информационной системой, и вам в уведомлении что-нибудь да придёт :)
+                            Попользуйтесь информационной системой, и Вам в уведомлении что-нибудь да придёт :)
                           </p>
                         {% endif %}
                           <!-- <form class="more_notifications" action="more_notifications.py" method="post">
@@ -128,8 +137,8 @@
             </div>
           {% else %}
             <div class="user_didnt_log_in">
-              <a href="{% url 'auth:login' %}" class="btn_udli">Войти</a>
-              <a href="{% url 'auth:register' %}" class="btn_udli">Зарегистрироваться</a>
+              <a href="{% url 'login' %}" class="btn_udli">Войти</a>
+              <a href="{% url 'register' %}" class="btn_udli">Зарегистрироваться</a>
             </div>
           {% endif %}
       </div>
@@ -152,20 +161,20 @@
               </div>
           </a>
           <div class="links_and_search_footer">
-            <a href="{% url 'auth:become_an_author' %}" class="first_two_links">Стать автором публикаций</a>
+            <a href="{% url 'become_an_author' %}" class="first_two_links">Стать автором публикаций</a>
             <!-- <a href="" class="first_two_links">Нашли ошибку в публикациях?</a> -->
-            <a href="{% url 'auth:become_a_teammemder' %}" class="second_two_links">Стать администратором системы</a>
+            <a href="{% url 'become_a_teammemder' %}" class="second_two_links">Стать администратором системы</a>
             <p         class="second_two_links">Разработка <a href="https://vk.com/todrgor" class="second_two_links">Егора Иванова</a> из ПКС-18-2</p>
             <!-- <a href="" class="third_three_links">Стать рекламодателем</a> -->
-            <a href="{% url 'auth:send_to_support' %}" class="third_three_links">Поделиться идеей, задать вопрос или отправить жалобу</a>
+            <a href="{% url 'send_to_support' %}" class="third_three_links">Поделиться идеей, задать вопрос или отправить жалобу</a>
             <div class="navigation_again_footer">
-              <a href="{% url 'pub:repairs' %}">Ремонт</a>
-              <a href="{% url 'pub:designs' %}">Дизайн</a>
-              <a href="{% url 'pub:lifehacks' %}">Лайфхаки</a>
+              <a href="{% url 'repairs' %}">Ремонт</a>
+              <a href="{% url 'designs' %}">Дизайн</a>
+              <a href="{% url 'lifehacks' %}">Лайфхаки</a>
               {% if user.is_authenticated %}
-                <a href="{% url 'pub:saved' %}">Избранное</a>
+                <a href="{% url 'saved' %}">Избранное</a>
                 <p class="to_notifications">Уведомления</p>
-                <a href="{% url 'auth:account_one' pk=user.id %}">Мой профиль</a>
+                <a href="{% url 'auth:one' pk=user.id %}">Мой профиль</a>
               {% endif %}
             </div>
             <div class="footer_search">

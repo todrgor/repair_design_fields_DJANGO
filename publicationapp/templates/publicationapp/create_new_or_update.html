@@ -40,13 +40,11 @@
         {% csrf_token %}
         {{ form.non_field_errors }}
 
-        {% if action == 'create' %}
-          <div class="pub_types" style="display: none;">
-            <h4>Вид публикации:</h4>
-            {{ form.type }}
-            {{ form.type.errors }}
-          </div>
-        {% endif %}
+        <div class="pub_types" {% if not action == 'create' and not user.role.id == 4 %}style="display: none;"{% endif %}>
+          <h4>Вид публикации:</h4>
+          {{ form.type }}
+          {{ form.type.errors }}
+        </div>
 
         <div class="pub_title pub_inp_one">
           <h4>Заголовок:</h4>
@@ -89,8 +87,8 @@
           {% endif %}
         </div>
 
-        {% if pub_type != 31  %}
-          <div class="pub_description pub_inp_one">
+        {% if pub_type != 31 and user.role.id != 4 or user.role.id == 4 %}
+          <div class="pub_content pub_inp_one {% if pub_type != 31 %}show{% endif %}">
             <h4>Наполнение:</h4>
             <p style="width: max-content;">Жгите! Сделайте читателю интересную информатифную полезную неводяную статью 📝</p>
             {{ form.media }}
@@ -111,7 +109,7 @@
           </div>
 
           {% for category in tag_categories.repair %}
-            <div class="filter_mini_div show repair">
+            <div class="filter_mini_div {% if pub_type == 11  %}show{% endif %} repair">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
@@ -148,7 +146,7 @@
           {% endfor %}
 
           {% for category in tag_categories.design %}
-            <div class="filter_mini_div show design">
+            <div class="filter_mini_div {% if pub_type == 21  %}show{% endif %} design">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
@@ -185,12 +183,13 @@
           {% endfor %}
 
           {% for category in tag_categories.lifehack %}
-            <div class="filter_mini_div show lifehack">
+            <div class="filter_mini_div {% if pub_type == 31  %}show{% endif %} lifehack">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
                 </span>
               </p>
+
               {% if category.id in empty_tag_categories_ids %}
                 <p class="opened_filter_text full_width big_p">
                   <span class="big_p_parth" style="color: red;">
@@ -198,6 +197,7 @@
                   </span>
                 </p>
               {% endif %}
+
               <div class="labels" id="{{ category.id }}">
                 <!-- див с чекбоксами лайфхак -->
                 {% for tag in tags %}
@@ -225,8 +225,8 @@
         <input type="submit" name="create!" value="Отредактирвать">
       </form>
 
-      <div class="if_here_is_not_something_what_you_want" style="margin: -60px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">
-        <p style="color: gray;">Если для публикации чего-либо не хватает,<br>например каких-либо тегов или полей,<br>расскажите нам через <a href="{% url 'auth:send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
+      <div class="if_here_is_not_something_what_you_want" style="margin: -100px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">
+        <p style="color: gray;">Если для публикации чего-либо не хватает,<br>например каких-либо тегов или полей,<br>расскажите нам через <a href="{% url 'send_to_support' %}" style="opacity: 1; text-decoration: underline;">обращение в поддержку ›</a></p>
       </div>
     </div>
   {% endif %}
