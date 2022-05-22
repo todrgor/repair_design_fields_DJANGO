@@ -2,11 +2,3 @@ cd C:\Users\ОКЕАА\repair_design_fields_DJANGO
 venv\Scripts\activate
 python manage.py runserver
 
-some different nice edits (read more)
-+ in supporting created loading deleted objects (also this is in pub authors everywhere), show-hide and to-up buttons 
-+ fixed lifehacks filter & statistics bugs
-+ changed admin panel icon
-+ created preloaded hover pictures
-+ added loading animation, while user toggled a pub and he is waiting answer from server 
-+ added some icons in header account wrapper and pub funcs
-+ added icons for video-objects in noties

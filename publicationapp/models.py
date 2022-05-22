@@ -68,6 +68,11 @@ class Publication(models.Model):
     def get_preview(self):  # вернуть preview или замену, если на превьюшке видео
         return 'pub_media/static/video_object_logo.svg' if self.preview.name.endswith(('.mp4', '.mov')) else self.preview.name
 
+    @property
+    def get_preview_url(self):  # вернуть url preview или замену, если на превьюшке видео
+        return '/media/pub_media/static/video_object_logo.svg' if self.preview.name.endswith(('.mp4', '.mov')) else self.preview.url
+
+
     def opened(self):
         self.seen_count +=1
         self.save

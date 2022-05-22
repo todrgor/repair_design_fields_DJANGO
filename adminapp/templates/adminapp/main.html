@@ -47,7 +47,7 @@
           <tbody>
           {% for pub in pubs %}
             <tr>
-              <td><div class="pub_preview" style="background: url({{ pub.preview.url }}) no-repeat; background-position: center; background-size: 300px;"></div></td>
+              <td style="background: #e1e1e1;"><div class="pub_preview" style="background: url({{ pub.get_preview_url }}) no-repeat; background-position: center; background-size: 200px;"></div></td>
               <td>
                 <p class="bold_text pub_title_ preview_and_pub_name"><a href="{% url 'pub:one' pk=pub.id %}">{{ pub.title }}</a></p>
                 {% if pub.content %}<p class="pub_desc">{{ pub.unstyled_content|safe|slice:"110" }}</p>{% endif %}
@@ -79,7 +79,7 @@
             </tr>
           {% endfor %}
         </table>
-        
+
         {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}">Создать нового пользвователя ›</a>{% endif %}
       </div>
 
