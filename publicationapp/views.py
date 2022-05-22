@@ -14,14 +14,6 @@ import operator
 
 
 
-# def is_number(s):
-#     try:
-#         float(s)
-#         return True
-#     except ValueError:
-#         return False
-
-
 # создание новой публикации
 def CreateNewPub(request):
     if not request.user.is_authenticated:
@@ -30,7 +22,7 @@ def CreateNewPub(request):
         return redirect('main')
 
     title = 'Создать публикацию'
-    form = PubForm()
+    form = PubForm({'author': request.user})
     tags = Tag.objects.all()
     tag_categories = {
         'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
@@ -47,6 +39,32 @@ def CreateNewPub(request):
         method_POST = request.POST
         form = PubForm(method_POST)
 
+        #   проверка на корректную превьюшку
+        allowed_file_formats = {
+            'lifehack':          ('.mp4', '.mov', '.png', '.jpg', '.jpeg', '.gif'),
+            'repair_and_design': ('.png', '.jpg', '.jpeg', '.gif'),
+        }
+        if 'preview' in request.FILES and request.FILES['preview']:
+            if method_POST['type'] == '31' and not request.FILES['preview'].name.endswith(allowed_file_formats['lifehack']):
+                form.add_error('preview', 'Пожалуйста, загрузите правильный файл! Для лайфхаков допустимы форматы файлов: ' +str(allowed_file_formats['lifehack'])[1:-1] +'.')
+            if method_POST['type'] in ['11', '21'] and not request.FILES['preview'].name.endswith(allowed_file_formats['repair_and_design']):
+                form.add_error('preview', 'Пожалуйста, загрузите правильное превью! Для публикаций про ремонт и дизайн допустимы форматы превью: ' +str(allowed_file_formats['repair_and_design'])[1:-1] +'.')
+        else:
+            message = 'Пожалуйста, загрузите превью!' if method_POST['type'] in ['11', '21'] else 'Пожалуйста, загрузите файл!'
+            form.add_error('preview', message)
+
+        #   проверка на отсутсвие введённого пользователя для авторства
+        if request.user.role.id == 4 and not method_POST['author']:
+            form.add_error('author', 'Пожалуйста, выберите автора для создаваемой публикаций!')
+
+        #   проверка на уникальность заголовка
+        if Publication.objects.filter(title=method_POST['title']):
+            form.add_error('title', 'Публикация с таким заголовком уже существует. Пожалуйста, перефразируйте его!')
+
+        #   проверка на пустой контент
+        if method_POST['type'] != '31' and not method_POST['content'] or method_POST['content'].isspace():
+            form.add_error('content', 'Пожалуйста, заполните наполнение Вашей публикации!')
+
         #   проверка, теги всех ли категорий
         #   выбраны и переадресация обратно, если нет
         selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=method_POST['type'])
@@ -56,29 +74,37 @@ def CreateNewPub(request):
             if category.id not in selected_tags_categories_ids:
                 empty_tag_categories_ids.append(category.id)
 
-        # если не все категории тегов выбраны или нет превьюшки -- а ну-ка иди дозаполни
-        if empty_tag_categories_ids or not 'preview' in request.FILES:
-            if not 'preview' in request.FILES:
-                form.add_error('preview', 'Пожалуйста, загрузите превью!')
-
+        # если не все категории тегов выбраны или с предыдущими проверками что-т не то -- а ну-ка иди дозаполни
+        if empty_tag_categories_ids or not 'preview' in request.FILES or not form.is_valid():
             content = {
-                'title': title,
-                'form': form,
-                'tags': tags,
-                'tag_categories': tag_categories,
-                'empty_tag_categories_ids': empty_tag_categories_ids,
-                'selected_tags': selected_tags,
-                'action': 'create',
-        		}
+            'title': title,
+            'form': form,
+            'pub_type': int(method_POST['type']),
+            'tags': tags,
+            'tag_categories': tag_categories,
+            'empty_tag_categories_ids': empty_tag_categories_ids,
+            'selected_tags': selected_tags,
+            'action': 'create',
+    		}
             return render(request, 'publicationapp/create_new_or_update.html', content)
 
-        #   создание публикции
+        #   создание публикации
+        pub_author = User.objects.get(id=method_POST['author']) if request.user.role.id == 4 else request.user
+        cost_min = float(method_POST['cost_min'])
+        cost_max = float(method_POST['cost_max'])
+        if cost_min > cost_max:
+            a = cost_min
+            cost_min = cost_max
+            cost_max = a
         pub_created = Publication.objects.create(
-            title=method_POST['title'].capitalize(),
-            type=PubTypes.objects.get(id=method_POST['type']),
-            preview=('pub_media/' + str(request.FILES['preview'])),
-            author=User.objects.get(id=request.user.id)
+            title = method_POST['title'].capitalize(),
+            type = PubTypes.objects.get(id=method_POST['type']),
+            preview = ('pub_media/' + str(request.FILES['preview'])),
+            author = pub_author,
+            cost_min = cost_min,
+            cost_max = cost_max
             )
+
         if pub_created.type.id != 31:
             pub_created.content = method_POST['content']
             pub_created.save()
@@ -92,14 +118,21 @@ def CreateNewPub(request):
         pub_created.cost_max = method_POST['cost_max']
         pub_created.save()
 
-        noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
-        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-        noti=Publication.objects.create(title=('Пользователь '+ pub_created.author.username +' выпустил публикацию «' + pub_created.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub_created.preview.name), content="Скорее открывайте её!", author=request.user)
+        if request.user == pub_created.author:
+            noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        else:
+            noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'», автором которой был назначен пользователь «'+ pub_created.author.username +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            noti=Publication.objects.create(title=('Администрацией «Ремонта и Дизайна» была создана публикация «' + pub_created.title +'», автором которой были назначены Вы!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
+            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+        noti=Publication.objects.create(title=('Пользователь «'+ pub_created.author.username +'» выпустил публикацию «' + pub_created.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Скорее открывайте её!", author=request.user)
         for s in UserSubscribes.objects.filter(star=pub_created.author.id):
             Notifications.objects.create(user_receiver=s.subscriber, noti_for_user=noti)
         return redirect('pub:one', pk=pub_created.id)
         # except:
-        #     form.add_error(None, 'Ошибка создания публикции')
+        #     form.add_error(None, 'Ошибка создания публикации')
 
     content = {
         'title': title,
@@ -117,12 +150,21 @@ def CreateNewPub(request):
 def UpdatePub(request, pk):
     if not request.user.is_authenticated:
         return redirect('main')
-    if not request.user.role.id in [2, 4]:
+    if request.user.role.id != 4 or request.user != Publication.objects.get(id=pk).author:
         return redirect('main')
 
     pub = Publication.objects.get(id=pk)
-    title = 'Отредактирвать публикацию «' + pub.title +'» от пользователя «' + pub.author.username +'»' if request.user.role.id == 4 and pub.author != request.user else 'Отредактирвать публикацию «' + pub.title +'»'
-    form = PubForm()
+    author_username = 'пользователя «' + pub.author.username +'»' if pub.author else 'удалённого пользователя'
+    title = 'Отредактирвать публикацию «' + pub.title +'» от ' +author_username if request.user.role.id == 4 and pub.author != request.user else 'Отредактирвать публикацию «' + pub.title +'»'
+    form = PubForm({
+        'title': pub.title,
+        'type': pub.type,
+        'author': pub.author,
+        'preview': pub.preview,
+        'content': pub.content,
+        'cost_min': pub.cost_min,
+        'cost_max': pub.cost_max,
+        })
     pub_preview = pub.preview
     pub_type = pub.type.id
     tags = Tag.objects.filter(pub_type=pub.type) if request.user.role.id != 4 else Tag.objects.all()
@@ -138,18 +180,47 @@ def UpdatePub(request, pk):
         form = PubForm(request.POST)
         method_POST = request.POST
 
-        #   проверка, теги всех ли категорий
-        #   выбраны и переадресация обратно, если нет
+        #   сменить тип публикации, если суперпользователь её сменил
         if request.user.role.id == 4 and 'type' in method_POST and method_POST['type']:
             pub.type = PubTypes.objects.get(id=method_POST['type'])
 
+        #   проверка на корректную превьюшку
+        if 'preview' in request.FILES and request.FILES['preview']:
+            allowed_file_formats = {
+                'lifehack':          ('.png', '.jpg', '.jpeg', '.gif', '.mp4', '.mov'),
+                'repair_and_design': ('.png', '.jpg', '.jpeg', '.gif'),
+            }
+            if pub.type.id == 31 and not request.FILES['preview'].name.endswith(allowed_file_formats['lifehack']):
+                form.add_error('preview', 'Пожалуйста, загрузите правильный файл! Для лайфхаков допустимы форматы файлов: ' +str(allowed_file_formats['lifehack'])[1:-1] +'.')
+            if pub.type.id in [11, 21] and not request.FILES['preview'].name.endswith(allowed_file_formats['repair_and_design']):
+                form.add_error('preview', 'Пожалуйста, загрузите правильное превью! Для публикаций про ремонт и дизайн допустимы форматы превью: ' +str(allowed_file_formats['repair_and_design'])[1:-1] +'.')
+
+        #   проверка на отсутсвие введённого пользователя для авторства от суперпользователя
+        if request.user.role.id == 4:
+            if not method_POST['author']:
+                form.add_error('author', 'Пожалуйста, выберите автора для редактируемой публикаций!')
+            else:
+                old_author = pub.author
+                pub.author = User.objects.get(id=method_POST['author'])
+
+        #   проверка на уникальность заголовка
+        if Publication.objects.filter(title=method_POST['title']).exclude(id=pub.id):
+            form.add_error('title', 'Публикация с таким заголовком уже существует. Пожалуйста, перефразируйте его!')
+
+        #   проверка на пустой контент
+        if method_POST['type'] != '31' and not method_POST['content'] or method_POST['content'].isspace():
+            form.add_error('content', 'Пожалуйста, заполните содержание Вашей публикации!')
+
+        #   проверка, теги всех ли категорий
+        #   выбраны и переадресация обратно, если нет
         selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
         selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
         all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
         for category in all_tag_categories_for_this_pub_type:
             if category.id not in selected_tags_categories_ids:
                 empty_tag_categories_ids.append(category.id)
-        if empty_tag_categories_ids:
+        # если не все категории тегов выбраны или в предыдущих проверках что-то не то -- а ну-ка иди дозаполни
+        if empty_tag_categories_ids or not form.is_valid():
             content = {
                 'title': title,
                 'form': form,
@@ -175,31 +246,42 @@ def UpdatePub(request, pk):
         if set(pub.tags.all()) != set(selected_tags):
             pub.tags.clear()
             pub.tags.add(*selected_tags)
-        if pub.cost_min != method_POST['cost_min']:
-            pub.cost_min = method_POST['cost_min']
-        if pub.cost_max != method_POST['cost_max']:
-            pub.cost_max = method_POST['cost_max']
+        cost_min = float(method_POST['cost_min'])
+        cost_max = float(method_POST['cost_max'])
+        if cost_min > cost_max:
+            a = cost_min
+            cost_min = cost_max
+            cost_max = a
+        if pub.cost_min != cost_min:
+            pub.cost_min = cost_min
+        if pub.cost_max != cost_max:
+            pub.cost_max = cost_max
         pub.save()
 
         if request.user == pub.author:
-            noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'»!'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+            noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-        if request.user.role.id == 4 and request.user != pub.author:
-            noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Автор ' +pub.author.username+ ' получит уведомление об этом'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: ' +request.user.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+        else:
+            if old_author == pub.author:
+                noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Автор «' +pub.author.username+ '» получит уведомление об этом'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+            else:
+                if old_author:
+                    noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» и бывший автор «' +old_author.username+ '» получат уведомление об этом'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                    noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'». По его велению теперь автор этой публикации не Вы, а «' +pub.author.username+ '».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                    Notifications.objects.create(user_receiver=old_author, noti_for_user=noti)
+                    noti=Publication.objects.create(title=('Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя «' +old_author.username+ '».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                else:
+                    noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» получит уведомление об этом, бывший автор – нет, так как он удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                    noti=Publication.objects.create(title=('Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя, который кстати по какой-то причине был удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
+                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
         return redirect('pub:one', pk=pub.id)
-
-    form = PubForm({
-        'title': pub.title,
-        'type': pub.type,
-        'preview': pub.preview,
-        'content': pub.content,
-        'cost_min': pub.cost_min,
-        'cost_max': pub.cost_max,
-        })
 
     content = {
         'title': title,
@@ -217,20 +299,24 @@ def UpdatePub(request, pk):
 
 #   удаление публикации
 def DeletePub(request, pk):
-    if request.user.is_authenticated and request.user.role.id in [2, 4]:
+    if request.user.is_authenticated and (request.user.role.id == 4 or request.user == Publication.objects.get(id=pk).author):
         pub = Publication.objects.get(id=pk)
         type = pub.type.id
         author = pub.author
         pub.delete()
 
-        if request.user.role.id == 2:
-            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
+        if request.user.role.id == 2 or request.user == author:
+            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-        if request.user.role.id == 4:
-            noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
-            Notifications.objects.create(user_receiver=author, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко его автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Можно создать новую, ещй лучше!", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+        if request.user.role.id == 4 and request.user != author:
+            if author:
+                noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
+                Notifications.objects.create(user_receiver=author, noti_for_user=noti)
+                noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко её автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            else:
+                noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Её автор, если что, почему-то был удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
 
         if type == 11:
             return redirect('repairs')
@@ -238,31 +324,6 @@ def DeletePub(request, pk):
             return redirect('designs')
         if type == 31:
             return redirect('lifehacks')
-
-
-#   просмотр публикции в "Избранном"
-class Saved(ListView):
-    model = SavedPubs
-    template_name = 'publicationapp/saved.html'
-    context_object_name = 'pubs'
-
-    def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return redirect('main')
-        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver=self.request.user).values_list('pub', flat=True)).order_by('-pushed')
-
-    def get_context_data(self, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('main')
-
-        context = super(Saved, self).get_context_data(**kwargs)
-        subscribes_urls = UserSubscribes.objects.filter(subscriber=self.request.user)
-        subscribing_authors = [sa.star.id for sa in subscribes_urls]
-
-        context.update({
-            'subscribing_authors': subscribing_authors,
-        })
-        return context
 
 
 #   сохранение-удаление публикаций из "Избранного"
@@ -288,10 +349,11 @@ def toggle_saved(request, pk):
             # }
 
             # result = render_to_string('newsapp/includes/likes_block.html', context)
-            noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.preview.name), content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
+            noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
-            Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+            if pub.author:
+                noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.author.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
+                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
             return JsonResponse({'result': result})
 
@@ -422,11 +484,12 @@ class PubWatchOne(ListView):
             seen_url_object.count += 1
             seen_url_object.save()
 
-        #   обновление статистики у открываемой публикции
+        #   обновление статистики у открываемой публикации
         ages = (SeenPubs.objects.filter(pub=self.kwargs['pk']).aggregate(Sum('watcher__age')))['watcher__age__sum']
         pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
         pub.average_age_savers =   ages / SavedPubs.objects.filter(pub=pub).count() if SavedPubs.objects.filter(pub=pub).count() != 0 else 0
-        pub.seen_count +=1
+        if pub.type.id != 31: # потому что лайфакам просмотр засчитается от js-кода. а без этой проверки зачситываться будет дважды -- тут и js-кодом
+            pub.seen_count +=1
         pub.save()
 
         context.update({
@@ -500,7 +563,7 @@ class LifehacksWatch(ListView):
 
     def get_queryset(self):
 
-        #   обновление статистики у открываемой публикции
+        #   обновление статистики у всех лайфхаков
         for pub in Publication.objects.filter(type=31):
             ages = (SeenPubs.objects.filter(pub=pub).aggregate(Sum('watcher__age')))['watcher__age__sum']
             pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
@@ -516,7 +579,7 @@ class LifehacksWatch(ListView):
         user = self.request.user
 
         saved_pubs =          [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=31)] if user.is_authenticated else None
-        subscribing_authors = [sa.star.id for sa in (UserSubscribes.objects.filter(subscriber=user))]     if user.is_authenticated else None
+        subscribing_authors = [sa.star.id for sa in (UserSubscribes.objects.filter(subscriber=user))]  if user.is_authenticated else None
 
         tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=31))
         tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
@@ -529,5 +592,30 @@ class LifehacksWatch(ListView):
             'tags': tags,
             'tag_categories': tag_categories,
             'selected_filters': selected_filters,
+        })
+        return context
+
+
+#   просмотр публикации в "Избранном"
+class Saved(ListView):
+    model = SavedPubs
+    template_name = 'publicationapp/saved.html'
+    context_object_name = 'pubs'
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return redirect('main')
+        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver=self.request.user).values_list('pub', flat=True)).order_by('-pushed')
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('main')
+
+        context = super(Saved, self).get_context_data(**kwargs)
+        subscribes_urls = UserSubscribes.objects.filter(subscriber=self.request.user)
+        subscribing_authors = [sa.star.id for sa in subscribes_urls]
+
+        context.update({
+            'subscribing_authors': subscribing_authors,
         })
         return context

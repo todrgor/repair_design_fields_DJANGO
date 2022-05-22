@@ -46,11 +46,19 @@
           {{ form.type.errors }}
         </div>
 
+        {% if user.role.id == 4 %}
+          <div class="pub_author pub_inp_one">
+            <h4>Автор публикации:</h4>
+            {{ form.author }}
+            {{ form.author.errors }}
+          </div>
+        {% endif %}
+
         <div class="pub_title pub_inp_one">
           <h4>Заголовок:</h4>
           {{ form.title }}
           {{ form.title.errors }}
-          <p>Максимальная длина текста — 135 символов.</p>
+          <p>Заголовк не должен совпадать с заголовками уже существующих публикаций. Максимальная длина текста — 135 символов.</p>
         </div>
 
         <div class="pub_preview pub_inp_one">
@@ -79,7 +87,7 @@
 
                 {{ form.preview }}
                 {{ form.preview.errors }}
-                <p>Идеальный размер изображения — 1350×405 пикселей.<br>С другими размерами фото может некорректно отображаться.</p>
+                <p>Идеальное соотношение сторон фотографии превью — 3.3:1 (ширина:высота).<br>С другими размерами фото может некорректно отображаться.</p>
 
           {% if pub_preview  %}
                 </div>
@@ -109,12 +117,13 @@
           </div>
 
           {% for category in tag_categories.repair %}
-            <div class="filter_mini_div {% if pub_type == 11  %}show{% endif %} repair">
+            <div class="filter_mini_div {% if pub_type == 11 or not pub_type %}show{% endif %} repair">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   {{ category.name }}:
                 </span>
               </p>
+
               {% if category.id in empty_tag_categories_ids %}
                 <p class="opened_filter_text full_width big_p">
                   <span class="big_p_parth" style="color: red;">
@@ -122,6 +131,7 @@
                   </span>
                 </p>
               {% endif %}
+
               <div class="labels" id="{{ category.id }}">
                 <!-- див с чекбоксами -->
                 {% for tag in tags %}
@@ -152,6 +162,7 @@
                   {{ category.name }}:
                 </span>
               </p>
+
               {% if category.id in empty_tag_categories_ids %}
                 <p class="opened_filter_text full_width big_p">
                   <span class="big_p_parth" style="color: red;">
@@ -222,7 +233,7 @@
           {% endfor %}
         </div>
 
-        <input type="submit" name="create!" value="Отредактирвать">
+        <input type="submit" {% if action == 'create' %} name="create!" value="Создать публикцию" {% else %}name="edit!" value="Сохранить изменения" {% endif %}>
       </form>
 
       <div class="if_here_is_not_something_what_you_want" style="margin: -100px 0 50px 0px; font-size: 13px; display: flex; justify-content: flex-end; width: fit-content; position: relative; left: 70%;">

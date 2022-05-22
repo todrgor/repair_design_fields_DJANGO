@@ -9,6 +9,12 @@
   list-style: none;
 }
 
+.preloaded_hovers{
+  display: none;
+  z-index: -999;
+  opacity: 0
+}
+
 .header_clear_hix {
   height: 50px;
   width: 100%;
@@ -42,7 +48,8 @@
   background: url(../../sources/SVG/logo_mini.svg) no-repeat;
 }
 
-.logo_mini:hover {
+.logo_mini:hover,
+.logo_mini_hover {
   background: url(../../sources/SVG/logo_mini_hover.svg) no-repeat;
 }
 
@@ -87,6 +94,7 @@
 .user_logged_in {
   display: flex;
   width: 99%;
+  max-width: 850px;
   justify-content: space-between;
   /* display: none; */
 }
@@ -166,7 +174,8 @@
   transition: all 0.4s ease;
 }
 
-.super_admin_panel:hover {
+.super_admin_panel:hover,
+.super_admin_panel_hover {
   background: url(../../sources/SVG/super_admin_panel_hover.svg) no-repeat;
 }
 
@@ -175,7 +184,8 @@
   transition: all 0.4s ease;
 }
 
-.create_new_pub:hover {
+.create_new_pub:hover,
+.create_new_pub_hover {
   background: url(../../sources/SVG/create_new_pub_hover.svg) no-repeat;
 }
 
@@ -188,14 +198,15 @@
 }
 
 .notifications_mini:hover .noti_logo,
+.notifications_mini_hover__noti_logo,
 .notifications_container.show_ntfctns_more .noti_logo {
   background: url(../../sources/SVG/notifications_hover_and_focus.svg) 6px 10px no-repeat;
   background-size: 30px, 30px;
 }
 
 .avatar_and_notifications {
-  max-width: 40%;
-  width: 22%;
+  max-width: 45%;
+  width: 28%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -209,8 +220,8 @@
 
 .avatar_container {
   height: 100%;
-  min-width: 70%;
-  max-width: 79%;
+  min-width: 66%;
+  max-width: 69%;
   cursor: pointer;
   display: flex;
   align-content: flex-start;
@@ -229,9 +240,17 @@
 
 .avatar_container .avatar_triangle {
   transition: all 0.2s ease;
+  position: absolute;
+  right: 5px;
+  padding: 2px;
+  /* background: #161515;
+  box-shadow: 0px 0px 10px 10px #161515; */
 }
+
 .avatar_container.show_avtr_optns .avatar_triangle {
   transform: rotate(90deg);
+  /* background: #242324;
+  box-shadow: 0px 0px 10px 10px #242324; */
 }
 
 .avatar_btn, .notifications_btn {
@@ -249,12 +268,13 @@
 
 .avatar_options_mini {
   padding: 0 8px;
+  position: relative;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-content: center;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   color: #fff;
   font-size: 17px;
   letter-spacing: 0.03em;
@@ -272,12 +292,13 @@
   overflow: hidden;
   margin: 5px 5px 5px 0;
 }
+
 .account_img img {
   width: 40px;
 }
 
 .avatar_options_mini_p {
-  max-width: 135px;
+  max-width: 77px;
   overflow: hidden;
 }
 
@@ -298,12 +319,67 @@
   opacity: 1;
 }
 
+.avatar_options .icon,
+.pub_additional_functions .icon {
+  width: 1em;
+  height: 1em;
+  margin-right: 5px;
+  background-size: contain;
+}
+
+.pub_additional_functions .icon {
+  margin-top: 3px;
+}
+
+.icon.account {
+  background: url(../../sources/SVG/account_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.settings {
+  background: url(../../sources/SVG/settings_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.support {
+  background: url(../../sources/SVG/support_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.exit {
+  background: url(../../sources/SVG/exit_icon.svg) no-repeat;
+  background-size: contain;
+}
+
+
+.icon.search {
+  background: url(../../sources/SVG/search_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.share {
+  background: url(../../sources/SVG/share_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.report {
+  background: url(../../sources/SVG/report_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.pub_edit {
+  background: url(../../sources/SVG/edit_pub_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.p_statistics {
+  background: url(../../sources/SVG/statistics_icon.svg) no-repeat;
+  background-size: contain;
+}
+.icon.p_delete {
+  background: url(../../sources/SVG/delete_icon.svg) no-repeat;
+  background-size: contain;
+}
 
 .avatar_options a {
   padding: 9px 10%;
   font-size: 15px;
   color: #fff;
-  display: block;
+  display: flex;
+  align-items: center;
 }
 
 .avatar_options a:hover {
@@ -553,4 +629,14 @@
 
 .white_form_rar_podpis_2.header_restyle a {
   text-decoration: underline;
+}
+
+.noselectable {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }

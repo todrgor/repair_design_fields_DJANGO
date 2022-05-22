@@ -53,7 +53,7 @@
                <th>Просмотрено</th>
                <th>Подписки</th>
                <!-- <th>Последние уведомления</th> -->
-               <th>Дата и время последней авторизации</th>
+               <th>Последняя авторизация</th>
                <th>Зарегистрировался</th>
              </tr>
 
@@ -76,7 +76,13 @@
                      {% if showing_user.age %}<p>{{ showing_user.age }} лет</p>{% endif %}
                      {% if showing_user.phone_number %}<p>тел.: {{ showing_user.phone_number }}</p>{% endif %}
                      {% if showing_user.email %}<p>{{ showing_user.email }}</p>{% endif %}
-                     <p style="color:gray;">{{ showing_user.role.name }}</p>
+                     <p style="color:gray;">{{ showing_user.all_noties_count }} уведомлений, {{ showing_user.new_noties_count }} новых</p>
+                     {% if showing_user.role.id == 2 %}
+                       <p style="color:gray;">Автор {{ showing_user.made_pubs_count }} публикаций</p>
+                     {% else %}
+                       <p style="color:gray;">{{ showing_user.role.name }}</p>
+                       {% if showing_user.role.id == 3 or showing_user.role.id == 4 %}<p style="color:gray;">{{ showing_user.made_pubs_count }} публикаций</p>{% endif %}
+                     {% endif %}
                    </div>
                 </td>
 
@@ -127,6 +133,10 @@
         <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
       </div>
     </div>
+  </div>
+
+  <div class="to_top_button">
+    <img src="/static/sources/SVG/to_top.svg" alt="">
   </div>
 {% endblock %}
 

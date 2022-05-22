@@ -48,9 +48,9 @@
                  <th class="functions">Действия</th>
               {% endif %}
                  <th class="id">ID</th>
-                 <th>Фото и заголовок публикации</th>
-                 <th>Автор публикации</th>
-                 <th class="with200px">Роль публикации</th>
+                 <th>Фото и заголовок</th>
+                 <th>Автор</th>
+                 <th class="with200px">Тип публикации</th>
                  <th>Просмотров</th>
                  <th>Сохранений</th>
                  <th class="with200px">Сохранена кем</th>
@@ -59,10 +59,11 @@
              </tr>
              {% for pub in pubs %}
              <tr id="{{ pub.id }}">
-              {% if user.role.id == 4 %}
-                 <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
-                     <p onclick="really_delete_pub({{pub.id }})" id="really_delete">Удалить безвозвратно</p></td>
-              {% endif %}
+                {% if user.role.id == 4 %}
+                   <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
+                     <p onclick="really_delete_pub({{pub.id }})" id="really_delete">Удалить безвозвратно</p>
+                   </td>
+                {% endif %}
                  <td class="id">{{pub.id }}</td>
                  <td class="width350px">
                      <div class="preview_and_pub_name">
@@ -114,6 +115,10 @@
         <a href="pub/delete/#>" id="delete">Удалить публикацию</a>
       </div>
     </div>
+  </div>
+
+  <div class="to_top_button">
+    <img src="/static/sources/SVG/to_top.svg" alt="">
   </div>
 {% endblock %}
 

@@ -3,21 +3,42 @@
 //   url (edit_the_pub.py?idPub=99);
 // }
 
+function start_loading_animation() {
+  $('.user_just_saved_it img').attr('src', '/static/sources/SVG/heart_loading.gif');
+  // $('.user_just_saved_it img').css('transform', 'rotate(-25deg)');
+  $('.user_just_saved_it input').val('Загрузка...');
+}
+
+function end_loading_animation() {
+  $('.user_just_saved_it img').attr('src', '/static/sources/SVG/heart.svg');
+  // $('.user_just_saved_it img').css('transform', 'rotate(0deg)');
+  console.log("loading ended");
+}
+
 function toggleSavePub_D(idPub) {
-  $.ajax({
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
+ $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
                 $('.user_just_saved_it').removeClass('pub_saved');
+                $('.user_just_saved_it input').val('В «Избранное»');
                 console.log("Публикация больше не в сохранённом, ID:" +idPub);
             }
             if (data.result == 1) {
                 $('.user_just_saved_it').addClass('pub_saved');
+                $('.user_just_saved_it input').val('Сохранено');
                 console.log("Произошло сохранение публикации, ID:" +idPub);
             }
         },
         error: function (data) {
+          end_loading_animation();
+          $('.user_just_saved_it input').val('Попробуйте ещё раз...');
           console.log("ошибка какая-то");
         }
     });

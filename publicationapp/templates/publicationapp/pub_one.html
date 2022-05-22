@@ -59,33 +59,47 @@
               {% endif %}
               " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
             </div>
+
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
-                <div class="nickname_and_role">
-                  <div class="nickname">
-                    <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                {% if pub.author.id != None %}
 
-                      {% if user.is_authenticated %}
-                        {% if user != pub.author %}
-                          <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
-                          <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                  <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                  <div class="nickname_and_role">
+                    <div class="nickname">
+                        <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                        {% if user.is_authenticated %}
+                          {% if user != pub.author %}
+                            <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                            <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                          {% endif %}
+                        {% else %}
+                          <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
+                          <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                         {% endif %}
-                      {% else %}
-                        <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
-                        <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
-                      {% endif %}
-                      <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                     </div>
                     <p class="role">Автор публикации</p>
                   </div>
-                </div>
+
+                {% else %}
+
+                  <img src="/media/users_avatars/deleted_user.png" alt="" class="deleted_user_photo">
+                  <div class="nickname_and_role">
+                    <div class="nickname">
+                      <p class="deleted_user_username">Пользователь удалён</p>
+                    </div>
+                    <p class="deleted_user_pub_author">Автор публикации</p>
+                  </div>
+                {% endif %}
+
               </div>
-              <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
             </div>
-            <div class="div_pub_text">
-              <p class="pub_text">{{ pub.title }}</p>
-            </div>
+            <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
+          </div>
+
+          <div class="div_pub_text">
+            <p class="pub_text">{{ pub.title }}</p>
+          </div>
 
             <div class="pub_tags_container">
 
@@ -133,6 +147,7 @@
         <p class="title">{{ pub.title }}</p>
       </div>
     </div>
+
     <div class="pubs_container">
       <div class="pub_full_content">
         {{ pub.content|safe }}
@@ -146,15 +161,17 @@
           YouHaveToLogin('сохранить публикацию')
         {% endif %}" title="Сохранить в «Избранное»">
           <img src="/static/sources/SVG/heart.svg" alt="">
-          <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if pub.id in saved_pubs %}  Сохранено{% else %}  В «Избранное»{% endif %}">
+          <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="{% if pub.id in saved_pubs %}Сохранено{% else %}В «Избранное»{% endif %}">
         </div>
+
         <div class="pub_author_cntnr">
           <div class="pub_author">
-            <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
-            <div class="nickname_and_role">
-              <div class="nickname">
-                <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+            {% if pub.author.id != None %}
 
+              <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+              <div class="nickname_and_role">
+                <div class="nickname">
+                  <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
                   {% if user.is_authenticated %}
                     {% if user != pub.author %}
                       <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
@@ -164,10 +181,21 @@
                     <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
                     <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                   {% endif %}
-                  <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                </div>
+                <p class="role">Автор публикации</p>
               </div>
-              <p class="role">Автор публикации</p>
-            </div>
+
+            {% else %}
+
+              <img src="/media/users_avatars/deleted_user.png" alt="" class="deleted_user_photo">
+              <div class="nickname_and_role">
+                <div class="nickname">
+                  <p class="deleted_user_username">Пользователь удалён</p>
+                </div>
+                <p class="deleted_user_pub_author">Автор публикации</p>
+              </div>
+            {% endif %}
+
           </div>
         </div>
         <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
@@ -278,11 +306,13 @@
         <div class="selected_tags" style="display: none;">
           <!-- js поместит сюда input'ы всех тегов определённой публикации -->
         </div>
-        <input type="submit" name="to_filter" value="Искать похожее" title="Найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+        <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+          <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+        </label>
       </form>
 
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+      <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 
-function toggleShow(idPubContainer) {
-  $(".pubs_container_one_type#"+idPubContainer).toggleClass('show');
-  $(".result_type_container#"+idPubContainer+" .triangle_to_open_and_hide").toggleClass('dontShow');
+function toggleShow(idContainer) {
+  $(".letters_container_one_type#"+idContainer).toggleClass('show');
+  $(".letter_type_container_title#"+idContainer+" .triangle_to_open_and_hide").toggleClass('dontShow');
 }
 
 function really_delete_pub(pub_id) {
@@ -82,6 +82,7 @@ function edit_category(category_id) {
   $('.create_or_edit_tag_or_tag_category input[name="category_or_tag_name"]').val(category_name);
   $('.pub_additional_functions_bg, .question_block.create_or_edit_tag_or_tag_category, .category_or_tag_name').addClass('show');
 }
+
 function edit_tag(tag_id) {
   tag_name = $('table.tags tr#'+ tag_id +' td.name').html();
   $('.create_or_edit_tag_or_tag_category h1.title').html('Редактирование тега «'+ tag_name +'»');
@@ -107,4 +108,16 @@ $('.pub_additional_functions_bg').on('click', function(e) {
     $('.question_block input').prop('checked', false);
     $('.question_block select').val(1);
   }
+});
+
+$(window).scroll(function() {
+  if($(this).scrollTop() >= 1800) {
+    $('.to_top_button').addClass('show');
+  } else {
+    $('.to_top_button').removeClass('show');
+  }
+});
+
+$('.to_top_button').click(function() {
+  $('body, html').animate({scrollTop:0}, 1500);
 });

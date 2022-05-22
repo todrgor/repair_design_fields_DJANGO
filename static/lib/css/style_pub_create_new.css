@@ -1,3 +1,4 @@
+
 .hidden {
   display: none;
 }
@@ -54,8 +55,12 @@ select[name="type"] {
   margin: 0 0 20px;
 }
 .pub_types,
+.pub_author,
 .pub_tags {
   width: 30%;
+}
+.pub_preview .errorlist {
+  width: 52%;
 }
 .at_first_choose_the_pub_type,
 .pub_inp_one p {
@@ -223,7 +228,8 @@ p.cancel_following.dont_cancel:hover {
 }
 .pub_inp_one .avatar_now img {
   border-radius: 100%;
-  max-width: 150px;
+  width: 150px;
+  height: 150px;
 }
 .pub_inp_one .preview_now img,
 .pub_inp_one .preview_now video {

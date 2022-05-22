@@ -33,10 +33,12 @@
       <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
     </div>
   </div>
+
   <div class="page_title">
       <p class="title_p">Панель администратора</p>
       <p class="count_pubs">главная</p>
   </div>
+
   <div class="pubs_container" style="margin-bottom: 20px;">
     <div class="some_divs_in_one_line">
       <div class="last_pubs one_div_sdiol">
@@ -68,6 +70,7 @@
                   <div class="nickname_and_desc">
                     <p class="bold_text"><a href="{% url 'auth:one' pk=u.id %}">{{ u.username }}</a></p>
                     {% if u.bio %}<p class="pub_desc">Статус: <span style="font-style: italic;">{{ u.bio }}</span></p>{% endif %}
+                    {% if u.made_pubs_count %}<p class="pub_desc">{{ u.made_pubs_count }} публикаций</p>{% endif %}
                     {% if u.age %}<p class="pub_desc">Возраст: {{ u.age }}</p>{% endif %}
                     {% if u.phone_number %}<p class="pub_desc">Телефон: {{ u.phone_number }}</p>{% endif %}
                   </div>
@@ -76,8 +79,10 @@
             </tr>
           {% endfor %}
         </table>
+        
         {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}">Создать нового пользвователя ›</a>{% endif %}
       </div>
+
       <!-- <div class="last_pubs one_div_sdiol">
         <p>Таблицы БД ›</p>
         <div class="one_div_sdiol body">
@@ -97,7 +102,6 @@
         </div>
       </div> -->
 
-
       <div class="last_pubs one_div_sdiol" style="margin-top: {% if not new_letters_to_support %}-40px;{% else %}-23px;{% endif %} width: 290px;">
         {% if not new_letters_to_support %}
           <p>Последние отвеченные обращения в поддержку (0 неотвеченных сейчас) <span><a href="{% url 'admin_mine:letters_to_support' %}">открыть ›</a></span></p>
@@ -111,8 +115,9 @@
                         {% if letter.asked_by.id != None %}
                           <a href="{% url 'auth:one' pk=letter.asked_by.id %}"><img src="{{ letter.asked_by.photo.url }}" alt=""></a>
                         {% else %}
-                          <img src="/static/sources/SVG/not_specific.svg" alt="">
+                          <img src="/media/users_avatars/deleted_user.png" alt="">
                         {% endif %}
+
                         <div style="display:block;">
                           <p style="">
                             {% if letter.asked_by.id != None %}
@@ -130,19 +135,22 @@
                           </p>
                         </div>
                       </div>
+
                       <div class="ask_content" style="display: block; padding-left: 60px;">
                         <p style="margin: 0;">
                           {{ letter.ask_content }}
                         </p>
                       </div>
                     </div>
+
                     <div class="letters_to_support_text_and_img">
                       <div class="photo_and_nickname" style="align-items: center;">
                         {% if letter.answered_by.id != None %}
                           <a href="{% url 'auth:one' pk=letter.answered_by.id %}"><img src="{{ letter.answered_by.photo.url }}" alt=""></a>
                         {% else %}
-                          <img src="/static/sources/SVG/not_specific.svg" alt="">
+                          <img src="/media/users_avatars/deleted_user.png" alt="">
                         {% endif %}
+
                         <div style="display:block;">
                           <p style="">
                             <span>Ответ от</span>
@@ -152,6 +160,7 @@
                               <span style="opacity: 0.8; font-style: italic;">удалённого пользователя</span>
                             {% endif %}
                           </p>
+
                           <p style="opacity: 0.8;">
                             {% if letter.type.id == 21 or letter.type.id == 22 %}
                               {% if letter.answer_additional_info == 1 %}
@@ -175,8 +184,10 @@
                               {% endif %}
                             {% endif %}
                           </p>
+
                         </div>
                       </div>
+
                       <div class="ask_content" style="display: block; padding-left: 60px;">
                         <p style="margin: 0;">
                           {{ letter.answer_content }}
@@ -211,6 +222,7 @@
                           </p>
                         </div>
                       </div>
+
                       <div class="ask_content" style="display: block; padding-left: 60px;">
                         <p style="margin: 0;">
                           {{ letter.ask_content }}
@@ -233,6 +245,7 @@
       <div class="title">
         <h2>Теги и их категории</h2>
       </div>
+
       {% for category in tag_categories %}
         <div class="category">
             <p class="bold_text">{{ category.name }}</p>
@@ -245,6 +258,7 @@
             {% endfor %}
         </div>
       {% endfor %}
+
       <div class="show_all">
           <a href="{% url 'admin_mine:tags_and_tag_categories' %}" class="bold_text" style="color: #300330;">Посмотреть всё ›</a>
       </div>

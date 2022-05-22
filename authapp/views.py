@@ -28,31 +28,32 @@ from phonenumber_field.phonenumber import PhoneNumber
 def toggle_get_noti_from_author(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
-            duplicate = UserSubscribes.objects.filter(subscriber=request.user, star=pk)
+            if request.user.id == pk or request.user.role.id == 4:
+                duplicate = UserSubscribes.objects.filter(subscriber=request.user, star=pk)
 
-            if not duplicate:
-                if request.user != User.objects.get(id=pk):
-                    record = UserSubscribes.objects.create(subscriber=request.user, star=User.objects.get(id=pk))
-                    record.save()
-                    result = 1
-                    noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' подписался на уведомления о Ваших новых публикациях.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(star=pk).count() ) + " подписчиков"), author=request.user)
-                    Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
-                    noti=Publication.objects.create(title=('Теперь вы будете получить уведомления о новых публикациях пользователя '+ User.objects.get(id=pk).username), type=PubTypes.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber=request.user.id).count() ) + " источников уведомлений о публикациях"), author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                if not duplicate:
+                    if request.user != User.objects.get(id=pk):
+                        record = UserSubscribes.objects.create(subscriber=request.user, star=User.objects.get(id=pk))
+                        record.save()
+                        result = 1
+                        noti=Publication.objects.create(title=('Пользователь «'+ request.user.username +'» подписался на уведомления о Ваших новых публикациях.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(star=pk).count() ) + " подписчиков"), author=request.user)
+                        Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
+                        noti=Publication.objects.create(title=('Теперь вы будете получать уведомления о новых публикациях пользователя «'+ User.objects.get(id=pk).username +'»'), type=PubTypes.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber=request.user.id).count() ) + " источников уведомлений о новых публикациях"), author=request.user)
+                        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                    else:
+                        result = 0
+                        noti=Publication.objects.create(title=('Вы пытались подписаться сами на себя. Давайте так не делать :)'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Не ну а шо вы в самый раз"), author=request.user)
+                        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 else:
+                    duplicate.delete()
                     result = 0
-                    noti=Publication.objects.create(title=('Вы пытались подписаться сами на себя. Давайте так не делать :)'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Не ну а шо вы в самый раз"), author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            else:
-                duplicate.delete()
-                result = 0
 
-            # context = {
-            #     'user': request.user,
-            #     'news_item': NewsItem.objects.get(pk=pk)
-            # }
-            # result = render_to_string('newsapp/includes/likes_block.html', context)
-            return JsonResponse({'result': result})
+                # context = {
+                #     'user': request.user,
+                #     'news_item': NewsItem.objects.get(pk=pk)
+                # }
+                # result = render_to_string('newsapp/includes/likes_block.html', context)
+                return JsonResponse({'result': result})
 
 
 #   получение сигнала о том,
@@ -316,22 +317,21 @@ def UpdateAccount(request, pk):
                         edited_user.role = UserRoles.objects.get(id=method_POST['role'])
 
                 edited_user_expert_info = ExpertInfo.objects.get(expert_account=pk) if ExpertInfo.objects.filter(expert_account=pk) else ExpertInfo.objects.create(expert_account=edited_user)
-                edited_user_expert_info.__dict__.update({
-                    'knowledge': method_POST['knowledge'],
-                    'offer': method_POST['offer'],
-                    'site': method_POST['site'],
-                    'bisness_phone_number': method_POST['bisness_phone_number'],
-                    'address': method_POST['address'],
-                    'telegram': method_POST['telegram'],
-                    'whatsapp': method_POST['whatsapp'],
-                    'viber': method_POST['viber'],
-                    'lol': method_POST['lol'],
-                    'vk': method_POST['vk'],
-                    'inst': method_POST['inst'],
-                    'ok': method_POST['ok'],
-                    'twitter': method_POST['twitter'],
-                    'other': method_POST['other'],
-                    })
+
+                edited_user_expert_info.knowledge =            method_POST['knowledge']            if method_POST['knowledge']            else ''
+                edited_user_expert_info.offer =                method_POST['offer']                if method_POST['offer']                else ''
+                edited_user_expert_info.site =                 method_POST['site']                 if method_POST['site']                 else ''
+                edited_user_expert_info.bisness_phone_number = method_POST['bisness_phone_number'] if method_POST['bisness_phone_number'] else ''
+                edited_user_expert_info.address =              method_POST['address']              if method_POST['address']              else ''
+                edited_user_expert_info.telegram =             method_POST['telegram']             if method_POST['telegram']             else ''
+                edited_user_expert_info.whatsapp =             method_POST['whatsapp']             if method_POST['whatsapp']             else ''
+                edited_user_expert_info.viber =                method_POST['viber']                if method_POST['viber']                else ''
+                edited_user_expert_info.lol =                  method_POST['lol']                  if method_POST['lol']                  else ''
+                edited_user_expert_info.vk =                   method_POST['vk']                   if method_POST['vk']                   else ''
+                edited_user_expert_info.inst =                 method_POST['inst']                 if method_POST['inst']                 else ''
+                edited_user_expert_info.ok =                   method_POST['ok']                   if method_POST['ok']                   else ''
+                edited_user_expert_info.twitter =              method_POST['twitter']              if method_POST['twitter']              else ''
+                edited_user_expert_info.other =                method_POST['other']                if method_POST['other']                else ''
                 edited_user_expert_info.save()
 
             edited_user.save()
@@ -366,25 +366,27 @@ def ChangePassword(request, pk):
         return redirect('main')
 
     editing_user = User.objects.get(id=pk)
-    form = PasswordChangeForm(editing_user)
+    form = PasswordChangeForm(editing_user) if request.user.id == pk else UserPasswordForm()
     if request.method == 'POST':
         print(request.POST)
-        form = PasswordChangeForm(editing_user, request.POST)
+        form = PasswordChangeForm(editing_user, request.POST) if request.user.id == pk else UserPasswordForm(request.POST)
         if form.is_valid():
-            form = form.save()
-
             if request.user.id == pk:
+                form = form.save()
                 update_session_auth_hash(request, form)
+
                 noti=Publication.objects.create(title=('Успешно изменён пароль!  Запишите его себе: «' + request.POST['new_password1'] +'». И не забывайте :)'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content="Вы молодец, что заботетесь о своей безопасности! С заботой, «Ремонт и Дизайн» ❤", author=request.user)
                 Notifications.objects.create(user_receiver=editing_user, noti_for_user=noti)
             else:
-                noti=Publication.objects.create(title=('Успешно изменён пароль пользователя «' + editing_user.username +'»!'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content="зачем правда ну ладно", author=request.user)
+                password = request.POST['password']
+                editing_user.set_password(password)
+                editing_user.save()
+
+                noti=Publication.objects.create(title=('Успешно изменён пароль пользователя «' + editing_user.username +'»! Теперь он такой: «' + password +'».'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content="зачем правда ну ладно", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Ваш пароль был изменён администратором. Запишите его себе: «' + request.POST['new_password1'] +'». И не забывайте :)'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content='С заботой, «Ремонт и Дизайн» ❤', author=request.user)
+                noti=Publication.objects.create(title=('Ваш пароль был изменён администратором. Запишите его себе: «' + password +'». И не забывайте :)'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content='С заботой, «Ремонт и Дизайн» ❤', author=request.user)
                 Notifications.objects.create(user_receiver=editing_user, noti_for_user=noti)
             return redirect('auth:settings', pk=pk)
-
-    print (form)
 
     title = 'Смена пароля' if request.user == editing_user else 'Смена пароля пользователя «' + editing_user.username +'»'
     context = {
@@ -407,7 +409,7 @@ def DeleteAccount(request, pk):
             user.delete()
 
             if request.user.id != user_id:
-                noti=Publication.objects.create(title=('Успешно удалён пользователь «' + user_name +'»'), type=PubTypes.objects.get(id=51), preview=(user_photo), content="Вот и зачем Вы его так?", author=request.user)
+                noti=Publication.objects.create(title=('Успешно удалён пользователь «' + user_name +'»'), type=PubTypes.objects.get(id=51), preview=user_photo, content="Вот и зачем Вы его так?", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 return redirect('admin_mine:users')
             else:
@@ -441,11 +443,11 @@ def BecomeATeammember(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            noti=Publication.objects.create(title=('Ваша заявка на роль администратора принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content="Ожидайте ответа!", author=request.user)
+            noti=Publication.objects.create(title=('Ваша заявка на роль администратора принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа!", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
             return redirect('/')
 
-    title = 'Заявка на роль администратора — стать частью команды «Ремонт и дизайн»'
+    title = 'Заявка на роль администратора — стать частью команды «Ремонт и Дизайн»'
     form = BecomeATeammemberForm()
     context = {
         'title': title,
@@ -506,7 +508,7 @@ def BecomeAnAuthor(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            noti=Publication.objects.create(title=('Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content="Ожидайте ответа!", author=request.user)
+            noti=Publication.objects.create(title=('Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа!", author=request.user)
             Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
             return redirect('/')
 
@@ -547,9 +549,9 @@ def SendToSupport(request):
                 pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
                 title = 'Жалоба на публикацию «'+ pub.title + '»'
                 ask_additional_info = int(request.POST['complaint_pub_id'])
-                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=pub.preview.name, content="Ожидайте ответа! ❤", author=request.user)
+                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Ожидайте ответа! ❤", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', type=PubTypes.objects.get(id=51), preview=pub.preview.name, content="Ожидайте ответа! ❤", author=request.user)
+                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Ожидайте ответа! ❤", author=request.user)
                 Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
             if request.POST['type'] == '12':
@@ -562,7 +564,7 @@ def SendToSupport(request):
                 Notifications.objects.create(user_receiver=account, noti_for_user=noti)
 
             if request.POST['type'] in ['21', '22'] and request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
-                noti=Publication.objects.create(title='Ваша заявка на смену роли не может быть принята на рассмотрение. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! С заботой, Ваша поддержка «Ремонта и дизайна»', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="По-другому пока не можем. Просим простить нас ❤", author=request.user)
+                noti=Publication.objects.create(title='Ваша заявка на смену роли не может быть принята на рассмотрение. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! С заботой, Ваша поддержка «Ремонта и Дизайна»', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="По-другому пока не можем. Просим простить нас ❤", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 return redirect('/')
 

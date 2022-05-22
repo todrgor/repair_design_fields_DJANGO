@@ -1,6 +1,6 @@
 {% extends 'mainapp/base.html' %}
 {% block title %}
-  Вход в ИС
+  Авторизация
 {% endblock %}
 {% block css %}
   <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
 {% endblock %}
 {% block bodystyle%}
-<body style='background: #313131;'>
+  <body style='background: #313131;'>
 {% endblock %}
 
 {% block header %}
@@ -17,6 +17,7 @@
       <a href="/">
           <div class="logo_mini"></div>
       </a>
+
       <div class="header_search">
           <img src="/static/sources/SVG/search.svg" alt="">
           <form class="" action="search.py" method="post">

@@ -28,7 +28,7 @@
       <p class="count_pubs" style="float: right;">{{ finded_count }} совпадений</p>
     {% else %}
       <p class="title_p" style="width: 79%;">По Вашему запросу <span style="color: #777; font-weight: 400;font-style: italic;">{{ looking_for }}</span> не нашлось ни одного результата...</p>
-      <p class="count_pubs" style="width: 65%; line-height: 25px;">Попробуйте поменять поисковый запрос, или сходить погулять и прийти попозже – возможно, появиятся новые публикации и пользвователи, и как раз под Ваши поисковый запрос :)</p>
+      <p class="count_pubs" style="width: 65%; line-height: 25px;">Попробуйте поменять поисковый запрос, или сходить погулять и прийти попозже – возможно, появиятся новые публикации и пользвователи, и как раз под Ваш поисковый запрос :)</p>
   {% endif %}
   </div>
 
@@ -37,6 +37,7 @@
       <p onclick="toggleShow('users')" class="result_type_container" id="users">Найдено {{ finded_accounts_count }} пользователей (по никнейму и статусу в профиле):
         <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
       </p>
+
       <div class="pubs_container_one_type show" id="users">
         {% for account in finded_accounts  %}
           <div class="user_one">
@@ -51,8 +52,9 @@
 
     {% if finded_pubs %}
       <p onclick="toggleShow('repair')" class="result_type_container" id="repair">Найдено {{ finded_pubs_count }} публикаций (по заголовку и внутреннему содержанию):
-      <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
-    </p>
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      </p>
+
       <div class="pubs_container_one_type show" id="repair">
         {% for pub in finded_pubs %}
           {% if pub.type.id == 11 %}
@@ -143,13 +145,15 @@
                     {% endif %}
                     " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
                   </div>
+
                   <div class="pub_author_cntnr">
                     <div class="pub_author">
-                      <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
-                      <div class="nickname_and_role">
-                        <div class="nickname">
-                          <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                      {% if pub.author.id != None %}
 
+                        <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                        <div class="nickname_and_role">
+                          <div class="nickname">
+                            <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
                             {% if user.is_authenticated %}
                               {% if user != pub.author %}
                                 <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
@@ -159,12 +163,24 @@
                               <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
                               <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                             {% endif %}
-                            <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                          </div>
+                          <p class="role">Автор публикации</p>
                         </div>
-                        <p class="role">Автор публикации</p>
-                      </div>
+
+                      {% else %}
+
+                        <img src="/media/users_avatars/deleted_user.png" alt="" class="deleted_user_photo">
+                        <div class="nickname_and_role">
+                          <div class="nickname">
+                            <p class="deleted_user_username">Пользователь удалён</p>
+                          </div>
+                          <p class="deleted_user_pub_author">Автор публикации</p>
+                        </div>
+                      {% endif %}
+
                     </div>
                   </div>
+
                   <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
                 </div>
 
@@ -213,22 +229,24 @@
     {% endif %}
   </div>
 
-  <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
+  <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
     <div class="pub_additional_functions dont_close_on_click">
       <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
         <input type="hidden" name="pub_type" value="31">
         <div class="selected_tags" style="display: none;">
           <!-- js поместит сюда input'ы всех тегов определённой публикации -->
         </div>
-        <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+        <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+          <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+        </label>
       </form>
 
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+      <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
 
-      <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
-      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
-      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
+      <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
+      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
+      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
     </div>
   </div>
 
@@ -247,7 +265,7 @@
     <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
   </div>
 
-  <div class="statistics"> <!-- посмотреть статистику по публикации -->
+  <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
     <h1>Статистика по публикации:</h1>
     <p>Просмотров: <span class="seen_count"></span></p>
     <p>Сохранений: <span class="saved_count"></span></p>

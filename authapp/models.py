@@ -15,18 +15,18 @@ from phonenumber_field.modelfields import PhoneNumberField
 # ksyu : 1212ks12 : Watcher
 # Gleb_Olivki : GlebKrasavchik99 : Watcher
 # Egor226 : Egor226 : author ????????????????
+# rakamakafo : rakamakafo : author
+# 18091 : 18091 : author
 
 class User(AbstractUser):
-    # last_entry работает странно и ненадёжно
-
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')
     role = models.ForeignKey('UserRoles', on_delete=models.SET_DEFAULT, default=1, verbose_name='Роль в ИС', blank=False)
     bio = models.CharField(max_length=100, blank=True, null=True, verbose_name='Самоописание/статус')
     age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(111)])
     phone_number = PhoneNumberField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
-    last_entry = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней авторизации')
-    reported_count = models.IntegerField(default=0, verbose_name='Сколько раз на пользователя было жалоб')
-    seen_count = models.IntegerField(default=0, verbose_name='Сколько раз пользователя просматривали')
+    last_entry = models.DateTimeField(auto_now=True, verbose_name='Последняя авторизация')
+    reported_count = models.IntegerField(default=0, verbose_name='Жалоб на пользователя')
+    seen_count = models.IntegerField(default=0, verbose_name='Просмотров страницы пользователя')
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -48,6 +48,10 @@ class User(AbstractUser):
         return self.noties_new.count() + self.noties_old.count()
 
     @property
+    def all_noties_count(self):
+        return Notifications.objects.filter(user_receiver=self.pk).count()
+
+    @property
     def new_noties_count(self):
         return self.noties_new.count()
 
@@ -60,6 +64,10 @@ class User(AbstractUser):
             return True
         else:
             return False
+
+    @property
+    def made_pubs_count(self):
+        return Publication.objects.filter(author=self, type__id__in=[11, 21, 31]).count()
 
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)
@@ -78,10 +86,8 @@ class UserRoles(models.Model):
 
 
 class UserSubscribes(models.Model):
-    # переделать нейминг и ввести правки в весь проект
-
-    subscriber = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='id подписчика')
-    star = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='id пользователя, про чьи новые публикации подписчик получает уведомления')
+    subscriber = models.ForeignKey('User', related_name="follower", on_delete=models.CASCADE, verbose_name='Подписчика')
+    star = models.ForeignKey('User', related_name="star", on_delete=models.CASCADE, verbose_name='Пользователь, про чьи новые публикации подписчик получает уведомления')
 
     class Meta:
         verbose_name = 'Подписка пользователя'
@@ -92,9 +98,7 @@ class UserSubscribes(models.Model):
 
 
 class ExpertInfo(models.Model):
-    # переделать нейминг и ввести правки в весь проект
-
-    expert_account = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='id эксперта')
+    expert_account = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='Аккаунт эксперта')
     count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
     bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
     knowledge = models.TextField(blank=True, null=True, max_length=1500, verbose_name='Стаж', default='')
@@ -145,8 +149,6 @@ class ExpertInfo(models.Model):
 
 
 class SavedPubs(models.Model):
-    # переделать нейминг и ввести правки в весь проект
-
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
     saver = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
     pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
@@ -160,8 +162,6 @@ class SavedPubs(models.Model):
 
 
 class SeenPubs(models.Model):
-    # переделать нейминг и ввести правки в весь проект
-
     when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
     watcher = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
     pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
@@ -191,11 +191,11 @@ class Notifications(models.Model):
 
 class ContactingSupport(models.Model):
     title = models.CharField(max_length=99, verbose_name='Заголовок события', default='000')
-    asked_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_question", verbose_name='Кто обратился в поддержку')
+    asked_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_question", verbose_name='Кто обратился в поддержку', null=True)
     ask_content = models.CharField(max_length=1555, verbose_name='Содержание обращения')
     ask_additional_info = models.IntegerField(verbose_name='Дополнительная информация к обращению', blank=True, null=True)
     when_asked = models.DateTimeField(verbose_name='Дата и время обращения в поддержку')
-    answered_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого', blank=True, null=True)
+    answered_by = models.ForeignKey('User', on_delete=models.SET_NULL, related_name="made_answer", verbose_name='Ответ в лице поддержки от кого', blank=True, null=True)
     answer_content = models.CharField(max_length=1555, verbose_name='Содержание ответа', blank=True, null=True)
     answer_additional_info = models.IntegerField(verbose_name='Дополнительная информация к ответу', blank=True, null=True)
     when_answered = models.DateTimeField(verbose_name='Дата и время ответа на обращение', blank=True, null=True)

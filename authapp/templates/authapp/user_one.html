@@ -67,8 +67,10 @@
     </div>
 
     {% if opened_user.bio %}
-      <p class="bio notNone">— {{ opened_user.bio }}</p>
-      <p class="bio None" style="display:none"></p>
+      <p class="bio notNone">
+        <span class="quotes opening noselectable">«</span>
+        <span class="notNone">{{ opened_user.bio }}</span><span class="quotes closing noselectable">»</span>
+      </p>
     {% else %}
       <p class="bio None"><span class="user_doesnt_have_bio">У этого пользователя нет статуса.</span></p>
       <p class="bio notNone" style="display:none"></p>
@@ -172,6 +174,7 @@
                     {% endif %}
                     " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
                   </div>
+
                   <div class="pub_author_cntnr">
                     <div class="pub_author">
                       <a href="{% url 'auth:one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
@@ -196,6 +199,7 @@
                   </div>
                   <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
                 </div>
+
                 <div class="div_pub_text">
                   <p class="pub_text">{{ pub.title }}</p>
                 </div>
@@ -241,6 +245,7 @@
                 <img src="{{ pub.preview.url }}" alt="">
                 <div class="img_black_gradient"> </div>
               </div>
+
               <div class="pub_info">
                 <p class="pub_title">{{pub.title}}</p>
                 <div class="div_pub_text">
@@ -248,8 +253,8 @@
                     {{ pub.unstyled_content|safe|slice:"1000" }}
                   </p>
                 </div>
-                <div class="pub_to_do">
 
+                <div class="pub_to_do">
                   {% if pub.id in saved_pubs %}
                     <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ pub.id }} )">
                       <img src="/static/sources/SVG/heart.svg" alt="">
@@ -261,9 +266,9 @@
                       <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
                     </div>
                   {% endif %}
-
                   <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
                 </div>
+
                 <div class="pub_tags"></div>
               </div>
             </div>
@@ -275,11 +280,13 @@
                 <img src="{{ pub.preview.url }}" alt="">
                 <div class="img_black_gradient"> </div>
               </div>
+
               <div class="pub_info">
                 <p class="pub_title before_slides_ten">{{pub.title}}</p>
                 <p class="pub_stats">👀 {{ pub.seen_count }}<br>
                                      ❤  {{ pub.saved_count }} </p>
               </div>
+
               <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
             </div>
           {% endif %}
@@ -290,12 +297,12 @@
 
 
   {% if user != opened_user %}
-    <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с публикацией -->
-      <div class="pub_additional_functions dont_close_on_click"  style="max-height: fit-content;">
-        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}">Подать жалобу<br>на пользователя</p>
+    <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с открытым пользователем -->
+      <div class="pub_additional_functions dont_close_on_click" style="max-height: fit-content;">
+        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}" title="Подать жалобу на пользователя"><span class="icon report"></span>Подать жалобу</p>
         {% if user.role.id == 4 and opened_user.role.id != 4 %}
-          <a href="{% url 'auth:settings' pk=opened_user.id%}" class="dont_close_on_click edit">Редактировать</a>
-          <p class="dont_close_on_click delete" onclick="deleteTheUser()">Удалить</p>
+          <a href="{% url 'auth:settings' pk=opened_user.id%}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon pub_edit" title="Редактировать пользователя"></span>Редактировать</p></a>
+          <p class="dont_close_on_click delete" onclick="deleteTheUser()"><span class="icon p_delete" title="Удалить пользователя"></span>Удалить</p>
         {% endif %}
       </div>
     </div>
@@ -320,15 +327,17 @@
           <div class="selected_tags" style="display: none;">
             <!-- js поместит сюда input'ы всех тегов определённой публикации -->
           </div>
-          <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+          <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+            <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+          </label>
         </form>
 
-        <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+        <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
 
-        <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
-        <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
-        <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
+        <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
+        <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
+        <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
       </div>
     </div>
 
@@ -337,7 +346,7 @@
       <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
     </div>
 
-    <div class="statistics"> <!-- посмотреть статистику по публикации -->
+    <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
       <h1>Статистика по публикации:</h1>
       <p>Просмотров: <span class="seen_count"></span></p>
       <p>Сохранений: <span class="saved_count"></span></p>

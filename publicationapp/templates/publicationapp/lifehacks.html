@@ -70,13 +70,15 @@
               {% endif %}
               " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
             </div>
+
             <div class="pub_author_cntnr">
               <div class="pub_author">
-                <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
-                <div class="nickname_and_role">
-                  <div class="nickname">
-                    <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
+                {% if pub.author.id != None %}
 
+                  <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                  <div class="nickname_and_role">
+                    <div class="nickname">
+                      <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
                       {% if user.is_authenticated %}
                         {% if user != pub.author %}
                           <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
@@ -86,14 +88,26 @@
                         <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
                         <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                       {% endif %}
-                      <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                    </div>
+                    <p class="role">Автор публикации</p>
                   </div>
-                  <p class="role">Автор публикации</p>
-                </div>
+
+                {% else %}
+
+                  <img src="/media/users_avatars/deleted_user.png" alt="" class="deleted_user_photo">
+                  <div class="nickname_and_role">
+                    <div class="nickname">
+                      <p class="deleted_user_username">Пользователь удалён</p>
+                    </div>
+                    <p class="deleted_user_pub_author">Автор публикации</p>
+                  </div>
+                {% endif %}
+
               </div>
             </div>
             <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
           </div>
+
           <div class="div_pub_text">
             <p class="pub_text">{{ pub.title }}</p>
           </div>
@@ -141,9 +155,11 @@
         <div class="opened_filter">
           <form class="opened_filter_form" action="" method="get">
             <p class="opened_filter_title">Фильтры для публикаций</p>
+
             <div class="opened_filter_under_title">
               <p class="opened_filter_second_title">{{ pubs.count }} подобрано</p>
             </div>
+
             <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
               <div class="filters_on"> <!-- если есть 1+ фильтров -->
                 <!-- <div class="filter_one" id="fltr_ordering">
@@ -154,64 +170,78 @@
                    <p id="fltr_cost_p">Фильтер бюджет</p>
                    <div class="to_close_filter fltr_cost"></div>
                 </div>
+
                 <div class="filter_one" id="fltr_save_percent">
                    <p id="fltr_save_percent_p">Фильтер % просмотревших сохранили к себе</p>
                    <div class="to_close_filter fltr_save_percent"></div>
                 </div>
+
                 {% for category in tag_categories %}
                   <div class="filter_one" id="fltr_{{ category.id }}">
                      <p id="fltr_{{ category.id }}_p">Фильтер {{ category.name }}</p>
                      <div class="to_close_filter fltr_some_category" id="{{ category.id }}"></div>
                   </div>
                 {% endfor %}
+
                 <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
               </div>
+
               <div class="filters_off"> <!-- если ни оного фильтра не включено -->
                 <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Будут показаны все публикации</span></p>
               </div>
             </div>
+
             <div class="filter_mini_div ordering">
               <p class="opened_filter_text full_width big_p">
                 <span class="big_p_parth">
                   <span class="category_name">Сортировка:</span>
                 </span>
+
                 <span class="button_span">
                   <button type="button" name="button" class="triangle_to_open_and_hide button_and_submit__without__bgn_and_border">
                   <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
                 </span>
               </p>
+
               <div class="labels" id="ordering">
                 <label>
                   <input type="radio" name="ordering" value="by_new" {% if selected_filters.ordering == 'by_new' or not selected_filters.ordering %} checked {% endif %}>
                   Сначала новые
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_old" {% if selected_filters.ordering == 'by_old' %} checked {% endif %}>
                   Сначала старые
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_seen_count" {% if selected_filters.ordering == 'by_seen_count' %} checked {% endif %}>
                   Больше всего просмотров
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_savest" {% if selected_filters.ordering == 'by_savest' %} checked {% endif %}>
                   Сначала самые сохраняемые
                   <!-- Сначала высокий % сохранений -->
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_shared_count" {% if selected_filters.ordering == 'by_shared_count' %} checked {% endif %}>
                   Больше нажатий «Поделиться»
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_name" {% if selected_filters.ordering == 'by_name' %} checked {% endif %}>
                   По наименованию
                 </label>
+
                 <label>
                   <input type="radio" name="ordering" value="by_reports" {% if selected_filters.ordering == 'by_reports' %} checked {% endif %}>
                   Сначала самые обжалованные
                 </label>
               </div>
             </div>
+
             <div class="filter_mini_div cost">
               <p class="opened_filter_text full_width">Финансовые затраты, ₽</p>
               <input id="fltr_cost_min" type="number" name="cost_mini" value="{{ selected_filters.cost_mini }}" placeholder="0" pattern="[0-9]+([\.,][0-9]+)?">
@@ -219,6 +249,7 @@
               <input id="fltr_cost_max" type="number" name="cost_max" value="{{ selected_filters.cost_max }}" placeholder="15 000 000">
               <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
             </div>
+
             <div class="filter_mini_div save_percent">
               <p class="opened_filter_text full_width">Сколько просмотревших<br>сохранили к себе, %</p>
               <input id="save_percent_min" type="number" name="save_percent_mini" value="{{ selected_filters.save_percent_mini }}" placeholder="0">
@@ -226,6 +257,7 @@
               <input id="save_percent_max" type="number" name="save_percent_max" value="{{ selected_filters.save_percent_max }}" placeholder="100">
               <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
             </div>
+
             {% for category in tag_categories %}
             <!-- див одной категории -->
               <div class="filter_mini_div category" id="{{ category.id }}">
@@ -240,12 +272,14 @@
                     <img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""> </button>
                   </span>
                 </p>
+
                 <div class="labels" id="{{ category.id }}">
                   <!-- див с чекбоксами -->
                   <label class="any_one">
                     <span> <input type="checkbox" name="clear_category" value="any_one" id="{{ category.id }}"> </span>
                     <span class="any_one__span">Очистить</span>
                   </label>
+
                   {% for tag in tags %}
                     {% if tag.category == category and tag.name != 'Другое' %}
                       <label>
@@ -254,6 +288,7 @@
                       </label>
                     {% endif %}
                   {% endfor %}
+
                   {% for tag in tags %}
                     {% if tag.category == category and tag.name == 'Другое' %}
                       <label>
@@ -289,35 +324,38 @@
 	<div class="filter_and_gradient">
 		<div class="filter_and_gradient_container">
 		  <button class="filter_button button_and_submit__without__bgn_and_border">
-			<div class="filter">
-			  <div class="filter_btn">
-  				<img class="filter_logo dont_close_on_click" src="/static/sources/SVG/filter_logo.svg" alt="">
-  				<p class="filter_p dont_close_on_click">Отфильтровать</p>
-			  </div>
-			  <div class="filter_tags_count dont_close_on_click">
-  				<p id="tags_count" class="dont_close_on_click">6</p>
-			  </div>
-			</div>
+  			<div class="filter">
+  			  <div class="filter_btn">
+    				<img class="filter_logo dont_close_on_click" src="/static/sources/SVG/filter_logo.svg" alt="">
+    				<p class="filter_p dont_close_on_click">Отфильтровать</p>
+  			  </div>
+
+  			  <div class="filter_tags_count dont_close_on_click">
+    				<p id="tags_count" class="dont_close_on_click">6</p>
+  			  </div>
+  			</div>
 		  </button>
 		</div>
   </div>
 
-  <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
+  <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
     <div class="pub_additional_functions dont_close_on_click">
       <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
         <input type="hidden" name="pub_type" value="31">
         <div class="selected_tags" style="display: none;">
           <!-- js поместит сюда input'ы всех тегов определённой публикации -->
         </div>
-        <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+        <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+          <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+        </label>
       </form>
 
-      <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
+      <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+      <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
 
-      <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
-      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
-      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
+      <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
+      <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
+      <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
     </div>
   </div>
 
@@ -336,7 +374,7 @@
     <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
   </div>
 
-  <div class="statistics"> <!-- посмотреть статистику по публикации -->
+  <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
     <h1>Статистика по публикации:</h1>
     <p>Просмотров: <span class="seen_count"></span></p>
     <p>Сохранений: <span class="saved_count"></span></p>

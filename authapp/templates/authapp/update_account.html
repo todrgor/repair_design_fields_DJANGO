@@ -237,6 +237,7 @@
         <div class="pub_description pub_inp_one">
           <h4>Поменять пароль:</h4>
           <p>Поменять пароль можно по <a href="{% url 'auth:change_password' pk=edited_user.id %}">ссылке.</a></p>
+          <!-- вот бы получать пароли супервользователем -->
         </div>
 
         <input type="submit" name="create!" value="Сохранить">

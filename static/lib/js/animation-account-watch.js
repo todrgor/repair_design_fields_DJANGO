@@ -1,49 +1,73 @@
 
-$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $('.user_role').offset().left) - 88});
+$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $('.user_role').offset().left) - 113});
 $('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
 
 function YouHaveToLogin(action) {
   alert('Вам нужно авторизоваться перед тем, как ' + action + '.')
 }
 
+function start_loading_animation(idPub) {
+  $('.pub_one#'+idPub+' .user_just_saved_it img').attr('src', '/static/sources/SVG/heart_loading.gif');
+  // $('.pub_one#'+idPub+' .user_just_saved_it img').css('transform', 'rotate(-25deg)');
+  $('.pub_one#'+idPub+' .user_just_saved_it input').val('Загрузка...');
+}
+
+function end_loading_animation(idPub) {
+  $('.pub_one#'+idPub+' .user_just_saved_it img').attr('src', '/static/sources/SVG/heart.svg');
+  // $('.pub_one.design#'+idPub+' .user_just_saved_it img').css('transform', 'rotate(0deg)');
+  console.log("loading ended");
+}
 
 function toggleSavePub_LH(idPub) {
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
   $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
-                $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
+                $('.pub_one#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
                 console.log("Публикация больше не в сохранённом, ID:" +idPub);
             }
             if (data.result == 1) {
-              $('.pub_one.lifehack#'+idPub+' .user_just_saved_it').addClass('pub_saved');
+              $('.pub_one#'+idPub+' .user_just_saved_it').addClass('pub_saved');
               console.log("Произошло сохранение публикации, ID:" +idPub);
             }
         },
         error: function (data) {
+          end_loading_animation(idPub);
           console.log("ошибка какая-то");
         }
     });
 }
 
 function toggleSavePub_D(idPub) {
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
   $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
-                $('.pub_one.design#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
-                $('.pub_one.design#'+idPub+' .user_just_saved_it input').val('В «Избранное»');
+                $('.pub_one#'+idPub+' .user_just_saved_it').removeClass('pub_saved');
+                $('.pub_one#'+idPub+' .user_just_saved_it input').val('В «Избранное»');
                 console.log("Публикация больше не в сохранённом, ID:" +idPub);
             }
             if (data.result == 1) {
-              $('.pub_one.design#'+idPub+' .user_just_saved_it').addClass('pub_saved');
-              $('.pub_one.design#'+idPub+' .user_just_saved_it input').val('Сохранено');
+              $('.pub_one#'+idPub+' .user_just_saved_it').addClass('pub_saved');
+              $('.pub_one#'+idPub+' .user_just_saved_it input').val('Сохранено');
               console.log("Произошло сохранение публикации, ID:" +idPub);
             }
         },
         error: function (data) {
+          end_loading_animation(idPub);
+          $('.pub_one#'+idPub+' .user_just_saved_it input').val('Попробуйте ещё раз...');
           console.log("ошибка какая-то");
         }
     });
@@ -145,13 +169,13 @@ function shareThePub() {
 }
 
 function showThePubStatistic() {
-  $('.statistics h1').html('Статистика по публикации «' + $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»:');
-  $('.statistics .seen_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .seen_count').html());
-  $('.statistics .saved_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .saved_count').html());
-  $('.statistics .average_age_watchers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_watchers').html());
-  $('.statistics .average_age_savers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_savers').html());
-  $('.statistics .shared_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .shared_count').html());
-  $('.statistics .reported_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .reported_count').html());
+  $('.statistics.visible_block h1').html('Статистика по публикации «' + $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»:');
+  $('.statistics.visible_block .seen_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .seen_count').html());
+  $('.statistics.visible_block .saved_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .saved_count').html());
+  $('.statistics.visible_block .average_age_watchers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_watchers').html());
+  $('.statistics.visible_block .average_age_savers').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .average_age_savers').html());
+  $('.statistics.visible_block .shared_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .shared_count').html());
+  $('.statistics.visible_block .reported_count').html($('.lifehack#'+ $opened_pub_additional_functions_id +' .statistics .reported_count').html());
   $('.delete_the_user, .new_complaint, .share_the_pub, .delete_the_pub').removeClass('show');
   $('.statistics').addClass('show');
 }

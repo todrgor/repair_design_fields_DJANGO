@@ -12,24 +12,24 @@
 
 .pub_one.lifehack .media {
   background: #1f1e1e;
-    width: 60%;
-    max-height: 480px;
-    display: grid;
-    border-radius: 18px;
-    overflow: hidden;
-    grid-column: 1;
-    grid-row: 1;
-    z-index: 1;
+  width: 60%;
+  max-height: 480px;
+  display: grid;
+  border-radius: 18px;
+  overflow: hidden;
+  grid-column: 1;
+  grid-row: 1;
+  z-index: 1;
 }
 .pub_one.lifehack .media img,
 .pub_one.lifehack .media video {
   grid-column: 1;
-    grid-row: 1;
-    /* max-height: 500px; */
-    /* min-height: 400px; */
-    /* height: 100%; */
-    max-width: 100%;
-    margin: 0 auto;
+  grid-row: 1;
+  /* max-height: 500px; */
+  /* min-height: 400px; */
+  /* height: 100%; */
+  max-width: 100%;
+  margin: 0 auto;
 }
 .pub_one.lifehack .media video.paused {
   filter: blur(5px);
@@ -44,37 +44,38 @@
 .pub_one.lifehack .div_pub_text {
   -webkit-text-fill-color: #000;
   margin: 14px 0px 0 65px;
-    max-height: 190px;
-    width: calc(100% - 90px);
+  max-height: 190px;
+  width: calc(100% - 90px);
 }
 
 .pub_one.lifehack .pub_to_do {
   justify-content: flex-start;
   align-items: center;
   position: relative;
+  bottom: 0;
 }
 .pub_one.lifehack .user_just_saved_it {
   width: 30px;
-    height: 30px;
-    padding: 10px;
-    border-radius: 30px;
-    background: #000;
-    background-position: center;
-    transition: 0.5s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 30px;
+  padding: 10px;
+  border-radius: 30px;
+  background: #000;
+  background-position: center;
+  transition: 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .pub_one.lifehack .user_just_saved_it a {
   width: 30px;
-    height: 30px;
+  height: 30px;
 }
 .pub_one.lifehack .user_just_saved_it.pub_saved{
   background: radial-gradient(82.88% 1513.02% at 8.1% 50%, #BE0D0D 0%, rgb(117 23 48) 80%);
 }
 .pub_one.lifehack .user_just_saved_it img {
   width: 30px;
-    height: 30px;
+  height: 30px;
 }
 .pub_one.lifehack input.user_just_saved_it_smbt {
   display: none;
@@ -82,30 +83,30 @@
 .pub_one.lifehack .pub_show_full {
   width: auto;
   max-width: 30px;
-    height: 10px;
-    font-size: 18px;
-    color: #737373;
-    padding: 5px;
-    margin: 0 5px 5px;
-    position: absolute;
-    right: 0;
-    background: #0000;
-    background-position: center;
-    transform: rotate(90deg);
-    transition: 0.5s ease;
+  height: 10px;
+  font-size: 18px;
+  color: #737373;
+  padding: 5px;
+  margin-top: -12px;
+  position: absolute;
+  background: #0000;
+  background-position: center;
+  transform: rotate(90deg);
+  transition: 0.5s ease;
+  /* right: 0; */
 }
 .pub_additional_functions_bg {
   opacity: 0.5;
   display: none;
   transition: 0.5s ease;
-    width: 100%;
-    height: 100%;
-    padding-top: calc(10% + 2px);
-    padding-right: 17%;
-    position: fixed;
-    top: 50px;
-    right: 0;
-    background: #23232347;
+  width: 100%;
+  height: 100%;
+  padding-top: calc(10% + 2px);
+  padding-right: 17%;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  background: #23232347;
 }
 .pub_additional_functions {
   opacity: 1;
@@ -130,62 +131,75 @@
     justify-content: flex-end;
 }
 
-.pub_additional_functions p,
-.pub_additional_functions a,
-.pub_additional_functions input {
+.pub_additional_functions p
+/* .pub_additional_functions a, */
+/* .pub_additional_functions input */
+{
   transition: 0.5s ease;
-    padding: 0 10px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 16px;
+  padding: 0 10px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
 }
+.pub_additional_functions input {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+}
+
+.pub_additional_functions p {
+  display: flex;
+}
+
 .pub_additional_functions .for_author_or_admin {
   display: none;
 }
 .pub_additional_functions .for_author_or_admin.show {
-  display: block;
+  display: flex;
 }
 
-.pub_additional_functions p:hover,
-.pub_additional_functions a:hover,
-.pub_additional_functions input:hover {
+.pub_additional_functions p:hover
+/* .pub_additional_functions a:hover,
+.pub_additional_functions input:hover */
+{
   background: #303030;
 }
 
 .pub_one.lifehack .user_just_saved_it:hover {
   background: url(../../sources/SVG/logo_gradient.svg);
-    background-size: 50px;
-    background-position: center;
+  background-size: 50px;
+  background-position: center;
 }
 .pub_one.lifehack .pub_show_full:hover,
 .pub_one.lifehack .pub_show_full.pub_additional_functions_opened {
-  background: #000;
-    color: #fff;
-    /* background: url(../../sources/SVG/reg-submit-gradient.svg); */
-    background-size: 430px;
-    background-position: center;
+  background: #efefef;
+  color: #000;
+  /* background: url(../../sources/SVG/reg-submit-gradient.svg); */
+  background-size: 430px;
+  background-position: center;
 }
 
 .pub_author_cntnr {
   margin-top: -5px;
-    margin-left: 15px;
+  margin-left: 15px;
 }
 .pub_author {
   display: flex;
-    align-items: center;
+  align-items: center;
 }
 .pub_author img {
   /* border: 2px solid #0000009e; */
-    border-radius: 25px;
-    width: 30px;
-    height: 30px;
+  border-radius: 25px;
+  width: 30px;
+  height: 30px;
 }
 .nickname_and_role .nickname {
   margin: 15px 5px 0;
   display: flex;
-    justify-content: space-between;
+  justify-content: space-between;
 }
 .checkbox_get_noti {
   display: none;
@@ -474,4 +488,8 @@
 .delete_the_pub.show,
 .delete_the_user.show {
   display: block;
+}
+
+.width100prcnts {
+  width: 100%;
 }

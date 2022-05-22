@@ -66,18 +66,19 @@
   width: 260px;
 }
 .p_for_removed_pubs {
-  position: relative;
-    top: 10px;
-    font-size: 12px;
-    color: #e2e2e2;
-    background: #763232;
-    border: 1px #2d0707 solid;
-    font-family: 'Roboto';
-    padding: 5px;
-    border-radius: 5px;
-    width: 97%;
-    display: none;
-    transition: all 0.3s ease;
+  position: absolute;
+  bottom: 20%;
+  font-size: 16px;
+  line-height: 22px;
+  color: #e2e2e2;
+  background: #763232;
+  border: 2px #2d0707 solid;
+  font-family: 'Roboto';
+  padding: 10px 16px;
+  border-radius: 10px;
+  width: 67%;
+  display: none;
+  transition: all 0.3s ease;
 }
 .pub_one.lifehack .p_for_removed_pubs {
   width: 86%;

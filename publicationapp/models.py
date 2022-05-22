@@ -14,7 +14,7 @@ class Publication(models.Model):
     tags = models.ManyToManyField('Tag', verbose_name='Теги публикции')
     cost_min = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=0, verbose_name='бюджет от')
     cost_max = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=1, verbose_name='бюджет до')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, null=True, verbose_name='Автор')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name='Автор')
     pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
     seen_count = models.IntegerField(default=0, verbose_name='Просмотров публикации')
     saved_count = models.IntegerField(default=0, verbose_name='Публикация была сохранена столько раз')
@@ -62,8 +62,11 @@ class Publication(models.Model):
                             is_taking_img_url = False
                             img_urls_list.append(src)
                         i+=1
-        print (img_urls_list)
         return img_urls_list
+
+    @property
+    def get_preview(self):  # вернуть preview или замену, если на превьюшке видео
+        return 'pub_media/static/video_object_logo.svg' if self.preview.name.endswith(('.mp4', '.mov')) else self.preview.name
 
     def opened(self):
         self.seen_count +=1

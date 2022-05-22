@@ -1,84 +1,117 @@
-function toggleRemovePubFromSaved_D(idPub) {
+
+function start_loading_animation(idPub) {
+  $('.pub_one#'+idPub+' .remove_pub_from_saved img').attr('src', '/static/sources/SVG/remove_from_saved_loading.gif');
+  // $('.pub_one#'+idPub+' .remove_pub_from_saved img').css('transform', 'rotate(-25deg)');
+  $('.pub_one#'+idPub+' .remove_pub_from_saved input').val('Загрузка...');
+}
+
+function end_loading_animation(idPub) {
+  $('.pub_one#'+idPub+' .remove_pub_from_saved img').attr('src', '/static/sources/SVG/remove_from_saved.svg');
+  // $('.pub_one.design#'+idPub+' .remove_pub_from_saved img').css('transform', 'rotate(0deg)');
+  console.log("loading ended");
+}
+
+function toggleRemovePubFromSaved_R (idPub) {
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
   $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
-              $('.pub_one.design#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
-              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('min-height', '100px');
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '140px');
-              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-              $('.pub_one.design#'+idPub+' .p_for_removed_pubs').addClass('show');
-              console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one#'+idPub+" .additional_functions").css("width","43%");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').addClass('show');
+              console.log("Публикация удалена из избранного о ремонте под ID "+idPub);
             }
             if (data.result == 1) {
-              $('.pub_one.design#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
-              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('min-height', '180px');
-              $('.pub_one.design#'+idPub+" .div_pub_text").css('max-height', '180px');
-              $('.pub_one.design#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-              $('.pub_one.design#'+idPub+' .p_for_removed_pubs').removeClass('show');
-              console.log("Публикация восстановлена в избранное о дизайне под ID "+idPub);
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one#'+idPub+" .additional_functions").css("width","14%");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              console.log("Публикация восстановлена в избранное о ремонте под ID "+idPub);
             }
         },
         error: function (data) {
+          end_loading_animation(idPub);
+          $('.pub_one#'+idPub+' .user_just_saved_it input').val('Попробуйте ещё раз...');
           console.log("ошибка какая-то");
         }
     });
 }
 
-function toggleRemovePubFromSaved_R (idPub) {
+function toggleRemovePubFromSaved_D(idPub) {
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
   $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
-              $('.pub_one.repair#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
-              $('.pub_one.repair#'+idPub+" .additional_functions").css("width","43%");
-              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-              $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').addClass('show');
-              console.log("Публикация удалена из избранного о ремонте под ID "+idPub);
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one#'+idPub+" .div_pub_text").css('min-height', '100px');
+              $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '140px');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').addClass('show');
+              console.log("Удалена из избранного публикация о дизайне под ID "+idPub);
             }
             if (data.result == 1) {
-              $('.pub_one.repair#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
-              $('.pub_one.repair#'+idPub+" .additional_functions").css("width","14%");
-              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-              $('.pub_one.repair#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-              $('.pub_one.repair#'+idPub+' .p_for_removed_pubs').removeClass('show');
-              console.log("Публикация восстановлена в избранное о ремонте под ID "+idPub);
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one#'+idPub+" .div_pub_text").css('min-height', '180px');
+              $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '180px');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              console.log("Публикация восстановлена в избранное о дизайне под ID "+idPub);
             }
         },
         error: function (data) {
+          end_loading_animation(idPub);
+          $('.pub_one#'+idPub+' .user_just_saved_it input').val('Попробуйте ещё раз...');
           console.log("ошибка какая-то");
         }
     });
 }
 
 function toggleRemovePubFromSaved_LH(idPub) {
+  console.log("$(this): ", $(this));
+  start_loading_animation(idPub);
+
   $.ajax({
         url: "/pub/" + idPub + "/toggle_saved/",
 
         success: function (data) {
+            end_loading_animation(idPub);
+
             if (data.result == 0) {
-              $('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
-              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
-              $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '255px');
-              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
-              $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').addClass('show');
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
+              $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '255px');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').addClass('show');
               console.log("Удалена из избранного публикация-лайфхак под ID "+idPub);
             }
             if (data.result == 1) {
-              $('.pub_one.lifehack#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
-              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
-              $('.pub_one.lifehack#'+idPub+" .div_pub_text").css('max-height', '270px');
-              $('.pub_one.lifehack#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
-              $('.pub_one.lifehack#'+idPub+' .p_for_removed_pubs').removeClass('show');
+              $('.pub_one#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
+              $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '270px');
+              $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
+              $('.pub_one#'+idPub+' .p_for_removed_pubs').removeClass('show');
               console.log("Восстановлена в избранное публикация-лайфхак под ID "+idPub);
             }
         },
         error: function (data) {
+          end_loading_animation(idPub);
           console.log("ошибка какая-то");
         }
     });
@@ -108,16 +141,13 @@ function toggleGetNotiFromAuthor(idAccount) {
 function openNewComplaintForm() {
   // $opened_pub_additional_functions_id
   $(' .new_complaint').addClass('show');
-  if ($('.share_the_pub').hasClass('show')) {
-    $('.share_the_pub').removeClass('show')
-  }
+  $('.share_the_pub').removeClass('show')
 }
 
 function new_complaint_was_sent() {
   if (!$('.new_complaint textarea').val().match(/^\s*$/)) {
     $('.pub_show_full').removeClass('pub_additional_functions_opened');
-    $('.pub_additional_functions_bg').removeClass('show');
-    $('.new_complaint').removeClass('show');
+    $('.pub_additional_functions_bg, .new_complaint').removeClass('show');
 
     // подготовка загружаемых файлов к отправке
     $photos = $('.new_complaint input[type="file"]')[0].files;

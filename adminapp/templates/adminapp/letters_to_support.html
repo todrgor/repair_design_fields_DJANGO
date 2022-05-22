@@ -43,388 +43,442 @@
   </div>
 
   <div class="pubs_container">
-      <div class="pubs_container_one_type show" id='ideas'>
-        <p style="margin: 25px auto;"><span class="bold_text">Идеи</span>
-          {% if new_ideas_count %}
-            <span style="color:gray;"> {{ new_ideas_count }} ждут ответа</span>
-          {% endif %}
-          {% if not ideas and not new_ideas %}
-            <span style="color:gray;">пока что ни одной</span>
-          {% endif %}
-        </p>
-        {% if ideas or new_ideas %}
-          <table border="1" class="withBorder">
-              <tr>
-                <th>Обращение</th>
-                <th>Ответ</th>
-              </tr>
-              {% for idea in new_ideas %}
-                <tr class="without_answer_yet">
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block;">
-                          <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
-                          <p style="color:gray;">{{ idea.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ idea.ask_content }}
-                        </p>
-                        {% for photo in all_ideas_photos %}
-                          {% if photo.contacting_support_action.id == idea.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
+
+    <p onclick="toggleShow('ideas')" id="ideas" class="letter_type_container_title" style="margin: 25px auto;"><span class="bold_text">Идеи</span>
+      <span class="count">{% if ideas or new_ideas %} {% if new_ideas_count %} {{ new_ideas_count }} ждут ответа{% else %} нет неотвеченных {% endif %} {% endif %}</span>
+      {% if not ideas and not new_ideas %}
+        <span class="count">пока что ни одной</span>
+      {% else %}
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      {% endif %}
+    </p>
+
+    {% if ideas or new_ideas %}
+      <div class="letters_container_one_type show" id='ideas'>
+        <table border="1" class="withBorder">
+            <tr>
+              <th>Обращение</th>
+              <th>Ответ</th>
+            </tr>
+            {% for idea in new_ideas %}
+              <tr class="without_answer_yet">
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block;">
+                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
+                        <p style="color:gray;">{{ idea.when_asked }}</p>
                       </div>
                     </div>
-                  </td>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответа ещё нет</p>
-                      <form class="" action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ idea.type.id }}">
-                        <input type="hidden" name="ask_id" value="{{ idea.id }}">
-                        {% if answer_form.answer.errors %}
-                          <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
-                            {{ answer_form.answer.errors }}
-                          </span>
-                        {% else %}
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ idea.ask_content }}
+                      </p>
+                      {% for photo in all_ideas_photos %}
+                        {% if photo.contacting_support_action.id == idea.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">Ответа ещё нет</p>
+
+                    <form class="" action="" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="ask_type" value="{{ idea.type.id }}">
+                      <input type="hidden" name="ask_id" value="{{ idea.id }}">
+                      {% if answer_form.answer.errors %}
+                        <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
                           {{ answer_form.answer.errors }}
-                        {% endif %}
-                        {{ answer_form.answer }}
-                        <input type="submit" name="make_answer" value="Отправить ответ">
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-
-              {% for idea in ideas %}
-                <tr>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block;">
-                          <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
-                          <p style="color:gray;">{{ idea.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ idea.ask_content }}
-                        </p>
-                        {% for photo in all_ideas_photos %}
-                          {% if photo.contacting_support_action.id == idea.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=idea.answered_by.id %}">{{ idea.answered_by.username }}</a>, <span style="color:gray;">{{ idea.when_asked }}</span></p>
-                      <p style="display: block; padding-left: 25px;">
-                        {{ idea.answer_content }}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-          </table>
-        {% endif %}
-      </div>
-
-      <div class="pubs_container_one_type show" id='questions'>
-        <p style="margin: 25px auto;"><span class="bold_text">Вопросы</span>
-          {% if new_questions_count %}
-            <span style="color:gray;"> {{ new_questions_count }} ждут ответа</span>
-          {% endif %}
-          {% if not questions and not new_questions %}
-            <span style="color:gray;">пока что ни одного</span>
-          {% endif %}
-        </p>
-        {% if questions or new_questions %}
-          <table border="1" class="withBorder">
-              <tr>
-                <th>Обращение</th>
-                <th>Ответ</th>
+                        </span>
+                      {% else %}
+                        {{ answer_form.answer.errors }}
+                      {% endif %}
+                      {{ answer_form.answer }}
+                      <input type="submit" name="make_answer" value="Отправить ответ">
+                    </form>
+                  </div>
+                </td>
               </tr>
-              {% for question in new_questions %}
-                <tr class="without_answer_yet">
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block;">
-                          <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
-                          <p style="color:gray;">{{ question.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ question.ask_content }}
-                        </p>
-                        {% for photo in all_questions_photos %}
-                          {% if photo.contacting_support_action.id == question.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
+            {% endfor %}
+
+            {% for idea in ideas %}
+              <tr>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=idea.asked_by.id %}"><img src="{{ idea.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block;">
+                        <a href="{% url 'auth:one' pk=idea.asked_by.id %}">{{ idea.asked_by.username }}</a>
+                        <p style="color:gray;">{{ idea.when_asked }}</p>
                       </div>
                     </div>
-                  </td>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответа ещё нет</p>
-                      <form class="" action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ question.type.id }}">
-                        <input type="hidden" name="ask_id" value="{{ question.id }}">
-                        {% if answer_form.answer.errors %}
-                          <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
-                            {{ answer_form.answer.errors }}
-                          </span>
-                        {% else %}
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ idea.ask_content }}
+                      </p>
+                      {% for photo in all_ideas_photos %}
+                        {% if photo.contacting_support_action.id == idea.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">
+                      Ответ от
+                      {% if idea.answered_by %}
+                        <a href="{% url 'auth:one' pk=idea.answered_by.id %}">{{ idea.answered_by.username }}</a>
+                      {% else %}
+                        <span style="font-style: italic; background: #e9e9e9;">[пользователь удалён]</span>
+                      {% endif %}
+                      , <span style="color:gray;">{{ idea.when_asked }}</span>
+                    </p>
+
+                    <p style="display: block; padding-left: 25px;">
+                      {{ idea.answer_content }}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+
+
+    <p onclick="toggleShow('questions')" id="questions" class="letter_type_container_title" style="margin: 25px auto;"><span class="bold_text">Вопросы</span>
+      <span class="count">{% if questions or new_questions %} {% if new_questions_count %} {{ new_questions_count }} ждут ответа{% else %} нет неотвеченных {% endif %} {% endif %}</span>
+      {% if not questions and not new_questions %}
+        <span class="count">пока что ни одной</span>
+      {% else %}
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      {% endif %}
+    </p>
+
+    {% if questions or new_questions %}
+      <div class="letters_container_one_type show" id='questions'>
+        <table border="1" class="withBorder">
+            <tr>
+              <th>Обращение</th>
+              <th>Ответ</th>
+            </tr>
+            {% for question in new_questions %}
+              <tr class="without_answer_yet">
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block;">
+                        <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
+                        <p style="color:gray;">{{ question.when_asked }}</p>
+                      </div>
+                    </div>
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ question.ask_content }}
+                      </p>
+                      {% for photo in all_questions_photos %}
+                        {% if photo.contacting_support_action.id == question.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">Ответа ещё нет</p>
+
+                    <form class="" action="" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="ask_type" value="{{ question.type.id }}">
+                      <input type="hidden" name="ask_id" value="{{ question.id }}">
+                      {% if answer_form.answer.errors %}
+                        <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
                           {{ answer_form.answer.errors }}
-                        {% endif %}
-                        {{ answer_form.answer }}
-                        <input type="submit" name="make_answer" value="Отправить ответ">
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-
-              {% for question in questions %}
-                <tr>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block;">
-                          <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
-                          <p style="color:gray;">{{ question.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ question.ask_content }}
-                        </p>
-                        {% for photo in all_questions_photos %}
-                          {% if photo.contacting_support_action.id == question.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=question.answered_by.id %}">{{ question.answered_by.username }}</a>, <span style="color:gray;">{{ question.when_asked }}</span></p>
-                      <p style="display: block; padding-left: 25px;">
-                        {{ question.answer_content }}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-          </table>
-        {% endif %}
-      </div>
-
-      <div class="pubs_container_one_type show" id='applications'>
-        <p style="margin: 25px auto;"><span class="bold_text">Заявки</span>
-          {% if new_applications_count %}
-            <span style="color:gray;"> {{ new_applications_count }} ждут ответа</span>
-          {% endif %}
-          {% if not applications and not new_applications %}
-            <span style="color:gray;">пока что ни одной</span>
-          {% endif %}
-        </p>
-        {% if applications or new_applications %}
-          <table border="1" class="withBorder">
-              <tr>
-                <th>Заявка</th>
-                <th>Ответ</th>
+                        </span>
+                      {% else %}
+                        {{ answer_form.answer.errors }}
+                      {% endif %}
+                      {{ answer_form.answer }}
+                      <input type="submit" name="make_answer" value="Отправить ответ">
+                    </form>
+                  </div>
+                </td>
               </tr>
-              {% for application in new_applications %}
-                <tr class="without_answer_yet">
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
-                          {% if application.type.id == 21 %}
-                            <p style="color:gray;">▶ роль автора</p>
-                          {% endif %}
-                          {% if application.type.id == 22 %}
-                            <p style="color:gray;">▶ роль админа</p>
-                          {% endif %}
-                          <p style="color:gray;">{{ application.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ application.ask_content }}
-                        </p>
-                        {% for photo in all_applications_photos %}
-                          {% if photo.contacting_support_action.id == application.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
+            {% endfor %}
+
+            {% for question in questions %}
+              <tr>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=question.asked_by.id %}"><img src="{{ question.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block;">
+                        <a href="{% url 'auth:one' pk=question.asked_by.id %}">{{ question.asked_by.username }}</a>
+                        <p style="color:gray;">{{ question.when_asked }}</p>
                       </div>
                     </div>
-                  </td>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответа ещё нет</p>
-                      <form class="" action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ application.type.id }}">
-                        <input type="hidden" name="ask_id" value="{{ application.id }}">
-                        {% if answer_form.answer.errors %}
-                          <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
-                            {{ answer_form.answer.errors }}
-                          </span>
-                        {% else %}
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ question.ask_content }}
+                      </p>
+                      {% for photo in all_questions_photos %}
+                        {% if photo.contacting_support_action.id == question.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">
+                      Ответ от
+                      {% if question.answered_by %}
+                        <a href="{% url 'auth:one' pk=question.answered_by.id %}">{{ question.answered_by.username }}</a>
+                      {% else %}
+                        <span style="font-style: italic; background: #e9e9e9;">[пользователь удалён]</span>
+                      {% endif %}
+                      , <span style="color:gray;">{{ question.when_asked }}</span>
+                    </p>
+
+                    <p style="display: block; padding-left: 25px;">
+                      {{ question.answer_content }}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+
+
+    <p onclick="toggleShow('applications')" id="applications" class="letter_type_container_title" style="margin: 25px auto;"><span class="bold_text">Заявки</span>
+      <span class="count">{% if applications or new_applications %} {% if new_applications_count %} {{ new_applications_count }} ждут ответа{% else %} нет неотвеченных {% endif %} {% endif %}</span>
+      {% if not applications and not new_applications %}
+        <span class="count">пока что ни одной</span>
+      {% else %}
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      {% endif %}
+    </p>
+
+    {% if applications or new_applications %}
+      <div class="letters_container_one_type show" id='applications'>
+        <table border="1" class="withBorder">
+            <tr>
+              <th>Заявка</th>
+              <th>Ответ</th>
+            </tr>
+            {% for application in new_applications %}
+              <tr class="without_answer_yet">
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block; width: 99%;">
+                        <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
+                        {% if application.type.id == 21 %}
+                          <p style="color:gray;">▶ роль автора</p>
+                        {% endif %}
+                        {% if application.type.id == 22 %}
+                          <p style="color:gray;">▶ роль админа</p>
+                        {% endif %}
+                        <p style="color:gray;">{{ application.when_asked }}</p>
+                      </div>
+                    </div>
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ application.ask_content }}
+                      </p>
+                      {% for photo in all_applications_photos %}
+                        {% if photo.contacting_support_action.id == application.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">Ответа ещё нет</p>
+
+                    <form class="" action="" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="ask_type" value="{{ application.type.id }}">
+                      <input type="hidden" name="ask_id" value="{{ application.id }}">
+                      {% if answer_form.answer.errors %}
+                        <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
                           {{ answer_form.answer.errors }}
-                        {% endif %}
-                        {{ answer_form.answer }}
-                        <input type="submit" name="change_role" value="Назначить новую роль">
-                        <input type="submit" name="change_role" value="Оставить прежнюю роль">
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-
-              {% for application in applications %}
-                <tr>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
-                          {% if application.type.id == 21 %}
-                            <p style="color:gray;">▶ роль автора</p>
-                          {% endif %}
-                          {% if application.type.id == 22 %}
-                            <p style="color:gray;">▶ роль админа</p>
-                          {% endif %}
-                          <p style="color:gray;">{{ application.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ application.ask_content }}
-                        </p>
-                        {% for photo in all_applications_photos %}
-                          {% if photo.contacting_support_action.id == application.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p style="display: block; text-align: center;">
-                        {% if application.answer_additional_info == 1 %}
-                          Роль изменена
-                        {% else %}
-                          Роль осталась прежней
-                        {% endif %}
-                      </p>
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=application.answered_by.id %}">{{ application.answered_by.username }}</a>, <span style="color:gray;">{{ application.when_asked }}</span></p>
-                      <p style="display: block; padding-left: 25px;">
-                        {{ application.answer_content }}
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-          </table>
-        {% endif %}
-      </div>
-
-      <div class="pubs_container_one_type show" id='reports'>
-        <p style="margin: 25px auto;"><span class="bold_text">Жалобы</span>
-          {% if new_reports_count %}
-            <span style="color:gray;"> {{ new_reports_count }} ждут ответа</span>
-          {% endif %}
-          {% if not reports and not new_reports %}
-            <span style="color:gray;">пока что ни одной</span>
-          {% endif %}
-        </p>
-        {% if reports or new_reports %}
-          <table border="1" class="withBorder">
-              <tr>
-                <th>Жалоба</th>
-                <th>Ответ</th>
+                        </span>
+                      {% else %}
+                        {{ answer_form.answer.errors }}
+                      {% endif %}
+                      {{ answer_form.answer }}
+                      <input type="submit" name="change_role" value="Назначить новую роль">
+                      <input type="submit" name="change_role" value="Оставить прежнюю роль">
+                    </form>
+                  </div>
+                </td>
               </tr>
-              {% for report in new_reports %}
-                <tr class="without_answer_yet">
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
-                        <div class="" style="display:block; width: 99%;">
-                          <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
-                          {% if report.type.id == 11 %}
-                            <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
-                          {% endif %}
-                          {% if report.type.id == 12 %}
-                            <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
-                          {% endif %}
-                          <p style="color:gray;">{{ report.when_asked }}</p>
-                        </div>
-                      </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ report.ask_content }}
-                        </p>
-                        {% for photo in all_reports_photos %}
-                          {% if photo.contacting_support_action.id == report.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
+            {% endfor %}
+
+            {% for application in applications %}
+              <tr>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=application.asked_by.id %}"><img src="{{ application.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block; width: 99%;">
+                        <a href="{% url 'auth:one' pk=application.asked_by.id %}" style="float: left; margin-right: 10px;">{{ application.asked_by.username }}</a>
+                        {% if application.type.id == 21 %}
+                          <p style="color:gray;">▶ роль автора</p>
+                        {% endif %}
+                        {% if application.type.id == 22 %}
+                          <p style="color:gray;">▶ роль админа</p>
+                        {% endif %}
+                        <p style="color:gray;">{{ application.when_asked }}</p>
                       </div>
                     </div>
-                  </td>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p class="admin_checked_the_letter">Ответа ещё нет</p>
-                      <form class="" action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="ask_type" value="{{ report.type.id }}">
-                        <input type="hidden" name="ask_id" value="{{ report.id }}">
-                        {% if answer_to_report_form.answer.errors %}
-                          <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
-                            {{ answer_to_report_form.answer.errors }}
-                          </span>
-                        {% else %}
-                          {{ answer_to_report_form.answer.errors }}
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ application.ask_content }}
+                      </p>
+                      {% for photo in all_applications_photos %}
+                        {% if photo.contacting_support_action.id == application.id %}
+                          <img src="{{ photo.photo.url }}">
                         {% endif %}
-                        {{ answer_to_report_form.answer }}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
 
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p style="display: block; text-align: center;">
+                      {% if application.answer_additional_info == 1 %}
+                        Роль изменена
+                      {% else %}
+                        Роль осталась прежней
+                      {% endif %}
+                    </p>
+
+                    <p class="admin_checked_the_letter">
+                      Ответ от
+                      {% if application.answered_by %}
+                        <a href="{% url 'auth:one' pk=application.answered_by.id %}">{{ application.answered_by.username }}</a>
+                      {% else %}
+                        <span style="font-style: italic; background: #e9e9e9;">[пользователь удалён]</span>
+                      {% endif %}
+                      , <span style="color:gray;">{{ application.when_asked }}</span>
+                    </p>
+
+                    <p style="display: block; padding-left: 25px;">
+                      {{ application.answer_content }}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+
+
+
+    <p onclick="toggleShow('reports')" id="reports" class="letter_type_container_title" style="margin: 25px auto;"><span class="bold_text">Жалобы</span>
+      <span class="count">{% if reports or new_reports %} {% if new_reports_count %} {{ new_reports_count }} ждут ответа{% else %} нет неотвеченных {% endif %} {% endif %}</span>
+      {% if not reports and not new_reports %}
+        <span class="count">пока что ни одной</span>
+      {% else %}
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      {% endif %}
+    </p>
+
+    {% if reports or new_reports %}
+      <div class="letters_container_one_type show" id='reports'>
+        <table border="1" class="withBorder">
+            <tr>
+              <th>Жалоба</th>
+              <th>Ответ</th>
+            </tr>
+            {% for report in new_reports %}
+              <tr class="without_answer_yet">
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block; width: 99%;">
+                        <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
                         {% if report.type.id == 11 %}
+                          <p style="color:gray; position: relative;">
+                            {% if not report.ask_additional_info in deleted_pubs_in_reports_ids %}
+                              жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a>
+                            {% else %}
+                               {{ report.title }} <span class="deleted">удалена</span>
+                            {% endif %}
+                          </p>
+                        {% endif %}
+                        {% if report.type.id == 12 %}
+                          <p style="color:gray; position: relative;">
+                            {% if not report.ask_additional_info in deleted_users_in_reports_ids %}
+                              жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a>
+                            {% else %}
+                               {{ report.title }} <span class="deleted">удалён</span>
+                            {% endif %}
+                          </p>
+                        {% endif %}
+                        <p style="color:gray;">{{ report.when_asked }}</p>
+                      </div>
+                    </div>
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ report.ask_content }}
+                      </p>
+                      {% for photo in all_reports_photos %}
+                        {% if photo.contacting_support_action.id == report.id %}
+                          <img src="{{ photo.photo.url }}">
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </td>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p class="admin_checked_the_letter">Ответа ещё нет</p>
+
+                    <form class="" action="" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="ask_type" value="{{ report.type.id }}">
+                      <input type="hidden" name="ask_id" value="{{ report.id }}">
+                      {% if answer_to_report_form.answer.errors %}
+                        <span style="color: red; font-size: 16px; text-align: center; padding: 10px 20% 25px; width: 60%; float: left;">
+                          {{ answer_to_report_form.answer.errors }}
+                        </span>
+                      {% else %}
+                        {{ answer_to_report_form.answer.errors }}
+                      {% endif %}
+                      {{ answer_to_report_form.answer }}
+
+                      {% if report.type.id == 11 %}
+                        {% if not report.ask_additional_info in deleted_pubs_in_reports_ids %}
                           {% for pub in reported_pubs %}
                             {% if pub.id == report.ask_additional_info %}
                               {% if pub.author.role.id != 4 %}
@@ -439,14 +493,20 @@
                                 </label>
                               {% else %}
                                 <label style='display: block;'>
-                                  Эта жалоба на публикацию суперпользователя – нельзя лишить его роли и удалить его учётную запись или публикацию. Поэтому можно только текстово ответить на жалобу.
+                                  Эта жалоба на публикацию суперпользователя – нельзя лишить его роли и удалить его учётную запись или публикацию. Поэтому остаётся только текстово ответить на жалобу.
                                 </label>
                               {% endif %}
                             {% endif %}
                           {% endfor %}
-                        {% endif  %}
+                        {% else %}
+                          <label style='display: block;'>
+                            Это жалоба на публикацию, которая уже была удалена по какой-то причине ранее – остаётся просто ответить, не приняв никаких прочих решений.
+                          </label>
+                        {% endif %}
+                      {% endif  %}
 
-                        {% if report.type.id == 12 %}
+                      {% if report.type.id == 12 %}
+                        {% if not report.ask_additional_info in deleted_users_in_reports_ids %}
                           {% for user in reported_users %}
                             {% if user.id == report.ask_additional_info %}
                               {% if user.role.id != 4 %}
@@ -463,98 +523,127 @@
                               {% endif %}
                             {% endif %}
                           {% endfor %}
-                        {% endif  %}
+                        {% else %}
+                          <label style='display: block;'>
+                            Это жалоба на пользователя, который уже удалён по какой-то причиине ранее – остаётся просто ответить, не приняв никаких прочих решений.
+                          </label>
+                        {% endif %}
+                      {% endif  %}
 
-                        <input type="submit" name="send_answer" value="Принять решение и отправить ответ">
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
+                      <input type="submit" name="send_answer" value="Принять решение и отправить ответ">
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
 
-              <!-- ОСТАНОВОЧКА ЗДЕСЬ -->
-              <!--
-                из заметок:
-                -- прямо сейчас есть возможность суперадмину случайно сменить роль
-                -- нет проверки на существование такой публикации или пользователя всё ещё
-             -->
-              {% for report in reports %}
-                <tr>
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <div class="photo_and_nickname" style="align-items: center;">
-                        <p>от</p>
-                        <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
+            {% for report in reports %}
+              <tr>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <div class="photo_and_nickname" style="align-items: center;">
+                      <p>от</p>
+                      <a href="{% url 'auth:one' pk=report.asked_by.id %}"><img src="{{ report.asked_by.photo.url }}" alt=""></a>
+                      <div class="" style="display:block; width: 99%;">
                         <div class="" style="display:block; width: 99%;">
-                          <div class="" style="display:block; width: 99%;">
-                            <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
-                            {% if report.type.id == 11 %}
-                              {% if report.answer_additional_info != 10 and report.answer_additional_info != 110 and report.answer_additional_info != 1010 %}
-                                <p style="color:gray;">▶ жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a></p>
+                          <a href="{% url 'auth:one' pk=report.asked_by.id %}" style="float: left; margin-right: 10px;">{{ report.asked_by.username }}</a>
+                          {% if report.type.id == 11 %}
+                            <p style="color:gray; position: relative;">
+                              {% if not report.ask_additional_info in deleted_pubs_in_reports_ids %}
+                                жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a>
                               {% else %}
-                                <p style="color:gray;"> {{ report.title }} </p>
+                                {{ report.title }} <span class="deleted">удалён</span>
                               {% endif %}
-                            {% endif %}
-                            {% if report.type.id == 12 %}
-                              {% if report.answer_additional_info != 1000 and report.answer_additional_info != 1010 %}
-                                <p style="color:gray;">▶ жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a></p>
+                            </p>
+                          {% endif %}
+
+                          {% if report.type.id == 12 %}
+                            <p style="color:gray; position: relative;">
+                              {% if not report.ask_additional_info in deleted_users_in_reports_ids %}
+                                жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a>
                               {% else %}
-                                <p style="color:gray;"> {{ report.title }} </p>
+                                {{ report.title }} <span class="deleted">удалено</span>
                               {% endif %}
-                            {% endif %}
-                            <p style="color:gray;">{{ report.when_asked }}</p>
-                          </div>
+                            </p>
+                          {% endif %}
+                          <p style="color:gray;">{{ report.when_asked }}</p>
                         </div>
                       </div>
-                      <div class="ask_content" style="display: block; padding-left: 25px;">
-                        <p style="margin-bottom: 10px;">
-                          {{ report.ask_content }}
-                        </p>
-                        {% for photo in all_reports_photos %}
-                          {% if photo.contacting_support_action.id == report.id %}
-                            <img src="{{ photo.photo.url }}">
-                          {% endif %}
-                        {% endfor %}
-                      </div>
                     </div>
-                  </td>
 
-                  <td style='min-width: 520px;'>
-                    <div class="letters_to_support_text_and_img">
-                      <p style="display: block; text-align: center;">
-                        {% if report.answer_additional_info == 0 %}
-                          Просто ответ текстом
-                        {% elif report.answer_additional_info == 10 %}
-                          Удаление публикации и ответ текстом
-                        {% elif report.answer_additional_info == 100 %}
-                          Снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
-                        {% elif report.answer_additional_info == 1000 %}
-                          Удаление пользователя из жалобы и ответ текстом
-                        {% elif report.answer_additional_info == 110 %}
-                          Удаление публикации, снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
-                        {% elif report.answer_additional_info == 1010 %}
-                          Удаление публикации и пользователя из жалобы и ответ текстом
+                    <div class="ask_content" style="display: block; padding-left: 25px;">
+                      <p style="margin-bottom: 10px;">
+                        {{ report.ask_content }}
+                      </p>
+
+                      {% for photo in all_reports_photos %}
+                        {% if photo.contacting_support_action.id == report.id %}
+                          <img src="{{ photo.photo.url }}">
                         {% endif %}
-                      </p>
-                      <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=report.answered_by.id %}">{{ report.answered_by.username }}</a>, <span style="color:gray;">{{ report.when_asked }}</span></p>
-                      <p style="display: block; padding-left: 25px;">
-                        {{ report.answer_content }}
-                      </p>
+                      {% endfor %}
                     </div>
-                  </td>
-                </tr>
-              {% endfor %}
-          </table>
-        {% endif %}
-      </div>
+                  </div>
+                </td>
 
-      {% if strange_letters or new_strange_letters %}
-      <div class="pubs_container_one_type show" id='strange_letters'>
-        <p style="margin: 25px auto;"><span class="bold_text">С этими обращениями что-то пошло не так... (Возникла какая-то ошибка)</span>
-          {% if new_strange_letters_count %}
-            <span style="color:gray;"> {{ new_strange_letters_count }} ждут ответа</span>
-          {% endif %}
-        </p>
+                <td style='min-width: 520px;'>
+                  <div class="letters_to_support_text_and_img">
+                    <p style="display: block; text-align: center;">
+                      {% if report.answer_additional_info == 0 %}
+                        Просто ответ текстом
+                      {% elif report.answer_additional_info == 10 %}
+                        Удаление публикации и ответ текстом
+                      {% elif report.answer_additional_info == 100 %}
+                        Снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
+                      {% elif report.answer_additional_info == 1000 %}
+                        Удаление пользователя из жалобы и ответ текстом
+                      {% elif report.answer_additional_info == 110 %}
+                        Удаление публикации, снижение пользователя из жалобы до роли "Пользователь-зритель" и ответ текстом
+                      {% elif report.answer_additional_info == 1010 %}
+                        Удаление публикации и пользователя из жалобы и ответ текстом
+
+                      {% elif report.answer_additional_info == 40 %}
+                        Ответ текстом и команда удалить публикацию, но она уже была удалена ранее
+                      {% elif report.answer_additional_info == 400 %}
+                        Ответ текстом и команда снизить пользователя из жалобы до роли "Пользователь-зритель", но ранее он был удалён
+                      {% elif report.answer_additional_info == 4000 %}
+                         Ответ текстом и команда на удаление пользователя из жалобы, но ранее он уже был удалён
+                      {% elif report.answer_additional_info == 440 %}
+                        Ответ текстом и удаление публикации, снижение пользователя из жалобы до роли "Пользователь-зритель", но ранее они были удалны
+                      {% elif report.answer_additional_info == 4040 %}
+                        Ответ текстом и удаление публикации и пользователя из жалобы, но ранее они уже были удалены
+                      {% endif %}
+                    </p>
+
+                    <p class="admin_checked_the_letter">
+                      Ответ от
+                      {% if report.answered_by %}
+                        <a href="{% url 'auth:one' pk=report.answered_by.id %}">{{ report.answered_by.username }}</a>
+                      {% else %}
+                        <span style="font-style: italic; background: #e9e9e9;">[пользователь удалён]</span>
+                      {% endif %}
+                      , <span style="color:gray;">{{ report.when_asked }}</span>
+                    </p>
+
+                    <p style="display: block; padding-left: 25px;">
+                      {{ report.answer_content }}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+      </div>
+    {% endif %}
+
+
+
+    {% if strange_letters or new_strange_letters %}
+      <p onclick="toggleShow('strange_letters')" id="strange_letters" class="letter_type_container_title" style="margin: 25px auto;"><span class="bold_text">С этими обращениями что-то пошло не так... (Возникла какая-то ошибка)</span>
+        <span class="count">{% if new_strange_letters_count %} {{ new_strange_letters_count }} ждут ответа{% else %} нет неотвеченных {% endif %}</span>
+        <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+      </p>
+
+      <div class="letters_container_one_type show" id='strange_letters'>
         <table border="1" class="withBorder">
             <tr>
               <th>Обращение</th>
@@ -588,6 +677,7 @@
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
+
                     <form class="" action="" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="ask_type" value="{{ strange_letter.type.id }}">
@@ -635,10 +725,20 @@
 
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
-                    <p class="admin_checked_the_letter">Ответ от <a href="{% url 'auth:one' pk=strange_letter.answered_by.id %}">{{ strange_letter.answered_by.username }}</a>, <span style="color:gray;">{{ strange_letter.when_asked }}</span></p>
+                    <p class="admin_checked_the_letter">
+                      Ответ от
+                      {% if strange_letter.answered_by %}
+                        <a href="{% url 'auth:one' pk=strange_letter.answered_by.id %}">{{ strange_letter.answered_by.username }}</a>
+                      {% else %}
+                        <span style="font-style: italic; background: #e9e9e9;">[пользователь удалён]</span>
+                      {% endif %}
+                      , <span style="color:gray;">{{ strange_letter.when_asked }}</span>
+                    </p>
+
                     <p style="display: block; padding-left: 25px;">
                       {{ strange_letter.answer_content }}
                     </p>
+
                     <form class="" action="" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="ask_type" value="{{ strange_letter.type.id }}">
@@ -651,7 +751,11 @@
             {% endfor %}
         </table>
       </div>
-      {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="to_top_button">
+    <img src="/static/sources/SVG/to_top.svg" alt="">
   </div>
 {% endblock %}
 

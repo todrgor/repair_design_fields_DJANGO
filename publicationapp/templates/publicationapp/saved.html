@@ -34,316 +34,333 @@
     {% if pubs %}<p class="count_pubs">{{ pubs.count }} публикации</p>{% endif %}
   </div>
 
-    {% if not pubs %}
-      <div class="pubs_container" style="min-height: 750px;">
-        <p style="width: 50%; padding: 10px; border-radius: 10px; border: 2px #e5e5e5 solid; background: #f2f2f2; box-shadow: #e3e3e3 0px 0px 5px;">
-          Пока что нет ни одной сохранённой публикации. Посмотрите, вам что-нибудь да понравится!</p>
-    {% else %}
-      <div class="pubs_container">
-      {% for pub in pubs %}
+  {% if not pubs %}
+    <div class="pubs_container" style="min-height: 750px;">
+      <p style="width: 50%; padding: 10px; border-radius: 10px; border: 2px #e5e5e5 solid; background: #f2f2f2; box-shadow: #e3e3e3 0px 0px 5px;">
+        Пока что нет ни одной сохранённой публикации. Посмотрите, вам что-нибудь да понравится!</p>
+  {% else %}
+    <div class="pubs_container">
+    {% for pub in pubs %}
 
-        {% if pub.type.id == 11 %}
-          <div class="pub_one repair" id="{{ pub.id }}">
-            <div class="img_from_pub">
-              <img src="{{ pub.preview.url }}" alt="">
-              <div class="img_black_gradient"> </div>
+      {% if pub.type.id == 11 %}
+        <div class="pub_one repair" id="{{ pub.id }}">
+          <div class="img_from_pub">
+            <img src="{{ pub.preview.url }}" alt="">
+            <div class="img_black_gradient"> </div>
+          </div>
+          <div class="pub_info">
+            <p class="pub_title before_slides_ten">{{ pub.title }}</p>
+            <p class="pub_stats">👀 {{ pub.seen_count }}<br>
+                                 ❤  {{ pub.saved_count }} </p>
+          </div>
+          <div class="additional_functions">
+            <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
+            <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R({{ pub.id }})">
+              <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
             </div>
-            <div class="pub_info">
-              <p class="pub_title before_slides_ten">{{ pub.title }}</p>
-              <p class="pub_stats">👀 {{ pub.seen_count }}<br>
-                                   ❤  {{ pub.saved_count }} </p>
+            <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if pub.type.id == 21 %}
+        <div class="pub_one design" id="{{ pub.id }}">
+          <div class="img_from_pub">
+            <img src="{{ pub.preview.url }}" alt="">
+            <div class="img_black_gradient"> </div>
+          </div>
+          <div class="pub_info">
+            <p class="pub_title">{{ pub.title }}</p>
+            <div class="div_pub_text">
+              <p class="pub_text">
+                {{ pub.unstyled_content|safe|slice:"1000" }}
+              </p>
             </div>
-            <div class="additional_functions">
-              <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
-              <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_R({{ pub.id }})">
+            <div class="pub_to_do">
+              <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D({{ pub.id }})">
                 <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
               </div>
-              <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
+              <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
             </div>
+            <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
+            <div class="pub_tags"></div>
           </div>
-        {% endif %}
+        </div>
+      {% endif %}
 
-        {% if pub.type.id == 21 %}
-          <div class="pub_one design" id="{{ pub.id }}">
-            <div class="img_from_pub">
-              <img src="{{ pub.preview.url }}" alt="">
-              <div class="img_black_gradient"> </div>
-            </div>
-            <div class="pub_info">
-              <p class="pub_title">{{ pub.title }}</p>
-              <div class="div_pub_text">
-                <p class="pub_text">
-                  {{ pub.unstyled_content|safe|slice:"1000" }}
-                </p>
-              </div>
-              <div class="pub_to_do">
-                <div class="remove_pub_from_saved" onclick="toggleRemovePubFromSaved_D({{ pub.id }})">
-                  <img src="/static/sources/SVG/remove_from_saved.svg" title="Удалить из «Избранного»">
+      {% if pub.type.id == 31 %}
+        <div class="pub_one lifehack" id="{{ pub.id }}">
+          <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
+          {% if user.is_authenticated %}
+            {% if pub.author == user or user.role.id == 4 %}
+              <div class="info_for_author_or_admin" style="display: none;">
+                <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
+                <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
+                <div class="statistics">
+                  <p class="seen_count">{{ pub.seen_count }}</p>
+                  <p class="saved_count">{{ pub.saved_count }}</p>
+                  <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
+                  <p class="average_age_savers">{{ pub.average_age_savers }}</p>
+                  <p class="shared_count">{{ pub.shared_count }}</p>
+                  <p class="reported_count">{{ pub.reported_count }}</p>
                 </div>
-                <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
               </div>
-              <p class="p_for_removed_pubs">Публикация удалена из избранного. До перезагрузки страницы её можно восстановить.</p>
-              <div class="pub_tags"></div>
-            </div>
-          </div>
-        {% endif %}
-
-        {% if pub.type.id == 31 %}
-          <div class="pub_one lifehack" id="{{ pub.id }}">
-            <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
-            {% if user.is_authenticated %}
-              {% if pub.author == user or user.role.id == 4 %}
-                <div class="info_for_author_or_admin" style="display: none;">
-                  <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
-                  <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
-                  <div class="statistics">
-                    <p class="seen_count">{{ pub.seen_count }}</p>
-                    <p class="saved_count">{{ pub.saved_count }}</p>
-                    <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
-                    <p class="average_age_savers">{{ pub.average_age_savers }}</p>
-                    <p class="shared_count">{{ pub.shared_count }}</p>
-                    <p class="reported_count">{{ pub.reported_count }}</p>
-                  </div>
-                </div>
-              {% endif %}
             {% endif %}
+          {% endif %}
 
-            <div class="media">
-              {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
-              <video class="paused" muted="muted" controls="controls" loop>
-                <source src="{{ pub.preview.url }}" type='video/mp4;'>
-                Тег video не поддерживается вашим браузером. Увы.
-              </video>
-              {% else %}
-                <img src="{{ pub.preview.url }}" alt="">
-              {% endif %}
-              <div class="img_black_gradient"> </div>
-            </div>
+          <div class="media">
+            {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
+            <video class="paused" muted="muted" controls="controls" loop>
+              <source src="{{ pub.preview.url }}" type='video/mp4;'>
+              Тег video не поддерживается вашим браузером. Увы.
+            </video>
+            {% else %}
+              <img src="{{ pub.preview.url }}" alt="">
+            {% endif %}
+            <div class="img_black_gradient"> </div>
+          </div>
 
-            <div class="pub_info">
-              <div class="pub_to_do">
-                <a onclick="toggleRemovePubFromSaved_LH({{ pub.id }})" title="Удалить из «Избранного»">
-                  <div class="remove_pub_from_saved">
-                    <img src="/static/sources/SVG/remove_from_saved.svg" alt="">
-                  </div>
-                </a>
-                <div class="pub_author_cntnr">
-                  <div class="pub_author">
+          <div class="pub_info">
+            <div class="pub_to_do">
+              <a onclick="toggleRemovePubFromSaved_LH({{ pub.id }})" title="Удалить из «Избранного»">
+                <div class="remove_pub_from_saved">
+                  <img src="/static/sources/SVG/remove_from_saved.svg" alt="">
+                </div>
+              </a>
+
+              <div class="pub_author_cntnr">
+                <div class="pub_author">
+                  {% if pub.author.id != None %}
+
                     <a href="{% url 'auth:one' pk=pub.author.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
                     <div class="nickname_and_role">
                       <div class="nickname">
                         <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
-
-                          {% if user.is_authenticated %}
-                            {% if user != pub.author %}
-                              <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
-                              <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
-                            {% endif %}
-                          {% else %}
-                            <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
-                            <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
+                        {% if user.is_authenticated %}
+                          {% if user != pub.author %}
+                            <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                            <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                           {% endif %}
-                          <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
+                        {% else %}
+                          <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
+                          <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
+                        {% endif %}
                       </div>
                       <p class="role">Автор публикации</p>
                     </div>
-                  </div>
+
+                  {% else %}
+
+                    <img src="/media/users_avatars/deleted_user.png" alt="" class="deleted_user_photo">
+                    <div class="nickname_and_role">
+                      <div class="nickname">
+                        <p class="deleted_user_username">Пользователь удалён</p>
+                      </div>
+                      <p class="deleted_user_pub_author">Автор публикации</p>
+                    </div>
+                  {% endif %}
+
                 </div>
-                <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
-              </div>
-              <div class="div_pub_text">
-                <p class="pub_text">{{ pub.title }}</p>
               </div>
 
-              <div class="pub_tags_container">
+              <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
+            </div>
 
-                {% for tag in pub.tags.all %}
-                  {% if tag.name != 'Другое' %}
-                    <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-                      <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                      <div class="pub_tag">
-                        <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
-                        <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                          type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                        <img src="/static/sources/SVG/search.svg" alt="">
-                      </div>
-                    </form>
-                  {% endif %}
-                {% endfor %}
+            <div class="div_pub_text">
+              <p class="pub_text">{{ pub.title }}</p>
+            </div>
 
-                {% for tag in pub.tags.all %}
-                  {% if tag.name == 'Другое' %}
-                    <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-                      <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                      <div class="pub_tag">
-                        <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
-                        <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                          type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
-                        <img src="/static/sources/SVG/search.svg" alt="">
-                      </div>
-                    </form>
-                  {% endif %}
-                {% endfor %}
+            <div class="pub_tags_container">
 
-              </div>
+              {% for tag in pub.tags.all %}
+                {% if tag.name != 'Другое' %}
+                  <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+                    <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                    <div class="pub_tag">
+                      <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                      <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                        type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                      <img src="/static/sources/SVG/search.svg" alt="">
+                    </div>
+                  </form>
+                {% endif %}
+              {% endfor %}
+
+              {% for tag in pub.tags.all %}
+                {% if tag.name == 'Другое' %}
+                  <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+                    <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                    <div class="pub_tag">
+                      <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                      <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                        type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                      <img src="/static/sources/SVG/search.svg" alt="">
+                    </div>
+                  </form>
+                {% endif %}
+              {% endfor %}
+
             </div>
           </div>
-        {% endif %}
-      {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+    <!--
+    <div class="opened_filter_big_bg">
+      <div class="pre_pre_opened_filter">
+        <div class="pre__opened_filter">
+          <div class="opened_filter">
+            <form class="opened_filter_form" action="to_filter_pubs" method="post">
+              <p class="opened_filter_title">Фильтры для публикаций</p>
+              <div class="opened_filter_under_title">
+                <p class="opened_filter_second_title">14 подобрано</p>
+              </div>
+              <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
+                <!--
+                <div class="filters_on"> <!-- если есть 1+ фильтров -->
+                  <!--
+                  <div class="filter_one" id="fltr_cost">
+                     <p id="fltr_cost_p">Фильтер период сохранения</p>
+                     <div class="to_close_filter fltr_cost"></div>
+                  </div>
+                  <div class="filter_one" id="fltr_style">
+                     <p id="fltr_style_p">Фильтер вид публикации</p>
+                     <div class="to_close_filter fltr_style"></div>
+                  </div>
+                  <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
+                </div>
+                <div class="filters_off"> <!-- если ни оного фильтра не включено -->
+                  <!--
+                  <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
+                </div>
+              </div>
+              <div class="filter_mini_div checked_styles">
+                <p class="opened_filter_text full_width big_p">
+                  <span class="big_p_parth">
+                    Вид публикации:
+                    <span id="checked_styles_count" class="checked_styles_count">Любой</span>
+                  </span>
+                  <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_design_styles button_and_submit__without__bgn_and_border">
+                    <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
+                  </button> </span>
+                </p>
+                <div class="styles_labels_open">
+                  <div class="styles_any_one_label">
+                    <label> <span> <input type="checkbox" name="style_design" value="Ремонт" > </span><span>Ремонт</span> </label>
+                    <label class="any_one" style="max-width: 99px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">Любой вид</span> </label>
+                  </div>
+                  <label> <span> <input type="checkbox" name="style_design" value="Дизайн" > </span><span>Дизайн</span> </label>
+                  <label> <span> <input type="checkbox" name="style_design" value="Лайфхаки" > </span><span>Лайфхаки</span> </label>
+                </div>
+              </div>
+              <div class="filter_mini_div cost">
+                <p class="opened_filter_text full_width">Период сохранения:</p>
+                <input id="fltr_cost_min" type="date" name="cost_mini" placeholder="1999-09-19">
+                <p style="font-size: 15px; font-weight: 900;">-</p>
+                <input id="fltr_cost_max" type="date" name="cost_max" placeholder="2111-11-12">
+                <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
+              <!--
+            </div>
+
+              <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
+              <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
+              <!--
+              <div class="show_pubs">
+                <div class="show_pubs_container">
+                  <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
+                  <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
+                <!--
+              </div>
+              </div>
+            <!-- <div class="clear_hix_show_pubs"></div> -->
+            <!--
+          </form>
+          </div>
+        </div>
+        -->
+
+        <!-- <div class="close_btn"></div> -->
+      <!--
+      </div>
+    </div>
+    -->
+
+  	<!--
+    <div class="filter_and_gradient">
+  		<div class="filter_and_gradient_container">
+  		  <button class="filter_button button_and_submit__without__bgn_and_border">
+  			<div class="filter">
+  			  <div class="filter_btn">
+  				<img class="filter_logo dont_close_on_click" src="/static/sources/SVG/filter_logo.svg" alt="">
+  				<p class="filter_p dont_close_on_click">Отфильтровать</p>
+  			  </div>
+  			  <div class="filter_tags_count dont_close_on_click">
+  				<p id="tags_count" class="dont_close_on_click">6</p>
+  			  </div>
+  			</div>
+  		  </button>
+  		</div>
+    </div>
+    -->
+
+    <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
+      <div class="pub_additional_functions dont_close_on_click">
+        <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+          <input type="hidden" name="pub_type" value="31">
+          <div class="selected_tags" style="display: none;">
+            <!-- js поместит сюда input'ы всех тегов определённой публикации -->
+          </div>
+          <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+            <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+          </label>
+        </form>
+
+        <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
+
+        <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
+        <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
+        <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
+      </div>
     </div>
 
-      <!--
-      <div class="opened_filter_big_bg">
-        <div class="pre_pre_opened_filter">
-          <div class="pre__opened_filter">
-            <div class="opened_filter">
-              <form class="opened_filter_form" action="to_filter_pubs" method="post">
-                <p class="opened_filter_title">Фильтры для публикаций</p>
-                <div class="opened_filter_under_title">
-                  <p class="opened_filter_second_title">14 подобрано</p>
-                </div>
-                <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
-                  <!--
-                  <div class="filters_on"> <!-- если есть 1+ фильтров -->
-                    <!--
-                    <div class="filter_one" id="fltr_cost">
-                       <p id="fltr_cost_p">Фильтер период сохранения</p>
-                       <div class="to_close_filter fltr_cost"></div>
-                    </div>
-                    <div class="filter_one" id="fltr_style">
-                       <p id="fltr_style_p">Фильтер вид публикации</p>
-                       <div class="to_close_filter fltr_style"></div>
-                    </div>
-                    <input class="clear_filter" type="button" name="clear_filter" value="Очистить все фильтры">
-                  </div>
-                  <div class="filters_off"> <!-- если ни оного фильтра не включено -->
-                    <!--
-                    <p>0 фильтров выбрано. <br> <span style="color: gray; font-size: 13px; font-family: 'Open Sans';">Показаны все публикации</span></p>
-                  </div>
-                </div>
-                <div class="filter_mini_div checked_styles">
-                  <p class="opened_filter_text full_width big_p">
-                    <span class="big_p_parth">
-                      Вид публикации:
-                      <span id="checked_styles_count" class="checked_styles_count">Любой</span>
-                    </span>
-                    <span> <button type="button" name="button" class="triangle_to_open_and_hide open_hide_design_styles button_and_submit__without__bgn_and_border">
-                      <img src="/static/sources/SVG/to_close_open_triangle.svg" alt="">
-                    </button> </span>
-                  </p>
-                  <div class="styles_labels_open">
-                    <div class="styles_any_one_label">
-                      <label> <span> <input type="checkbox" name="style_design" value="Ремонт" > </span><span>Ремонт</span> </label>
-                      <label class="any_one" style="max-width: 99px;"> <span> <input type="checkbox" name="style_design" value="any_one"> </span><span class="any_one__span">Любой вид</span> </label>
-                    </div>
-                    <label> <span> <input type="checkbox" name="style_design" value="Дизайн" > </span><span>Дизайн</span> </label>
-                    <label> <span> <input type="checkbox" name="style_design" value="Лайфхаки" > </span><span>Лайфхаки</span> </label>
-                  </div>
-                </div>
-                <div class="filter_mini_div cost">
-                  <p class="opened_filter_text full_width">Период сохранения:</p>
-                  <input id="fltr_cost_min" type="date" name="cost_mini" placeholder="1999-09-19">
-                  <p style="font-size: 15px; font-weight: 900;">-</p>
-                  <input id="fltr_cost_max" type="date" name="cost_max" placeholder="2111-11-12">
-                  <!-- <input type="range" min="0" max="100" step="1" value="50"> -->
-                <!--
-              </div>
+    <div class="new_complaint"> <!-- написать жалобу -->
+      {% csrf_token %}
+      <h1>Жалоба на публикацию</h1>
+      <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
+      <p>Если у вас есть фотографии по теме:</p>
+      <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
+      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
+      <!-- <form> </form> -->
+    </div>
 
-                <!-- <div class="filter_mini_div user_feedbacks"> <p class="opened_filter_text">СОРТИРОВАТЬ, НАПРИМЕР По активности пользователей:</p> </div> -->
-                <!-- <div class="filter_mini_div filter_other"> <p class="opened_filter_text">Дополнительно:</p> </div> -->
-                <!--
-                <div class="show_pubs">
-                  <div class="show_pubs_container">
-                    <input class="filter_mini_div filter_to_filter" style="margin: 0;" type="submit" name="to_filter" value="Показать подобранные">
-                    <!-- <input class="filter_mini_div filter_to_filter" type="button" name="to_filter" value="Без фильтров"> -->
-                  <!--
-                </div>
-                </div>
-              <!-- <div class="clear_hix_show_pubs"></div> -->
-              <!--
-            </form>
-            </div>
-          </div>
-          -->
+    <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
+      <h1>Ссылка на публикацию: </h1>
+      <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
+    </div>
 
-          <!-- <div class="close_btn"></div> -->
-        <!--
-        </div>
+    <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
+      <h1>Статистика по публикации:</h1>
+      <p>Просмотров: <span class="seen_count"></span></p>
+      <p>Сохранений: <span class="saved_count"></span></p>
+      <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
+      <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
+      <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
+      <p>Жалоб на публикацию: <span class="reported_count"></span></p>
+    </div>
+
+    <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
+      <h1>Вы точно хотите удалить публикацию?</h1>
+      <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" class="cancel">Отмена</p>
+        <a href="" id="delete">Удалить публикацию</a>
       </div>
-      -->
+    </div>
 
-    	<!--
-      <div class="filter_and_gradient">
-    		<div class="filter_and_gradient_container">
-    		  <button class="filter_button button_and_submit__without__bgn_and_border">
-    			<div class="filter">
-    			  <div class="filter_btn">
-    				<img class="filter_logo dont_close_on_click" src="/static/sources/SVG/filter_logo.svg" alt="">
-    				<p class="filter_p dont_close_on_click">Отфильтровать</p>
-    			  </div>
-    			  <div class="filter_tags_count dont_close_on_click">
-    				<p id="tags_count" class="dont_close_on_click">6</p>
-    			  </div>
-    			</div>
-    		  </button>
-    		</div>
-      </div>
-      -->
-
-      <div class="pub_additional_functions_bg"> <!-- доп функции с публикацией -->
-        <div class="pub_additional_functions dont_close_on_click">
-          <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-            <input type="hidden" name="pub_type" value="31">
-            <div class="selected_tags" style="display: none;">
-              <!-- js поместит сюда input'ы всех тегов определённой публикации -->
-            </div>
-            <input type="submit" name="to_filter" value="Искать похожее" title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
-          </form>
-
-          <p class="dont_close_on_click" onclick="shareThePub()">Поделиться</p>
-          <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}">Подать жалобу</p>
-
-          <a href="" class="dont_close_on_click for_author_or_admin edit">Редактировать</a>
-          <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()">Статистика</p>
-          <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()">Удалить</p>
-        </div>
-      </div>
-
-      <div class="new_complaint"> <!-- написать жалобу -->
-        {% csrf_token %}
-        <h1>Жалоба на публикацию</h1>
-        <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
-        <p>Если у вас есть фотографии по теме:</p>
-        <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
-        <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-        <!-- <form> </form> -->
-      </div>
-
-      <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-        <h1>Ссылка на публикацию: </h1>
-        <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
-      </div>
-
-      <div class="statistics"> <!-- посмотреть статистику по публикации -->
-        <h1>Статистика по публикации:</h1>
-        <p>Просмотров: <span class="seen_count"></span></p>
-        <p>Сохранений: <span class="saved_count"></span></p>
-        <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
-        <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
-        <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
-        <p>Жалоб на публикацию: <span class="reported_count"></span></p>
-      </div>
-
-      <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
-        <h1>Вы точно хотите удалить публикацию?</h1>
-        <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
-        <div class="cancel_or_delete">
-          <p id="cancel_deleting" class="cancel">Отмена</p>
-          <a href="" id="delete">Удалить публикацию</a>
-        </div>
-      </div>
-
-    {% endif %}
+  {% endif %}
   </div>
 
 {% endblock %}

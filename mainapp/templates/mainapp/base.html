@@ -19,33 +19,47 @@
 {% endblock %}
 
   {% block header %}
+    <div class="preloaded_hovers">
+      <div class="logo_mini_hover">                     <img src="/static/sources/SVG/logo_mini_hover.svg" alt=""></div>
+      <div class="super_admin_panel_hover">             <img src="/static/sources/SVG/super_admin_panel_hover.svg" alt=""></div>
+      <div class="create_new_pub_hover">                <img src="/static/sources/SVG/create_new_pub_hover.svg" alt=""></div>
+      <div class="notifications_mini_hover__noti_logo"> <img src="/static/sources/SVG/notifications_hover_and_focus.svg" alt=""></div>
+      <div class="logo_huge_hover">                     <img src="/static/sources/SVG/logo_huge_hover.png" alt=""></div>
+
+      <div class="toggle_pub_saved_loading">            <img src="/static/sources/SVG/heart_loading.gif" alt=""></div>
+      <div class="toggle_pub_unsaved_loading">          <img src="/static/sources/SVG/remove_from_saved_loading.gif" alt=""></div>
+      <div class="pub_unsaved">                         <img src="/static/sources/SVG/come_back_to_saved.svg" alt=""></div>
+    </div>
+
     <div class="header_bg">
       <div class="header">
           <a href="/">
-              <div class="logo_mini"></div>
+            <div class="logo_mini"></div>
           </a>
+
           <div class="header_search">
-              <img src="/static/sources/SVG/search.svg" alt="">
-              <form class="" action="{% url 'search' %}" method="get">
-                  <input type="text" name="search_input" value="" placeholder="Я ищу...">
-              </form>
+            <img src="/static/sources/SVG/search.svg" alt="">
+            <form class="" action="{% url 'search' %}" method="get">
+                <input type="text" name="search_input" value="" placeholder="Я ищу...">
+            </form>
           </div>
+
           {% if user.is_authenticated %}
             <div class="user_logged_in">
               <div class="header_content">
-                  <a href="{% url 'repairs' %}" class="not_heart">Ремонт</a>
-                  <a href="{% url 'designs' %}" class="not_heart">Дизайн</a>
-                  <a href="{% url 'lifehacks' %}" class="not_heart">Лайфхаки</a>
-                  <a href="{% url 'saved' %}" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
+                <a href="{% url 'repairs' %}" class="not_heart">Ремонт</a>
+                <a href="{% url 'designs' %}" class="not_heart">Дизайн</a>
+                <a href="{% url 'lifehacks' %}" class="not_heart">Лайфхаки</a>
+                <a href="{% url 'saved' %}" class="saved_heart"><p>Избранное</p><img src="/static/sources/SVG/heart.svg" alt=""></a>
               </div>
 
               <div class="role_buttoms">
-                  {% if user.role.id == 3 or user.role.id == 4 %}
-                    <a href="{% url 'admin_mine:main' %}" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
-                  {% endif %}
-                  {% if user.role.id == 2 or user.role.id == 4 %}
-                    <a href="{% url 'pub:create_new' %}" class="create_new_pub" title="Нажмите, чтобы создать публикацию"></a>
-                  {% endif %}
+                {% if user.role.id == 3 or user.role.id == 4 %}
+                  <a href="{% url 'admin_mine:main' %}" class="super_admin_panel" title="Нажмите, чтобы открыть администрирование"></a>
+                {% endif %}
+                {% if user.role.id == 2 or user.role.id == 4 %}
+                  <a href="{% url 'pub:create_new' %}" class="create_new_pub" title="Нажмите, чтобы создать публикацию"></a>
+                {% endif %}
               </div>
 
               <div class="avatar_and_notifications">
@@ -53,16 +67,16 @@
                       <button class="avatar_btn">
                           <div class="avatar_options_mini">
                               <div class="account_img"><img src="{{ user.photo.url }}" style="width:40px; height:40px;"></div>
-                              <p class="avatar_options_mini_p">{{ user.username }}</p>
+                              <p class="avatar_options_mini_p" title="{{ user.username }}">{{ user.username }}</p>
                               <img class="avatar_triangle" src="/static/sources/SVG/avatar-triangle.svg" alt="">
                           </div>
                       </button>
 
                       <div id="avtr_optns" class="avatar_options">
-                          <a href="{% url 'auth:one' pk=user.id %}">Мой профиль</a>
-                          <a href="{% url 'auth:settings' pk=user.id %}">Настройки</a>
-                          <a href="{% url 'send_to_support' %}">Поддержка</a>
-                          <a href="{% url 'logout' %}">Выйти</a>
+                          <a href="{% url 'auth:one' pk=user.id %}"><span class="icon account"></span>Мой профиль</a>
+                          <a href="{% url 'auth:settings' pk=user.id %}"><span class="icon settings"></span>Настройки</a>
+                          <a href="{% url 'send_to_support' %}"><span class="icon support"></span>Поддержка</a>
+                          <a href="{% url 'logout' %}"><span class="icon exit"></span>Выйти</a>
                       </div>
                   </div>
 
