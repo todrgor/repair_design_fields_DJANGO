@@ -28,6 +28,21 @@
       <div class="opened_filter"></div>
     </div>
 
+    <div class="preloaded_units">
+      <div class="site_hover">            <img src="/static/sources/SVG/site_hover.svg" alt=""></div>
+      <div class="telephone_hover">       <img src="/static/sources/SVG/telephone_hover.svg" alt=""></div>
+      <div class="telegram_hover">        <img src="/static/sources/SVG/telegram_hover.svg" alt=""></div>
+      <div class="whatsapp_hover">        <img src="/static/sources/SVG/whatsapp_hover.svg" alt=""></div>
+      <div class="viber_hover">           <img src="/static/sources/SVG/viber_hover.svg" alt=""></div>
+      <div class="lol_hover">             <img src="/static/sources/SVG/lol_hover.svg" alt=""></div>
+      <div class="vk_hover">              <img src="/static/sources/SVG/vk_hover.svg" alt=""></div>
+      <div class="instagram_hover">       <img src="/static/sources/SVG/instagram_hover.svg" alt=""></div>
+      <div class="twitter_hover">         <img src="/static/sources/SVG/twitter_hover.svg" alt=""></div>
+      <div class="odnoklassniki_hover">   <img src="/static/sources/SVG/odnoklassniki_hover.svg" alt=""></div>
+      <div class="address_hover">         <img src="/static/sources/SVG/address_hover.svg" alt=""></div>
+      <div class="other_hover">           <img src="/static/sources/SVG/other_hover.svg" alt=""></div>
+    </div>
+
     <div class="photo_nickname_role_additionalFunctions">
       <img src="{{ opened_user.photo.url }}" alt="" class="user_photo">
       <div class="user_nickname_and_role">
@@ -100,23 +115,30 @@
 
           </div>
 
-          <div class="contact_info">
-            {% if expert_info.site %} <p class="site"><img src="/static/sources/SVG/site.svg">{{ expert_info.site }}</p> {% endif %}
-            {% if expert_info.bisness_phone_number %} <p class="telephone"><img src="/static/sources/SVG/telephone.svg">{{ expert_info.bisness_phone_number }}</p> {% endif %}
-            {% if expert_info.telegram %} <p class="telegram"><img src="/static/sources/SVG/telegram.svg">{{ expert_info.telegram }}</p> {% endif %}
-            {% if expert_info.whatsapp %} <p class="whatsapp"><img src="/static/sources/SVG/whatsapp.svg">{{ expert_info.whatsapp }}</p> {% endif %}
-            {% if expert_info.viber %} <p class="viber"><img src="/static/sources/SVG/viber.svg">{{ expert_info.viber }}</p> {% endif %}
-            {% if expert_info.lol %} <p class="lol"><img src="/static/sources/SVG/lol.svg">{{ expert_info.lol }}</p> {% endif %}
-            {% if expert_info.vk %} <p class="vk"><img src="/static/sources/SVG/vk.svg">{{ expert_info.vk }}</p> {% endif %}
-            {% if expert_info.inst %} <p class="inst"><img src="/static/sources/SVG/instagram.svg">{{ expert_info.inst }}</p> {% endif %}
-            {% if expert_info.twitter %} <p class="twitter"><img src="/static/sources/SVG/twitter.svg">{{ expert_info.twitter }}</p> {% endif %}
-            {% if expert_info.ok %} <p class="ok"><img src="/static/sources/SVG/odnoklassniki.svg">{{ expert_info.ok }}</p> {% endif %}
-            {% if expert_info.address %} <p class="address"><img src="/static/sources/SVG/address.svg">{{ expert_info.address }}</p> {% endif %}
-            {% if expert_info.other %} <p class="other"><img src="/static/sources/SVG/other.svg">{{ expert_info.other }}</p> {% endif %}
+          <div class="contact_info_and_user_some_counts">
+            <div class="contact_info">
+              {% if expert_info.site %}                 <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p>{% endif %}
+              {% if expert_info.bisness_phone_number %} <p class="telephone"> <span class="icon"></span>  {{ expert_info.bisness_phone_number }} </p>{% endif %}
+              {% if expert_info.telegram %}             <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p>{% endif %}
+              {% if expert_info.whatsapp %}             <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p>{% endif %}
+              {% if expert_info.viber %}                <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p>{% endif %}
+              {% if expert_info.lol %}                  <p class="lol">       <span class="icon"></span>  {{ expert_info.lol }}                  </p>{% endif %}
+              {% if expert_info.vk %}                   <p class="vk">        <span class="icon"></span>  {{ expert_info.vk }}                   </p>{% endif %}
+              {% if expert_info.inst %}                 <p class="instagram"> <span class="icon"></span>  {{ expert_info.inst }}                 </p>{% endif %}
+              {% if expert_info.twitter %}              <p class="twitter">   <span class="icon"></span>  {{ expert_info.twitter }}              </p>{% endif %}
+              {% if expert_info.ok %}                   <p class="ok">        <span class="icon"></span>  {{ expert_info.ok }}                   </p>{% endif %}
+              {% if expert_info.address %}              <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p>{% endif %}
+              {% if expert_info.other %}                <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>{% endif %}
 
-            {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
-              <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
-            {% endif %}
+              {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
+                <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
+              {% endif %}
+            </div>
+
+            <div class="user_some_counts">
+              <p>{{ expert_info.count_follovers }} подписчиков</p>
+              <p>{{ opened_user.seen_count }} просмотров страницы</p>
+            </div>
           </div>
         {% else %}
           <div class="expert_info">
@@ -201,6 +223,7 @@
                 </div>
 
                 <div class="div_pub_text">
+                  <div class="some_counts lifehack"><p><span class="count_one">👁‍🗨 {{ pub.seen_count }}</span><span class="count_one">❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
                   <p class="pub_text">{{ pub.title }}</p>
                 </div>
 
@@ -283,7 +306,7 @@
 
               <div class="pub_info">
                 <p class="pub_title before_slides_ten">{{pub.title}}</p>
-                <p class="pub_stats">👀 {{ pub.seen_count }}<br>
+                <p class="pub_stats">👁‍🗨 {{ pub.seen_count }}<br>
                                      ❤  {{ pub.saved_count }} </p>
               </div>
 

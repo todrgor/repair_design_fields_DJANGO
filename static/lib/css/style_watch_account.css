@@ -101,8 +101,11 @@
 }
 
 .expert_info_and_offer_and_contact_info {
+  width: 110%;
+  margin-left: -5%;
   display: flex;
   margin-bottom: 60px;
+  justify-content: space-between;
 }
 
 .expert_info_and_offer {
@@ -112,8 +115,8 @@
 
 .offer,
 .expert_info {
-  margin: 0 0 30px 8%;
   /* width: 60%; */
+  margin: 0 0 30px 0;
   display: flex;
   align-items: flex-start;
 }
@@ -128,55 +131,228 @@
 
 .offer_text,
 .expert_info p {
-  width: 80%;
+  max-height: 450px;
+  overflow: auto;
   text-align: justify;
   margin-right: 10px;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
+  width: 80%;
+}
+
+.contact_info_and_user_some_counts {
+  width: 23%;
 }
 
 .contact_info {
-  width: 25%;
+  /* border: 1px solid #c3c3c3; */
   background: #f3f3f3;
   border-radius: 25px;
-  border: 1px solid #c3c3c3;
-  padding: 20px;
+  padding: 20px 0;
   margin: -20px;
+  margin-bottom: 10px;
   height: fit-content;
 }
 
 .contact_info p {
+  transition: .2s;
   display: flex;
-  margin-bottom: 10px;
-  width: 100%;
+  width: calc(100% - 40px);
   overflow: hidden;
   overflow-x: auto;
   word-break: break-all;
   max-height: 57px;
   overflow-y: auto;
-  padding-right: 8px;
+  padding: 7px 20px 5px;
 }
 
-.contact_info p.other {
+.site .icon {
+  background: url(../../sources/SVG/site.svg);
+}
+.telephone .icon {
+  background: url(../../sources/SVG/telephone.svg);
+}
+.telegram .icon {
+  background: url(../../sources/SVG/telegram.svg);
+}
+.whatsapp .icon {
+  background: url(../../sources/SVG/whatsapp.svg);
+}
+.viber .icon {
+  background: url(../../sources/SVG/viber.svg);
+}
+.lol .icon {
+  background: url(../../sources/SVG/lol.svg);
+}
+.vk .icon {
+  background: url(../../sources/SVG/vk.svg);
+}
+.instagram .icon {
+  background: url(../../sources/SVG/instagram.svg);
+}
+.twitter .icon {
+  background: url(../../sources/SVG/twitter.svg);
+}
+.ok .icon {
+  background: url(../../sources/SVG/odnoklassniki.svg);
+}
+.address .icon {
+  background: url(../../sources/SVG/address.svg);
+}
+.other .icon {
+  background: url(../../sources/SVG/other.svg);
+}
+
+.site:hover .icon {
+  background: url(../../sources/SVG/site_hover.svg) no-repeat;  background-size: contain;
+}
+.telephone:hover .icon {
+  background: url(../../sources/SVG/telephone_hover.svg) no-repeat;  background-size: contain;
+}
+.telegram:hover .icon {
+  background: url(../../sources/SVG/telegram_hover.svg) no-repeat;  background-size: contain;
+}
+.whatsapp:hover .icon {
+  background: url(../../sources/SVG/whatsapp_hover.svg) no-repeat;  background-size: contain;
+}
+.viber:hover .icon {
+  background: url(../../sources/SVG/viber_hover.svg) no-repeat;  background-size: contain;
+  width: 22px;
+  margin-left: -2px;
+}
+.lol:hover .icon {
+  background: url(../../sources/SVG/lol_hover.svg) no-repeat;  background-size: contain;
+}
+.vk:hover .icon {
+  background: url(../../sources/SVG/vk_hover.svg) no-repeat;  background-size: contain;
+}
+.instagram:hover .icon {
+  background: url(../../sources/SVG/instagram_hover.svg) no-repeat;  background-size: contain;
+}
+.twitter:hover .icon {
+  background: url(../../sources/SVG/twitter_hover.svg) no-repeat;  background-size: contain;
+}
+.ok:hover .icon {
+  background: url(../../sources/SVG/odnoklassniki_hover.svg) no-repeat;  background-size: contain;
+}
+.address:hover .icon {
+  background: url(../../sources/SVG/address_hover.svg) no-repeat;  background-size: contain;
+  width: 18px;
+  margin-left: 2px;
+}
+.other:hover .icon {
+  background: url(../../sources/SVG/other_hover.svg) no-repeat;  background-size: contain;
+}
+
+
+.site:hover {
+  background: #b7d98a;
+  color: #fdffea;
+}
+.telephone:hover {
+  background: #161515;
+  color: #e9e6e6;
+}
+.telegram:hover {
+  background: #82b4cb;
+  color: #f0f2ff;
+}
+.whatsapp:hover {
+  background: #8ad99c;
+  color: #f6fff2;
+}
+.viber:hover {
+  background: #cd8ad9;
+  color: #f5f2ff;
+}
+.lol:hover {
+  background: #a88ad9;
+  color: #f2feff;
+}
+.vk:hover {
+  background: #8a9fd9;
+  color: #f2f5ff;
+}
+.instagram:hover {
+  background: #d9a08a;
+  color: #fffaf2;
+}
+.twitter:hover {
+  background: #8ac7d9;
+  color: #f5fff2;
+}
+.ok:hover {
+  background: #d9c18a;
+  color: #fff2f2;
+}
+.address:hover {
+  background: #fff9f5;
+  color: #221202;
+}
+.other:hover {
+  background: #03220a;
+  color: #f2fff2;
+}
+.other:hover .icon {
+  opacity: 1;
+}
+
+.other {
   max-height: 100px;
+  color: #8d8d8d;
 }
-
-.contact_info img {
+.contact_info .icon {
+  transition: .08s;
+  background-size: contain;
   width: 20px;
   height: 20px;
   margin-right: 10px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.contact_info a {
+  color: black;
+}
+.other .icon {
+  width: 50px;
+  opacity: 0.35;
 }
 
-.contact_info p::-webkit-scrollbar {
+
+.contact_info p::-webkit-scrollbar
+{
   width: 4px;               /* ширина scrollbar */
   margin-left: 10px;
 }
 
-.contact_info p::-webkit-scrollbar-track {
-  background: #c3c3c3;        /* цвет дорожки */
+.offer_text::-webkit-scrollbar,
+.expert_info::-webkit-scrollbar
+{
+  width: 8px;               /* ширина scrollbar */
+  margin-left: 10px;
 }
 
-.contact_info p::-webkit-scrollbar-thumb {
-  background: #9d9d9d;    /* цвет плашки */
+.contact_info p::-webkit-scrollbar-track,
+.offer_text::-webkit-scrollbar-track,
+.expert_info::-webkit-scrollbar-track
+{
+  background: #f3f3f3;        /* цвет дорожки */
+}
+
+.contact_info p::-webkit-scrollbar-thumb,
+.offer_text::-webkit-scrollbar-thumb,
+.expert_info::-webkit-scrollbar-thumb
+{
+  background: #d5d5d5;    /* цвет плашки */
   border-radius: 20px;       /* закругления плашки */
+}
+
+.user_some_counts {
+  color: gray;
 }
 
 .author_pubs {

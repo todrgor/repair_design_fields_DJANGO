@@ -23,7 +23,8 @@ function toggleRemovePubFromSaved_R (idPub) {
 
             if (data.result == 0) {
               $('.pub_one#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
-              $('.pub_one#'+idPub+" .additional_functions").css("width","43%");
+              $('.pub_one#'+idPub+" .additional_functions").css("width","60%");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved").css("width","80px");
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Публикация удалена. Восстановить её можно, пока не перезагрузите страницу");
               $('.pub_one#'+idPub+' .p_for_removed_pubs').addClass('show');
@@ -32,6 +33,7 @@ function toggleRemovePubFromSaved_R (idPub) {
             if (data.result == 1) {
               $('.pub_one#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
               $('.pub_one#'+idPub+" .additional_functions").css("width","14%");
+              $('.pub_one#'+idPub+" .remove_pub_from_saved").css("width","40px");
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("title","Удалить из «Избранного»");
               $('.pub_one#'+idPub+' .p_for_removed_pubs').removeClass('show');
@@ -94,6 +96,7 @@ function toggleRemovePubFromSaved_LH(idPub) {
             end_loading_animation(idPub);
 
             if (data.result == 0) {
+              $('.pub_one#'+idPub).addClass('unsaved');
               $('.pub_one#'+idPub+' .remove_pub_from_saved').addClass('pub_removed');
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/come_back_to_saved.svg");
               $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '255px');
@@ -102,6 +105,7 @@ function toggleRemovePubFromSaved_LH(idPub) {
               console.log("Удалена из избранного публикация-лайфхак под ID "+idPub);
             }
             if (data.result == 1) {
+              $('.pub_one#'+idPub).removeClass('unsaved');
               $('.pub_one#'+idPub+' .remove_pub_from_saved').removeClass('pub_removed');
               $('.pub_one#'+idPub+" .remove_pub_from_saved img").attr("src","/static/sources/SVG/remove_from_saved.svg");
               $('.pub_one#'+idPub+" .div_pub_text").css('max-height', '270px');

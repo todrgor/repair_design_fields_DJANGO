@@ -5,6 +5,7 @@ from django.core.validators import FileExtensionValidator, MaxValueValidator, Mi
 # from django.db.models.functions import Lower
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+import bleach
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
@@ -30,18 +31,7 @@ class Publication(models.Model):
 
     @property
     def unstyled_content(self):  # пройтись по content и убрать все стили, оставить просто текст
-        content = self.content
-        to_remove = False
-
-        for i in range(len(content)):
-            if i < len(content):
-                if content[i] == '<':
-                    to_remove = True
-                if to_remove:
-                    if content[i] == '>':
-                        to_remove = False
-                    content = content[:i] +' '+ content[(i+1):]
-        return content
+        return bleach.clean(self.content, tags=['script'], strip=True)
 
     @property
     def img_urls_list(self):  # пройтись по content и получить все img

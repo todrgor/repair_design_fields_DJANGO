@@ -251,32 +251,32 @@
 .nickname_and_role .nickname .nickname_link {
   color: #000;
   max-width: 150px;
-    overflow: hidden;
+  overflow: hidden;
 }
 .nickname_and_role .role {
   color: #0000009e;
-      font-size: 12px;
-      margin-left: 5px;
+    font-size: 12px;
+    margin-left: 5px;
 }
 
 .pub_tags_container {
-  margin: 25px 0 0 25px;
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    flex-wrap: wrap;
+  margin: 25px 0 0 15px;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .pub_tag {
   display: flex;
-    padding: 10px;
-    margin: 0 5px 8px 0;
-    border-radius: 10px;
-    cursor: pointer;
-    background: #dedede;
-    color: #525252;
-    font-size: 14px;
-    transition: 0.5s ease;
+  padding: 10px;
+  margin: 0 5px 8px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #dedede;
+  color: #525252;
+  font-size: 14px;
+  transition: 0.5s ease;
 }
 .pub_tag p {
   transition: 0.5s ease;
@@ -297,7 +297,7 @@
 
 .pub_tag.use_all {
   background: #7d7d7d;
-    color: #fff;
+  color: #fff;
 }
 .pub_tag.use_all:hover {
   background: #a1a1a1;
@@ -315,18 +315,18 @@
 .new_complaint,
 .share_the_pub {
   text-align: center;
-    position: fixed;
-    top: 150px;
-    right: 14%;
-    margin: 0 auto;
-    z-index: 15;
-    background: #fff;
-    padding: 30px 5px;
-    border-radius: 30px;
-    width: 500px;
-    box-shadow: 0px 0px 80px #8c8c8c;
-    display: none;
-    transition: 0.3s ease;
+  position: fixed;
+  top: 150px;
+  right: 14%;
+  margin: 0 auto;
+  z-index: 15;
+  background: #fff;
+  padding: 30px 5px;
+  border-radius: 30px;
+  width: 500px;
+  box-shadow: 0px 0px 80px #8c8c8c;
+  display: none;
+  transition: 0.3s ease;
 }
 .new_complaint.show,
 .share_the_pub.show {
@@ -334,30 +334,30 @@
 }
 .new_complaint form {
   display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 .new_complaint textarea {
   font-family: 'Roboto';
-    font-size: 15px;
+  font-size: 15px;
   width: 80%;
-    margin: 15px auto;
-    padding: 10px;
-    border: 2px solid gray;
-    border-radius: 15px;
-    border-bottom-right-radius: 0;
+  margin: 15px auto;
+  padding: 10px;
+  border: 2px solid gray;
+  border-radius: 15px;
+  border-bottom-right-radius: 0;
 }
 .new_complaint input[type="submit"] {
   width: 85%;
-    border: none;
-    border-radius: 10px;
-    background: #383838;
-    color: #fff;
-    font-size: 18px;
-    margin: 0 auto;
-    padding: 8px;
-    transition: 0.3s ease;
-    cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  background: #383838;
+  color: #fff;
+  font-size: 18px;
+  margin: 0 auto;
+  padding: 8px;
+  transition: 0.3s ease;
+  cursor: pointer;
 }
 .new_complaint input[type="file"] {
   margin: 0 auto 20px;
@@ -371,23 +371,23 @@
 
 .share_the_pub p {
   margin: 20px 0;
-    font-family: 'Roboto';
-    font-size: 22px;
-    color: #3f51b5;
-    text-decoration: underline 2px;
+  font-family: 'Roboto';
+  font-size: 22px;
+  color: #3f51b5;
+  text-decoration: underline 2px;
 }
 
 /* для маленькой панельки автору этой публикцииЖ */
 .functions_for_author_and_admin {
   padding: 5px 0;
-    border-radius: 15px;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #fff;
-    border: 1px solid gray;
-    overflow: hidden;
-    /* display: none; */
+  border-radius: 15px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #fff;
+  border: 1px solid gray;
+  overflow: hidden;
+  /* display: none; */
 }
 .functions_for_author_and_admin h4 {
   padding: 3px 12px;
@@ -422,24 +422,24 @@
 .delete_the_pub,
 .delete_the_user {
   text-align: center;
-    position: fixed;
-    top: 150px;
-    right: 14%;
-    margin: 0 auto;
-    z-index: 15;
-    background: #fff;
-    padding: 30px 5px;
-    border-radius: 30px;
-    width: 500px;
-    box-shadow: 0px 0px 80px #8c8c8c;
-    display: none;
-    /* transition: 0.3s ease; */
+  position: fixed;
+  top: 150px;
+  right: 14%;
+  margin: 0 auto;
+  z-index: 15;
+  background: #fff;
+  padding: 30px 5px;
+  border-radius: 30px;
+  width: 500px;
+  box-shadow: 0px 0px 80px #8c8c8c;
+  display: none;
+  /* transition: 0.3s ease; */
 }
 .statistics h1 {
   margin-bottom: 20px;
   text-align: left;
-    margin-left: 20px;
-    width: calc(100% - 40px);
+  margin-left: 20px;
+  width: calc(100% - 40px);
 }
 .statistics p {
   text-align: left;

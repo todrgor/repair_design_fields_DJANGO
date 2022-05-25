@@ -19,7 +19,7 @@
 {% endblock %}
 
   {% block header %}
-    <div class="preloaded_hovers">
+    <div class="preloaded_units">
       <div class="logo_mini_hover">                     <img src="/static/sources/SVG/logo_mini_hover.svg" alt=""></div>
       <div class="super_admin_panel_hover">             <img src="/static/sources/SVG/super_admin_panel_hover.svg" alt=""></div>
       <div class="create_new_pub_hover">                <img src="/static/sources/SVG/create_new_pub_hover.svg" alt=""></div>
@@ -122,7 +122,7 @@
                                 </div>
                               {% endfor %}
 
-                              {% if user.noties_count <= 4 %}
+                              {% if user.all_noties_count < 5 %}
                                 <p class="title_notifications_opened" style="color: gray; margin: 30px auto 0; text-align: center; width: 70%; font-size: 17px;">
                                   Пока что это все уведомления.
                                 </p>

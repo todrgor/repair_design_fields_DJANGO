@@ -81,7 +81,17 @@
   transition: all 0.3s ease;
 }
 .pub_one.lifehack .p_for_removed_pubs {
-  width: 86%;
+  position: relative;
+  margin-bottom: 10px;
+  width: auto;
+}
+.pub_one.lifehack.unsaved {
+  overflow: hidden;
+}
+.pub_one.lifehack.unsaved .pub_tag {
+  padding: 8px;
+  margin: 0 5px 5px 0;
+  font-size: 5px;
 }
 .p_for_removed_pubs.show {
   display: inherit;
@@ -89,34 +99,34 @@
 
 .additional_functions {
   position: absolute;
-    bottom: 20px;
-    right: 20px;
-    /* width: 43%; */
-    width: 14%;
-    display: none;
-    justify-content: space-between;
-    z-index: 2;
+  bottom: 20px;
+  right: 20px;
+  /* width: 43%; */
+  width: 14%;
+  display: none;
+  justify-content: space-between;
+  z-index: 2;
 }
 .pub_one.repair:hover .additional_functions,
 .pub_one.repair:hover .read_more {
-    display: flex;
-    opacity: 1;
+  display: flex;
+  opacity: 1;
 }
 .pub_one.repair .remove_from_saved {
   border-radius: 5px;
-    width: 35px;
+  width: 35px;
 }
 .pub_one.repair .p_for_removed_pubs {
   display: none;
-    position: static;
-    width: 63%;
-    align-items: center;
+  position: static;
+  width: 63%;
+  align-items: center;
 }
 .pub_one.repair .p_for_removed_pubs.show {
   display: flex;
 }
 .pub_one.repair .read_more {
   position: static;
-    opacity: 1;
-    align-items: center;
+  opacity: 1;
+  align-items: center;
 }

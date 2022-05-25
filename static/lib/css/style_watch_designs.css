@@ -453,7 +453,7 @@ input::-webkit-inner-spin-button {
 
 .pub_text {
   max-height: 180px;
-  min-height: 3em;
+  min-height: 2em;
   /* font-size: 16px;
   line-height: 22px;
   letter-spacing: 0.065em; */
@@ -621,4 +621,32 @@ input.user_just_saved_it_smbt {
   color: #9da3a1;
   font-size: 12px;
   text-align: center;
+}
+
+.some_counts {
+  font-size: 14px;
+  width: fit-content;
+  background: #dedede;
+  color: #68688c;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  position: relative;
+  margin: 0 0 0px 86%;
+}
+.some_counts.lifehack {
+  border-radius: 7px;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+.count_one {
+  margin-right: 10px;
+}
+
+.count_one:last-of-type {
+  margin-right: 0;
 }

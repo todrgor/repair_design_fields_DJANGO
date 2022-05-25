@@ -26,8 +26,8 @@ class UserForm(forms.Form):
 
 
 class UserExpertForm(forms.Form):
-    knowledge = forms.CharField(max_length=1500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
-    offer = forms.CharField(max_length=1500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
+    knowledge = forms.CharField(max_length=5500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
+    offer = forms.CharField(max_length=5500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
     site = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Ваш сайт'}), required=False)
     bisness_phone_number = PhoneNumberField(label="Ваш номер телефона для клиентов:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона для клиентов"}), required=False)
     address = forms.CharField(max_length=300, label="Адрес:", widget=forms.TextInput(attrs={'placeholder': 'Адрес Вашего офиса'}), required=False)
