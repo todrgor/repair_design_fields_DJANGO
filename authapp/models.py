@@ -4,6 +4,8 @@ from django.db import models
 from publicationapp.models import Publication
 from django.core.validators import MaxValueValidator, MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
+from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # user : password : role
 # su1 : : admin + superuser
@@ -25,15 +27,11 @@ class User(AbstractUser):
     age = models.PositiveIntegerField(verbose_name='Возраст', null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(111)])
     phone_number = PhoneNumberField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Последняя авторизация')
-    reported_count = models.IntegerField(default=0, verbose_name='Жалоб на пользователя')
     seen_count = models.IntegerField(default=0, verbose_name='Просмотров страницы пользователя')
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
-    # def new_last_entry(self):
-    #     self.save()
 
     @property
     def noties_new(self):
@@ -69,6 +67,10 @@ class User(AbstractUser):
     def made_pubs_count(self):
         return Publication.objects.filter(author=self, type__id__in=[11, 21, 31]).count()
 
+    @property
+    def reported_count(self):
+        return ContactingSupport.objects.filter(ask_additional_info=self.id, type=12).count()
+
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)
 
@@ -99,10 +101,11 @@ class UserSubscribes(models.Model):
 
 class ExpertInfo(models.Model):
     expert_account = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='Аккаунт эксперта')
-    count_follovers = models.PositiveIntegerField(default=0, verbose_name='Количество подписчиков')
+    # knowledge = models.TextField(blank=True, null=True, verbose_name='Стаж', default='')
+    # offer = models.TextField(blank=True, null=True, max_length=5500, verbose_name='Какую услугу предлагает', default='')
+    knowledge = RichTextUploadingField(blank=True, max_length=5500, null=True, verbose_name='Стаж', default='')
+    offer = RichTextUploadingField(blank=True, max_length=5500, null=True, verbose_name='Список предлагаемых услуг', default='')
     bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
-    knowledge = models.TextField(blank=True, null=True, max_length=5500, verbose_name='Стаж', default='')
-    offer = models.TextField(blank=True, null=True, max_length=5500, verbose_name='Какую услугу предлагает', default='')
     site = models.CharField(blank=True, null=True, max_length=255, verbose_name='Ссылка на сайт', default='')
     address = models.CharField(blank=True, null=True, max_length=255, verbose_name='Адрес', default='')
     telegram = models.CharField(blank=True, null=True, max_length=255, verbose_name='Номер телефона, к которому привязан аккаунт Telegram', default='')
@@ -117,7 +120,7 @@ class ExpertInfo(models.Model):
 
     class Meta:
         verbose_name = 'Экспертная информация о пользователе'
-        verbose_name_plural = 'Экспертная информация о пользователе'
+        verbose_name_plural = 'Много экспертной информации о пользователях'
 
     @property
     def is_not_empty(self):
@@ -140,39 +143,12 @@ class ExpertInfo(models.Model):
         )
         return answer
 
-    def count_follovers_changed(self, change_count):
-        count_follovers += change_count
-        self.save
+    @property
+    def count_follovers(self):
+        return UserSubscribes.objects.filter(star=self.id).count()
 
     def __str__(self):
         return 'Expert ' + str(self.expert_account) + ', offer: ' + str(self.offer)
-
-
-class SavedPubs(models.Model):
-    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
-    saver = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id сохранившего')
-    pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
-
-    class Meta:
-        verbose_name = 'Сохранённая публикация'
-        verbose_name_plural = 'Сохранённые публикации'
-
-    def __str__(self):
-        return 'saver ' + str(self.saver) + ' saved pub ' + str(self.pub)
-
-
-class SeenPubs(models.Model):
-    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время просмотра публикации')
-    watcher = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
-    pub = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
-    count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
-
-    class Meta:
-        verbose_name = 'Просмотренная публикация'
-        verbose_name_plural = 'Просмотренные публикации'
-
-    def __str__(self):
-        return 'pub ' + str(self.pub) + ' seen by ' + str(self.watcher)
 
 
 class Notifications(models.Model):

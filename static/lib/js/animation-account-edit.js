@@ -1,3 +1,4 @@
+
 function cancel_following(idAccount) {
   $.ajax({
         url: "/account/" + idAccount + "/toggleNotifications/",

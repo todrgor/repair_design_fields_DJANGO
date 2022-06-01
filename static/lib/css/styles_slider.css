@@ -1,44 +1,44 @@
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    background-color: #343434;
+  background-color: #343434;
 }
 
 .slider {
-    width: 800px;
-    height: 600px;
-    overflow: hidden;
-    border: 10px solid gray;
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  border: 10px solid gray;
 }
 
 .middle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .navigation {
-    position: absolute;
-    left: 50%;
-    bottom: 16px;
-    transform: translateX(-50%);
-    display: flex;
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
 }
 
 .bar {
-    height: 8px;
-    width: 16px;
-    margin: 6px;
-    cursor: pointer;
-    background-color: red;
-    opacity: .5;
-    border-radius: 10px;
-    transition: all .4s ease;
+  height: 8px;
+  width: 16px;
+  margin: 6px;
+  cursor: pointer;
+  background-color: red;
+  opacity: .5;
+  border-radius: 10px;
+  transition: all .4s ease;
 }
 
 .bar:hover {

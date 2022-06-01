@@ -23,6 +23,43 @@ from django.utils import timezone
 from phonenumber_field.phonenumber import PhoneNumber
 
 
+#   очистить ссылку от домена
+def url_without_domen(url):
+    remove_slugs_list = (
+        '@',
+        'https://',
+        'http://',
+        'www.'
+        )
+    for slug in remove_slugs_list:
+        if url.startswith(slug):
+            url.replace(slug, '', 1)
+
+    domens_list = (
+        'ru',
+        'com',
+        'me'
+    )
+    for domen in domens_list:
+        if ('.'+ domen +'/') in url and url.find('.') == url.find('.'+ domen +'/'):
+            url = url[(url.find('.') +len(domen) +2):]
+    return url
+
+    # #   получить всю сссылку
+    # def full_url(url, direct_to):
+    #     directions_list = {
+    #         'tg': 't.me/',
+    #         'wa': 'wa.me/',
+    #         'vb': 'vb.me/',
+    #         'lol': 'life-online.ru/',
+    #         'vk': 'vk.com/',
+    #         'ig': 'instagram.com/',
+    #         'tw': 't.co/',
+    #         'ok': 'ok.ru/',
+    #     }
+    #     url = directions_list[direct_to] + url.url_without_domen(url.url_without_pre_domen(url)) if direct_to in directions_list else ''
+    #     return url
+
 
 #   включение-отключение получение уведомлений от автора
 def toggle_get_noti_from_author(request, pk):
@@ -99,7 +136,7 @@ class UserRegisterView(TemplateView):
 class UserLoginView(LoginView):
     template_name = "authapp/login.html"
     model = User
-    title ='Вход в ИС'
+    title ='Авторизация'
     success_url = reverse_lazy('main')
     form_class = LoginForm
 
@@ -207,20 +244,20 @@ def CreateAccount(request):
                 edited_user_expert_info = ExpertInfo.objects.filter(expert_account=edited_user.id)
                 edited_user_expert_info = ExpertInfo.objects.get(expert_account=edited_user.id) if edited_user_expert_info else ExpertInfo.objects.create(expert_account=edited_user)
                 edited_user_expert_info.__dict__.update({
-                    'knowledge': method_POST['knowledge'],
-                    'offer': method_POST['offer'],
-                    'bisness_phone_number': method_POST['bisness_phone_number'],
-                    'site': method_POST['site'],
-                    'address': method_POST['address'],
-                    'telegram': method_POST['telegram'],
-                    'whatsapp': method_POST['whatsapp'],
-                    'viber': method_POST['viber'],
-                    'lol': method_POST['lol'],
-                    'vk': method_POST['vk'],
-                    'inst': method_POST['inst'],
-                    'ok': method_POST['ok'],
-                    'twitter': method_POST['twitter'],
-                    'other': method_POST['other'],
+                    'knowledge':                              method_POST['knowledge'],
+                    'offer':                                  method_POST['offer'],
+                    'bisness_phone_number':                   method_POST['bisness_phone_number'],
+                    'site':                                   method_POST['site'],
+                    'address':                                method_POST['address'],
+                    'telegram':             url_without_domen(method_POST['telegram']),
+                    'whatsapp':             url_without_domen(method_POST['whatsapp']),
+                    'viber':                url_without_domen(method_POST['viber']),
+                    'lol':                  url_without_domen(method_POST['lol']),
+                    'vk':                   url_without_domen(method_POST['vk']),
+                    'inst':                 url_without_domen(method_POST['inst']),
+                    'ok':                   url_without_domen(method_POST['ok']),
+                    'twitter':              url_without_domen(method_POST['twitter']),
+                    'other':                                  method_POST['other'],
                     })
                 edited_user_expert_info.save()
 
@@ -318,20 +355,20 @@ def UpdateAccount(request, pk):
 
                 edited_user_expert_info = ExpertInfo.objects.get(expert_account=pk) if ExpertInfo.objects.filter(expert_account=pk) else ExpertInfo.objects.create(expert_account=edited_user)
 
-                edited_user_expert_info.knowledge =            method_POST['knowledge']            if method_POST['knowledge']            else ''
-                edited_user_expert_info.offer =                method_POST['offer']                if method_POST['offer']                else ''
-                edited_user_expert_info.site =                 method_POST['site']                 if method_POST['site']                 else ''
-                edited_user_expert_info.bisness_phone_number = method_POST['bisness_phone_number'] if method_POST['bisness_phone_number'] else ''
-                edited_user_expert_info.address =              method_POST['address']              if method_POST['address']              else ''
-                edited_user_expert_info.telegram =             method_POST['telegram']             if method_POST['telegram']             else ''
-                edited_user_expert_info.whatsapp =             method_POST['whatsapp']             if method_POST['whatsapp']             else ''
-                edited_user_expert_info.viber =                method_POST['viber']                if method_POST['viber']                else ''
-                edited_user_expert_info.lol =                  method_POST['lol']                  if method_POST['lol']                  else ''
-                edited_user_expert_info.vk =                   method_POST['vk']                   if method_POST['vk']                   else ''
-                edited_user_expert_info.inst =                 method_POST['inst']                 if method_POST['inst']                 else ''
-                edited_user_expert_info.ok =                   method_POST['ok']                   if method_POST['ok']                   else ''
-                edited_user_expert_info.twitter =              method_POST['twitter']              if method_POST['twitter']              else ''
-                edited_user_expert_info.other =                method_POST['other']                if method_POST['other']                else ''
+                edited_user_expert_info.knowledge =                              method_POST['knowledge']             if method_POST['knowledge']            else ''
+                edited_user_expert_info.offer =                                  method_POST['offer']                 if method_POST['offer']                else ''
+                edited_user_expert_info.site =                                   method_POST['site']                  if method_POST['site']                 else ''
+                edited_user_expert_info.bisness_phone_number =                   method_POST['bisness_phone_number']  if method_POST['bisness_phone_number'] else ''
+                edited_user_expert_info.address =                                method_POST['address']               if method_POST['address']              else ''
+                edited_user_expert_info.telegram =             url_without_domen(method_POST['telegram'])             if method_POST['telegram']             else ''
+                edited_user_expert_info.whatsapp =             url_without_domen(method_POST['whatsapp'])             if method_POST['whatsapp']             else ''
+                edited_user_expert_info.viber =                url_without_domen(method_POST['viber'])                if method_POST['viber']                else ''
+                edited_user_expert_info.lol =                  url_without_domen(method_POST['lol'] )                 if method_POST['lol']                  else ''
+                edited_user_expert_info.vk =                   url_without_domen(method_POST['vk'] )                  if method_POST['vk']                   else ''
+                edited_user_expert_info.inst =                 url_without_domen(method_POST['inst'])                 if method_POST['inst']                 else ''
+                edited_user_expert_info.ok =                   url_without_domen(method_POST['ok'])                   if method_POST['ok']                   else ''
+                edited_user_expert_info.twitter =              url_without_domen(method_POST['twitter'])              if method_POST['twitter']              else ''
+                edited_user_expert_info.other =                                  method_POST['other']                 if method_POST['other']                else ''
                 edited_user_expert_info.save()
 
             edited_user.save()
@@ -482,20 +519,20 @@ def BecomeAnAuthor(request):
                     becomer_expert_info = ExpertInfo.objects.create(expert_account=request.user)
 
                 becomer_expert_info.__dict__.update({
-                    'knowledge': request.POST['knowledge'],
-                    'offer': request.POST['offer'],
-                    'site': request.POST['site'],
-                    'bisness_phone_number': request.POST['bisness_phone_number'],
-                    'address': request.POST['address'],
-                    'telegram': request.POST['telegram'],
-                    'whatsapp': request.POST['whatsapp'],
-                    'viber': request.POST['viber'],
-                    'lol': request.POST['lol'],
-                    'vk': request.POST['vk'],
-                    'inst': request.POST['inst'],
-                    'ok': request.POST['ok'],
-                    'twitter': request.POST['twitter'],
-                    'other': request.POST['other'],
+                    'knowledge':                              request.POST['knowledge'],
+                    'offer':                                  request.POST['offer'],
+                    'site':                                   request.POST['site'],
+                    'bisness_phone_number':                   request.POST['bisness_phone_number'],
+                    'address':                                request.POST['address'],
+                    'telegram':             url_without_domen(request.POST['telegram']),
+                    'whatsapp':             url_without_domen(request.POST['whatsapp']),
+                    'viber':                url_without_domen(request.POST['viber']),
+                    'lol':                  url_without_domen(request.POST['lol']),
+                    'vk':                   url_without_domen(request.POST['vk']),
+                    'inst':                 url_without_domen(request.POST['inst']),
+                    'ok':                   url_without_domen(request.POST['ok']),
+                    'twitter':              url_without_domen(request.POST['twitter']),
+                    'other':                                  request.POST['other'],
                     })
                 becomer_expert_info.save()
 

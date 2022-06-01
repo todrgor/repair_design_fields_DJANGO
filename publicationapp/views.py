@@ -8,7 +8,6 @@ from publicationapp.models import *
 from .forms import *
 from django.core.files.storage import FileSystemStorage
 from django.db.models.functions import Lower
-from django.db.models import Sum
 # from django.db.models import Q
 import operator
 
@@ -150,7 +149,7 @@ def CreateNewPub(request):
 def UpdatePub(request, pk):
     if not request.user.is_authenticated:
         return redirect('main')
-    if request.user.role.id != 4 or request.user != Publication.objects.get(id=pk).author:
+    if not (request.user.role.id == 4 or request.user == Publication.objects.get(id=pk).author):
         return redirect('main')
 
     pub = Publication.objects.get(id=pk)
@@ -179,21 +178,22 @@ def UpdatePub(request, pk):
     if request.method == 'POST':
         form = PubForm(request.POST)
         method_POST = request.POST
+        print(method_POST)
 
         #   сменить тип публикации, если суперпользователь её сменил
         if request.user.role.id == 4 and 'type' in method_POST and method_POST['type']:
             pub.type = PubTypes.objects.get(id=method_POST['type'])
 
         #   проверка на корректную превьюшку
-        if 'preview' in request.FILES and request.FILES['preview']:
-            allowed_file_formats = {
-                'lifehack':          ('.png', '.jpg', '.jpeg', '.gif', '.mp4', '.mov'),
-                'repair_and_design': ('.png', '.jpg', '.jpeg', '.gif'),
-            }
-            if pub.type.id == 31 and not request.FILES['preview'].name.endswith(allowed_file_formats['lifehack']):
-                form.add_error('preview', 'Пожалуйста, загрузите правильный файл! Для лайфхаков допустимы форматы файлов: ' +str(allowed_file_formats['lifehack'])[1:-1] +'.')
-            if pub.type.id in [11, 21] and not request.FILES['preview'].name.endswith(allowed_file_formats['repair_and_design']):
-                form.add_error('preview', 'Пожалуйста, загрузите правильное превью! Для публикаций про ремонт и дизайн допустимы форматы превью: ' +str(allowed_file_formats['repair_and_design'])[1:-1] +'.')
+        allowed_file_formats = {
+            'lifehack':          ('.png', '.jpg', '.jpeg', '.gif', '.mp4', '.mov'),
+            'repair_and_design': ('.png', '.jpg', '.jpeg', '.gif'),
+        }
+        preview_name = request.FILES['preview'].name if 'preview' in request.FILES and request.FILES['preview'] else pub.preview.name
+        if pub.type.id == 31 and not preview_name.endswith(allowed_file_formats['lifehack']):
+            form.add_error('preview', 'Пожалуйста, загрузите правильный файл! Для лайфхаков допустимы форматы файлов: ' +str(allowed_file_formats['lifehack'])[1:-1] +'.')
+        if pub.type.id in [11, 21] and not preview_name.endswith(allowed_file_formats['repair_and_design']):
+            form.add_error('preview', 'Пожалуйста, загрузите правильное превью! Для публикаций про ремонт и дизайн допустимы форматы превью: ' +str(allowed_file_formats['repair_and_design'])[1:-1] +'.')
 
         #   проверка на отсутсвие введённого пользователя для авторства от суперпользователя
         if request.user.role.id == 4:
@@ -330,30 +330,23 @@ def DeletePub(request, pk):
 def toggle_saved(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
+            pub = Publication.objects.get(id=pk)
             duplicate = SavedPubs.objects.filter(saver=request.user, pub=pk)
 
             if not duplicate:
                 record = SavedPubs.objects.create(saver=request.user, pub=Publication.objects.get(id=pk))
                 record.save()
                 result = 1
+                noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
+                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                if pub.author and pub.author != request.user:
+                    noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.author.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
+                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
             else:
                 duplicate.delete()
                 result = 0
 
-            pub = Publication.objects.get(id=pk)
-            pub.saved_count = SavedPubs.objects.filter(pub__id=pk).count()
             pub.save()
-            # context = {
-            #     'user': request.user,
-            #     'news_item': NewsItem.objects.get(pk=pk)
-            # }
-
-            # result = render_to_string('newsapp/includes/likes_block.html', context)
-            noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            if pub.author and pub.author != request.user:
-                noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.author.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
-                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
 
             return JsonResponse({'result': result})
 
@@ -362,8 +355,6 @@ def toggle_saved(request, pk):
 def set_seen(request, pk):
     if request.is_ajax():
         pub = Publication.objects.get(id=pk)
-        pub.seen_count +=1
-        pub.save()
 
         if request.user.is_authenticated:
             user = request.user
@@ -415,7 +406,7 @@ def filter_pubs (method_GET):
         a = save_percent_mini
         save_percent_mini = save_percent_max
         save_percent_max = a
-    ids_of_pubs_with_good_save_percent = [pub.id for pub in pubs if pub.seen_count and (pub.saved_count/pub.seen_count*100) >= save_percent_mini and (pub.saved_count/pub.seen_count*100) <= save_percent_max]
+    ids_of_pubs_with_good_save_percent = [pub.id for pub in pubs if pub.seen_count and pub.save_percent >= save_percent_mini and pub.save_percent <= save_percent_max]
     pubs = pubs.filter(id__in=ids_of_pubs_with_good_save_percent)
 
     #       categories & tags
@@ -431,15 +422,15 @@ def filter_pubs (method_GET):
 
     #       ordering (сортировка по by_name возвращает list, не queryset)
     if 'ordering' in method_GET:
-        pubs = pubs.order_by('-pushed')         if method_GET['ordering'] == 'by_new'          else pubs
-        pubs = pubs.order_by('pushed')          if method_GET['ordering'] == 'by_old'          else pubs
-        pubs = pubs.order_by('-seen_count')     if method_GET['ordering'] == 'by_seen_count'   else pubs
-        pubs = pubs.order_by('-saved_count')    if method_GET['ordering'] == 'by_savest'       else pubs
-        # pubs = pubs.order_by('seen_count'/'saved_count') if method_GET['ordering'] == 'by_savest' else pubs
-        pubs = pubs.order_by('-shared_count')   if method_GET['ordering'] == 'by_shared_count' else pubs
-        pubs = pubs.order_by('-reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
+        pubs = pubs.order_by('-pushed')                      if method_GET['ordering'] == 'by_new'          else pubs
+        pubs = pubs.order_by('pushed')                       if method_GET['ordering'] == 'by_old'          else pubs
+        pubs = sorted(pubs,  key=lambda m: m.seen_count)     if method_GET['ordering'] == 'by_seen_count'   else pubs
+        pubs = sorted(pubs,  key=lambda m: m.saved_count)    if method_GET['ordering'] == 'by_savest'       else pubs
+        # pubs = sorted(pubs,  key=lambda m: m.save_percent) if method_GET['ordering'] == 'by_savest' else pubs
+        pubs = pubs.order_by('-shared_count')                if method_GET['ordering'] == 'by_shared_count' else pubs
+        pubs = sorted(pubs,  key=lambda m: m.reported_count) if method_GET['ordering'] == 'by_reports'      else pubs
         # ну почему сортировка по наименованию для русского языка не работает((((
-        pubs = pubs.order_by(Lower('title'))    if method_GET['ordering'] == 'by_name' else pubs
+        pubs = pubs.order_by(Lower('title'))                 if method_GET['ordering'] == 'by_name'         else pubs
         # pubs = sorted(pubs, key=operator.attrgetter('title')) if method_GET['ordering'] == 'by_name' else pubs
 
     # [pub.id for pub in sorted(pubs, key=operator.attrgetter('title'))]
@@ -483,14 +474,7 @@ class PubWatchOne(ListView):
             seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
             seen_url_object.count += 1
             seen_url_object.save()
-
-        #   обновление статистики у открываемой публикации
-        ages = (SeenPubs.objects.filter(pub=self.kwargs['pk']).aggregate(Sum('watcher__age')))['watcher__age__sum']
-        pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
-        pub.average_age_savers =   ages / SavedPubs.objects.filter(pub=pub).count() if SavedPubs.objects.filter(pub=pub).count() != 0 else 0
-        if pub.type.id != 31: # потому что лайфакам просмотр засчитается от js-кода. а без этой проверки зачситываться будет дважды -- тут и js-кодом
-            pub.seen_count +=1
-        pub.save()
+            print(SeenPubs.objects.filter(watcher=user, pub=pub))
 
         context.update({
             'pub': pub,
@@ -562,15 +546,6 @@ class LifehacksWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-
-        #   обновление статистики у всех лайфхаков
-        for pub in Publication.objects.filter(type=31):
-            ages = (SeenPubs.objects.filter(pub=pub).aggregate(Sum('watcher__age')))['watcher__age__sum']
-            pub.average_age_watchers = ages / SeenPubs.objects.filter(pub=pub).count()  if SeenPubs.objects.filter(pub=pub).count() != 0  else 0
-            pub.average_age_savers =   ages / SavedPubs.objects.filter(pub=pub).count() if SavedPubs.objects.filter(pub=pub).count() != 0 else 0
-            pub.seen_count +=1
-            pub.save()
-
         pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=31)
         return pubs
 

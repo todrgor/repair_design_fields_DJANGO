@@ -1,5 +1,6 @@
 from django.db import models
-# from authapp.models import User
+# from authapp.models import ContactingSupport
+import authapp
 from repair_design_fields import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 # from django.db.models.functions import Lower
@@ -7,27 +8,52 @@ from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 import bleach
 
+from django.db.models import Sum
+
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
     type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид публикации', blank=False)
     preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'gif'])], verbose_name='Превью')
     content = RichTextUploadingField(blank=True, null=True, verbose_name='Контент', default='')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name='Автор')
+    pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
     tags = models.ManyToManyField('Tag', verbose_name='Теги публикции')
     cost_min = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=0, verbose_name='бюджет от')
     cost_max = models.FloatField(validators=[MinValueValidator(0.0)], blank=True, default=1, verbose_name='бюджет до')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name='Автор')
-    pushed = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время публикации')
-    seen_count = models.IntegerField(default=0, verbose_name='Просмотров публикации')
-    saved_count = models.IntegerField(default=0, verbose_name='Публикация была сохранена столько раз')
-    reported_count = models.IntegerField(default=0, verbose_name='Жалоб на публикацию')
     shared_count = models.IntegerField(default=0, verbose_name='"Поделиться" нажато раз')
-    average_age_watchers = models.IntegerField(default=0, verbose_name='Средний возраст просмотревших')
-    average_age_savers = models.IntegerField(default=0, verbose_name='Средний возраст сохранивших')
 
     class Meta:
         verbose_name = 'Публикация'
         verbose_name_plural = 'Публикации'
         ordering = ('-pushed',)
+
+    @property
+    def seen_count(self):
+        return SeenPubs.objects.filter(pub=self.id).count()
+
+    @property
+    def saved_count(self):
+        return SavedPubs.objects.filter(pub=self.id).count()
+
+    @property
+    def reported_count(self):
+        return authapp.models.ContactingSupport.objects.filter(ask_additional_info=self.id, type=11).count()
+
+    @property
+    def save_percent(self):
+        return self.saved_count/self.seen_count*100
+
+    @property
+    def average_age_watchers(self):
+        ages = (SeenPubs.objects.filter(pub=self.id).aggregate(Sum('watcher__age')))['watcher__age__sum']
+        average_age_watchers = ages / self.seen_count if self.seen_count else 0
+        return average_age_watchers
+
+    @property
+    def average_age_savers(self):
+        ages = (SeenPubs.objects.filter(pub=self.id).aggregate(Sum('watcher__age')))['watcher__age__sum']
+        average_age_savers = ages / self.saved_count if self.saved_count else 0
+        return average_age_savers
 
     @property
     def unstyled_content(self):  # пройтись по content и убрать все стили, оставить просто текст
@@ -62,27 +88,6 @@ class Publication(models.Model):
     def get_preview_url(self):  # вернуть url preview или замену, если на превьюшке видео
         return '/media/pub_media/static/video_object_logo.svg' if self.preview.name.endswith(('.mp4', '.mov')) else self.preview.url
 
-
-    def opened(self):
-        self.seen_count +=1
-        self.save
-
-    def reported(self):
-        self.reported_count +=1
-        self.save
-
-    def shared(self):
-        self.shared_count +=1
-        self.save
-
-    def saved(self):
-        self.saved_count +=1
-        self.save
-
-    def ansaved(self):
-        self.saved_count -=1
-        self.save
-
     def __str__(self):
         return str(self.title) + ', ' + str(self.type)
 
@@ -97,6 +102,33 @@ class PubTypes(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SavedPubs(models.Model):
+    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время сохранения публикации')
+    saver = models.ForeignKey('authapp.User', on_delete=models.CASCADE, verbose_name='id сохранившего')
+    pub = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+
+    class Meta:
+        verbose_name = 'Сохранённая публикация'
+        verbose_name_plural = 'Сохранённые публикации'
+
+    def __str__(self):
+        return 'saver ' + str(self.saver) + ' saved pub ' + str(self.pub)
+
+
+class SeenPubs(models.Model):
+    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время последнего просмотра публикации')
+    watcher = models.ForeignKey('authapp.User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
+    pub = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
+    count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
+
+    class Meta:
+        verbose_name = 'Просмотренная публикация'
+        verbose_name_plural = 'Просмотренные публикации'
+
+    def __str__(self):
+        return 'pub ' + str(self.pub) + ' seen by ' + str(self.watcher)
 
 
 class TagCategory(models.Model):

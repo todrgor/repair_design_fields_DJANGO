@@ -42,15 +42,19 @@ function toggleSavePub_LH(idPub) {
 }
 
 function toggleGetNotiFromAuthor(idAccount) {
+  $('.pub_one.lifehack a#'+idAccount+' .get_noti').removeClass('noties_gotten');
+  $('.pub_one.lifehack a#'+idAccount+' .get_noti').addClass('loading');
+
   $.ajax({
         url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
-              $('.pub_one.lifehack a#'+idAccount+' .get_noti').removeClass('noties_gotten');
+              $('.pub_one.lifehack a#'+idAccount+' .get_noti').removeClass('noties_gotten, loading');
               console.log("Прекратилось получение уведомлений от автора этой публикации");
             }
             if (data.result == 1) {
+              $('.pub_one.lifehack a#'+idAccount+' .get_noti').removeClass('loading');
               $('.pub_one.lifehack a#'+idAccount+' .get_noti').addClass('noties_gotten');
               console.log("Началось получение уведомлений от автора этой публикации");
             }
@@ -227,6 +231,7 @@ function setThePubSeen() {
                     console.log("+1 к счётчику просмотров публикации с ID:" +pub.id);
                   },
                   error: function (data) {
+                    $SeenPubsList.splice($SeenPubsList.indexOf(pub.id), 1);
                     console.log("ошибка какая-то c счётчиком просмотров, ID если что:" +pub.id);
                   }
               });
@@ -268,7 +273,10 @@ function togglePubAdditionalFunctions(idPub) {
 
   $('.pub_one.lifehack#'+ idPub +' .pub_show_full').toggleClass('pub_additional_functions_opened');
   $('.pub_additional_functions_bg').toggleClass('show');
-  $('.pub_additional_functions').offset($('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset());
+  $('.pub_additional_functions').offset({
+    top: ( $('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset().top) -20,
+    left: ( $('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset().left) -25
+  });
   console.log("Открыты дополнительные действия с публикацией под ID "+ idPub);
 }
 

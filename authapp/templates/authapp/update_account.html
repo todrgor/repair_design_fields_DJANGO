@@ -88,6 +88,8 @@
         </div>
 
         <div class="pub_title pub_inp_one">
+          <p class="user_role_id" style="display: none; z-index: -999;">{{ edited_user.role.id }}</p>
+
           {% if edited_user.id == user.id %}
             <h4>Ваша роль:</h4>
             {% if edited_user.role.id == 4 and not edited_user.is_only_one_superuser %}
@@ -138,6 +140,8 @@
         {% endif %}
 
         {% if edited_user.role.id == 2 or edited_user.role.id == 4 or user.role.id == 4 %}
+          {{ form_expert_user.media }}
+
           <div class="expert_inputs {% if edited_user.role.id == 2 or edited_user.role.id == 4 %} show {% endif %}">
             <p class="title_p" style="color: #b9b9b9; margin: 0 0 20px; float: none;">Ваш стаж, услуги и контакты:</p>
             <div class="pub_description pub_inp_one">
@@ -160,68 +164,98 @@
 
               <p>
                 <img src="/static/sources/SVG/site.svg">
-                {{ form_expert_user.site }}
-                {{ form_expert_user.site.errors }}
+                <span class="input_frame">
+                  {{ form_expert_user.site }}
+                  {{ form_expert_user.site.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/telephone.svg">
-                {{ form_expert_user.bisness_phone_number }}
-                {{ form_expert_user.bisness_phone_number.errors }}
+                <span class="input_frame">
+                  {{ form_expert_user.bisness_phone_number }}
+                  {{ form_expert_user.bisness_phone_number.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/telegram.svg">
-                {{ form_expert_user.telegram }}
-                {{ form_expert_user.telegram.errors }}
+                <span class="input_frame">
+                  <span>t.me/</span>
+                  {{ form_expert_user.telegram }}
+                  {{ form_expert_user.telegram.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/whatsapp.svg">
-                {{ form_expert_user.whatsapp }}
-                {{ form_expert_user.whatsapp.errors }}
+                <span class="input_frame">
+                  <span>wa.me/</span>
+                  {{ form_expert_user.whatsapp }}
+                  {{ form_expert_user.whatsapp.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/viber.svg">
-                {{ form_expert_user.viber }}
-                {{ form_expert_user.viber.errors }}
+                <span class="input_frame">
+                  <span>vb.me/</span>
+                  {{ form_expert_user.viber }}
+                  {{ form_expert_user.viber.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/lol.svg">
-                {{ form_expert_user.lol }}
-                {{ form_expert_user.lol.errors }}
+                <span class="input_frame">
+                  <span style="width: 114px;">life-online.ru/</span>
+                  {{ form_expert_user.lol }}
+                  {{ form_expert_user.lol.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/vk.svg">
-                {{ form_expert_user.vk }}
-                {{ form_expert_user.vk.errors }}
+                <span class="input_frame">
+                  <span>vk.me/</span>
+                  {{ form_expert_user.vk }}
+                  {{ form_expert_user.vk.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/instagram.svg">
-                {{ form_expert_user.inst }}
-                {{ form_expert_user.inst.errors }}
+                <span class="input_frame">
+                  <span>instagram.com/</span>
+                  {{ form_expert_user.inst }}
+                  {{ form_expert_user.inst.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/twitter.svg">
-                {{ form_expert_user.twitter }}
-                {{ form_expert_user.twitter.errors }}
+                <span class="input_frame">
+                  <span>t.co/</span>
+                  {{ form_expert_user.twitter }}
+                  {{ form_expert_user.twitter.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/odnoklassniki.svg">
-                {{ form_expert_user.ok }}
-                {{ form_expert_user.ok.errors }}
+                <span class="input_frame">
+                  <span>ok.ru/</span>
+                  {{ form_expert_user.ok }}
+                  {{ form_expert_user.ok.errors }}
+                </span>
               </p>
 
               <p>
                 <img src="/static/sources/SVG/address.svg">
-                {{ form_expert_user.address }}
-                {{ form_expert_user.address.errors }}
+                <span class="input_frame">
+                  {{ form_expert_user.address }}
+                  {{ form_expert_user.address.errors }}
+                </span>
               </p>
 
               <p>

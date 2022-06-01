@@ -29,7 +29,6 @@ def NewComplaint(request):
                 # print(complaint['complaint_text'])
 
                 pub_complaint = Publication.objects.get(id=complaint['complaint_id'])
-                pub_complaint.reported_count +=1
                 pub_complaint.save()
                 contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), type=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
@@ -42,7 +41,6 @@ def NewComplaint(request):
             # если обращение -- жалоба на пользователя
             if int(complaint['complaint_type']) == 12:
                 user_complaint = User.objects.get(id=complaint['complaint_id'])
-                user_complaint.reported_count +=1
                 user_complaint.save()
                 contacting_support = ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), type=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 

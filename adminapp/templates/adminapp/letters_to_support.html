@@ -552,7 +552,7 @@
                               {% if not report.ask_additional_info in deleted_pubs_in_reports_ids %}
                                 жалоба на публикацию <a href="{% url 'pub:one' pk=report.ask_additional_info %}"> {% for pub in reported_pubs %} {% if pub.id == report.ask_additional_info %} {{ pub.title }} {% endif %} {% endfor %}</a>
                               {% else %}
-                                {{ report.title }} <span class="deleted">удалён</span>
+                                {{ report.title }} <span class="deleted">публикация из жалобы удалена</span>
                               {% endif %}
                             </p>
                           {% endif %}
@@ -562,7 +562,7 @@
                               {% if not report.ask_additional_info in deleted_users_in_reports_ids %}
                                 жалоба на пользователя <a href="{% url 'auth:one' pk=report.ask_additional_info %}"> {% for user in reported_users %} {% if user.id == report.ask_additional_info %} {{ user.username }} {% endif %} {% endfor %}</a>
                               {% else %}
-                                {{ report.title }} <span class="deleted">удалено</span>
+                                {{ report.title }} <span class="deleted">пользователь из жалобы удалён</span>
                               {% endif %}
                             </p>
                           {% endif %}

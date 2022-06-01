@@ -42,9 +42,7 @@ INSTALLED_APPS = [
     'mainapp',
     'adminapp',
     'authapp',
-    'accountapp',
     'publicationapp',
-    'supportapp',
 
     'phonenumber_field',
     'ckeditor',

@@ -98,16 +98,20 @@
             <div class="expert_info">
               <h4>Стаж:</h4>
                 {% if expert_info.knowledge %}
-                  <p class="offer_text">{{ expert_info.knowledge|safe }}</p>
+                  <div class="offer_text_frame">
+                    <div class="offer_text">{{ expert_info.knowledge|safe }}</div>
+                  </div>
                 {% else %}
                   <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
             </div>
 
             <div class="offer">
-              <h4>Услуга:</h4>
+              <h4>Услуги:</h4>
                 {% if expert_info.offer %}
-                  <p class="offer_text">{{ expert_info.offer|safe }}</p>
+                  <div class="offer_text_frame">
+                    <div class="offer_text">{{ expert_info.offer|safe }}</div>
+                  </div>
                 {% else %}
                   <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
                 {% endif %}
@@ -118,7 +122,7 @@
           <div class="contact_info_and_user_some_counts">
             <div class="contact_info">
               {% if expert_info.site %}                 <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p>{% endif %}
-              {% if expert_info.bisness_phone_number %} <p class="telephone"> <span class="icon"></span>  {{ expert_info.bisness_phone_number }} </p>{% endif %}
+              {% if expert_info.bisness_phone_number %} <a href="tel:{{ expert_info.bisness_phone_number }}"> <p class="telephone"> <span class="icon"></span>{{ expert_info.bisness_phone_number }}</p> </a> {% endif %}
               {% if expert_info.telegram %}             <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p>{% endif %}
               {% if expert_info.whatsapp %}             <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p>{% endif %}
               {% if expert_info.viber %}                <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p>{% endif %}
@@ -141,10 +145,14 @@
             </div>
           </div>
         {% else %}
-          <div class="expert_info">
-            <h4 style="width: 50%; margin: 0 auto; opacity: 0.5;">
-              Нет информации о стаже, услугах и контактах этого автора
+          <div class="expert_info" style="flex-direction: column;">
+            <h4 style="width: 100%; transform: translateX(47%); font-size: 25px;">
+              Нет информации о стаже, услугах и контактах
             </h4>
+
+            <div class="user_some_counts" style="margin-top: 15px; width: 100%; text-align: center; transform: translateX(47%); color: #bbbbbb;">
+              <p>{{ expert_info.count_follovers }} подписчиков • {{ opened_user.seen_count }} просмотров страницы</p>
+            </div>
           </div>
         {% endif %}
       </div>

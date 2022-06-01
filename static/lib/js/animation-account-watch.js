@@ -1,5 +1,5 @@
 
-$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 20, left:( $('.user_role').offset().left) - 113});
+$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 40, left:( $('.user_role').offset().left) + 10});
 $('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
 
 function YouHaveToLogin(action) {
@@ -74,15 +74,19 @@ function toggleSavePub_D(idPub) {
 }
 
 function toggleGetNotiFromAuthor(idAccount) {
+  $('.get_noti').removeClass('noties_gotten');
+  $('.get_noti').addClass('loading');
+
   $.ajax({
         url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
-              $('a#'+idAccount+' .get_noti').removeClass('noties_gotten');
+              $('a#'+idAccount+' .get_noti').removeClass('noties_gotten, loading');
               console.log("Прекратилось получение уведомлений от автора этой публикации");
             }
             if (data.result == 1) {
+              $('.get_noti').removeClass('loading');
               $('a#'+idAccount+' .get_noti').addClass('noties_gotten');
               console.log("Началось получение уведомлений от автора этой публикации");
             }
@@ -309,14 +313,20 @@ function togglePubAdditionalFunctions(idPub) {
 
   $('.pub_one.lifehack#'+ idPub +' .pub_show_full').toggleClass('pub_additional_functions_opened');
   $('.pub_additional_functions_bg#pub').toggleClass('show');
-  $('.pub_additional_functions').offset($('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset());
+  $('.pub_additional_functions').offset({
+    top: ( $('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset().top) -20,
+    left: ( $('.pub_one.lifehack#'+ idPub +' .pub_show_full').offset().left) -25
+  });
   console.log("Открыты дополнителknknjnjnjnjnjьные действия с публикацией под ID "+ idPub);
 }
 
 function togglePubAdditionalFunctionsAuthor(idPub) {
   $('.photo_nickname_role_additionalFunctions .additionalFunctions').toggleClass('opened');
   $('.pub_additional_functions_bg#author').toggleClass('show');
-  $('.pub_additional_functions_bg#author .pub_additional_functions').offset($('.photo_nickname_role_additionalFunctions .additionalFunctions').offset());
+  $('.pub_additional_functions_bg#author .pub_additional_functions').offset({
+    top: ( $('.photo_nickname_role_additionalFunctions .additionalFunctions').offset().top) -20,
+    left: ( $('.photo_nickname_role_additionalFunctions .additionalFunctions').offset().left) -25
+  });
   $is_opened_pub_additional_functions = 1;
   $opened_pub_additional_functions_id = idPub;
   console.log("Открыты дополнительные действия с публикацией под ID "+ idPub);

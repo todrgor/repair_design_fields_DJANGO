@@ -4,6 +4,8 @@ from authapp.models import User, UserRoles, ContactingSupportTypes
 from publicationapp.models import Publication
 
 from phonenumber_field.formfields import PhoneNumberField
+from ckeditor.widgets import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 
@@ -26,8 +28,12 @@ class UserForm(forms.Form):
 
 
 class UserExpertForm(forms.Form):
-    knowledge = forms.CharField(max_length=5500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
-    offer = forms.CharField(max_length=5500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
+    # knowledge = forms.CharField(max_length=5500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
+    # offer = forms.CharField(max_length=5500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
+
+    knowledge = forms.CharField(widget=CKEditorUploadingWidget(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), max_length=5500, label="Стаж:", required=False)
+    offer = forms.CharField(widget=CKEditorUploadingWidget(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), max_length=5500, label="Услуга:", required=False)
+
     site = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Ваш сайт'}), required=False)
     bisness_phone_number = PhoneNumberField(label="Ваш номер телефона для клиентов:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона для клиентов"}), required=False)
     address = forms.CharField(max_length=300, label="Адрес:", widget=forms.TextInput(attrs={'placeholder': 'Адрес Вашего офиса'}), required=False)
@@ -39,7 +45,7 @@ class UserExpertForm(forms.Form):
     inst = forms.CharField(max_length=300, label="Instagram:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Instagram'}), required=False)
     ok = forms.CharField(max_length=300, label="Одноклассники:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Одноклассниках'}), required=False)
     twitter = forms.CharField(max_length=300, label="Twitter:", widget=forms.TextInput(attrs={'placeholder': 'Профиль в Twitter'}), required=False)
-    other = forms.CharField(max_length=300, label="Дополнительно:", widget=forms.Textarea(attrs={'placeholder': 'Дополнительня контактная информация', 'style': 'height: 25px; width: calc(40% + 1.7px); min-width: 270px; min-height: 15px;'}), required=False)
+    other = forms.CharField(max_length=300, label="Дополнительно:", widget=forms.Textarea(attrs={'placeholder': 'Дополнительня контактная информация'}), required=False)
 
 
 class RegisterForm(UserCreationForm):

@@ -189,7 +189,8 @@
   height: 100%;
   top: 50px;
   left: 0;
-  background: #000000d1;
+  background: #000000ad;
+  backdrop-filter: blur(2px);
   z-index: 11;
   transition: all 0.55s ease;
   display: none;

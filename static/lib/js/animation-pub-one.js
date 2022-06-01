@@ -45,15 +45,19 @@ function toggleSavePub_D(idPub) {
 }
 
 function toggleGetNotiFromAuthor(idAccount) {
+  $('.get_noti').removeClass('noties_gotten');
+  $('.get_noti').addClass('loading');
+
   $.ajax({
         url: "/account/" + idAccount + "/toggleNotifications/",
 
         success: function (data) {
             if (data.result == 0) {
-              $('.get_noti').removeClass('noties_gotten');
+              $('.get_noti').removeClass('noties_gotten, loading');
               console.log("Прекратилось получение уведомлений от автора этой публикации");
             }
             if (data.result == 1) {
+              $('.get_noti').removeClass('loading');
               $('.get_noti').addClass('noties_gotten');
               console.log("Началось получение уведомлений от автора этой публикации");
             }
@@ -71,7 +75,10 @@ $is_opened_delete_the_pub = 0;
 function togglePubAdditionalFunctions(idPub) {
   $('.pub_show_full').toggleClass('pub_additional_functions_opened');
   $('.pub_additional_functions_bg').toggleClass('show');
-  $('.pub_additional_functions').offset({top:( $('.pub_show_full').offset().top - 30  ), left:( $('.pub_show_full').offset().left - 5  )});
+  $('.pub_additional_functions').offset({
+    top: ( $('.pub_show_full').offset().top) -20,
+    left: ( $('.pub_show_full').offset().left) -25
+  });
   $is_opened_pub_additional_functions = 1;
   $opened_pub_additional_functions_id = idPub;
   console.log("Открыты дополнительные действия с публикацией, ID:" +idPub);
