@@ -10,9 +10,9 @@
 
 .filters_off {
   display: inherit;
-    transition: all 0.2s;
-    width: 100%;
-    margin: 15px 0;
+  transition: all 0.2s;
+  width: 100%;
+  margin: 15px 0;
 }
 .filters_off.hidden {
   display: none;
@@ -29,9 +29,9 @@
 
 .big_p {
   margin-bottom: 9px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .big_p_parth {
@@ -45,11 +45,6 @@
   white-space: nowrap;
 }
 
-#checked_colors_count,
-#checked_styles_count,
-#checked_rooms_count,
-#checked_spheres_count,
-/* перечисления выше надо удалить нахрен потом */
 .count_checked {
   white-space: nowrap;
   color: #5c535c;
@@ -70,15 +65,15 @@
 
 .checked_colors_div {
   margin-left: 3px;
-    width: 15px;
-    height: 15px;
-    background-color: #CCC;
-    transition: all 0.2s;
-    border-radius: 4px;
+  width: 15px;
+  height: 15px;
+  background-color: #CCC;
+  transition: all 0.2s;
+  border-radius: 4px;
 
-    position: absolute;
-    visibility: hidden;
-    z-index: -1;
+  position: absolute;
+  visibility: hidden;
+  z-index: -1;
 }
 
 .checked_colors_div.checked_color {
@@ -97,30 +92,26 @@
   width: 100%;
 }
 
-.styles_labels_open,
-.checked_rooms_open,
-.spheres_labels_open,
-/* перечисления выше надо удалить нахрен потом */
 .labels
 {
   display: flex;
-    opacity: 1;
-    width: 100%;
-    background: #f0f0f0;
-    padding: 3px 5px 5px;
-    border-radius: 8px;
-    border: 2px solid #d1d1d1;
-    flex-direction: row;
-    flex-wrap: wrap;
-    position: relative;
+  opacity: 1;
+  width: 100%;
+  background: #f0f0f0;
+  padding: 3px 5px 5px;
+  border-radius: 8px;
+  border: 2px solid #d1d1d1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .styles_any_one_label,
 .check_any_one_room,
 .spheres_any_one_label {
   width: 100%;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .any_one {
@@ -141,23 +132,19 @@
 
 .styles_labels_title {
   width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.styles_labels_open label,
-.checked_rooms_open label,
-.spheres_labels_open label,
-/* перечисления выше надо удалить нахрен потом */
 .labels label
 {
   width: 100%;
-    cursor: pointer;
-    font-size: 15px;
-    color: #3f3f3f;
-    transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3f3f3f;
+  transition: all 0.3s ease;
 }
 label#author_style_design {
   padding: 0 2px;
@@ -172,25 +159,16 @@ label#author_style_design:hover {
 }
 
 
-.checked_styles label:hover,
-.checked_rooms label:hover,
-.spheres_labels_open label:hover,
-/* перечисления выше надо удалить нахрен потом */
 .labels label:hover,
 .any_one__span:hover {
   color: #000;
 }
 
-.color_panel.hidden,
-.styles_labels_open.hidden,
-.checked_rooms_open.hidden,
-.spheres_labels_open.hidden,
-/* перечисления выше надо удалить нахрен потом */
 .labels.hidden
 {
   opacity: 0;
-    height: 0px;
-    display: none;
+  height: 0px;
+  display: none;
 }
 
 .button_span {
@@ -210,12 +188,6 @@ label#author_style_design:hover {
   transition: all 0.3s ease;
 }
 
-.triangle_to_open_and_hide:hover img,
-.triangle_to_open_and_hide.color_panel_hidden img,
-.triangle_to_open_and_hide.styles_labels_hidden img,
-.triangle_to_open_and_hide.checked_rooms_open_hidden img,
-.triangle_to_open_and_hide.spheres_labels_hidden img,
-/* перечисления выше надо удалить нахрен потом */
 .triangle_to_open_and_hide.labels_hidden img
 {
   transform: rotate(-90deg);
@@ -233,34 +205,34 @@ label#author_style_design:hover {
 .cp {
   width: 96%;
   display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    background: #f0f0f0;
-    padding: 3px 3px 0;
-    border-radius: 8px;
-    border: 2px solid #d1d1d1;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background: #f0f0f0;
+  padding: 3px 3px 0;
+  border-radius: 8px;
+  border: 2px solid #d1d1d1;
 }
 
 .cp__color {
   width: 11.11%;
-    height: 21px;
-    background-color: #CCC;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.5s;
-    text-align: center;
-    font-size: 12px;
-    line-height: 20px;
-    color: #666666;
+  height: 21px;
+  background-color: #CCC;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.5s;
+  text-align: center;
+  font-size: 12px;
+  line-height: 20px;
+  color: #666666;
 }
 
 .cp__color.any_3_colors {
-    line-height: 11px;
-    font-size: 11px;
-    color: #000;
-    width: 100%;
-    height: 13px;
-    line-height: 11px;
+  line-height: 11px;
+  font-size: 11px;
+  color: #000;
+  width: 100%;
+  height: 13px;
+  line-height: 11px;
 }
 
 .any_3_colors:hover {
@@ -268,8 +240,8 @@ label#author_style_design:hover {
 }
 
 .cp__color.active {
-    box-shadow: inset #333333 0px 0px 4px 0px;
-    z-index: 5;
+  box-shadow: inset #333333 0px 0px 4px 0px;
+  z-index: 5;
 }
 
 .cp__color.active#c_5a3b03,
@@ -634,22 +606,22 @@ label#author_style_design:hover {
 
 .show_pubs  {
   bottom: -10px;
-    padding: 10px;
-    padding-top: 13px;
-    margin: -10px;
-    position: sticky;
-    width: 100%;
-    height: 30px;
-    background: #ffffff;
-    z-index: 5;
+  padding: 10px;
+  padding-top: 13px;
+  margin: -10px;
+  position: sticky;
+  width: 100%;
+  height: 30px;
+  background: #ffffff;
+  z-index: 5;
 }
 
 .show_pubs_container {
   display: flex;
-    justify-content: flex-start;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    overflow: hidden;
+  justify-content: flex-start;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .clear_hix_show_pubs {
@@ -659,15 +631,15 @@ label#author_style_design:hover {
 
 .filter_to_filter {
   height: 25px;
-    padding: 0 23%;
-    font-size: 14px;
-    border: none;
-    border-radius: 6px;
-    background: #3c3c3c;
-    color: #ffffff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 0;
+  padding: 0 23%;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background: #3c3c3c;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0;
 }
 .filter_to_filter:hover {
   background: #141414;

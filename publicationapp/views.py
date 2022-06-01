@@ -12,6 +12,45 @@ from django.db.models.functions import Lower
 import operator
 
 
+def content_images_set_fancybox_atribute(content):
+    is_taking_img_url = False
+    is_taking_img_tag = False
+    i = 0
+
+    while i < len(content):
+        if i+4 < len(content) and content[i:(i+4)] == '<img': # если прохожясь по "content" нашлась фотография
+            img_tag_start = i
+            is_taking_img_tag = True
+            img  = '<img'
+            href = ''
+            i+=4
+            while is_taking_img_tag: # достать тег фотки и отдельно ссылку на неё
+                img += content[i]
+                if content[i:(i+5)] == 'src="':
+                    img += 'rc="'
+                    href = ''
+                    i+=5
+                    is_taking_img_url = True
+                    while is_taking_img_url:
+                        img  += content[i]
+                        href += content[i]
+                        if is_taking_img_url and content[i] == '"' and content[(i-5):i] != 'src="':
+                            is_taking_img_url = False
+                        i+=1
+                if is_taking_img_tag and content[i] == '>':
+                    is_taking_img_tag = False
+                i+=1
+
+            #   создать новый "content", в котором фотка обворачивается в ссылку для
+            #   возможности её открыть и посмотреть с помошью fancybox.js
+            #   (с проверкой, не было ли сделана ссылка уже ранее)
+            insert = '<a data-fancybox="gallery" href="'+ href +'">' + img + '</a>'
+            if (content[(img_tag_start -34 -len(href)):img_tag_start]) != ('<a data-fancybox="gallery" href="'+ href +'>'):
+                content = content[:img_tag_start] + insert + content[(img_tag_start +len(img) +1):]
+            i = img_tag_start + len(insert)
+        i+=1
+    return content
+
 
 # создание новой публикации
 def CreateNewPub(request):
@@ -30,9 +69,6 @@ def CreateNewPub(request):
     }
     empty_tag_categories_ids = []
     selected_tags = None
-
-    # if request.method == 'POST':
-    #     print(request.POST)
 
     if request.method == 'POST':
         method_POST = request.POST
@@ -105,7 +141,7 @@ def CreateNewPub(request):
             )
 
         if pub_created.type.id != 31:
-            pub_created.content = method_POST['content']
+            pub_created.content = content_images_set_fancybox_atribute(method_POST['content'])
             pub_created.save()
 
         #   сохранение превью
@@ -130,8 +166,6 @@ def CreateNewPub(request):
         for s in UserSubscribes.objects.filter(star=pub_created.author.id):
             Notifications.objects.create(user_receiver=s.subscriber, noti_for_user=noti)
         return redirect('pub:one', pk=pub_created.id)
-        # except:
-        #     form.add_error(None, 'Ошибка создания публикации')
 
     content = {
         'title': title,
@@ -178,7 +212,6 @@ def UpdatePub(request, pk):
     if request.method == 'POST':
         form = PubForm(request.POST)
         method_POST = request.POST
-        print(method_POST)
 
         #   сменить тип публикации, если суперпользователь её сменил
         if request.user.role.id == 4 and 'type' in method_POST and method_POST['type']:
@@ -242,7 +275,7 @@ def UpdatePub(request, pk):
         if pub.title != method_POST['title']:
             pub.title = method_POST['title'].capitalize()
         if pub.content != method_POST['content'] and pub.type.id != 31:
-            pub.content = method_POST['content']
+            pub.content = content_images_set_fancybox_atribute(method_POST['content'])
         if set(pub.tags.all()) != set(selected_tags):
             pub.tags.clear()
             pub.tags.add(*selected_tags)
@@ -391,8 +424,6 @@ def filter_pubs (method_GET):
         cost_max = a
     pubs = pubs.exclude(cost_max__lt=cost_mini) if cost_mini else pubs
     pubs = pubs.exclude(cost_min__gt=cost_max)  if cost_max  else pubs
-    # method_GET['cost_mini'] = cost_mini
-    # method_GET['cost_max'] = cost_max
 
     #       percent of savers by watchers
     save_percent_mini = float(method_GET['save_percent_mini']) if 'save_percent_mini' in method_GET and method_GET['save_percent_mini'] and not method_GET['save_percent_mini'].isspace() else 0
@@ -433,11 +464,6 @@ def filter_pubs (method_GET):
         pubs = pubs.order_by(Lower('title'))                 if method_GET['ordering'] == 'by_name'         else pubs
         # pubs = sorted(pubs, key=operator.attrgetter('title')) if method_GET['ordering'] == 'by_name' else pubs
 
-    # [pub.id for pub in sorted(pubs, key=operator.attrgetter('title'))]
-    # print(pubs.order_by(Lower('title')))
-    # print(sorted(pubs, key=operator.attrgetter('title')))
-    # print(pubs.order_by(Lower('title').desc()))
-    # print(pubs.annotate(a=Lower('title')).order_by('a'))
     return pubs
 
 
@@ -502,7 +528,6 @@ class RepairsWatch(ListView):
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
-            # 'all_tags_for_this_pubs': all_tags_for_this_pubs,
             'tags': tags,
             'tag_categories': tag_categories,
             'selected_filters': selected_filters,
@@ -530,7 +555,6 @@ class DesignsWatch(ListView):
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
-            # 'all_tags_for_this_pubs': all_tags_for_this_pubs,
             'saved_pubs': saved_pubs,
             'tags': tags,
             'tag_categories': tag_categories,

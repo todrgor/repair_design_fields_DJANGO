@@ -65,9 +65,9 @@ select[name="type"] {
 .at_first_choose_the_pub_type,
 .pub_inp_one p {
   opacity: 0.8;
-    font-size: 16px;
-    letter-spacing: 0;
-    font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0;
+  font-weight: 400;
 }
 .pub_inp_one a {
   letter-spacing: 0;
@@ -120,6 +120,7 @@ select[name="type"] {
   align-items: center;
   margin-bottom: 5px;
   width: 40%;
+  color: #6a6a6a;
 }
 
 .contact_info textarea {
@@ -183,8 +184,8 @@ input[type="submit"]:hover {
   margin: 0 0 20px;
   /* padding: 0 0 0 20px; */
   display: flex;
-    align-items: center;
-    color: #333;
+  align-items: center;
+  color: #333;
 }
 .user_one .user_link:hover {
   color: #000;
@@ -192,18 +193,18 @@ input[type="submit"]:hover {
 }
 .user_one .user_photo {
   margin: 0 10px 0 0;
-    width: 50px;
-    height: 50px;
-    border-radius: 30px;
-    border: 1px solid gray;
+  width: 50px;
+  height: 50px;
+  border-radius: 30px;
+  border: 1px solid gray;
 }
 p.cancel_following {
   cursor: pointer;
   color: #300;
   padding: 5px 10px;
-    margin: 10px 0 0;
-    width: auto;
-    border-radius: 10px;
+  margin: 10px 0 0;
+  width: auto;
+  border-radius: 10px;
 }
 p.cancel_following:hover {
   background: #ffd6d6;
@@ -217,9 +218,9 @@ p.cancel_following.dont_cancel:hover {
 
 .errorlist {
   letter-spacing: 0;
-    font-size: 15px;
-    list-style: auto;
-    color: #6d0000;
+  font-size: 15px;
+  list-style: auto;
+  color: #6d0000;
 }
 
 .errorlist li {

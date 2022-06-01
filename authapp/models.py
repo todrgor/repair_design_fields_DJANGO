@@ -96,13 +96,11 @@ class UserSubscribes(models.Model):
         verbose_name_plural = 'Подписки пользователей'
 
     def __str__(self):
-        return 'Subscriber ' + str(self.subscriber) + ' follows ' + str(self.star)
+        return str(self.subscriber) + ' follows ' + str(self.star)
 
 
 class ExpertInfo(models.Model):
     expert_account = models.OneToOneField('User', on_delete=models.CASCADE, unique=True, verbose_name='Аккаунт эксперта')
-    # knowledge = models.TextField(blank=True, null=True, verbose_name='Стаж', default='')
-    # offer = models.TextField(blank=True, null=True, max_length=5500, verbose_name='Какую услугу предлагает', default='')
     knowledge = RichTextUploadingField(blank=True, max_length=5500, null=True, verbose_name='Стаж', default='')
     offer = RichTextUploadingField(blank=True, max_length=5500, null=True, verbose_name='Список предлагаемых услуг', default='')
     bisness_phone_number = PhoneNumberField(null=True, blank=True, verbose_name="Рабочий номер телефона (для клиентов)")
@@ -119,8 +117,12 @@ class ExpertInfo(models.Model):
     other = models.CharField(blank=True, null=True, max_length=255, verbose_name='Дополнительная контактная информация при необходимости', default='')
 
     class Meta:
-        verbose_name = 'Экспертная информация о пользователе'
-        verbose_name_plural = 'Много экспертной информации о пользователях'
+        verbose_name = 'Информация о специалисте'
+        verbose_name_plural = 'Информация о специалистах'
+
+    @property
+    def count_follovers(self):
+        return UserSubscribes.objects.filter(star=self.expert_account).count()
 
     @property
     def is_not_empty(self):
@@ -143,12 +145,8 @@ class ExpertInfo(models.Model):
         )
         return answer
 
-    @property
-    def count_follovers(self):
-        return UserSubscribes.objects.filter(star=self.id).count()
-
     def __str__(self):
-        return 'Expert ' + str(self.expert_account) + ', offer: ' + str(self.offer)
+        return 'Expert ' + str(self.expert_account)
 
 
 class Notifications(models.Model):

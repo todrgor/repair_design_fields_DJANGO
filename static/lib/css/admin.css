@@ -470,9 +470,6 @@ tr.without_answer_yet p.admin_checked_the_letter {
   text-decoration: underline;
 }
 
-/* max-height: 500px;
-    overflow: auto; */
-
 
 
 .result_type_container {
@@ -565,7 +562,6 @@ label.one_pub_type {
   text-align: justify;
 }
 
-/*print_report*/
 .print_report {
   padding: 5px 10px;
   margin: 0 0 20px;

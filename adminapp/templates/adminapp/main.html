@@ -39,7 +39,7 @@
       <p class="count_pubs">главная</p>
   </div>
 
-  <div class="pubs_container" style="margin-bottom: 20px;">
+  <div class="pubs_container" style="margin-bottom: 20px; width: 110%; margin-left: 7%;">
     <div class="some_divs_in_one_line">
       <div class="last_pubs one_div_sdiol">
         <p>Последние публикации <span><a href="{% url 'admin_mine:pubs' %}">открыть ›</a></span></p>
@@ -82,25 +82,6 @@
 
         {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}">Создать нового пользвователя ›</a>{% endif %}
       </div>
-
-      <!-- <div class="last_pubs one_div_sdiol">
-        <p>Таблицы БД ›</p>
-        <div class="one_div_sdiol body">
-          <a href="">Публикации</a>
-          <a href="">Фотографии публикаций</a>
-          <a href="">Теги публикаций</a>
-          <a href="">Значения публикаций</a>
-          <a href="">Роли публикаций</a>
-          <br>
-          <a href="">Пользователи</a>
-          <a href="">Роли пользователей</a>
-          <a href="">Уведомления пользователей</a>
-          <a href="">Сохранённое пользователей</a>
-          <a href="">Просмотренное пользователей</a>
-          <a href="">Подписки пользователей</a>
-          <a href="">Экспертная информация пользователей</a>
-        </div>
-      </div> -->
 
       <div class="last_pubs one_div_sdiol" style="margin-top: {% if not new_letters_to_support %}-40px;{% else %}-23px;{% endif %} width: 290px;">
         {% if not new_letters_to_support %}

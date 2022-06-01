@@ -1,16 +1,16 @@
 .result_type_container {
   margin: 0 0 20px;
-    font-size: 20px;
-    color: #433;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+  font-size: 20px;
+  color: #433;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
 }
 .result_type_container:hover {
   color: #100;
   background: #f7f7f7;
-    /* border: 1px solid #bababa; */
+  /* border: 1px solid #bababa; */
 }
 .pubs_container_one_type{
   display: none;
@@ -41,8 +41,8 @@
   margin: 0 0 20px;
   padding: 0 0 0 20px;
   display: flex;
-    align-items: center;
-    color: #333;
+  align-items: center;
+  color: #333;
 }
 .user_one .user_link:hover {
   color: #000;
@@ -50,15 +50,15 @@
 }
 .user_one .user_photo {
   margin: 0 10px 0 0;
-    width: 50px;
-    height: 50px;
-    border-radius: 30px;
-    border: 1px solid gray;
+  width: 50px;
+  height: 50px;
+  border-radius: 30px;
+  border: 1px solid gray;
 }
 
 /* для FAQ */
 .answer {
   width: 70%;
-    margin: 0 20px 20px;
-    text-align: justify;
+  margin: 0 20px 20px;
+  text-align: justify;
 }

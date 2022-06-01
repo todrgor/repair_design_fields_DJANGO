@@ -112,6 +112,7 @@
                     <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
                     <div class="statistics">
                       <p class="seen_count">{{ pub.seen_count }}</p>
+                      <p class="ununique_seen_count">{{ pub.ununique_seen_count }}</p>
                       <p class="saved_count">{{ pub.saved_count }}</p>
                       <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
                       <p class="average_age_savers">{{ pub.average_age_savers }}</p>
@@ -258,7 +259,6 @@
     <p>Если у вас есть фотографии по теме:</p>
     <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
     <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-    <!-- <form> </form> -->
   </div>
 
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
@@ -268,7 +268,8 @@
 
   <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
     <h1>Статистика по публикации:</h1>
-    <p>Просмотров: <span class="seen_count"></span></p>
+    <p>Пользователей просмотрело (хотя бы раз): <span class="seen_count"></span></p>
+    <p>Всего просмотров (включая по несколько раз): <span class="ununique_seen_count"></span></p>
     <p>Сохранений: <span class="saved_count"></span></p>
     <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
     <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>

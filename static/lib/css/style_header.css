@@ -148,10 +148,10 @@
   display: flex;
   flex-direction: row;
   align-content: center;
-  /* width: 9%; наверное, это и не нужно*/
   justify-content: space-between;
   align-items: center;
   flex-wrap: nowrap;
+  /* width: 9%; наверное, это и не нужно*/
 }
 
 .role_buttoms a {
@@ -262,10 +262,6 @@
   transition: all 0.4s ease;
 }
 
-/* .avatar_btn:focus {
-  background: #262526;
-} */
-
 .avatar_options_mini {
   padding: 0 8px;
   position: relative;
@@ -288,9 +284,9 @@
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  /* border: 1px solid #FFFFFF; */
   overflow: hidden;
   margin: 5px 5px 5px 0;
+  /* border: 1px solid #FFFFFF; */
 }
 
 .account_img img {
@@ -672,8 +668,6 @@
 }
 
 .pub_additional_functions p
-/* .pub_additional_functions a, */
-/* .pub_additional_functions input */
 {
   transition: 0.5s ease;
   padding: 0 10px;

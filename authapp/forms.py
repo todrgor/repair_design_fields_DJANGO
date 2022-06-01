@@ -17,25 +17,12 @@ class UserForm(forms.Form):
     age = forms.IntegerField(label="Ваш возраст:", widget=forms.TextInput(attrs={'placeholder': "Ваш возраст", 'type': 'number'}), min_value=1, max_value=111)
     phone_number = PhoneNumberField(label="Ваш номер телефона:", widget=forms.TextInput(attrs={'placeholder': "Номер телефона"}))
 
-    # class Meta:
-    #     model = User
-    #     fields = ('username', 'photo',  'phone_number', 'age')
-    #     error_messages = {
-    #         'phone_number': {
-    #             'taken': ("Пользователь с таким номером телефона уже существует. Пожалуйста, введите иной."),
-    #         },
-    #     }
-
 
 class UserExpertForm(forms.Form):
-    # knowledge = forms.CharField(max_length=5500, label="Стаж:", widget=forms.Textarea(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), required=False)
-    # offer = forms.CharField(max_length=5500, label="Услуга:", widget=forms.Textarea(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), required=False)
-
     knowledge = forms.CharField(widget=CKEditorUploadingWidget(attrs={'placeholder': 'Расскажите о своём опыте работы, знаниях и особенностях. Например, как долго Вы работаете, с кем предпочтительно, какие у вас выполненные проекты (преветствуются ссылки на них), и а чём Вы больше всего компетентны.', 'title': 'Опишите свои опыт и навыки', }), max_length=5500, label="Стаж:", required=False)
     offer = forms.CharField(widget=CKEditorUploadingWidget(attrs={'placeholder': 'Опишите Вашу основную услугу для Вашей целевой аудитории ярко и ёмко.', 'title': 'Опишите свою услугу так, чтобы прям сейчас захотелось у вас эту услугу получить!', }), max_length=5500, label="Услуга:", required=False)
-
     site = forms.CharField(max_length=300, label="Сайт:", widget=forms.TextInput(attrs={'placeholder': 'Ваш сайт'}), required=False)
-    bisness_phone_number = PhoneNumberField(label="Ваш номер телефона для клиентов:", widget=forms.TextInput(attrs={'placeholder':"Номер телефона для клиентов"}), required=False)
+    bisness_phone_number = PhoneNumberField(label="Телефон для клиентов:", widget=forms.TextInput(attrs={'placeholder':"+7 800 555 35-55 – для клиентов"}), required=False)
     address = forms.CharField(max_length=300, label="Адрес:", widget=forms.TextInput(attrs={'placeholder': 'Адрес Вашего офиса'}), required=False)
     telegram = forms.CharField(max_length=300, label="Telegram:", widget=forms.TextInput(attrs={'placeholder': 'Telegram'}), required=False)
     whatsapp = forms.CharField(max_length=300, label="WhatsApp:", widget=forms.TextInput(attrs={'placeholder': 'WhatsApp'}), required=False)

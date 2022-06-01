@@ -1,5 +1,5 @@
 from django.db import models
-# from authapp.models import ContactingSupport
+# from authapp.models import User, ContactingSupport
 import authapp
 from repair_design_fields import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
@@ -30,6 +30,13 @@ class Publication(models.Model):
     @property
     def seen_count(self):
         return SeenPubs.objects.filter(pub=self.id).count()
+
+    @property
+    def ununique_seen_count(self):
+        count = 0
+        for s in SeenPubs.objects.filter(pub=self.id):
+            count += s.count
+        return count
 
     @property
     def saved_count(self):
@@ -64,20 +71,18 @@ class Publication(models.Model):
         content = self.content
         img_urls_list = []
         is_taking_img_url = False
-        is_removing_style = False
 
         for i in range(len(content)):
-            if i+5 < len(content):
-                if content[i] == 's' and content[(i+1):(i+5)] == 'rc="':
-                    is_taking_img_url = True
-                    src = ''
-                    i+=5
-                    while is_taking_img_url:
-                        src += content[i]
-                        if is_taking_img_url and content[i] == '"' and content[(i-5):i] != 'src="':
-                            is_taking_img_url = False
-                            img_urls_list.append(src)
-                        i+=1
+            if i+5 < len(content) and content[i:(i+5)] == 'src="':
+                is_taking_img_url = True
+                src = ''
+                i+=5
+                while is_taking_img_url:
+                    src += content[i]
+                    if is_taking_img_url and content[i] == '"' and content[(i-5):i] != 'src="':
+                        is_taking_img_url = False
+                        img_urls_list.append(src)
+                    i+=1
         return img_urls_list
 
     @property
@@ -122,6 +127,7 @@ class SeenPubs(models.Model):
     watcher = models.ForeignKey('authapp.User', on_delete=models.CASCADE, verbose_name='id просмотревшего')
     pub = models.ForeignKey('Publication', on_delete=models.CASCADE, verbose_name='id публикации', default=0)
     count = models.IntegerField(default=0, verbose_name='Сколько раз публикация была просмотрена')
+    when_last_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время последнего просмотра')
 
     class Meta:
         verbose_name = 'Просмотренная публикация'

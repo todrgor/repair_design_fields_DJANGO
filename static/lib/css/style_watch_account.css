@@ -326,7 +326,7 @@
 .contact_info .icon {
   transition: .08s;
   background-size: contain;
-  width: 20px;
+  min-width: 20px;
   height: 20px;
   margin-right: 10px;
   background-repeat: no-repeat;

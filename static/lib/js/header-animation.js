@@ -10,7 +10,6 @@ $avatar_wrap.on('click', function () {
     } else {
       $is_opened_avatar = 0;
     }
-    // console.log('$is_opened_avatar = ', $is_opened_avatar);
 });
 
 function open_noti(idAccount) {
@@ -35,7 +34,6 @@ function open_noti(idAccount) {
             console.log("ошибка какая-то с уведомлениями");
           }
       });
-    // console.log('$is_opened_notifications = ', $is_opened_notifications);
 };
 
 $filter_button.on('click', function () {
@@ -45,7 +43,6 @@ $filter_button.on('click', function () {
     } else {
       $is_opened_filter_panel = 0;
     }
-    // console.log('$is_opened_filter_panel === ', $is_opened_filter_panel);
 });
 
 

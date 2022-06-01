@@ -121,18 +121,18 @@
 
           <div class="contact_info_and_user_some_counts">
             <div class="contact_info">
-              {% if expert_info.site %}                 <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p>{% endif %}
-              {% if expert_info.bisness_phone_number %} <a href="tel:{{ expert_info.bisness_phone_number }}"> <p class="telephone"> <span class="icon"></span>{{ expert_info.bisness_phone_number }}</p> </a> {% endif %}
-              {% if expert_info.telegram %}             <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p>{% endif %}
-              {% if expert_info.whatsapp %}             <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p>{% endif %}
-              {% if expert_info.viber %}                <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p>{% endif %}
-              {% if expert_info.lol %}                  <p class="lol">       <span class="icon"></span>  {{ expert_info.lol }}                  </p>{% endif %}
-              {% if expert_info.vk %}                   <p class="vk">        <span class="icon"></span>  {{ expert_info.vk }}                   </p>{% endif %}
-              {% if expert_info.inst %}                 <p class="instagram"> <span class="icon"></span>  {{ expert_info.inst }}                 </p>{% endif %}
-              {% if expert_info.twitter %}              <p class="twitter">   <span class="icon"></span>  {{ expert_info.twitter }}              </p>{% endif %}
-              {% if expert_info.ok %}                   <p class="ok">        <span class="icon"></span>  {{ expert_info.ok }}                   </p>{% endif %}
-              {% if expert_info.address %}              <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p>{% endif %}
-              {% if expert_info.other %}                <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>{% endif %}
+              {% if expert_info.site %}                 <a href="http://{{ expert_info.site }}">                            <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p> </a> {% endif %}
+              {% if expert_info.bisness_phone_number %} <a href="tel:{{ expert_info.bisness_phone_number }}">               <p class="telephone"> <span class="icon"></span>  {{ expert_info.bisness_phone_number }} </p> </a> {% endif %}
+              {% if expert_info.telegram %}             <a href="https://t.me/{{ expert_info.telegram }}">                  <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p> </a> {% endif %}
+              {% if expert_info.whatsapp %}             <a href="https://wa.me/{{ expert_info.whatsapp }} ">                <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p> </a> {% endif %}
+              {% if expert_info.viber %}                <a href="https://vb.me/{{ expert_info.viber }}">                    <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p> </a> {% endif %}
+              {% if expert_info.lol %}                  <a href="http://life-online.ru/{{ expert_info.lol }}">              <p class="lol">       <span class="icon"></span>  {{ expert_info.lol }}                  </p> </a> {% endif %}
+              {% if expert_info.vk %}                   <a href="https://vk.com/{{ expert_info.vk }}">                      <p class="vk">        <span class="icon"></span>  {{ expert_info.vk }}                   </p> </a> {% endif %}
+              {% if expert_info.inst %}                 <a href="https://instagram.com/{{ expert_info.inst }}">             <p class="instagram"> <span class="icon"></span>  {{ expert_info.inst }}                 </p> </a> {% endif %}
+              {% if expert_info.twitter %}              <a href="https://twitter.com/{{ expert_info.twitter }}">            <p class="twitter">   <span class="icon"></span>  {{ expert_info.twitter }}              </p> </a> {% endif %}
+              {% if expert_info.ok %}                   <a href="https://ok.ru/{{ expert_info.ok }}">                       <p class="ok">        <span class="icon"></span>  {{ expert_info.ok }}                   </p> </a> {% endif %}
+              {% if expert_info.address %}              <a href="https://yandex.ru/maps/?text={{ expert_info.address }}">   <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p> </a> {% endif %}
+              {% if expert_info.other %}                                                                                    <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>      {% endif %}
 
               {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
                 <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
@@ -171,6 +171,7 @@
                     <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
                     <div class="statistics">
                       <p class="seen_count">{{ pub.seen_count }}</p>
+                      <p class="ununique_seen_count">{{ pub.ununique_seen_count }}</p>
                       <p class="saved_count">{{ pub.saved_count }}</p>
                       <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
                       <p class="average_age_savers">{{ pub.average_age_savers }}</p>
@@ -221,7 +222,6 @@
                               <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
                               <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
                             {% endif %}
-                            <!-- <div class="get_noti_label">Получать уведомления о новых записях Алексея</div> -->
                         </div>
                         <p class="role">Автор публикации</p>
                       </div>
@@ -379,7 +379,8 @@
 
     <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
       <h1>Статистика по публикации:</h1>
-      <p>Просмотров: <span class="seen_count"></span></p>
+      <p>Пользователей просмотрело (хотя бы раз): <span class="seen_count"></span></p>
+      <p>Всего просмотров (включая по несколько раз): <span class="ununique_seen_count"></span></p>
       <p>Сохранений: <span class="saved_count"></span></p>
       <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
       <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
@@ -404,7 +405,6 @@
     <p>Если у вас есть фотографии по теме:</p>
     <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
     <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-    <!-- <form> </form> -->
   </div>
 
 {% endblock %}

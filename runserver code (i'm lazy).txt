@@ -1,9 +1,0 @@
-cd C:\Users\ОКЕАА\repair_design_fields_DJANGO
-venv\Scripts\activate
-python manage.py runserver
-
-***:
-+ 50% scripts injection protection 
-+ pub counts 👁‍🗨 ❤ 🔗 
-+ unsaving animation fix
-+ user account page redisign (40%)

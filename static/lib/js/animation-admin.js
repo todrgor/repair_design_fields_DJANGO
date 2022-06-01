@@ -21,7 +21,6 @@ function really_delete_account(user_id) {
 function really_delete_category(category_id) {
   category_name = $('table.categories tr#'+ category_id +' td.name').html();
   tags_in_category_count = $('table.categories tr#'+ category_id +' .this_category_tags li').length;
-  // pubs_with_tags_in_category_count = $('table.tags .pubs["category_id='+ category_id +'"] li').length;
   $('.delete_tag_or_tag_category input[name="tag_or_category_to_delete"]').val('category')
   $('.delete_tag_or_tag_category input[name="object_id"]').val(category_id)
   $('.delete_tag_or_tag_category .title').html('Вы точно хотите удалить категорию «'+ category_name +'»?');

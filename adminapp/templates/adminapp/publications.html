@@ -53,9 +53,11 @@
                  <th>Фото и заголовок</th>
                  <th>Автор</th>
                  <th class="with200px">Тип публикации</th>
-                 <th>Просмотров</th>
+                 <th>Пользователей просмотрело</th>
+                 <th>Всего просмотров (с повторными)</th>
                  <th>Сохранений</th>
                  <th class="with200px">Сохранена кем</th>
+                 <th class="with200px">Просмотрена кем</th>
                  <th class="with200px">Ссылки на фотографии в публикации</th>
                  <th>Теги</th>
              </tr>
@@ -87,6 +89,7 @@
 
                   <td class="with200px">{{ pub.type.name }}</td>
                   <td>{{ pub.seen_count }}</td>
+                  <td>{{ pub.ununique_seen_count }}</td>
                   <td>{{ pub.saved_count }}</td>
 
                    <td class="following">
@@ -94,6 +97,20 @@
                       {% for su in saved_urls %}
                         {% if su.pub.id == pub.id %}
                           <li><a href="{% url 'auth:one' pk=su.saver.id %}">{{ su.saver.username }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+                     </ul>
+                   </td>
+
+                   <td class="following">
+                     <ul>
+                      {% for su in seen_urls %}
+                        {% if su.pub.id == pub.id %}
+                          <li>
+                            <a href="{% url 'auth:one' pk=su.watcher.id %}">{{ su.watcher.username }}</a>
+                            <p>просмотрел {{ su.count }} раз</p>
+                            <p>последний просмотр – {{ su.when_last_time }}</p>
+                          </li>
                         {% endif %}
                       {% endfor %}
                      </ul>

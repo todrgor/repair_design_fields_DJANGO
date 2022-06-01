@@ -1,13 +1,11 @@
 
 function start_loading_animation(idPub) {
   $('.pub_one#'+idPub+' .remove_pub_from_saved img').attr('src', '/static/sources/SVG/remove_from_saved_loading.gif');
-  // $('.pub_one#'+idPub+' .remove_pub_from_saved img').css('transform', 'rotate(-25deg)');
   $('.pub_one#'+idPub+' .remove_pub_from_saved input').val('Загрузка...');
 }
 
 function end_loading_animation(idPub) {
   $('.pub_one#'+idPub+' .remove_pub_from_saved img').attr('src', '/static/sources/SVG/remove_from_saved.svg');
-  // $('.pub_one.design#'+idPub+' .remove_pub_from_saved img').css('transform', 'rotate(0deg)');
   console.log("loading ended");
 }
 
@@ -147,7 +145,6 @@ function toggleGetNotiFromAuthor(idAccount) {
 
 
 function openNewComplaintForm() {
-  // $opened_pub_additional_functions_id
   $(' .new_complaint').addClass('show');
   $('.share_the_pub').removeClass('show')
 }
@@ -202,7 +199,6 @@ function new_complaint_was_sent() {
 function shareThePub() {
   server_url = 'http://127.0.0.1:8000';
   pub_url = server_url + $('.lifehack#' + $opened_pub_additional_functions_id + ' .pub_url').html();
-  // $opened_pub_additional_functions_id
   $('.new_complaint, .statistics, .delete_the_pub').removeClass('show');
   $('.share_the_pub').addClass('show');
   $('.share_the_pub a').html(pub_url).attr('href', pub_url);
@@ -231,7 +227,6 @@ function showThePubStatistic() {
 }
 
 function deleteThePub() {
-  // $opened_pub_additional_functions_id;
   $('.delete_the_pub h1').html('Вы точно хотите удалить публикацию «'+ $('.lifehack#'+ $opened_pub_additional_functions_id +' .div_pub_text .pub_text').html() +'»?');
   $('.delete_the_pub a#delete').attr('href', $('.lifehack#'+ $opened_pub_additional_functions_id +' .delete_url').html());
   $('.new_complaint, .share_the_pub, .statistics').removeClass('show');

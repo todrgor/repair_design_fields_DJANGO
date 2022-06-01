@@ -353,22 +353,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* .close_btn {
-  position: relative;
-  right: -6%;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  background: url(../../sources/SVG/close.svg) no-repeat;
-  background-size: 30px 30px;
-  opacity: 0.5;
-  transition: all 0.3s ease;
-}
-
-.close_btn:hover {
-  opacity: 1;
-} */
-
 .pubs_container {
   width: 80%;
   max-width: 1100px;
@@ -560,45 +544,45 @@ input.user_just_saved_it_smbt {
 
 .variant_one_img {
   width: 340px;
-    height: 340px;
-    border-radius: 100%;
-    margin: 20px auto;
+  height: 340px;
+  border-radius: 100%;
+  margin: 20px auto;
 }
 
 .variant_one_img#repair {
   background: url(../../images/watch_repairs/2.jpeg);
   background-size: 360px;
-    background-position: center;
+  background-position: center;
 }
 
 .variant_one_img#design {
   background: url(../../images/slider-1/9.png);
   background-size: 360px;
-    background-position: center;
+  background-position: center;
 }
 
 .variant_one_img#lifehacks {
   background: url(../../images/watch_lifehacks/95.png);
   background-size: 390px;
-    background-position: center;
+  background-position: center;
 }
 
 .variant_one h4 {
   margin: 10px 0;
-    text-align: center;
+  text-align: center;
 }
 
 .variant_one p {
   width: 80%;
-    margin: 0 auto;
-    text-align: justify;
+  margin: 0 auto;
+  text-align: justify;
 }
 
 .variant_one a {
   color: #444;
-    display: block;
-    margin: 10px 0 0;
-    text-align: center;
+  display: block;
+  margin: 10px 0 0;
+  text-align: center;
 }
 
 .variant_one a:hover {

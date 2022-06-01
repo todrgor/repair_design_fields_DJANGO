@@ -1,17 +1,11 @@
-// function start_edit_pub() {
-//   console.log('cant edit sorry');
-//   url (edit_the_pub.py?idPub=99);
-// }
 
 function start_loading_animation() {
   $('.user_just_saved_it img').attr('src', '/static/sources/SVG/heart_loading.gif');
-  // $('.user_just_saved_it img').css('transform', 'rotate(-25deg)');
   $('.user_just_saved_it input').val('Загрузка...');
 }
 
 function end_loading_animation() {
   $('.user_just_saved_it img').attr('src', '/static/sources/SVG/heart.svg');
-  // $('.user_just_saved_it img').css('transform', 'rotate(0deg)');
   console.log("loading ended");
 }
 
@@ -85,13 +79,11 @@ function togglePubAdditionalFunctions(idPub) {
 }
 
 function openNewComplaintForm() {
-  // $opened_pub_additional_functions_id
   $('.new_complaint').addClass('show');
   $('.new_complaint').offset({top:( $('.pub_show_full').offset().top - 220  ), left:( $('.pub_show_full').offset().left - 220  )});
 }
 
 function shareThePub() {
-  // $opened_pub_additional_functions_id
   $('.share_the_pub').addClass('show');
   $('.share_the_pub').offset({top:( $('.pub_show_full').offset().top - 40  ), left:( $('.pub_show_full').offset().left - 220  )});
   $.ajax({

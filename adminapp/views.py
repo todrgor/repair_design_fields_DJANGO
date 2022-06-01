@@ -18,16 +18,9 @@ def NewComplaint(request):
         if request.is_ajax():
             complaint = request.POST
             contacting_support = None
-            # print(str(request.POST))
-            # print(str(request.FILES))
 
             # если обращение -- жалоба на публикацию
             if int(complaint['complaint_type']) == 11:
-                # print(complaint['complaint_id'])
-                # print(complaint['complaint_type'])
-                # print(isinstance(int(complaint['complaint_type']), int))
-                # print(complaint['complaint_text'])
-
                 pub_complaint = Publication.objects.get(id=complaint['complaint_id'])
                 pub_complaint.save()
                 contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), type=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
@@ -79,15 +72,12 @@ class StartPanel(ListView):
         pubs = Publication.objects.filter(type__id__in=[11, 21, 31]).order_by('-pushed')[:3]
         noties = Notifications.objects.filter().order_by('-when')[:4]
         users = User.objects.filter().order_by('-last_entry')[:4]
-        # applications =
-        # complaints =
         tag_categories = TagCategory.objects.all().order_by('id')[:4]
         tags = [Tag.objects.filter(category=category).exclude(name='Авторский стиль (как видит сам автор, без придуманных стилей)')[:4] for category in tag_categories]
         new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
         answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
 
         data = {
-            # 'noties': noties,
             'title': title,
             'pubs': pubs,
             'users': users,
@@ -114,10 +104,6 @@ def LettersToSupport(request):
         if not request.POST['answer'].isspace():
             answer = request.POST
             letter = ContactingSupport.objects.get(id=int(answer['ask_id']))
-            # у меня проблема: при перезагрзке страницы request.POST полностью сохраняется,
-            # из-за этого те же самые изменения создаются второй раз. единственное найденное
-            # решение, которое очень похоже на кастыль -- проверять, есть ли уже в БД ответ
-            # на это обрщание. рабоатает. но request.POST по-прежнему повторяется
             if letter.type.id == 0 and 'delete_letter' in answer:
                 noti=Publication.objects.create(title=('Спасибо Вам за Ваше обращение! С Ваши обращением «' + letter.title + '», отправленным ' + str(localize(letter.when_asked)) + ', на каком-то этапе обработки что-то пошло не так... Оно было удалено. Если вопрос остаётся открытым, пожалуйста, сделайте обращение в поддержку ешё раз. Также: если что, на обращение был сделан ответ: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и Дизайна»'), type=PubTypes.objects.get(id=51), preview=letter.asked_by.photo.name, content="Просим прощения за неудобства ❤", author=request.user)
                 Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
@@ -212,7 +198,6 @@ def LettersToSupport(request):
                                 Notifications.objects.create(user_receiver=report_reason_receiver, noti_for_user=noti)
                             noti=Publication.objects.create(title=('Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и Дизайна»'), type=PubTypes.objects.get(id=51), preview=noti_preview, content="Если решение не устраивает, можно подать жалобу ещё раз ❤", author=request.user)
                             Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
-                        # print('report of type', letter_type)
 
                     if letter_type in [21, 22]:
                         letter.ask_additional_info = 999
@@ -250,10 +235,6 @@ def LettersToSupport(request):
                         Notifications.objects.create(user_receiver=letter.asked_by, noti_for_user=noti)
 
                 letter.save()
-                # print(str(answer))
-                # print(str(answer.is_delete_pub))
-                # print(str(answer.is_deny_rules))
-                # print(str(answer.is_delete_account))
         else:
             answer_form = AnswerForm({'answer': None})
             answer_to_report_form = AnswerToReportForm({'answer': None, 'decision': 'just_answer'})
@@ -289,19 +270,6 @@ def LettersToSupport(request):
     new_strange_letters = ContactingSupport.objects.filter(type=0, answer_content=None)
     new_strange_letters_count = new_strange_letters.count()
     all_strange_letters_photos = ContactingSupportPhotos.objects.filter(contacting_support_action__type=0)
-
-    # print(ideas)
-    # print(new_ideas)
-    # print(questions)
-    # print(new_questions)
-    # print(applications)
-    # print(new_applications)
-    # print(reports)
-    # print(reported_pubs_list_id)
-    # print(reported_pubs)
-    # print(isinstance(1,str))
-    # print(strange_letters)
-    # print(new_strange_letters)
 
     title = 'Обращения в поддержку'
     if new_ideas or new_questions or new_applications or new_reports or new_strange_letters:
@@ -363,11 +331,20 @@ class PubList(ListView):
         title ='Публикации | Панель администратора'
         pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
         saved_urls = SavedPubs.objects.filter(pub__in = pubs)
+        seen_urls = SeenPubs.objects.filter(pub__in = pubs)
+
+        print(seen_urls)
+        for su in seen_urls:
+            print(su.pub)
+            print(su.watcher)
+            print(su.watcher.id)
+            print(su.count)
 
         data = {
             'title': title,
             'pubs': pubs,
             'saved_urls': saved_urls,
+            'seen_urls': seen_urls,
         }
         return data
 

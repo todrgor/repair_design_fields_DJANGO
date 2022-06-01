@@ -25,11 +25,11 @@
 .pub_one.lets_see_repair_list .pub_show_full {
   background: rgb(0 0 0 / 48%);
   font-size: 18px;
-    letter-spacing: 0;
-    line-height: normal;
-    border: 1px solid #fff;
-    padding: 6px 12px;
-    border-radius: 18px;
+  letter-spacing: 0;
+  line-height: normal;
+  border: 1px solid #fff;
+  padding: 6px 12px;
+  border-radius: 18px;
 }
 .pub_one.lets_see_repair_list .pub_show_full:hover {
   background: rgb(33 19 5 / 53%);
@@ -62,7 +62,7 @@
 }
 .pub_one.repair .pub_stats {
   position: absolute;
-    bottom: 0;
+  bottom: 0;
 }
 
 .pub_one.repair .read_more {

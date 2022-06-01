@@ -123,17 +123,17 @@
 }
 
 .footer_search input {
-    background: none;
-    border: none;
-    outline: none;
-    color: #fff;
-    font-size: 16px;
-    line-height: 110%;
-    padding: 3px 7px;
-    max-width: 150px;
-    letter-spacing: 0.05em;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px;
+  line-height: 110%;
+  padding: 3px 7px;
+  max-width: 150px;
+  letter-spacing: 0.05em;
 }
 
 .footer_search input::placeholder {
-    color: #8d8787;
+  color: #8d8787;
 }

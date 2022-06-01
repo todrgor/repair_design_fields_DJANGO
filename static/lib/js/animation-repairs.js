@@ -5,7 +5,6 @@ function TagsWereSelectedBeforeLoadingThePage() {
   UpdateSelectedTagsView();
   UpdateCostView();
   UpdateSavePercentView();
-  // SelectedTagsCount(); до этого тыщу раз уже был вызван
 }
 
 function SelectedTagsCount() {
@@ -17,7 +16,6 @@ function SelectedTagsCount() {
 
 function UpdateSelectedTagsView() {
   if ($('.opened_filter :input[type="checkbox"]:checked').length > 0 || $('#fltr_cost_min').val() != ''  || $('#fltr_cost_max').val() != '' || $('#save_percent_min').val() != '' || $('#save_percent_max').val() != '') {
-    // console.log('win');
     $(".filters_on, .filter_tags_count").addClass('show');
     $(".filters_off").addClass('hidden');
     $(".filter_btn, .filter").addClass('tags_count_showed');
@@ -40,7 +38,6 @@ function UpdateSelectedTagsView() {
         },
     });
   } else {
-    // console.log('*** tebe');
     $(".filters_on, .filter_tags_count").removeClass('show');
     $(".filters_off").removeClass('hidden');
     $(".filter_btn, .filter").removeClass('tags_count_showed');
@@ -88,7 +85,6 @@ function UpdateCostView() {
 
     $('#fltr_cost').addClass('show');
     SelectedTagsCount();
-    // console.log("from cost input +1");
   }
 }
 
@@ -131,15 +127,10 @@ function UpdateSavePercentView() {
     $('#fltr_save_percent_p')[0].innerHTML += " сохранений";
     $('#fltr_save_percent').addClass('show');
     SelectedTagsCount();
-    // console.log("from save_percent input +1");
   }
 }
 
 function UpdateOneTag(tag) {
-  // console.log('UpdateOneTag(tag) --');
-  // console.log($(tag));
-  // console.log(tag);
-
   category_id = $(tag).parents(".labels").first().attr('id');
   category_name = $('.filter_mini_div.category#' + category_id + ' .category_name').html();
   selected_tags_in_category = $(tag).parents(".labels").first().find(':input:checked');

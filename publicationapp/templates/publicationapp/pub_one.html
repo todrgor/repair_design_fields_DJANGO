@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/static/lib\css\style_watch_lifehacks.css">
   {% else %}
     <link rel="stylesheet" href="/static/lib\css\style_pub_one.css">
+    <link  href="/static/lib\css\jquery.fancybox.min.css" rel="stylesheet">
   {% endif %}
 {% endblock %}
 
@@ -281,7 +282,8 @@
 
       <div class="statistics"> <!-- посмотреть статистику по публикации -->
         <h1>Статистика по публикации:</h1>
-        <p>Просмотров: <span>{{ pub.seen_count }}</span></p>
+        <p>Пользователей просмотрело (хотя бы раз): <span>{{ pub.seen_count }}</span></p>
+        <p>Всего просмотров (включая по несколько раз): <span>{{ pub.ununique_seen_count }}</span></p>
         <p>Сохранений: <span>{{ pub.saved_count }}</span></p>
         <p>Средний возраст всех просмотревших: <span>{{ pub.average_age_watchers }}</span></p>
         <p>Средний возраст только сохранивших: <span>{{ pub.average_age_savers }}</span></p>
@@ -323,8 +325,6 @@
     <p>Если у вас есть фотографии по теме:</p>
     <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
     <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-    <!-- <form>
-    </form> -->
   </div>
 
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
@@ -339,5 +339,7 @@
   <script src="/static/lib/js/animation-pub-one.js"></script>
   {% if pub.type.id == 31 %}
     <script src="/static/lib/js/animation-lifehacks.js"></script>
+  {% else %}
+    <script src="/static/lib\js\jquery.fancybox.min.js"></script>
   {% endif %}
 {% endblock %}
