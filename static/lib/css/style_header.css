@@ -702,7 +702,8 @@
 .new_complaint,
 .share_the_pub,
 .statistics,
-.delete_the_pub {
+.delete_the_pub,
+.delete_the_user {
   text-align: center;
   position: fixed;
   top: 150px;
@@ -721,7 +722,8 @@
 .share_the_pub.show,
 .functions_for_author_and_admin.show,
 .statistics.show,
-.delete_the_pub.show {
+.delete_the_pub.show,
+.delete_the_user.show {
   display: block;
 }
 .statistics h1 {

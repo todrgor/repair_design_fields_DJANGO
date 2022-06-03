@@ -370,7 +370,7 @@ def toggle_saved(request, pk):
                 record = SavedPubs.objects.create(saver=request.user, pub=Publication.objects.get(id=pk))
                 record.save()
                 result = 1
-                noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей ИС.", author=request.user)
+                noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей платформой.", author=request.user)
                 Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
                 if pub.author and pub.author != request.user:
                     noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.author.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)

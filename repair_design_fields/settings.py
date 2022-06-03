@@ -144,13 +144,11 @@ LOGIN_REDIRECT_URL = 'main'
 
 MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = MEDIA_DIR
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 
-# а меди надо?
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -165,8 +163,8 @@ PHONENUMBER_DB_FORMAT = 'INTERNATIONAL'
 # CKEDITOR_UPLOAD_PATH = 'content/ckeditor/' # так сама консоль почему-то посоветовала
 CKEDITOR_UPLOAD_PATH = MEDIA_DIR + '/pub_media/'
 
-CKEDITOR_CONFIGS = { # full functional
-    "default": {
+CKEDITOR_CONFIGS = {
+    "default": { # full functional
         "removePlugins": "stylesheetparser",
         'allowedContent': True,
         'toolbar_Full': [

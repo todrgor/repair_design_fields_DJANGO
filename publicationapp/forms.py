@@ -3,6 +3,7 @@ from publicationapp.models import *
 from authapp.models import User
 from ckeditor.widgets import CKEditorWidget
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class PubForm(forms.Form):
     author = forms.ModelChoiceField(queryset=User.objects.filter(role__in=[2, 4]), initial=0, label="Автор публикации:", empty_label="Ещё не выбрано", required=False)

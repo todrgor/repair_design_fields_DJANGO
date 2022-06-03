@@ -1,0 +1,9 @@
+Проект доступен по ссылке: http://todrgor.pythonanywhere.com/
+Доработанная версия: https://github.com/todrgor/repair_design_fields_DJANGO
+
+Пользователи для доступа, если нужно:
+никнейм    - пароль    - роль:
+Todrgor226 - su1       - суперпользователь (полный доступ и права ко всему и на всё)
+testUser1  - testUser1 - пользователь-зритель
+testUser2  - testUser2 - автор публикаций
+testUser3  - testUser3 - администратор
