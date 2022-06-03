@@ -136,21 +136,23 @@
   width: 121px;
 }
 
+.expert_info p,
+.offer p {
+  margin: 5px 0;
+}
+
 .offer_text {
   max-height: 450px;
   overflow: auto;
   text-align: justify;
   display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-content: center;
-  align-items: center;
   padding: 10px;
   /* margin-right: 10px; */
   /* padding-right: 10px; */
   /* padding-bottom: 20px; */
   /* padding-right: 0; */
   /* border-radius: 10px; */
+  flex-direction: column;
 }
 
 .offer_text_frame {
