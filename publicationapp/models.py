@@ -43,12 +43,12 @@ class Publication(models.Model):
         return SavedPubs.objects.filter(pub=self.id).count()
 
     @property
-    def reported_count(self):
-        return authapp.models.ContactingSupport.objects.filter(ask_additional_info=self.id, type=11).count()
-
-    @property
     def save_percent(self):
         return self.saved_count/self.seen_count*100
+
+    @property
+    def reported_count(self):
+        return authapp.models.ContactingSupport.objects.filter(ask_additional_info=self.id, type=11).count()
 
     @property
     def average_age_watchers(self):
@@ -139,6 +139,7 @@ class SeenPubs(models.Model):
 
 class TagCategory(models.Model):
     name = models.CharField(max_length=135, verbose_name='Название категории')
+    pub_type = models.ManyToManyField('PubTypes', verbose_name='Для какого типа публикации')
 
     class Meta:
         verbose_name = 'Категория тегов'
@@ -150,8 +151,8 @@ class TagCategory(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Значение тега')
-    pub_type = models.ManyToManyField('PubTypes', verbose_name='Тип публикации')
     category = models.ForeignKey('TagCategory', on_delete=models.CASCADE, verbose_name='Категория тега', blank=False)
+    pub_type = models.ManyToManyField('PubTypes', verbose_name='Для какого типа публикации')
 
     class Meta:
         verbose_name = 'Тег публикации'

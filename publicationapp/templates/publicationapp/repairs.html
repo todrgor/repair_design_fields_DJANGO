@@ -16,7 +16,7 @@
   <div class="page_title" {% if not pubs %} style="margin-top: 15%; align-content: flex-start; align-items: flex-start; flex-direction: column;" {% endif %}>
     {% if pubs %}
       <p class="title_p">Ремонтные решения:</p>
-      <p class="count_pubs">{{ pubs.count }} публикации</p>
+      <p class="count_pubs">{{ pubs_count }} публикаций</p>
     {% else %}
       <p class="title_p">Не нашлось ни одной публикации...</p>
       <p class="count_pubs" style="width: 65%; line-height: 25px;">Попробуйте поменять критерии фильтра, или сходить погулять и прийти попозже – возможно, будут опубликованы новые публикации, и как раз под Ваши критерии фильтра :)</p>
@@ -48,7 +48,7 @@
           <form class="opened_filter_form" action="" method="get">
             <p class="opened_filter_title">Фильтры для публикаций</p>
             <div class="opened_filter_under_title">
-              <p class="opened_filter_second_title">{{ pubs.count }} подобрано</p>
+              <p class="opened_filter_second_title">{{ pubs_count }} подобрано</p>
             </div>
             <div class="filter_mini_div bringed_pubs"> <!-- включённые фильтры -->
               <div class="filters_on"> <!-- если есть 1+ фильтров -->
@@ -101,7 +101,7 @@
                 </label>
                 <label>
                   <input type="radio" name="ordering" value="by_savest" {% if selected_filters.ordering == 'by_savest' %} checked {% endif %}>
-                  Сначала самые сохраняемые
+                  Высокий процент сохранений
                   <!-- Сначала высокий % сохранений -->
                 </label>
                 <label>

@@ -409,6 +409,17 @@ def change_shared_count(request, pk):
 
 
 #   ОТФИЛЬТРОВАТЬ ПУБЛИКАЦИИ
+
+def filter_pubs_by_property(pubs, attr):
+    pubs = list(pubs)
+    n = 1
+    while n < len(pubs):
+        for i in range(len(pubs)-n):
+            if getattr(pubs[i], attr) < getattr(pubs[i+1], attr):
+                pubs[i], pubs[i+1] = pubs[i+1], pubs[i]
+        n+=1
+    return pubs
+
 def filter_pubs (method_GET):
     # print(method_GET)
     pubs = Publication.objects.filter(type=method_GET['pub_type'])
@@ -419,9 +430,7 @@ def filter_pubs (method_GET):
     cost_mini = 0 if cost_mini and cost_mini < 0 else cost_mini
     cost_max =  0 if cost_max  and cost_max  < 0 else cost_max
     if cost_mini and cost_max and cost_mini > cost_max:
-        a = cost_mini
-        cost_mini = cost_max
-        cost_max = a
+        cost_mini, cost_max = cost_max, cost_mini,
     pubs = pubs.exclude(cost_max__lt=cost_mini) if cost_mini else pubs
     pubs = pubs.exclude(cost_min__gt=cost_max)  if cost_max  else pubs
 
@@ -434,9 +443,7 @@ def filter_pubs (method_GET):
     save_percent_mini = 100 if save_percent_mini > 100 else save_percent_mini
     save_percent_max =  100 if save_percent_max > 100  else save_percent_max
     if save_percent_mini and save_percent_max and save_percent_mini > save_percent_max:
-        a = save_percent_mini
-        save_percent_mini = save_percent_max
-        save_percent_max = a
+        save_percent_mini, save_percent_max = save_percent_max, save_percent_mini
     ids_of_pubs_with_good_save_percent = [pub.id for pub in pubs if pub.seen_count and pub.save_percent >= save_percent_mini and pub.save_percent <= save_percent_max]
     pubs = pubs.filter(id__in=ids_of_pubs_with_good_save_percent)
 
@@ -453,25 +460,22 @@ def filter_pubs (method_GET):
 
     #       ordering (сортировка по by_name возвращает list, не queryset)
     if 'ordering' in method_GET:
-        pubs = pubs.order_by('-pushed')                      if method_GET['ordering'] == 'by_new'          else pubs
-        pubs = pubs.order_by('pushed')                       if method_GET['ordering'] == 'by_old'          else pubs
-        pubs = sorted(pubs,  key=lambda m: m.seen_count)     if method_GET['ordering'] == 'by_seen_count'   else pubs
-        pubs = sorted(pubs,  key=lambda m: m.saved_count)    if method_GET['ordering'] == 'by_savest'       else pubs
-        # pubs = sorted(pubs,  key=lambda m: m.save_percent) if method_GET['ordering'] == 'by_savest' else pubs
-        pubs = pubs.order_by('-shared_count')                if method_GET['ordering'] == 'by_shared_count' else pubs
-        pubs = sorted(pubs,  key=lambda m: m.reported_count) if method_GET['ordering'] == 'by_reports'      else pubs
-        # ну почему сортировка по наименованию для русского языка не работает((((
-        pubs = pubs.order_by(Lower('title'))                 if method_GET['ordering'] == 'by_name'         else pubs
-        # pubs = sorted(pubs, key=operator.attrgetter('title')) if method_GET['ordering'] == 'by_name' else pubs
+        pubs = pubs.order_by('-pushed')                        if method_GET['ordering'] == 'by_new'          else pubs
+        pubs = pubs.order_by('pushed')                         if method_GET['ordering'] == 'by_old'          else pubs
+        pubs = pubs.order_by(Lower('title'))                   if method_GET['ordering'] == 'by_name'         else pubs
+        pubs = pubs.order_by('-shared_count')                  if method_GET['ordering'] == 'by_shared_count' else pubs
+        pubs = filter_pubs_by_property(pubs, 'seen_count')     if method_GET['ordering'] == 'by_seen_count'   else pubs
+        pubs = filter_pubs_by_property(pubs, 'save_percent')   if method_GET['ordering'] == 'by_savest'       else pubs
+        pubs = filter_pubs_by_property(pubs, 'reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
 
-    return pubs
+    return list(pubs)
 
 
 #   AJAX: узнать количество подходящих
 #   публикаций под заданные фильтры
 def get_filtered_pubs_count(request):
     if request.is_ajax() and request.GET:
-        return JsonResponse({'pubs_count': filter_pubs(request.GET).count()})
+        return JsonResponse({'pubs_count': len(filter_pubs(request.GET))})
 
 
 #       просмотр одной публикации
@@ -517,7 +521,7 @@ class RepairsWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=11)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else list(Publication.objects.filter(type=11))
         return pubs
 
     def get_context_data(self, **kwargs):
@@ -528,6 +532,7 @@ class RepairsWatch(ListView):
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
+            'pubs_count': len(context['pubs']),
             'tags': tags,
             'tag_categories': tag_categories,
             'selected_filters': selected_filters,
@@ -542,7 +547,7 @@ class DesignsWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=21)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else list(Publication.objects.filter(type=21))
         return pubs
 
     def get_context_data(self, **kwargs):
@@ -556,6 +561,7 @@ class DesignsWatch(ListView):
 
         context.update({
             'saved_pubs': saved_pubs,
+            'pubs_count': len(context['pubs']),
             'tags': tags,
             'tag_categories': tag_categories,
             'selected_filters': selected_filters,
@@ -570,7 +576,7 @@ class LifehacksWatch(ListView):
     context_object_name = 'pubs'
 
     def get_queryset(self):
-        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else Publication.objects.filter(type=31)
+        pubs = filter_pubs(self.request.GET) if self.request.method == 'GET' and 'to_filter' in self.request.GET else list(Publication.objects.filter(type=31))
         return pubs
 
     def get_context_data(self, **kwargs):
@@ -585,6 +591,7 @@ class LifehacksWatch(ListView):
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
+            'pubs_count': len(context['pubs']),
             'saved_pubs': saved_pubs,
             'subscribing_authors': subscribing_authors,
 
@@ -604,7 +611,8 @@ class Saved(ListView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return redirect('main')
-        return Publication.objects.filter(id__in=SavedPubs.objects.filter(saver=self.request.user).values_list('pub', flat=True)).order_by('-pushed')
+        pubs = list(Publication.objects.filter(id__in=SavedPubs.objects.filter(saver=self.request.user).values_list('pub', flat=True)).order_by('-pushed'))
+        return pubs
 
     def get_context_data(self, **kwargs):
         if not self.request.user.is_authenticated:
@@ -615,6 +623,7 @@ class Saved(ListView):
         subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
         context.update({
+            'pubs_count': len(context['pubs']),
             'subscribing_authors': subscribing_authors,
         })
         return context
