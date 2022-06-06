@@ -99,7 +99,7 @@ class Publication(models.Model):
 
 class PubTypes(models.Model):
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id типа')
-    name = models.CharField(max_length=135, verbose_name='Значение типа')
+    name = models.CharField(max_length=135, verbose_name='Наименование типа')
 
     class Meta:
         verbose_name = 'Тип публикации'
@@ -146,18 +146,17 @@ class TagCategory(models.Model):
         verbose_name_plural = 'Категории тегов'
 
     def __str__(self):
-        return self.name
+        return (self.name + ' (' + str(list(self.pub_type.values_list('name', flat=True))).replace("[", "").replace("]", "").replace("'", "") + ')')
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Значение тега')
+    name = models.CharField(max_length=255, verbose_name='Наименование тега')
     category = models.ForeignKey('TagCategory', on_delete=models.CASCADE, verbose_name='Категория тега', blank=False)
-    pub_type = models.ManyToManyField('PubTypes', verbose_name='Для какого типа публикации')
 
     class Meta:
         verbose_name = 'Тег публикации'
-        verbose_name_plural = 'Теги публикции'
+        verbose_name_plural = 'Теги публикации'
         ordering = ('name',)
 
     def __str__(self):
-        return (self.name + ' (' + str(self.category.name) + ', ' + str(list(self.pub_type.values_list('name', flat=True))).replace("[", "").replace("]", "").replace("'", "") + ')')
+        return (self.name + ' (' + str(self.category.name) + ')')

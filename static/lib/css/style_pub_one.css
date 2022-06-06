@@ -27,20 +27,23 @@
 .functions_for_author_and_admin p {
   padding: 3px 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: -webkit-fill-available;
 }
 .functions_for_author_and_admin p:hover {
   background: #d6d8b4;
-  color: #2d2d0d;
+  /* color: #2d2d0d; */
 }
 .functions_for_author_and_admin a {
   color: black;
 }
-#delete:hover {
-  color: red;
+.functions_for_author_and_admin p#delete:hover {
+  color: black;
   background: #ff9a9a;
 }
 #edit:hover {
-  color: green;
+  /* color: green; */
   background: #bfffc1;
 }
 

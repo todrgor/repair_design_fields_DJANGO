@@ -357,7 +357,7 @@ input::-webkit-inner-spin-button {
   width: 80%;
   max-width: 1100px;
   min-height: 600px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
   display: flex;
   flex-direction: column;
 }
@@ -618,7 +618,7 @@ input.user_just_saved_it_smbt {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   position: relative;
-  margin: 0 0 0px 86%;
+  margin: 0 0 0px 78%;
 }
 .some_counts.lifehack {
   border-radius: 7px;

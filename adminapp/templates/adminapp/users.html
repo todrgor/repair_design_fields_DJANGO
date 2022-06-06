@@ -45,7 +45,7 @@
          <table border="1" class="pubs">
              <tr">
               {% if user.role.id == 4 %}
-                 <th class="functions">Действия</th>
+                 <th class="functions"></th>
               {% endif %}
                <th class="id">ID</th>
                <th>Кто</th>
@@ -61,9 +61,9 @@
                <tr id="{{ showing_user.id }}">
                 {% if user.role.id == 4 %}
                    <td class="functions">
-                    <a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit">Редактировать</p></a>
+                    <a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit"><span class="icon pub_edit_black"></span></p></a>
                     {% if showing_user.role.id == 4 and not showing_user.is_only_one_superuser and showing_user == user or showing_user.role.id != 4 %}
-                      <p onclick="really_delete_account({{ showing_user.id }})" id="really_delete">Удалить безвозвратно</p>
+                      <p onclick="really_delete_account({{ showing_user.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                     {% endif %}
                    </td>
                 {% endif %}
@@ -108,10 +108,8 @@
 
                  <td class="following">
                      <ul class="overflowX_auto">
-                       {% for s in subscribed_urls %}
-                         {% if s.subscriber.id == showing_user.id %}
-                           <li><a href="{% url 'auth:one' pk=s.star.id %}">{{ s.star.username }}</a></li>
-                         {% endif %}
+                       {% for s in showing_user.following_for.all %}
+                         <li><a href="{% url 'auth:one' pk=s.id %}">{{ s.username }}</a></li>
                        {% endfor %}
                      </ul>
                  </td>

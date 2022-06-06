@@ -69,22 +69,34 @@ def toggle_get_noti_from_author(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
             if request.user.id == pk or request.user.role.id == 4:
-                duplicate = UserSubscribes.objects.filter(subscriber=request.user, star=pk)
+                duplicate = request.user.following_for.filter(id=pk)
+                star = User.objects.get(id=pk)
 
                 if not duplicate:
-                    if request.user != User.objects.get(id=pk):
-                        record = UserSubscribes.objects.create(subscriber=request.user, star=User.objects.get(id=pk))
-                        record.save()
+                    if request.user != star:
+                        request.user.following_for.add(star)
                         result = 1
-                        noti=Publication.objects.create(title=('Пользователь «'+ request.user.username +'» подписался на уведомления о Ваших новых публикациях.'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(star=pk).count() ) + " подписчиков"), author=request.user)
-                        Notifications.objects.create(user_receiver=User.objects.get(id=pk), noti_for_user=noti)
-                        noti=Publication.objects.create(title=('Теперь вы будете получать уведомления о новых публикациях пользователя «'+ User.objects.get(id=pk).username +'»'), type=PubTypes.objects.get(id=51), preview=(User.objects.get(id=pk).photo.name), content=("Теперь у Вас " + str( UserSubscribes.objects.filter(subscriber=request.user.id).count() ) + " источников уведомлений о новых публикациях"), author=request.user)
-                        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+
+                        NotificationsNewTable.objects.create(
+                            type = ActionTypes.objects.get(id=3030200),
+                            content = 'Пользователь «'+ request.user.username +'» подписался на уведомления о Ваших новых публикациях.',
+                            hover_text = 'Теперь у Вас ' + str( User.objects.filter(following_for__id=star.id).count() ) + ' подписчиков.'
+                        ).receiver.add(star)
+
+                        NotificationsNewTable.objects.create(
+                            type = ActionTypes.objects.get(id=3030200),
+                            content = 'Теперь вы будете получать уведомления о новых публикациях пользователя «'+ User.objects.get(id=pk).username +'»',
+                            hover_text = 'Теперь у Вас ' + str( request.user.following_for.count() ) + ' источников уведомлений о новых публикациях'
+                        ).receiver.add(request.user)
                     else:
                         result = 0
-                        noti=Publication.objects.create(title=('Вы пытались подписаться сами на себя. Давайте так не делать :)'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content=("Не ну а шо вы в самый раз"), author=request.user)
-                        Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                        NotificationsNewTable.objects.create(
+                            type = ActionTypes.objects.get(id=3030400),
+                            content = 'Вы пытались подписаться сами на себя. Давайте так не делать :)',
+                            hover_text = 'Не ну а шо вы в самый раз'
+                        ).receiver.add(request.user)
                 else:
+                    request.user.following_for.remove(star)
                     duplicate.delete()
                     result = 0
 
@@ -94,11 +106,13 @@ def toggle_get_noti_from_author(request, pk):
 #   получение сигнала о том,
 #   что новые уведомления открыты и прочитаны
 def new_noti_were_seen(request, pk):
+    #   переписать через property юзера
     if request.is_ajax():
-        if Notifications.objects.filter(user_receiver=request.user, is_new=True):
+        new_noties = NotificationsNewTable.objects.filter(receiver=request.user).exclude(receiver_saw=request.user)
+        if new_noties:
             result = 1
-            for nn in Notifications.objects.filter(user_receiver=request.user, is_new=True):
-                nn.is_new = False
+            for nn in new_noties:
+                nn.receiver_saw.add(request.user)
                 nn.save()
         else:
             result = 0
@@ -168,12 +182,10 @@ class AccountOneWatch(ListView):
         opened_user.save()
         user_role = opened_user.role.id
 
-        saved_pubs = subscribing_authors  = None
+        saved_pubs = None
         if self.request.user.is_authenticated:
             saved_urls = SavedPubs.objects.filter(saver=self.request.user)
             saved_pubs = [sp.pub.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber=self.request.user)
-            subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
         expert_info = expert_pubs = None
         if user_role in [2, 4]:
@@ -188,7 +200,6 @@ class AccountOneWatch(ListView):
             'expert_info': expert_info,
             'expert_pubs': expert_pubs,
             'saved_pubs': saved_pubs,
-            'subscribing_authors': subscribing_authors,
         })
         return context
 
@@ -259,8 +270,11 @@ def CreateAccount(request):
                     })
                 edited_user_expert_info.save()
 
-            noti=Publication.objects.create(title=('Успешно создан аккаунт пользователя «'+ edited_user.username +'»!'), type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content=("Вы большой молодец, что расширяете нам базу пользователей"), author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=9910200),
+                content = 'Успешно создан аккаунт пользователя «'+ edited_user.username +'»!',
+                hover_text = 'Вы большой молодец, что расширяете нам базу пользователей'
+            ).receiver.add(request.user)
             return redirect('auth:one', pk=edited_user.id)
 
     title = 'Создать нового пользователя'
@@ -291,7 +305,6 @@ def UpdateAccount(request, pk):
         'phone_number': edited_user.phone_number,
         })
     form_expert_user = UserExpertForm()
-    edited_user_subs = UserSubscribes.objects.filter(subscriber=pk)
 
     if edited_user.role.id in [2, 4]:
         edited_user_expert_info = ExpertInfo.objects.get(expert_account=pk) if ExpertInfo.objects.filter(expert_account=pk) else ExpertInfo.objects.create(expert_account=edited_user).save()
@@ -372,13 +385,23 @@ def UpdateAccount(request, pk):
             edited_user.save()
 
             if request.user.id == edited_user.id:
-                noti=Publication.objects.create(title=('Аккаунт успешно отредактирован.'), type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content=("Вы большой молодец"), author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=3010500),
+                    content = 'Аккаунт успешно отредактирован.',
+                    hover_text = 'Вы большой молодец'
+                ).receiver.add(request.user)
             else:
-                noti=Publication.objects.create(title=('Успешно отредактирован аккаунт пользователя «'+ edited_user.username) +'»!', type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content=("Вы большой молодец"), author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Ваш аккаунт отредактирован суперпользователем «'+ request.user.username) +'»!', type=PubTypes.objects.get(id=51), preview=(edited_user.photo.name), content=("Вы большой молодец"), author=request.user)
-                Notifications.objects.create(user_receiver=edited_user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9910200),
+                    content = 'Успешно отредактирован аккаунт пользователя «'+ edited_user.username +'»!',
+                    hover_text = 'Вы большой молодец'
+                ).receiver.add(request.user)
+
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9910200),
+                    content = 'Ваш аккаунт отредактирован суперпользователем «'+ request.user.username +'»!',
+                    hover_text = 'Вы большой молодец'
+                ).receiver.add(edited_user)
 
             return redirect('auth:one', pk=edited_user.id)
 
@@ -388,7 +411,6 @@ def UpdateAccount(request, pk):
         'form_user': form_user,
         'form_expert_user': form_expert_user,
         'edited_user': edited_user,
-        'edited_user_subs': edited_user_subs,
     }
     return render(request, 'authapp/update_account.html', context)
 
@@ -410,17 +432,27 @@ def ChangePassword(request, pk):
                 form = form.save()
                 update_session_auth_hash(request, form)
 
-                noti=Publication.objects.create(title=('Успешно изменён пароль!  Запишите его себе: «' + request.POST['new_password1'] +'». И не забывайте :)'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content="Вы молодец, что заботетесь о своей безопасности! С заботой, «Ремонт и Дизайн» ❤", author=request.user)
-                Notifications.objects.create(user_receiver=editing_user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=3010202),
+                    content = 'Успешно изменён пароль! Запишите его себе: «' + request.POST['new_password1'] +'». И не забывайте :)',
+                    hover_text = 'Вы молодец, что заботетесь о своей безопасности! С заботой, «Ремонт и Дизайн» ❤'
+                ).receiver.add(edited_user)
             else:
                 password = request.POST['password']
                 editing_user.set_password(password)
                 editing_user.save()
 
-                noti=Publication.objects.create(title=('Успешно изменён пароль пользователя «' + editing_user.username +'»! Теперь он такой: «' + password +'».'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content="зачем правда ну ладно", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Ваш пароль был изменён администратором. Запишите его себе: «' + password +'». И не забывайте :)'), type=PubTypes.objects.get(id=51), preview=(editing_user.photo.name), content='С заботой, «Ремонт и Дизайн» ❤', author=request.user)
-                Notifications.objects.create(user_receiver=editing_user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9910202),
+                    content = 'Успешно изменён пароль пользователя «' + editing_user.username +'»! Теперь он такой: «' + password +'».',
+                    hover_text = 'зачем правда ну ладно'
+                ).receiver.add(request.user)
+
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9910202),
+                    content = 'УВаш пароль был изменён администратором. Запишите его себе: «' + password +'». И не забывайте :)',
+                    hover_text = 'С заботой, «Ремонт и Дизайн» ❤'
+                ).receiver.add(editing_user)
             return redirect('auth:settings', pk=pk)
 
     title = 'Смена пароля' if request.user == editing_user else 'Смена пароля пользователя «' + editing_user.username +'»'
@@ -444,8 +476,12 @@ def DeleteAccount(request, pk):
             user.delete()
 
             if request.user.id != user_id:
-                noti=Publication.objects.create(title=('Успешно удалён пользователь «' + user_name +'»'), type=PubTypes.objects.get(id=51), preview=user_photo, content="Вот и зачем Вы его так?", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9910500),
+                    content = 'Успешно удалён пользователь «' + user_name +'»',
+                    hover_text = 'Вот и зачем Вы его так?'
+                ).receiver.add(request.user)
+
                 return redirect('admin_mine:users')
             else:
                 return redirect('logout')
@@ -478,8 +514,11 @@ def BecomeATeammember(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            noti=Publication.objects.create(title=('Ваша заявка на роль администратора принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа!", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=1014200),
+                content = 'Ваша заявка на роль администратора принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.',
+                hover_text = 'Ожидайте ответа!'
+            ).receiver.add(request.user)
             return redirect('/')
 
     title = 'Заявка на роль администратора — стать частью команды «Ремонт и Дизайн»'
@@ -543,8 +582,11 @@ def BecomeAnAuthor(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            noti=Publication.objects.create(title=('Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.'), type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа!", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=1013200),
+                content = 'Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.',
+                hover_text = 'Ожидайте ответа!'
+            ).receiver.add(request.user)
             return redirect('/')
 
     title = 'Стать автором публикаций'
@@ -583,54 +625,86 @@ def SendToSupport(request):
                 pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
                 title = 'Жалоба на публикацию «'+ pub.title + '»'
                 ask_additional_info = int(request.POST['complaint_pub_id'])
-                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.', type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1012200),
+                    content = title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(request.user)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1012200),
+                    content = 'Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(pub.author)
 
             if request.POST['type'] == '12':
                 account = User.objects.get(id=request.POST['complaint_account_id'])
                 title = 'Жалоба на пользователя «'+ account.username + '»'
                 ask_additional_info = int(request.POST['complaint_account_id'])
-                noti=Publication.objects.create(title=title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=account.photo.name, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title='Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.', type=PubTypes.objects.get(id=51), preview=account.photo.name, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=account, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1011200),
+                    content = title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(request.user)
 
-            if request.POST['type'] in ['21', '22'] and request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
-                noti=Publication.objects.create(title='Ваша заявка на смену роли не может быть принята на рассмотрение. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! С заботой, Ваша поддержка «Ремонта и Дизайна»', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="По-другому пока не можем. Просим простить нас ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                return redirect('/')
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1011200),
+                    content = 'Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(account)
 
-            if request.POST['type'] == '21':
-                title = 'Заявка на роль автора от пользователя «'+ request.user.username + '»'
-                noti=Publication.objects.create(title='Ваша заявка на роль автора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            if request.POST['type'] in ['21', '22']:
+                if request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
+                    action_type = 1013200 if request.POST['type'] == '21' else 1014200
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=action_type),
+                        content = 'Ваша заявка на смену роли не может быть принята на рассмотрение. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! С заботой, Ваша поддержка «Ремонта и Дизайна»',
+                        hover_text = 'По-другому пока не можем. Просим простить нас ❤'
+                    ).receiver.add(request.user)
+                    return redirect('/')
 
-            if request.POST['type'] == '22':
-                title = 'Заявка на роль модератора от пользователя «'+ request.user.username + '»'
-                noti=Publication.objects.create(title='Ваша заявка на участника команды (модератора) принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа!", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                else:
+                    if request.POST['type'] == '21':
+                        title = 'Заявка на роль автора от пользователя «'+ request.user.username + '»'
+                        NotificationsNewTable.objects.create(
+                            type = ActionTypes.objects.get(id=1013200),
+                            content = 'Ваша заявка на роль автора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                            hover_text = 'Ожидайте ответа! ❤'
+                        ).receiver.add(request.user)
+
+                    if request.POST['type'] == '22':
+                        title = 'Заявка на роль модератора от пользователя «'+ request.user.username + '»'
+                        NotificationsNewTable.objects.create(
+                            type = ActionTypes.objects.get(id=1014200),
+                            content = 'Ваша заявка на администратора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                            hover_text = 'Ожидайте ответа! ❤'
+                        ).receiver.add(request.user)
 
             if request.POST['type'] == '31':
                 title = 'Вопрос от пользователя «'+ request.user.username + '»'
-                noti=Publication.objects.create(title='Ваш вопрос принят. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1010200),
+                    content = 'Ваш вопрос принят. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(request.user)
 
             if request.POST['type'] == '32':
                 title = 'Идея и/или предложение от пользователя «'+ request.user.username + '»'
-                noti=Publication.objects.create(title='Ваша Идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.', type=PubTypes.objects.get(id=51), preview=request.user.photo.name, content="Ожидайте ответа! ❤", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=1010200),
+                    content = 'Ваша Идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                    hover_text = 'Ожидайте ответа! ❤'
+                ).receiver.add(request.user)
 
-            contacting_support = ContactingSupport.objects.create(title=title, type=ContactingSupportTypes.objects.get(id=request.POST['type']), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=ask_additional_info, when_asked=timezone.now())
-            if request.FILES:
-                fs = FileSystemStorage()
-                photos = request.FILES.getlist('photos')
-                i_count = 0
-                for i in photos:
-                    fs.save(('contacting_support_media/' + photos[i_count].name), photos[i_count])
-                    ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
-                    i_count +=1
+            if not (request.POST['type'] in ['21', '22'] and request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1):
+                contacting_support = ContactingSupport.objects.create(title=title, type=ContactingSupportTypes.objects.get(id=request.POST['type']), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=ask_additional_info, when_asked=timezone.now())
+                if request.FILES:
+                    fs = FileSystemStorage()
+                    photos = request.FILES.getlist('photos')
+                    i_count = 0
+                    for i in photos:
+                        fs.save(('contacting_support_media/' + photos[i_count].name), photos[i_count])
+                        ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
+                        i_count +=1
 
             return redirect('/')
 
@@ -655,7 +729,6 @@ def Search(request):
     finded_pubs = Publication.objects.filter(id__in=[pub.id for pub in Publication.objects.filter(type__in=[11, 21, 31]) if looking_for in str(pub.title).lower() or looking_for in str(pub.content).lower()])
     saved_pubs_urls = SavedPubs.objects.filter(saver=request.user) if request.user.is_authenticated else []
     saved_finded_pubs = [sp.pub.id for sp in saved_pubs_urls]
-    subscribing_authors = [sa.star.id for sa in (UserSubscribes.objects.filter(subscriber=request.user))] if request.user.is_authenticated else None
 
     finded_accounts_count = finded_accounts.count()
     finded_pubs_count = finded_pubs.count()
@@ -669,7 +742,6 @@ def Search(request):
         'finded_accounts_count': finded_accounts_count,
         'finded_pubs': finded_pubs,
         'saved_finded_pubs': saved_finded_pubs,
-        'subscribing_authors': subscribing_authors,
         'finded_pubs_count': finded_pubs_count,
         'title': title,
     }

@@ -47,7 +47,7 @@
          <table border="1" class="withBorder">
              <tr>
               {% if user.role.id == 4 %}
-                 <th class="functions">Действия</th>
+                 <th class="functions"></th>
               {% endif %}
                  <th class="id">ID</th>
                  <th>Фото и заголовок</th>
@@ -64,8 +64,9 @@
              {% for pub in pubs %}
                <tr id="{{ pub.id }}">
                   {% if user.role.id == 4 %}
-                     <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}"><p id="edit">Редактировать</p></a>
-                       <p onclick="really_delete_pub({{pub.id }})" id="really_delete">Удалить безвозвратно</p>
+                     <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}">
+                       <p id="edit"><span class="icon pub_edit_black"></span></p></a>
+                       <p onclick="really_delete_pub({{pub.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                      </td>
                   {% endif %}
 

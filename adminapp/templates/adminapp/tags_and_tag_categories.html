@@ -46,7 +46,16 @@
           </div>
         {% endif %}
     </div>
+
+    {% if errors %}
+      <div class="page_title errors">
+        <p class="title_p">Ошибка:</p>
+        <p class="errors_content">{{ errors|safe }}</p>
+        <p class="hide_errors">OK</p>
+      </div>
+    {% endif %}
   {% endif %}
+
    <div class="pubs_container" {% if not tags and tag_categories%}style="height: 700px;"{% endif %}>
      {% if not tags and tag_categories %}
        <p class="title_p">Всё куда-то делось – нет ни одного тега и категории...</p>
@@ -54,28 +63,40 @@
      {% endif %}
 
      {% if tag_categories %}
-       <div class="pubs_container_one_type show" id='categories'>
-         <p style="margin: 25px auto;"><span class="bold_text">Категории тегов</span><span style="color:gray;"> {{ tag_categories.count }} категорий</span>
-         </p>
-         <table border="1" class="categories">
+       <p onclick="toggleShow('tag_categories')" id="tag_categories" class="letter_type_container_title" style="margin: 25px auto;">
+         <span class="bold_text">Категории тегов</span>
+         <span class="count"> {{ tag_categories.count }} категорий</span>
+         <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+       </p>
+
+       <div class="letters_container_one_type show" id='tag_categories'>
+         <table border="1" class="tag_categories">
                <tr>
                 {% if user.role.id == 4 %}
-                   <th class="functions">Действия</th>
+                   <th class="functions"></th>
                 {% endif %}
                    <th class="id">ID</th>
                    <th>Название</th>
-                   <th>Теги в этой категории</th>
+                   <th>Для каких типов публикаций</th>
+                   <th>Теги с этой категорией</th>
                </tr>
                {% for category in tag_categories %}
                  <tr id="{{ category.id }}">
                   {% if user.role.id == 4 %}
                    <td class="functions">
-                     <p onclick="edit_category({{ category.id }})" id="edit">Редактировать</p>
-                     <p onclick="really_delete_category({{ category.id }})" id="really_delete">Удалить безвозвратно</p>
+                     <p onclick="edit_category({{ category.id }})" id="edit"><span class="icon pub_edit_black"></span></p>
+                     <p onclick="really_delete_category({{ category.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                    </td>
                   {% endif %}
                   <td class="id">{{ category.id }}</td>
                   <td class="name">{{ category.name }}</td>
+
+                  <td class="pub_types">
+                    {% for pub_type in category.pub_type.all %}
+                      <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
+                    {% endfor %}
+                  </td>
+
                   <td class="this_category_tags following">
                     <ul>
                       {% for tag in tags %}
@@ -87,43 +108,43 @@
                   </td>
                  </tr>
                {% endfor %}
-           </table>
+         </table>
        </div>
      {% endif %}
 
      {% if tags %}
-       <div class="pubs_container_one_type show" id='tags'>
-         <p style="margin: 25px auto;"><span class="bold_text">Теги</span><span style="color:gray;"> {{ tags.count }} тегов</span>
-         </p>
+       <p onclick="toggleShow('tags')" id="tags" class="letter_type_container_title" style="margin: 25px auto;">
+         <span class="bold_text">Теги</span>
+         <span class="count"> {{ tags.count }} тегов</span>
+         <span class="triangle_to_open_and_hide"><img src="/static/sources/SVG/to_close_open_triangle.svg" alt=""></span>
+       </p>
+
+       <div class="letters_container_one_type show" id='tags'>
          <table border="1" class="tags">
                <tr>
                 {% if user.role.id == 4 %}
-                   <th class="functions">Действия</th>
+                   <th class="functions"></th>
                 {% endif %}
                    <th class="id">ID</th>
                    <th>Название</th>
                    <th>Категория</th>
-                   <th>Для каких типов публикаций</th>
                    <th>Публикации с этим тегом</th>
                </tr>
+
                {% for category in tag_categories %}
                  {% for tag in tags %}
                    {% if tag.category == category and tag.name != 'Другое' %}
                      <tr id="{{ tag.id }}">
                       {% if user.role.id == 4 %}
                        <td class="functions">
-                         <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
-                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
+                         <p onclick="edit_tag({{ tag.id }})" id="edit"><span class="icon pub_edit_black"></span></p>
+                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                        </td>
                       {% endif %}
                       <td class="id">{{ tag.id }}</td>
                       <td class="name">{{ tag.name }}</td>
                       <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
-                      <td class="pub_types">
-                        {% for pub_type in tag.pub_type.all %}
-                          <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
-                        {% endfor %}
-                      </td>
+
                       <td class="pubs following">
                         <ul>
                           {% for pub in pubs %}
@@ -133,26 +154,23 @@
                           {% endfor %}
                         </ul>
                       </td>
+
                      </tr>
                    {% endif %}
                  {% endfor %}
+
                  {% for tag in tags %}
                    {% if tag.category == category and tag.name == 'Другое' %}
                      <tr id="{{ tag.id }}">
                       {% if user.role.id == 4 %}
                        <td class="functions">
-                         <p onclick="edit_tag({{ tag.id }})" id="edit">Редактировать</p>
-                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete">Удалить безвозвратно</p>
+                         <p onclick="edit_tag({{ tag.id }})" id="edit"><span class="icon pub_edit_black"></span></p>
+                         <p onclick="really_delete_tag({{ tag.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                        </td>
                       {% endif %}
                       <td class="id">{{ tag.id }}</td>
                       <td class="name">{{ tag.name }}</td>
                       <td class="category" id="{{ tag.category.id }}">{{ tag.category }}</td>
-                      <td class="pub_types">
-                        {% for pub_type in tag.pub_type.all %}
-                          <p style="display: block;" id="{{ pub_type.id }}">{{ pub_type.name }}</p>
-                        {% endfor %}
-                      </td>
 
                       <td class="pubs following">
                         <ul>
@@ -167,7 +185,7 @@
                    {% endif %}
                  {% endfor %}
                {% endfor %}
-           </table>
+         </table>
        </div>
      {% endif %}
 

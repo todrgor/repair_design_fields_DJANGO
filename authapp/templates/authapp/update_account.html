@@ -124,16 +124,16 @@
           {% endif %}
         </div>
 
-        {% if edited_user_subs %}
+        {% if edited_user.following_for.all %}
           <div class="pub_title pub_inp_one">
             <h4 style="margin: 0 0 10px">Уведомления получаются от:</h4>
-            {% for s in edited_user_subs %}
-              <div class="user_one" id="{{ s.star.id }}">
-                <a href="{% url 'auth:one' pk=s.star.id %}" class="user_link">
-                  <img src="{{ s.star.photo.url }}" alt="" class="user_photo">
-                  <p class="user_nikname">{{ s.star.username }}</p>
+            {% for s in edited_user.following_for.all %}
+              <div class="user_one" id="{{ s.id }}">
+                <a href="{% url 'auth:one' pk=s.id %}" class="user_link">
+                  <img src="{{ s.photo.url }}" alt="" class="user_photo">
+                  <p class="user_nikname">{{ s.username }}</p>
                 </a>
-                <p class="cancel_following" onclick="cancel_following({{ s.star.id }})">Отписаться</p>
+                <p class="cancel_following" onclick="cancel_following({{ s.id }})">Отписаться</p>
               </div>
             {% endfor %}
           </div>

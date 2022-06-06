@@ -1,3 +1,9 @@
+
+.pubs_container {
+  width: 90%;
+  max-width: max-content;
+}
+
 .header a:hover, .functions a p:hover {
   text-decoration: none;
 }
@@ -27,6 +33,10 @@ a:hover {
   background: #e8e8e8;
   display: flex;
   justify-content: center;
+  position: sticky;
+  top: 50px;
+  z-index: 87;
+  border-bottom: 2px solid white;
 }
 .admin_menu {
   width: 80%;
@@ -48,6 +58,39 @@ a:hover {
   display: flex;
   align-content: center;
   align-items: center;
+}
+
+.page_title.errors .title_p {
+  color: #a30000;
+  margin-right: 30px;
+}
+
+.errors_content {
+  color: #a30000;
+}
+
+.hide_errors {
+  font-size: 20px;
+  position: absolute;
+  right: 10%;
+  padding: 10px;
+  background: #ffffffbf;
+  border-radius: 8px;
+  border: 1px solid;
+  color: #a30000;
+  cursor: pointer;
+}
+
+.hide_errors:hover {
+  background: #fff;
+}
+
+.page_title.errors {
+  margin: 0;
+  padding: 40px 10%;
+  background: #ffcaca;
+  height: max-content;
+  position: relative;
 }
 
 .create_new_tag_or_category {
@@ -319,6 +362,7 @@ table td.functions {
   position: sticky;
   left: 0;
   border: 1px solid #dbdbdb;
+  /* background: #e5e5e5; */
   /* width: 210px; */
 }
 table td.photo_and_nickname {
@@ -389,6 +433,7 @@ table td.following a {
   padding: 5px 10px;
   margin: 0 0 10px;
   cursor: pointer;
+  display: flex;
 }
 .functions p#edit:hover {
   color: #808036;

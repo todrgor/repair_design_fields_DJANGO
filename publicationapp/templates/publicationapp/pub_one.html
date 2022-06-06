@@ -265,8 +265,8 @@
         {% endif %}
       </div>
 
-      <div class="some_counts"><p><span class="count_one">👁‍🗨 {{ pub.seen_count }}</span><span class="count_one">❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
     </div>
+    <div class="some_counts"><p><span class="count_one">👁‍🗨 {{ pub.seen_count }}</span><span class="count_one">❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
 
 
   {% endif %}
@@ -275,9 +275,9 @@
     {% if user.id == pub.author.id or user.role.id == 4 %}
       <div class="functions_for_author_and_admin"> <!-- действия для автора и админа -->
         <h4>Управление:</h4>
-        <a onclick="open_statistics()"><p id="statistics">Статистика</p></a>
-        <a onclick="user_tried_to_delete()"><p id="delete">Удалить</p></a>
-        <a href="{% url 'pub:edit' pk=pub.id %}"><p id="edit">Редактировать</p></a>
+        <a onclick="open_statistics()"><p id="statistics"><span class="icon p_statistics_black"></span>Статистика</p></a>
+        <a onclick="user_tried_to_delete()"><p id="delete"><span class="icon p_delete_black"></span>Удалить</p></a>
+        <a href="{% url 'pub:edit' pk=pub.id %}"><p id="edit"><span class="icon pub_edit_black"></span>Редактировать</p></a>
       </div>
 
       <div class="statistics"> <!-- посмотреть статистику по публикации -->

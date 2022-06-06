@@ -63,9 +63,9 @@ def CreateNewPub(request):
     form = PubForm({'author': request.user})
     tags = Tag.objects.all()
     tag_categories = {
-        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)),
-        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)),
-        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)),
+        'repair':   TagCategory.objects.filter(pub_type=11),
+        'design':   TagCategory.objects.filter(pub_type=21),
+        'lifehack': TagCategory.objects.filter(pub_type=31),
     }
     empty_tag_categories_ids = []
     selected_tags = None
@@ -104,7 +104,7 @@ def CreateNewPub(request):
         #   выбраны и переадресация обратно, если нет
         selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=method_POST['type'])
         selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
-        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=method_POST['type']).values_list('category', flat=True))
+        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(pub_type=method_POST['type'])
         for category in all_tag_categories_for_this_pub_type:
             if category.id not in selected_tags_categories_ids:
                 empty_tag_categories_ids.append(category.id)
@@ -128,9 +128,7 @@ def CreateNewPub(request):
         cost_min = float(method_POST['cost_min'])
         cost_max = float(method_POST['cost_max'])
         if cost_min > cost_max:
-            a = cost_min
-            cost_min = cost_max
-            cost_max = a
+            cost_min, cost_max = cost_max, cost_min
         pub_created = Publication.objects.create(
             title = method_POST['title'].capitalize(),
             type = PubTypes.objects.get(id=method_POST['type']),
@@ -149,22 +147,35 @@ def CreateNewPub(request):
         preview_file = fs.save(('pub_media/' + request.FILES['preview'].name), request.FILES['preview'])
 
         pub_created.tags.add(*selected_tags)
-        pub_created.cost_min = method_POST['cost_min']
-        pub_created.cost_max = method_POST['cost_max']
         pub_created.save()
 
         if request.user == pub_created.author:
-            noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            action_type = 3030200
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=action_type),
+                content = 'Успешно создана публикация «' + pub_created.title +'»!',
+                hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться публикацией.'
+            ).receiver.add(request.user)
         else:
-            noti=Publication.objects.create(title=('Успешно создана публикация «' + pub_created.title +'», автором которой был назначен пользователь «'+ pub_created.author.username +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-            noti=Publication.objects.create(title=('Администрацией «Ремонта и Дизайна» была создана публикация «' + pub_created.title +'», автором которой были назначены Вы!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            action_type = 9911200
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=action_type),
+                content = 'Успешно создана публикация «' + pub_created.title +'», автором которой был назначен пользователь «'+ pub_created.author.username +'»!',
+                hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться публикацией.'
+            ).receiver.add(request.user)
 
-        noti=Publication.objects.create(title=('Пользователь «'+ pub_created.author.username +'» выпустил публикацию «' + pub_created.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub_created.get_preview, content="Скорее открывайте её!", author=request.user)
-        for s in UserSubscribes.objects.filter(star=pub_created.author.id):
-            Notifications.objects.create(user_receiver=s.subscriber, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=action_type),
+                content = 'Администрацией «Ремонта и Дизайна» была создана публикация «' + pub_created.title +'», автором которой были назначены Вы!',
+                hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться публикацией.'
+            ).receiver.add(pub_created.author)
+
+        NotificationsNewTable.objects.create(
+            type = ActionTypes.objects.get(id=action_type),
+            content = 'Пользователь «'+ pub_created.author.username +'» выпустил публикацию «' + pub_created.title +'»!',
+            hover_text = 'Скорее открывайте её!'
+        ).receiver.add(User.objects.filter(following_for__id=pub_created.author.id))
+
         return redirect('pub:one', pk=pub_created.id)
 
     content = {
@@ -202,9 +213,9 @@ def UpdatePub(request, pk):
     pub_type = pub.type.id
     tags = Tag.objects.filter(pub_type=pub.type) if request.user.role.id != 4 else Tag.objects.all()
     tag_categories = {
-        'repair':   TagCategory.objects.filter(id__in=tags.filter(pub_type=11).values_list('category', flat=True)) if pub.type.id == 11 or request.user.role.id == 4 else None,
-        'design':   TagCategory.objects.filter(id__in=tags.filter(pub_type=21).values_list('category', flat=True)) if pub.type.id == 21 or request.user.role.id == 4 else None,
-        'lifehack': TagCategory.objects.filter(id__in=tags.filter(pub_type=31).values_list('category', flat=True)) if pub.type.id == 31 or request.user.role.id == 4 else None,
+        'repair':   TagCategory.objects.filter(pub_type=11) if pub.type.id == 11 or request.user.role.id == 4 else None,
+        'design':   TagCategory.objects.filter(pub_type=21) if pub.type.id == 21 or request.user.role.id == 4 else None,
+        'lifehack': TagCategory.objects.filter(pub_type=31) if pub.type.id == 31 or request.user.role.id == 4 else None,
     }
     empty_tag_categories_ids = []
     selected_tags = pub.tags.all()
@@ -248,7 +259,7 @@ def UpdatePub(request, pk):
         #   выбраны и переадресация обратно, если нет
         selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
         selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
-        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(id__in=Tag.objects.filter(pub_type=pub.type).values_list('category', flat=True))
+        all_tag_categories_for_this_pub_type = TagCategory.objects.filter(pub_type=pub.type)
         for category in all_tag_categories_for_this_pub_type:
             if category.id not in selected_tags_categories_ids:
                 empty_tag_categories_ids.append(category.id)
@@ -282,9 +293,7 @@ def UpdatePub(request, pk):
         cost_min = float(method_POST['cost_min'])
         cost_max = float(method_POST['cost_max'])
         if cost_min > cost_max:
-            a = cost_min
-            cost_min = cost_max
-            cost_max = a
+            cost_min, cost_max = cost_max, cost_min
         if pub.cost_min != cost_min:
             pub.cost_min = cost_min
         if pub.cost_max != cost_max:
@@ -292,27 +301,55 @@ def UpdatePub(request, pk):
         pub.save()
 
         if request.user == pub.author:
-            noti=Publication.objects.create(title=('Изменена публикация «' + pub.title +'»!'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=5010201),
+                content = 'Изменена публикация «' + pub.title +'»!',
+                hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться публикацией.'
+            ).receiver.add(request.user)
         else:
             if old_author == pub.author:
-                noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Автор «' +pub.author.username+ '» получит уведомление об этом'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9911201),
+                    content = 'Вы изменили публикацию «' + pub.title +'»! Автор «' +pub.author.username+ '» получит уведомление об этом',
+                    hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                ).receiver.add(request.user)
+
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9911201),
+                    content = 'Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'».',
+                    hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                ).receiver.add(pub.author)
             else:
                 if old_author:
-                    noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» и бывший автор «' +old_author.username+ '» получат уведомление об этом'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                    noti=Publication.objects.create(title=('Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'». По его велению теперь автор этой публикации не Вы, а «' +pub.author.username+ '».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                    Notifications.objects.create(user_receiver=old_author, noti_for_user=noti)
-                    noti=Publication.objects.create(title=('Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя «' +old_author.username+ '».'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=9911201),
+                        content = 'Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» и бывший автор «' +old_author.username+ '» получат уведомление об этом.',
+                        hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                    ).receiver.add(request.user)
+
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=9911201),
+                        content = 'Изменили Вашу публикацию «' + pub.title +'»! Суперпользователь: «' +request.user.username +'». По его велению теперь автор этой публикации не Вы, а «' +pub.author.username+ '».',
+                        hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                    ).receiver.add(old_author)
+
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=9911201),
+                        content = 'Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя «' +old_author.username+ '».',
+                        hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                    ).receiver.add(pub.author)
                 else:
-                    noti=Publication.objects.create(title=('Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» получит уведомление об этом, бывший автор – нет, так как он удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-                    noti=Publication.objects.create(title=('Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя, который кстати по какой-то причине был удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Теперь Вы и другие пользвователи могут посмотреть и воспользоваться изменённой публикацией.", author=request.user)
-                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=9911201),
+                        content = 'Вы изменили публикацию «' + pub.title +'»! Новый автор «' +pub.author.username+ '» получит уведомление об этом, бывший автор – нет, так как он удалён.',
+                        hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                    ).receiver.add(request.user)
+
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=9911201),
+                        content = 'Публикацию «' + pub.title +'» изменил суперпользователь: «' +request.user.username +'» и назначил Вас на роль автора этой публикации заместо предыдущего пользователя, который кстати по какой-то причине был удалён.',
+                        hover_text = 'Теперь Вы и другие пользователи могут посмотреть и воспользоваться изменённой публикацией.'
+                    ).receiver.add(pub.author)
 
         return redirect('pub:one', pk=pub.id)
 
@@ -339,17 +376,31 @@ def DeletePub(request, pk):
         pub.delete()
 
         if request.user.role.id == 2 or request.user == author:
-            noti=Publication.objects.create(title=('Успешно удалена публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
-            Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+            NotificationsNewTable.objects.create(
+                type = ActionTypes.objects.get(id=5010500),
+                content = 'Успешно удалена публикация «' + pub.title +'» !',
+                hover_text = 'Можно создать новую, ещё лучше!'
+            ).receiver.add(author)
+
         if request.user.role.id == 4 and request.user != author:
             if author:
-                noti=Publication.objects.create(title=('Суперпользователем была удалена Ваша публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
-                Notifications.objects.create(user_receiver=author, noti_for_user=noti)
-                noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Жалко её автора, пользователя ' + author.username), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9911500),
+                    content = 'Суперпользователем была удалена Ваша публикация «' + pub.title +'» !',
+                    hover_text = 'Можно создать новую, ещё лучше!'
+                ).receiver.add(author)
+
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9911500),
+                    content = 'Вами была удалена публикация «' + pub.title +'» ! Жалко её автора, пользователя ' + author.username,
+                    hover_text = 'Можно создать новую, ещё лучше!'
+                ).receiver.add(request.user)
             else:
-                noti=Publication.objects.create(title=('Вами была удалена публикация «' + pub.title +'» ! Её автор, если что, почему-то был удалён.'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Можно создать новую, ещё лучше!", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=9911500),
+                    content = 'Вами была удалена публикация «' + pub.title +'» ! Её автор, если что, почему-то был удалён.',
+                    hover_text = 'Можно создать новую, ещё лучше!'
+                ).receiver.add(request.user)
 
         if type == 11:
             return redirect('repairs')
@@ -370,11 +421,18 @@ def toggle_saved(request, pk):
                 record = SavedPubs.objects.create(saver=request.user, pub=Publication.objects.get(id=pk))
                 record.save()
                 result = 1
-                noti=Publication.objects.create(title=('У вас новая сохранённая публикация «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=pub.get_preview, content="Просто напоминание и благодарность за использование нашей платформой.", author=request.user)
-                Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
+                NotificationsNewTable.objects.create(
+                    type = ActionTypes.objects.get(id=5010800),
+                    content = 'У вас новая сохранённая публикация «' + pub.title +'»!',
+                    hover_text = 'Просто напоминание и благодарность за использование нашей платформой.'
+                ).receiver.add(request.user)
+
                 if pub.author and pub.author != request.user:
-                    noti=Publication.objects.create(title=('Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !'), type=PubTypes.objects.get(id=51), preview=(pub.author.photo.name), content=("Теперь у публикации " + str( SavedPubs.objects.filter(pub=pub.id).count() ) + " сохранений"), author=request.user)
-                    Notifications.objects.create(user_receiver=pub.author, noti_for_user=noti)
+                    NotificationsNewTable.objects.create(
+                        type = ActionTypes.objects.get(id=5010800),
+                        content = 'Пользователь '+ request.user.username +' сохранил к себе публикацию «' + pub.title +'» !',
+                        hover_text = 'Теперь у публикации ' + str( pub.saved_count ) + ' сохранений'
+                    ).receiver.add(pub.author)
             else:
                 duplicate.delete()
                 result = 0
@@ -437,7 +495,6 @@ def filter_pubs (method_GET):
     #       percent of savers by watchers
     save_percent_mini = float(method_GET['save_percent_mini']) if 'save_percent_mini' in method_GET and method_GET['save_percent_mini'] and not method_GET['save_percent_mini'].isspace() else 0
     save_percent_max  = float(method_GET['save_percent_max'])  if 'save_percent_max'  in method_GET and method_GET['save_percent_max']  and not method_GET['save_percent_max'].isspace()  else 100
-    # print (save_percent_mini, save_percent_max)
     save_percent_mini = 0 if save_percent_mini < 0 else save_percent_mini
     save_percent_max =  0 if save_percent_max  < 0 else save_percent_max
     save_percent_mini = 100 if save_percent_mini > 100 else save_percent_mini
@@ -492,14 +549,12 @@ class PubWatchOne(ListView):
         context = super(PubWatchOne, self).get_context_data(**kwargs)
         pub = Publication.objects.get(id=self.kwargs['pk'])
 
-        saved_pubs = subscribing_authors =  None
+        saved_pubs = None
         if self.request.user.is_authenticated:
             user = self.request.user
 
             saved_urls = SavedPubs.objects.filter(saver=user, pub=pub)
             saved_pubs = [sp.pub.id for sp in saved_urls]
-            subscribes_urls = UserSubscribes.objects.filter(subscriber=user)
-            subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
             seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
             seen_url_object.count += 1
@@ -509,7 +564,6 @@ class PubWatchOne(ListView):
         context.update({
             'pub': pub,
             'saved_pubs': saved_pubs,
-            'subscribing_authors': subscribing_authors,
         })
         return context
 
@@ -527,8 +581,8 @@ class RepairsWatch(ListView):
     def get_context_data(self, **kwargs):
         context = super(RepairsWatch, self).get_context_data(**kwargs)
 
-        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=11))
-        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
+        tag_categories = TagCategory.objects.filter(pub_type=11)
+        tags = Tag.objects.filter(category__in=tag_categories)
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
@@ -555,8 +609,8 @@ class DesignsWatch(ListView):
         context = super(DesignsWatch, self).get_context_data(**kwargs)
         saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=21)] if user.is_authenticated else None
 
-        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=21))
-        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
+        tag_categories = TagCategory.objects.filter(pub_type=21)
+        tags = Tag.objects.filter(category__in=tag_categories)
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
@@ -584,16 +638,14 @@ class LifehacksWatch(ListView):
         user = self.request.user
 
         saved_pubs =          [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=31)] if user.is_authenticated else None
-        subscribing_authors = [sa.star.id for sa in (UserSubscribes.objects.filter(subscriber=user))]  if user.is_authenticated else None
 
-        tags = Tag.objects.filter(pub_type=PubTypes.objects.get(id=31))
-        tag_categories = TagCategory.objects.filter(id__in=tags.values_list('category', flat=True))
+        tag_categories = TagCategory.objects.filter(pub_type=31)
+        tags = Tag.objects.filter(category__in=tag_categories)
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
 
         context.update({
             'pubs_count': len(context['pubs']),
             'saved_pubs': saved_pubs,
-            'subscribing_authors': subscribing_authors,
 
             'tags': tags,
             'tag_categories': tag_categories,
@@ -619,11 +671,8 @@ class Saved(ListView):
             return redirect('main')
 
         context = super(Saved, self).get_context_data(**kwargs)
-        subscribes_urls = UserSubscribes.objects.filter(subscriber=self.request.user)
-        subscribing_authors = [sa.star.id for sa in subscribes_urls]
 
         context.update({
             'pubs_count': len(context['pubs']),
-            'subscribing_authors': subscribing_authors,
         })
         return context
