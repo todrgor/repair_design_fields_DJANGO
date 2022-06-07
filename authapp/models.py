@@ -1,11 +1,14 @@
+
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
-from publicationapp.models import Publication
+from django.utils import timezone
+from django.utils.formats import localize
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+from publicationapp.models import Publication
 
 
 # user : password : role
@@ -45,11 +48,11 @@ class User(AbstractUser):
 
     @property
     def noties_new(self):
-        return NotificationsNewTable.objects.filter(receiver=self).exclude(receiver_saw=self)
+        return Notifications.objects.filter(receiver=self).exclude(receiver_saw=self)
 
     @property
     def noties_old(self):
-        return NotificationsNewTable.objects.filter(receiver=self, receiver_saw=self)
+        return Notifications.objects.filter(receiver=self, receiver_saw=self)
 
     @property
     def noties_count(self):
@@ -57,7 +60,7 @@ class User(AbstractUser):
 
     @property
     def all_noties_count(self):
-        return NotificationsNewTable.objects.filter(receiver=self).count()
+        return Notifications.objects.filter(receiver=self).count()
 
     @property
     def new_noties_count(self):
@@ -72,6 +75,11 @@ class User(AbstractUser):
             return True
         else:
             return False
+
+    @property
+    def expert_info(self):
+        expert_info = ExpertInfo.objects.get(expert_account=self) if ExpertInfo.objects.filter(expert_account=self) else None
+        return expert_info
 
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)
@@ -139,20 +147,6 @@ class ExpertInfo(models.Model):
         return 'Expert ' + str(self.expert_account)
 
 
-class Notifications(models.Model):
-    when = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания уведомления')
-    user_receiver = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='id получателя уведомлении')
-    noti_for_user = models.ForeignKey('publicationapp.Publication', on_delete=models.CASCADE, verbose_name='id публикации-уведомления', default=0)
-    is_new = models.BooleanField(default=True, verbose_name='Уведомление новое?')
-
-    class Meta:
-        verbose_name = 'Уведомление'
-        verbose_name_plural = 'Уведомления'
-
-    def __str__(self):
-        return 'user_receiver: ' + str(self.user_receiver) + ', noti_for_user: ' + str(self.noti_for_user) + ', when: ' + str(self.when)
-
-
 class ActionTypes(models.Model): # событий много рзных бывает, в будующем можно создать таблицу категорий типов для сортировки/чего-то ещё
     id = models.PositiveIntegerField(primary_key=True, verbose_name='id типа события')
     name = models.CharField(max_length=255, verbose_name='Наименование типа события')
@@ -165,10 +159,10 @@ class ActionTypes(models.Model): # событий много рзных быва
     def __str__(self):
         return self.name
 
-class NotificationsNewTable(models.Model):
-    # preview = models.ImageField(upload_to='notifications_preview', blank=True, null=True, verbose_name='Превью уведомления')
+class Notifications(models.Model):
     when_happend = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания уведомления')
     type = models.ForeignKey('ActionTypes', on_delete=models.SET_NULL, verbose_name='Тип события', blank=False, null=True)
+    preview = models.ImageField(upload_to='notifications_preview', blank=True, null=True, verbose_name='Превью уведомления', default='../../static/sources/SVG/logo_mini.svg')
     content = models.CharField(max_length=500, verbose_name='Содержание уведомления')
     hover_text = models.CharField(max_length=100, verbose_name='Подсказка при наведении на уведомление')
     url = models.CharField(max_length=500, blank=True, null=True, verbose_name='Ссылка')
@@ -177,17 +171,18 @@ class NotificationsNewTable(models.Model):
     receiver_saw = models.ManyToManyField('User', related_name="receiver_saw", verbose_name='Просмотревшие уведомление')
 
     class Meta:
-        verbose_name = 'Уведомление NEW'
-        verbose_name_plural = 'Уведомления NEW'
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
         ordering = ('-when_happend',)
+
+    @property
+    def get_preview(self):
+        preview = self.preview.url if not 'static/sources/SVG/logo_mini.svg' in self.preview.url else '../../static/sources/SVG/logo_mini.svg'
+        return preview
 
     @property
     def icon(self):
         return self.type.icon
-
-    @property
-    def get_preview(self):
-        return '../../static/sources/SVG/logo_mini.svg'
 
     def __str__(self):
         return 'receiver: ' + str(list(self.receiver.values_list('username', flat=True))).replace("[", "").replace("]", "").replace("'", "") + ', noti: ' + str(self.content) + ', when: ' + str(self.when_happend)
@@ -201,11 +196,15 @@ class JournalActions(models.Model):
     action_subjects_list = models.CharField(max_length=500, verbose_name='Список объектов, попавших в событие')
 
     class Meta:
-        verbose_name = 'Событие'
-        verbose_name_plural = 'События'
+        verbose_name = 'Одно событие'
+        verbose_name_plural = 'Журнал событий'
+
+    @property
+    def icon(self):
+        return self.type.icon
 
     def __str__(self):
-        return str(self.type) + ', ' + str(self.action_person) + ', ' + str(self.when)
+        return str(self.type) + ', ' + str(self.action_person) + ', ' + str(localize(self.when))
 
 
 class ContactingSupport(models.Model):

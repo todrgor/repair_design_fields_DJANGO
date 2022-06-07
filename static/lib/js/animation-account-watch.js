@@ -151,7 +151,7 @@ function new_complaint_was_sent() {
 }
 
 function shareThePub() {
-  server_url = 'http://127.0.0.1:8000';
+  server_url = 'todrgor.pythonanywhere.com';
   pub_url = server_url + $('.lifehack#' + $opened_pub_additional_functions_id + ' .pub_url').html();
   $('.new_complaint, .statistics, .delete_the_pub, .delete_the_user').removeClass('show');
   $('.share_the_pub').addClass('show');

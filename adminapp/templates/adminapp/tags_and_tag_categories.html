@@ -33,18 +33,19 @@
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
       <a href="">Теги и их категории</a>
+      <a href="{% url 'admin_mine:journal' %}">Журнал событий</a>
     </div>
   </div>
   {% if tags and tag_categories %}
     <div class="page_title">
-        <p class="title_p" style="width: max-content;">Теги публикаций и их категории</p>
-        <p class="count_pubs" style="width: 20%; margin: 0 5% 0 2%; float: none;">всего {{ tag_categories.count }} категорий и {{ tags.count }} тегов сейчас</p>
-        {% if user.role.id == 4 %}
-          <div class="create_new_tag_or_category" style="width: 20%; height: auto; margin-top: -5px; margin-left: 0;">
-            <p class="create_new category">Новая категория тегов ›</p>
-            <p class="create_new tag">Новый тег ›</p>
-          </div>
-        {% endif %}
+      <p class="title_p" style="width: max-content;">Теги публикаций и их категории</p>
+      <p class="count_pubs" style="width: 20%; margin: 0 5% 0 2%; float: none;">всего {{ tag_categories.count }} категорий и {{ tags.count }} тегов сейчас</p>
+      {% if user.role.id == 4 %}
+        <div class="create_new_tag_or_category" style="width: 20%; height: auto; margin-top: -5px; margin-left: 0;">
+          <p class="create_new category">Новая категория тегов ›</p>
+          <p class="create_new tag">Новый тег ›</p>
+        </div>
+      {% endif %}
     </div>
 
     {% if errors %}

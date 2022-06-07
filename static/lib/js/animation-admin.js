@@ -7,7 +7,7 @@ function toggleShow(idContainer) {
 function really_delete_pub(pub_id) {
   name = $('table tr#'+ pub_id +' .preview_and_pub_name a.name').html();
   $('.question_block h1').html('Вы точно хотите удалить публикацию «'+ name +'»?');
-  $('.cancel_or_delete a').attr('href', '/pub/delete/'+pub_id);
+  $('.cancel_or_delete a').attr('href', '/pub/'+ pub_id +'/delete/');
   $('.pub_additional_functions_bg, .question_block').addClass('show');
 }
 

@@ -1,0 +1,92 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\admin.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+  <div id="tags_count"></div>
+  <div id="fltr_cost_min"></div>
+  <div id="fltr_cost_max"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div>
+</div>
+
+
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="{% url 'admin_mine:main' %}">Главная</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Обращения в поддержку</a>
+      <a href="{% url 'admin_mine:users' %}">Пользователи</a>
+      <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+      <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
+      <a href="">Журнал событий</a>
+    </div>
+  </div>
+  <div class="page_title">
+    <p class="title_p">Журнал событий</p>
+    <p class="count_pubs">панель администратора</p>
+  </div>
+   <div class="pubs_container journal">
+     <div class="pubs_container_one_type withBorder journal show" id='pubs'>
+         <table border="1" class="pubs">
+             <tr">
+               <th class="id">ID</th>
+               <th>Содержание</th>
+               <th>Когда</th>
+             </tr>
+
+             {% for action in journal %}
+               <tr id="{{ action.id }}">
+                 <td class="id">{{ action.id }}</td>
+                 <td class="action_subjects_list photo_and_nickname">
+                   <div class="photo_and_icon" {% if action.action_person %}style="cursor: no-drop;"{% endif %}>
+                     {% if action.action_person %}
+                       <a href="{% url 'auth:one' pk=action.action_person.id %}">
+                         <img src="{{ action.action_person.photo.url }}" alt="">
+                         <div class="action_icon" style="background: url({{ action.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
+                       </a>
+                      {% else %}
+                        <img src="/media/users_avatars/deleted_user.png" alt="">
+                        <div class="action_icon" style="background: url({{ action.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
+                      {% endif %}
+                  </div>
+
+                   <div class="info_container">
+                     <p>
+                       {{ action.action_content }}
+                     </p>
+                     <p style="color: gray;">
+                       Задействованные объекты:<br>{{ action.action_subjects_list }}
+                     </p>
+                   </div>
+                 </td>
+                 <td class="when">{{ action.when }}</td>
+               </tr>
+             {% endfor %}
+         </table>
+     </div>
+
+  </div>
+
+  <div class="to_top_button">
+    <img src="/static/sources/SVG/to_top.svg" alt="">
+  </div>
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-admin.js"></script>
+{% endblock %}

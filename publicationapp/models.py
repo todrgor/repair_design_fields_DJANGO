@@ -12,7 +12,7 @@ from django.db.models import Sum
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
-    type = models.ForeignKey('PubTypes', on_delete=models.SET_DEFAULT, default=0, verbose_name='Вид публикации', blank=False)
+    type = models.ForeignKey('PubTypes', on_delete=models.CASCADE, default=0, verbose_name='Вид публикации', blank=False)
     preview = models.FileField(max_length=200, upload_to='pub_media', validators=[FileExtensionValidator(['mp4', 'mov', 'png', 'jpg', 'jpeg', 'gif'])], verbose_name='Превью')
     content = RichTextUploadingField(blank=True, null=True, verbose_name='Контент', default='')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, verbose_name='Автор')

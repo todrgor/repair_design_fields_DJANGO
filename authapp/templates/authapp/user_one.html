@@ -244,7 +244,7 @@
                         <div class="pub_tag">
                           <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
                           <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                            type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                           <img src="/static/sources/SVG/search.svg" alt="">
                         </div>
                       </form>
@@ -258,7 +258,7 @@
                         <div class="pub_tag">
                           <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
                           <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                            type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                            type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                           <img src="/static/sources/SVG/search.svg" alt="">
                         </div>
                       </form>
@@ -332,8 +332,12 @@
       <div class="pub_additional_functions dont_close_on_click" style="max-height: fit-content;">
         <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}" title="Подать жалобу на пользователя"><span class="icon report"></span>Подать жалобу</p>
         {% if user.role.id == 4 and opened_user.role.id != 4 %}
-          <a href="{% url 'auth:settings' pk=opened_user.id%}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon pub_edit" title="Редактировать пользователя"></span>Редактировать</p></a>
+          <a href="{% url 'auth:settings' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon pub_edit" title="Редактировать пользователя"></span>Редактировать</p></a>
           <p class="dont_close_on_click delete" onclick="deleteTheUser()"><span class="icon p_delete" title="Удалить пользователя"></span>Удалить</p>
+        {% endif %}
+
+        {% if user.role.id == 3 or user.role.id == 4 %}
+          <a href="{% url 'admin_mine:user_individual' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon p_statistics" title="Статистика пользователя"></span>Статистика</p></a>
         {% endif %}
       </div>
     </div>

@@ -34,12 +34,13 @@
       <a href="{% url 'admin_mine:users' %}">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
       <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
+      <a href="{% url 'admin_mine:journal' %}">Журнал событий</a>
     </div>
   </div>
 
   <div class="page_title">
-      <p class="title_p">Обращения в поддержку</p>
-      <p class="count_pubs">{{ all_new_letters_count }} новых, {{ all_letters_count }} всего</p>
+    <p class="title_p">Обращения в поддержку</p>
+    <p class="count_pubs">{{ all_new_letters_count }} новых, {{ all_letters_count }} всего</p>
   </div>
 
   <div class="pubs_container">

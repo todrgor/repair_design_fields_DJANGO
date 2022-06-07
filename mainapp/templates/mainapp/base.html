@@ -107,9 +107,17 @@
                               <p class="title_seen_notifications_opened" style="padding-top: 0px;">Новые:</p>
                               {% for nn in user.noties_new %}
                                 <div class="notification_one noti_new">
-                                  <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                  <div class="preview_and_icon">
+                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: 50px 50px; background-position: center;"></div>
+                                    <div class="noti_one_icon" style="background: url({{ nn.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
+                                  </div>
                                   <p class="content_noti" title="{{ nn.hover_text }}">{{ nn.content|safe }}</p>
-                                  <p class="when_happend_noti">{{ nn.when_happend }}</p>
+                                  <div class="url_and_time">
+                                    {% if nn.url %}
+                                      <a href="{{ nn.url }}">{% if nn.url_text %}{{ nn.url_text }}{% else %}Открыть{% endif %}</a>
+                                    {% endif %}
+                                    <p class="when_happend_noti">{{ nn.when_happend }}</p>
+                                  </div>
                                 </div>
                               {% endfor %}
                             {% endif %}
@@ -118,9 +126,17 @@
                               <p class="title_seen_notifications_opened">Просмотренные:</p>
                               {% for nn in user.noties_old %}
                                 <div class="notification_one noti_old">
-                                  <div class="noti_one_logo" style="background: url({{ nn.get_preview }}); background-size: auto 40px; background-position: center; border: 1px solid gray; border-radius: 40px;"></div>
+                                  <div class="preview_and_icon">
+                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: 50px 50px; background-position: center;"></div>
+                                    <div class="noti_one_icon" style="background: url({{ nn.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
+                                  </div>
                                   <p class="content_noti" title="{{ nn.hover_text }}">{{ nn.content|safe }}</p>
-                                  <p class="when_happend_noti">{{ nn.when_happend }}</p>
+                                  <div class="url_and_time">
+                                    {% if nn.url %}
+                                      <a href="{{ nn.url }}">{% if nn.url_text %}{{ nn.url_text }}{% else %}Открыть{% endif %}</a>
+                                    {% endif %}
+                                    <p class="when_happend_noti">{{ nn.when_happend }}</p>
+                                  </div>
                                 </div>
                               {% endfor %}
 

@@ -37,9 +37,9 @@
   </div>
 
   <div class="page_title">
-      <p class="title_p">Публикации</p>
-      <p class="count_pubs">всего {{ pubs.count }}</p>
-      {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new" style="margin-left: 59%;">создать новую ›</a>{% endif %}
+    <p class="title_p">Публикации</p>
+    <p class="count_pubs">всего {{ pubs.count }}</p>
+    {% if user.role.id == 4 %}<a href="{% url 'pub:create_new' %}" class="create_new" style="margin-left: 59%;">создать новую ›</a>{% endif %}
   </div>
 
    <div class="pubs_container">
@@ -64,18 +64,20 @@
              {% for pub in pubs %}
                <tr id="{{ pub.id }}">
                   {% if user.role.id == 4 %}
-                     <td class="functions"><a href="{% url 'pub:edit' pk=pub.id%}">
-                       <p id="edit"><span class="icon pub_edit_black"></span></p></a>
-                       <p onclick="really_delete_pub({{pub.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                     <td class="functions">
+                       <a href="{% url 'pub:edit' pk=pub.id%}">
+                         <p id="edit"><span class="icon pub_edit_black"></span></p>
+                       </a>
+                       <p onclick="really_delete_pub({{ pub.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
                      </td>
                   {% endif %}
 
                    <td class="id">{{pub.id }}</td>
                    <td class="width350px">
-                       <div class="preview_and_pub_name">
-                           <img class="preview" src="{{ pub.get_preview_url }}">
-                           <a href="{% url 'pub:one' pk=pub.id %}" class="name">{{ pub.title }}</a>
-                       </div>
+                     <div class="preview_and_pub_name">
+                       <img class="preview" src="{{ pub.get_preview_url }}">
+                       <a href="{% url 'pub:one' pk=pub.id %}" class="name">{{ pub.title }}</a>
+                     </div>
                    </td>
 
                   <td class="photo_and_nickname" style='align-items: center;'>

@@ -1,3 +1,4 @@
+
 from django.db.models import Q
 # from django.db.models.functions import Lower
 
@@ -68,39 +69,64 @@ def url_without_protocol(url):
 def toggle_get_noti_from_author(request, pk):
     if request.is_ajax():
         if request.user.is_authenticated:
-            if request.user.id == pk or request.user.role.id == 4:
-                duplicate = request.user.following_for.filter(id=pk)
-                star = User.objects.get(id=pk)
+            duplicate = request.user.following_for.filter(id=pk)
+            star = User.objects.get(id=pk)
 
-                if not duplicate:
-                    if request.user != star:
-                        request.user.following_for.add(star)
-                        result = 1
+            if not duplicate:
+                if request.user != star:
+                    request.user.following_for.add(star)
+                    result = 1
 
-                        NotificationsNewTable.objects.create(
-                            type = ActionTypes.objects.get(id=3030200),
-                            content = 'Пользователь «'+ request.user.username +'» подписался на уведомления о Ваших новых публикациях.',
-                            hover_text = 'Теперь у Вас ' + str( User.objects.filter(following_for__id=star.id).count() ) + ' подписчиков.'
-                        ).receiver.add(star)
+                    Notifications.objects.create(
+                        type = ActionTypes.objects.get(id=3030200),
+                        preview = request.user.photo.name,
+                        content = 'Пользователь «'+ request.user.username +'» подписался на уведомления о Ваших новых публикациях.',
+                        hover_text = 'Теперь у Вас ' + str( User.objects.filter(following_for__id=star.id).count() ) + ' подписчиков.'
+                    ).receiver.add(star)
 
-                        NotificationsNewTable.objects.create(
-                            type = ActionTypes.objects.get(id=3030200),
-                            content = 'Теперь вы будете получать уведомления о новых публикациях пользователя «'+ User.objects.get(id=pk).username +'»',
-                            hover_text = 'Теперь у Вас ' + str( request.user.following_for.count() ) + ' источников уведомлений о новых публикациях'
-                        ).receiver.add(request.user)
-                    else:
-                        result = 0
-                        NotificationsNewTable.objects.create(
-                            type = ActionTypes.objects.get(id=3030400),
-                            content = 'Вы пытались подписаться сами на себя. Давайте так не делать :)',
-                            hover_text = 'Не ну а шо вы в самый раз'
-                        ).receiver.add(request.user)
+                    Notifications.objects.create(
+                        type = ActionTypes.objects.get(id=3030200),
+                        preview = star.photo.name,
+                        content = 'Теперь вы будете получать уведомления о новых публикациях пользователя «'+ User.objects.get(id=pk).username +'»',
+                        hover_text = 'Теперь у Вас ' + str( request.user.following_for.count() ) + ' источников уведомлений о новых публикациях',
+                        url = reverse('auth:one', args=(star.id,)),
+                        url_text = 'Открыть пользователя'
+                    ).receiver.add(request.user)
+
+                    JournalActions.objects.create(
+                        type = ActionTypes.objects.get(id=3030200),
+                        action_person = request.user,
+                        action_content = 'Подписка на пользователя «'+ star.username +'» пользователем «'+ request.user.username +'».',
+                        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [user_star «'+ star.username +'» (id: '+ str(star.id) +')]'
+                    )
                 else:
-                    request.user.following_for.remove(star)
-                    duplicate.delete()
                     result = 0
+                    Notifications.objects.create(
+                        type = ActionTypes.objects.get(id=3030400),
+                        preview = request.user.photo.name,
+                        content = 'Вы пытались подписаться сами на себя. Давайте так не делать :)',
+                        hover_text = 'Не ну а шо вы в самый раз'
+                    ).receiver.add(request.user)
 
-                return JsonResponse({'result': result})
+                    JournalActions.objects.create(
+                        type = ActionTypes.objects.get(id=3030200),
+                        action_person = request.user,
+                        action_content = 'Попытка подписки на самого себя пользователем «'+ request.user.username +'».',
+                        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                    )
+            else:
+                request.user.following_for.remove(star)
+                duplicate.delete()
+                result = 0
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=3030500),
+                    action_person = request.user,
+                    action_content = 'Отписка на пользователя «'+ star.username +'» пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [user_star «'+ star.username +'» (id: '+ str(star.id) +')]'
+                )
+
+            return JsonResponse({'result': result})
 
 
 #   получение сигнала о том,
@@ -108,7 +134,7 @@ def toggle_get_noti_from_author(request, pk):
 def new_noti_were_seen(request, pk):
     #   переписать через property юзера
     if request.is_ajax():
-        new_noties = NotificationsNewTable.objects.filter(receiver=request.user).exclude(receiver_saw=request.user)
+        new_noties = Notifications.objects.filter(receiver=request.user).exclude(receiver_saw=request.user)
         if new_noties:
             result = 1
             for nn in new_noties:
@@ -134,7 +160,15 @@ class UserRegisterView(TemplateView):
         if request.method == 'POST':
             form = RegisterForm(request.POST, request.FILES)
             if form.is_valid():
-                form.save()
+                registered_user = form.save()
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=3010300),
+                    action_person = registered_user,
+                    action_content = 'Зарегистрировался пользователь «'+ registered_user.username +'».',
+                    action_subjects_list = '[user «'+ registered_user.username +'». (id: '+ str(registered_user.id) +')]'
+                )
+
                 return HttpResponseRedirect(reverse('login'))
 
         content = {
@@ -158,10 +192,40 @@ class UserLoginView(LoginView):
         else:
             return 1
 
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+
+        JournalActions.objects.create(
+            type = ActionTypes.objects.get(id=3010200),
+            action_person = self.request.user,
+            action_content = 'Авторизовался пользователь «'+ self.request.user.username +'».',
+            action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')]'
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
 
 #   выход из учётной записи пользователя
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('main')
+
+    def get_context_data(self, **kwargs):
+        JournalActions.objects.create(
+            type = ActionTypes.objects.get(id=3010100),
+            action_person = self.request.user,
+            action_content = 'Вышел из аккаунта пользователь «'+ self.request.user.username +'».',
+            action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')]'
+        )
+
+        context = super().get_context_data(**kwargs)
+        current_site = get_current_site(self.request)
+        context.update({
+            'site': current_site,
+            'site_name': current_site.name,
+            'title': _('Logged out'),
+        })
+        if self.extra_context is not None:
+            context.update(self.extra_context)
+        return context
 
 
 #   просмотр одной странички пользователя
@@ -172,23 +236,24 @@ class AccountOneWatch(ListView):
     allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
 
     def get_queryset(self):
-        return User.objects.get(id=self.kwargs['pk'])
-
-    def get_context_data(self, **kwargs):
-        context = super(AccountOneWatch, self).get_context_data(**kwargs)
-
         opened_user = User.objects.get(id=self.kwargs['pk'])
         opened_user.seen_count +=1
         opened_user.save()
-        user_role = opened_user.role.id
 
-        saved_pubs = None
-        if self.request.user.is_authenticated:
-            saved_urls = SavedPubs.objects.filter(saver=self.request.user)
-            saved_pubs = [sp.pub.id for sp in saved_urls]
+        JournalActions.objects.create(
+            type = ActionTypes.objects.get(id=4010200),
+            action_person = self.request.user,
+            action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ self.request.user.username +'».',
+            action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
+        )
+        return opened_user
+
+    def get_context_data(self, **kwargs):
+        context = super(AccountOneWatch, self).get_context_data(**kwargs)
+        saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=self.request.user)] if self.request.user.is_authenticated else None
 
         expert_info = expert_pubs = None
-        if user_role in [2, 4]:
+        if context['opened_user'].role.id in [2, 4]:
             expert_pubs = Publication.objects.filter(author=self.kwargs['pk'], type__id__in=[11, 21, 31])
             try:
                 expert_info = ExpertInfo.objects.get(expert_account=self.kwargs['pk'])
@@ -270,11 +335,22 @@ def CreateAccount(request):
                     })
                 edited_user_expert_info.save()
 
-            NotificationsNewTable.objects.create(
+            Notifications.objects.create(
                 type = ActionTypes.objects.get(id=9910200),
+                preview = edited_user.photo.name,
                 content = 'Успешно создан аккаунт пользователя «'+ edited_user.username +'»!',
-                hover_text = 'Вы большой молодец, что расширяете нам базу пользователей'
+                hover_text = 'Вы большой молодец, что расширяете нам базу пользователей',
+                url = reverse('auth:one', args=(edited_user.id,)),
+                url_text = 'Открыть пользователя'
             ).receiver.add(request.user)
+
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=9910200),
+                action_person = request.user,
+                action_content = 'Создание аккаунта пользователя «'+ edited_user.username +'» пользователем «'+ request.user.username +'».',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [created_user «'+ edited_user.username +'» (id: '+ str(edited_user.id) +')]'
+            )
+
             return redirect('auth:one', pk=edited_user.id)
 
     title = 'Создать нового пользователя'
@@ -385,23 +461,41 @@ def UpdateAccount(request, pk):
             edited_user.save()
 
             if request.user.id == edited_user.id:
-                NotificationsNewTable.objects.create(
-                    type = ActionTypes.objects.get(id=3010500),
+                Notifications.objects.create(
+                    type = ActionTypes.objects.get(id=3010201),
                     content = 'Аккаунт успешно отредактирован.',
                     hover_text = 'Вы большой молодец'
                 ).receiver.add(request.user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=3010201),
+                    action_person = request.user,
+                    action_content = 'Изменил свой аккаунт пользователь «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                )
+
             else:
-                NotificationsNewTable.objects.create(
-                    type = ActionTypes.objects.get(id=9910200),
+                Notifications.objects.create(
+                    type = ActionTypes.objects.get(id=9910201),
+                    preview = edited_user.photo.name,
                     content = 'Успешно отредактирован аккаунт пользователя «'+ edited_user.username +'»!',
-                    hover_text = 'Вы большой молодец'
+                    hover_text = 'Вы большой молодец',
+                    url = reverse('auth:one', args=(edited_user.id,)),
+                    url_text = 'Открыть пользователя'
                 ).receiver.add(request.user)
 
-                NotificationsNewTable.objects.create(
-                    type = ActionTypes.objects.get(id=9910200),
+                Notifications.objects.create(
+                    type = ActionTypes.objects.get(id=9910201),
                     content = 'Ваш аккаунт отредактирован суперпользователем «'+ request.user.username +'»!',
                     hover_text = 'Вы большой молодец'
                 ).receiver.add(edited_user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=9910201),
+                    action_person = request.user,
+                    action_content = 'Изменение аккаунта пользователя «'+ edited_user.username +'» пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [edited_user «'+ edited_user.username +'» (id: '+ str(edited_user.id) +')]'
+                )
 
             return redirect('auth:one', pk=edited_user.id)
 
@@ -419,47 +513,63 @@ def UpdateAccount(request, pk):
 def ChangePassword(request, pk):
     if not request.user.is_authenticated:
         return redirect('main')
-    if request.user.role.id != 4 and request.user.id != pk or not request.user.is_authenticated:
+    if request.user.role.id != 4 and request.user.id != pk:
         return redirect('main')
 
-    editing_user = User.objects.get(id=pk)
-    form = PasswordChangeForm(editing_user) if request.user.id == pk else UserPasswordForm()
+    edited_user = User.objects.get(id=pk)
+    form = PasswordChangeForm(edited_user) if request.user.id == pk else UserPasswordForm()
     if request.method == 'POST':
         print(request.POST)
-        form = PasswordChangeForm(editing_user, request.POST) if request.user.id == pk else UserPasswordForm(request.POST)
+        form = PasswordChangeForm(edited_user, request.POST) if request.user.id == pk else UserPasswordForm(request.POST)
         if form.is_valid():
             if request.user.id == pk:
                 form = form.save()
                 update_session_auth_hash(request, form)
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=3010202),
                     content = 'Успешно изменён пароль! Запишите его себе: «' + request.POST['new_password1'] +'». И не забывайте :)',
                     hover_text = 'Вы молодец, что заботетесь о своей безопасности! С заботой, «Ремонт и Дизайн» ❤'
                 ).receiver.add(edited_user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=3010202),
+                    action_person = request.user,
+                    action_content = 'Смена своего пароля пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                )
             else:
                 password = request.POST['password']
-                editing_user.set_password(password)
-                editing_user.save()
+                edited_user.set_password(password)
+                edited_user.save()
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=9910202),
-                    content = 'Успешно изменён пароль пользователя «' + editing_user.username +'»! Теперь он такой: «' + password +'».',
-                    hover_text = 'зачем правда ну ладно'
+                    content = 'Успешно изменён пароль пользователя «' + edited_user.username +'»! Теперь он такой: «' + password +'».',
+                    hover_text = 'зачем правда ну ладно',
+                    url = reverse('auth:one', args=(edited_user.id,)),
+                    url_text = 'Открыть пользователя'
                 ).receiver.add(request.user)
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=9910202),
-                    content = 'УВаш пароль был изменён администратором. Запишите его себе: «' + password +'». И не забывайте :)',
+                    content = 'Ваш пароль был изменён администратором. Запишите его себе: «' + password +'». И не забывайте :)',
                     hover_text = 'С заботой, «Ремонт и Дизайн» ❤'
-                ).receiver.add(editing_user)
+                ).receiver.add(edited_user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=9910202),
+                    action_person = request.user,
+                    action_content = 'Смена пароля пользователя «'+ edited_user.username +'» пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [edited_user «'+ edited_user.username +'» (id: '+ str(edited_user.id) +')]'
+                )
             return redirect('auth:settings', pk=pk)
 
-    title = 'Смена пароля' if request.user == editing_user else 'Смена пароля пользователя «' + editing_user.username +'»'
+    title = 'Смена пароля' if request.user == edited_user else 'Смена пароля пользователя «' + edited_user.username +'»'
     context = {
         'title': title,
         'form': form,
-        'editing_user': editing_user,
+        'edited_user': edited_user,
     }
     return render(request, 'authapp/change_password.html', context)
 
@@ -476,11 +586,21 @@ def DeleteAccount(request, pk):
             user.delete()
 
             if request.user.id != user_id:
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=9910500),
+                    preview = user_photo,
                     content = 'Успешно удалён пользователь «' + user_name +'»',
-                    hover_text = 'Вот и зачем Вы его так?'
+                    hover_text = 'Вот и зачем Вы его так?',
+                    url = reverse('admin_mine:user_create_new'),
+                    url_text = 'Создать нового'
                 ).receiver.add(request.user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=9910500),
+                    action_person = request.user,
+                    action_content = 'Удаление аккаунта пользователя «'+ user_name +'» пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [deleted_user «'+ user_name +'» (id: '+ str(user_id) +')]'
+                )
 
                 return redirect('admin_mine:users')
             else:
@@ -514,11 +634,18 @@ def BecomeATeammember(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            NotificationsNewTable.objects.create(
+            Notifications.objects.create(
                 type = ActionTypes.objects.get(id=1014200),
                 content = 'Ваша заявка на роль администратора принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.',
                 hover_text = 'Ожидайте ответа!'
             ).receiver.add(request.user)
+
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=1014200),
+                action_person = request.user,
+                action_content = 'Заявка на роль администратора от пользователя «'+ request.user.username +'».',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ contacting_support.title +'» (id: '+ str(contacting_support.id) +')]'
+            )
             return redirect('/')
 
     title = 'Заявка на роль администратора — стать частью команды «Ремонт и Дизайн»'
@@ -582,11 +709,18 @@ def BecomeAnAuthor(request):
                     ContactingSupportPhotos.objects.create(contacting_support_action=contacting_support, photo=('contacting_support_media/' + photos[i_count].name))
                     i_count +=1
 
-            NotificationsNewTable.objects.create(
+            Notifications.objects.create(
                 type = ActionTypes.objects.get(id=1013200),
                 content = 'Ваша заявка стать автором публикаций принята на рассмотрение. О нашем решении Вы узнаете через уведомление. Скоро Вы увидите здесь ответ.',
                 hover_text = 'Ожидайте ответа!'
             ).receiver.add(request.user)
+
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=1013200),
+                action_person = request.user,
+                action_content = 'Заявка на роль автора публикаций от пользователя «'+ request.user.username +'».',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ contacting_support.title +'» (id: '+ str(contacting_support.id) +')]'
+            )
             return redirect('/')
 
     title = 'Стать автором публикаций'
@@ -625,75 +759,126 @@ def SendToSupport(request):
                 pub = Publication.objects.get(id=request.POST['complaint_pub_id'])
                 title = 'Жалоба на публикацию «'+ pub.title + '»'
                 ask_additional_info = int(request.POST['complaint_pub_id'])
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1012200),
                     content = title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(request.user)
-                NotificationsNewTable.objects.create(
+
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1012200),
                     content = 'Принята на рассмотрение жалоба на Вашу публикацию «'+ pub.title +'». Ожидайте решения.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(pub.author)
 
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1012200),
+                    action_person = request.user,
+                    action_content = 'Жалоба на публикацию «'+ title +'» от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub_complaint «'+ pub.title +'» (id: '+ str(pub.id) +')]'
+                )
+
             if request.POST['type'] == '12':
                 account = User.objects.get(id=request.POST['complaint_account_id'])
                 title = 'Жалоба на пользователя «'+ account.username + '»'
                 ask_additional_info = int(request.POST['complaint_account_id'])
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1011200),
                     content = title+ ' принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(request.user)
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1011200),
                     content = 'Принята на рассмотрение жалоба на Ваш аккаунт. Ожидайте решения.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(account)
 
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1011200),
+                    action_person = request.user,
+                    action_content = 'Жалоба на пользователя «'+ account.username +'» от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [user_complaint «'+ account.username +'» (id: '+ str(account.id) +')]'
+                )
+
             if request.POST['type'] in ['21', '22']:
                 if request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
-                    action_type = 1013200 if request.POST['type'] == '21' else 1014200
-                    NotificationsNewTable.objects.create(
+                    action_type, role_name = 1013200, 'роль автора публикаций' if request.POST['type'] == '21' else 1014200, 'роль администратора'
+
+                    Notifications.objects.create(
                         type = ActionTypes.objects.get(id=action_type),
                         content = 'Ваша заявка на смену роли не может быть принята на рассмотрение. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! С заботой, Ваша поддержка «Ремонта и Дизайна»',
                         hover_text = 'По-другому пока не можем. Просим простить нас ❤'
                     ).receiver.add(request.user)
+
+                    JournalActions.objects.create(
+                        type = ActionTypes.objects.get(id=action_type),
+                        action_person = request.user,
+                        action_content = 'Заявка на '+ role_name +' от пользователя «'+ request.user.username +'» (подана '+ str(localize(timezone.now())) +') не обработана – всего 1 суперпользователь в системе.',
+                        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                    )
                     return redirect('/')
 
                 else:
                     if request.POST['type'] == '21':
                         title = 'Заявка на роль автора от пользователя «'+ request.user.username + '»'
-                        NotificationsNewTable.objects.create(
+                        Notifications.objects.create(
                             type = ActionTypes.objects.get(id=1013200),
                             content = 'Ваша заявка на роль автора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                             hover_text = 'Ожидайте ответа! ❤'
                         ).receiver.add(request.user)
 
+                        JournalActions.objects.create(
+                            type = ActionTypes.objects.get(id=1013200),
+                            action_person = request.user,
+                            action_content = 'Подана заявка на роль автора от пользователя «'+ request.user.username +'».',
+                            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                        )
+
                     if request.POST['type'] == '22':
                         title = 'Заявка на роль модератора от пользователя «'+ request.user.username + '»'
-                        NotificationsNewTable.objects.create(
+                        Notifications.objects.create(
                             type = ActionTypes.objects.get(id=1014200),
-                            content = 'Ваша заявка на администратора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                            content = 'Ваша заявка на роль администратора принята на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                             hover_text = 'Ожидайте ответа! ❤'
                         ).receiver.add(request.user)
 
+                        JournalActions.objects.create(
+                            type = ActionTypes.objects.get(id=1014200),
+                            action_person = request.user,
+                            action_content = 'Подана заявка на роль администратора от пользователя «'+ request.user.username +'».',
+                            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                        )
+
             if request.POST['type'] == '31':
                 title = 'Вопрос от пользователя «'+ request.user.username + '»'
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1010200),
                     content = 'Ваш вопрос принят. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(request.user)
 
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1010200),
+                    action_person = request.user,
+                    action_content = 'Подан вопрос от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                )
+
             if request.POST['type'] == '32':
                 title = 'Идея и/или предложение от пользователя «'+ request.user.username + '»'
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1010200),
-                    content = 'Ваша Идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
+                    content = 'Ваша идея и/или предложение приняты на рассмотрение. Ожидайте решения. Ответ придёт Вам в виде уведомления.',
                     hover_text = 'Ожидайте ответа! ❤'
                 ).receiver.add(request.user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1010200),
+                    action_person = request.user,
+                    action_content = 'Подана идея и/или предложение от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+                )
 
             if not (request.POST['type'] in ['21', '22'] and request.user.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1):
                 contacting_support = ContactingSupport.objects.create(title=title, type=ContactingSupportTypes.objects.get(id=request.POST['type']), asked_by=request.user, ask_content=request.POST['desc'], ask_additional_info=ask_additional_info, when_asked=timezone.now())
@@ -734,6 +919,13 @@ def Search(request):
     finded_pubs_count = finded_pubs.count()
     finded_count = finded_accounts_count + finded_pubs_count
     title = 'Найдено ' + str(finded_count) + ' результатов по запросу «' + looking_for +'»' if finded_count else 'Ничего не найдено по запросу «' + looking_for +'»'
+
+    JournalActions.objects.create(
+        type = ActionTypes.objects.get(id=3090200),
+        action_person = request.user,
+        action_content = 'Поисковый запрос '+ request.GET['search_input'] +' пользователем «'+ request.user.username +'».',
+        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+    )
 
     context = {
         'looking_for': looking_for,

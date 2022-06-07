@@ -1,0 +1,134 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  {{ title }}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="/static/lib\css\style_header.css">
+<link rel="stylesheet" href="/static/lib\css\style_footer.css">
+<link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
+<link rel="stylesheet" href="/static/lib\css\admin.css">
+
+{% endblock %}
+
+{% block content %}
+<div class="ne_nuzhno_no_starum_skriptam_nuzhno" style="display:none;"> <!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
+  <div id="tags_count"></div>
+  <div id="fltr_cost_min"></div>
+  <div id="fltr_cost_max"></div>
+  <div id="fltr_cost_p"></div>
+  <div id="fltr_style_p"></div>
+  <div id="fltr_room_p"></div>
+  <div id="checked_styles_count"></div>
+  <div id="checked_rooms_count"></div>
+  <div class="opened_filter"></div>
+</div>
+
+
+  <div class="admin_menu_bg">
+    <div class="admin_menu">
+      <a href="{% url 'admin_mine:main' %}">Главная</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}">Обращения в поддержку</a>
+      <a href="{% url 'admin_mine:users' %}">Пользователи</a>
+      <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
+      <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
+      <a href="{% url 'admin_mine:journal' %}">Журнал событий</a>
+    </div>
+  </div>
+  <div class="page_title" style="height: max-content; width: max-content;">
+    <a href="{% url 'auth:one' pk=opened_user.id %}" style="opacity: 1; margin-right: 10px; display: flex; align-items: center;">
+      <div class="avatar" style=" background: gray; background: url({{ opened_user.photo.url }}) no-repeat; background-size: 130px 130px; background-position: center;  width: 130px; height: 130px; border-radius: 130px; border: 1px solid gray; margin-right: 10px;"></div>
+      <p class="title_p">{{ opened_user.username }}</p>
+    </a>
+
+    <p class="count_pubs">индивидуальная статистика пользователя</p>
+    {% if user.role.id == 4 %}
+      <div style="margin-left: 20%; width: -webkit-fill-available;">
+        <a href="{% url 'auth:settings' pk=opened_user.id%}" class="create_new">редактировать ›</a>
+        <p href="really_delete_the_account()" class="create_new">удалить ›</p>
+      </div>
+    {% endif %}
+  </div>
+
+   <div class="pubs_container">
+     <div class="pubs_container_one_type withBorder show" id='pubs'>
+         <table border="1" class="pubs">
+           <tr class="id">
+             ID: {{ opened_user.id }} <br>
+             Страница пользователя просмтрена {{ opened_user.seen_count }} раз
+             {% if opened_user.role.id == 2 or opened_user.role.id == 3 or opened_user.role.id == 4 %}
+               <br>{{ opened_user.expert_info.count_follovers }} подписчиков
+             {% endif %}
+           </tr>
+
+           <tr>
+             {% if opened_user.bio %}<p>Статус: {{ opened_user.bio }}</p>{% endif %}
+             {% if opened_user.age %}<p>{{ opened_user.age }} лет</p>{% endif %}
+             {% if opened_user.phone_number %}<p>тел.: {{ opened_user.phone_number }}</p>{% endif %}
+             {% if opened_user.email %}<p>{{ opened_user.email }}</p>{% endif %}
+             <p>{{ opened_user.all_noties_count }} уведомлений, {{ opened_user.new_noties_count }} новых</p>
+             {% if opened_user.role.id == 2 %}
+               <p>Автор {{ opened_user.made_pubs_count }} публикаций</p>
+             {% else %}
+               <p>{{ opened_user.role.name }}</p>
+               {% if opened_user.role.id == 3 or opened_user.role.id == 4 %}<p>{{ opened_user.made_pubs_count }} публикаций</p>{% endif %}
+             {% endif %}
+           </tr>
+
+           <tr>
+             Публикации в Избранном:
+             <ul>
+              {% for s in saved_urls %}
+                <li><a href="{% url 'pub:one' pk=s.pub.id %}">{{ s.pub.title }}</a></li>
+              {% endfor %}
+             </ul>
+           </tr>
+
+           <tr>
+             Просмотренные публикации:
+             <ul class="overflowX_auto">
+               {% for s in seen_urls %}
+                 <li><a href="{% url 'pub:one' pk=s.pub.id %}">{{ s.pub.title }} ({{ s.count }} раз)</a></li>
+               {% endfor %}
+             </ul>
+           </tr>
+
+           <tr>
+             Подписан на:
+             <ul class="overflowX_auto">
+               {% for s in opened_user.following_for.all %}
+                 <li><a href="{% url 'auth:one' pk=s.id %}">{{ s.username }}</a></li>
+               {% endfor %}
+             </ul>
+           </tr>
+
+           <tr>
+             Зарегистрировался:
+             {{ opened_user.date_joined }}<br>
+             Последняя авторизация:
+             {{ opened_user.last_entry }}
+           </tr>
+         </table>
+     </div>
+
+  </div>
+  <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
+    <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+      <h1 class="dont_close_on_click">Вы точно хотите удалить аккаунт?</h1>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить. Никак.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" class="cancel">Отмена</p>
+        <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="to_top_button">
+    <img src="/static/sources/SVG/to_top.svg" alt="">
+  </div>
+{% endblock %}
+
+{% block scripts_individual %}
+  <script src="/static/lib/js/animation-admin.js"></script>
+{% endblock %}

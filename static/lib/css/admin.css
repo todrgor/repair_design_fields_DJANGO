@@ -428,7 +428,9 @@ table td.following a {
 
 }
 .functions p#edit,
-.functions p#really_delete {
+.functions p#really_delete,
+.functions p#individual_statistics
+{
   color: #a3a3a3;
   padding: 5px 10px;
   margin: 0 0 10px;
@@ -655,4 +657,32 @@ label.one_pub_type {
   color: #7c4c4c;
   font-weight: 600;
   margin-top: 13px;
+}
+
+.journal table td.photo_and_nickname {
+  height: fit-content;
+  min-height: 100px;
+  padding: 10px 30px;
+  width: 520px;
+}
+
+.journal .photo_and_icon {
+  position: relative;
+  margin-right: 20px;
+}
+
+.journal .action_icon {
+  background: url(../../sources/SVG/not_specific.svg) no-repeat;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  position: absolute;
+  right: 0px;
+  bottom: -5px;
+  border: 2px solid gray;
+}
+
+.journal.pubs_container {
+  margin: 0;
+  margin-left: 10%;
 }

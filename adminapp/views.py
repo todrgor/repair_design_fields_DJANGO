@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.utils import timezone
 from django.utils.formats import localize
+from django.urls import reverse
 # from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 from django.db.models.functions import Length
@@ -26,18 +27,27 @@ def NewComplaint(request):
                 pub_complaint.save()
                 contacting_support = ContactingSupport.objects.create(title=('Жалоба на публикацию «' + pub_complaint.title +'»'), type=ContactingSupportTypes.objects.get(id=11), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1012200),
+                    preview = pub_complaint.get_preview,
                     content = 'Ваша жалоба на публикацию «'+ 'pub_complaint.title' +'» принята!',
                     hover_text = "Ждите результата здесь, в уведомлениях"
                 ).receiver.add(request.user)
 
                 if pub_complaint.author:
-                    NotificationsNewTable.objects.create(
+                    Notifications.objects.create(
                         type = ActionTypes.objects.get(id=1012200),
+                        preview = pub_complaint.get_preview,
                         content = 'На Вашу публикацию «'+ pub_complaint.title +'» поступила 1 новая жалоба.',
                         hover_text = "Ждите результата здесь, в уведомлениях"
                     ).receiver.add(pub_complaint.author)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1012200),
+                    action_person = request.user,
+                    action_content = 'Жалоба на публикацию «'+ pub_complaint.title +'» от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub_complaint «'+ pub_complaint.title +'» (id: '+ str(pub_complaint.id) +')]',
+                )
 
             # если обращение -- жалоба на пользователя
             if int(complaint['complaint_type']) == 12:
@@ -45,16 +55,25 @@ def NewComplaint(request):
                 user_complaint.save()
                 contacting_support = ContactingSupport.objects.create(title=('Жалоба на пользователя «' + user_complaint.username +'»'), type=ContactingSupportTypes.objects.get(id=12), asked_by=request.user, ask_content=complaint['complaint_text'], ask_additional_info=complaint['complaint_id'], when_asked=timezone.now())
 
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1011200),
+                    preview = user_complaint.photo.name,
                     content = 'Ваша жалоба на пользователя «'+ user_complaint.username +'» принята!',
                     hover_text = "Ждите результата здесь, в уведомлениях"
                 ).receiver.add(request.user)
-                NotificationsNewTable.objects.create(
+
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1011200),
                     content = 'На Ваш профиль поступила 1 новая жалоба.',
                     hover_text = "Ждите результата здесь, в уведомлениях"
                 ).receiver.add(user_complaint)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1011200),
+                    action_person = request.user,
+                    action_content = 'Жалоба на пользователя «'+ user_complaint.username +'» от пользователя «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [user_complaint «'+ user_complaint.username +'» (id: '+ str(user_complaint.id) +')]',
+                )
 
             # если обращение поступило вместе с фотками
             if request.FILES and int(complaint['complaint_type']) in [11, 12]:
@@ -86,7 +105,7 @@ class StartPanel(ListView):
         pubs = Publication.objects.filter(type__id__in=[11, 21, 31]).order_by('-pushed')[:3]
         users = User.objects.filter().order_by('-last_entry')[:4]
         tag_categories = TagCategory.objects.all().order_by('id')[:4]
-        tags = [Tag.objects.annotate(text_len=Length('name')).filter(text_len__lte=20, category=category) for category in tag_categories]
+        tags = [Tag.objects.annotate(text_len=Length('name')).filter(text_len__lte=20, category=category)[:4] for category in tag_categories]
         new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
         answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
 
@@ -118,11 +137,18 @@ def LettersToSupport(request):
             answer = request.POST
             letter = ContactingSupport.objects.get(id=int(answer['ask_id']))
             if letter.type.id == 0 and 'delete_letter' in answer:
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1010500),
                     content = 'Спасибо Вам за Ваше обращение! С Ваши обращением «' + letter.title + '», отправленным ' + str(localize(letter.when_asked)) + ', на каком-то этапе обработки что-то пошло не так... Оно было удалено. Если вопрос остаётся открытым, пожалуйста, сделайте обращение в поддержку ешё раз. Также: если что, на обращение был сделан ответ: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и Дизайна»',
                     hover_text = "Просим прощения за неудобства ❤"
                 ).receiver.add(letter.asked_by)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=1010500),
+                    action_person = request.user,
+                    action_content = 'Сломанное обращение «'+ letter.title +'» от пользователя «'+ letter.asked_by.username +'» отвечено и удалено пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                )
 
                 if not letter.answer_content:
                     letter.answer_content = answer['answer']
@@ -160,18 +186,25 @@ def LettersToSupport(request):
                          or (thats_account_report_and_account_role_id_is_4)
                             ):
                             # print('ответ только сообщением')
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=action_type),
                                 content = 'Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и Дизайна»!',
                                 hover_text = 'Если решение не устраивает, можно подать жалобу ещё раз ❤'
                             ).receiver.add(letter.asked_by)
 
                             if report_reason_receiver:
-                                NotificationsNewTable.objects.create(
+                                Notifications.objects.create(
                                     type = ActionTypes.objects.get(id=action_type),
                                     content = letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – закрыть вопрос только текстовым ответом: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и Дизайна»!',
                                     hover_text = 'Если решение не устраивает, можно подать жалобу ❤'
                                 ).receiver.add(report_reason_receiver)
+
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=action_type),
+                                action_person = request.user,
+                                action_content = letter.title +' от пользователя «'+ letter.asked_by.username +'» (подана '+ str(localize(letter.when_asked)) +') обработана пользователем «'+ request.user.username +'».',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
 
                         else:
                             # print('ответ не только сообщением')
@@ -218,23 +251,30 @@ def LettersToSupport(request):
                             if not report_reason_receiver:
                                 decision += ' (но этот пользователь по каким-то причинам уже удалён, никаких манипуляций над ним уже не произвести)'
 
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=action_type),
                                 content = 'Спасибо Вам за Вашу бдительность и Вашу жалобу! ' + letter.title + ', отправленная Вами ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу ещё раз, упомянув об этом. С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                 hover_text = 'Если решение не устраивает, можно подать жалобу ещё раз ❤'
                             ).receiver.add(letter.asked_by)
 
                             if not 'is_delete_account' in answer and report_reason_receiver:
-                                NotificationsNewTable.objects.create(
+                                Notifications.objects.create(
                                     type = ActionTypes.objects.get(id=action_type),
                                     content = letter.title + ', отправленная пользователем «' + letter.asked_by.username + '» ' + str(localize(letter.when_asked)) + ', была рассмотрена.  Решение поддержки – ' + decision_for_report_reason_receiver + '. Также ответ от поддержки: «' + answer['answer'] + '». Если решение не устраивает и/или не решает вопроса, подайте жалобу, упомянув об этом. С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                     hover_text = 'Если решение не устраивает, можно подать жалобу ❤'
                                 ).receiver.add(report_reason_receiver)
 
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=action_type),
+                                action_person = request.user,
+                                action_content = letter.title +' от пользователя «'+ letter.asked_by.username +'» (подана '+ str(localize(letter.when_asked)) +') обработана пользователем «'+ request.user.username +'».',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
+
                     if letter_type in [21, 22]:
                         letter.ask_additional_info = 999
                         if letter_type == 21:
-                            role_name = 'роль автора'
+                            role_name = 'роль автора публикаций'
                             action_type = 1013201
                             role_id = 2
                         if letter_type == 22:
@@ -243,17 +283,24 @@ def LettersToSupport(request):
                             role_id = 3
 
                         if letter.asked_by.role.id == 4 and User.objects.filter(role=UserRoles.objects.get(id=4)).count() <= 1:
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=action_type),
                                 content = 'Ваша заявка на '+ role_name +' была рассмотрена. На данный момент в системе всего 1 суперпользователь, поэтому нам опасно менять Вам роль. Найдите наследника и обращайтесь ещё! Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                 hover_text = 'По-другому пока не можем. Просим простить нас ❤'
                             ).receiver.add(letter.asked_by)
 
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=action_type),
                                 content = 'Заявка на '+ role_name +' от пользователя «' + letter.asked_by.username + '» никак не может быть одобрена: на данный момент в системе всего 1 суперпользователь, поэтому опасно менять ему роль. Придётся подождать наследника и обратиться потом ещё. С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                 hover_text = 'По-другому мы пока не можем. Вот так вот ❤'
                             ).receiver.add(request.user)
+
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=action_type),
+                                action_person = request.user,
+                                action_content = 'Заявка на '+ role_name +' от пользователя «'+ letter.asked_by.username +'» (подана '+ str(localize(letter.when_asked)) +') не обработана – всего 1 суперпользователь в системе.',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
 
                         else:
                             if answer['change_role'] == 'Назначить новую роль':
@@ -266,25 +313,46 @@ def LettersToSupport(request):
                                 decision = 'к сожалению, '+ role_name +' Вам не назначена.'
                                 letter.answer_additional_info = 0
 
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=action_type),
                                 content = 'Ваша заявка на '+ role_name +' была рассмотрена. Решение: '+ decision +' Также ответ от поддержки: «' + answer['answer'] +'». С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                 hover_text = 'Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤'
                             ).receiver.add(letter.asked_by)
 
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=action_type),
+                                action_person = request.user,
+                                action_content = 'Заявка на '+ role_name +' от пользователя «'+ letter.asked_by.username +'» (подана '+ str(localize(letter.when_asked)) +') обработана пользователем «'+ request.user.username +'».',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
+
                     if letter_type in [31, 32]:
                         if letter_type == 31:
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=1010201),
                                 content = 'Ваш вопрос был рассмотрен. Ответ от поддержки: «' + answer['answer'] + '».',
                                 hover_text = 'Пишите ещё, если что-то непонятно, или у Вас родилась идея! ❤'
                             ).receiver.add(letter.asked_by)
+
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=1010201),
+                                action_person = request.user,
+                                action_content = letter.title +' от пользователя «'+ letter.asked_by.username +'» (подан '+ str(localize(letter.when_asked)) +') обработан пользователем «'+ request.user.username +'».',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
                         if letter_type == 32:
-                            NotificationsNewTable.objects.create(
+                            Notifications.objects.create(
                                 type = ActionTypes.objects.get(id=1010201),
                                 content = 'Спасибо Вам за Вашу идею! Идея была рассмотрена. Ответ от поддержки: «' + answer['answer'] + '». С заботой, Ваша поддержка «Ремонта и Дизайна»',
                                 hover_text = 'Ждём ещё идей! ❤'
                             ).receiver.add(letter.asked_by)
+
+                            JournalActions.objects.create(
+                                type = ActionTypes.objects.get(id=1010201),
+                                action_person = request.user,
+                                action_content = letter.title +' от пользователя «'+ letter.asked_by.username +'» (подана '+ str(localize(letter.when_asked)) +') обработана пользователем «'+ request.user.username +'».',
+                                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+                            )
                 letter.save()
         else:
             answer_form = AnswerForm({'answer': None})
@@ -428,6 +496,59 @@ class UserList(ListView):
         return data
 
 
+# страница статистики отдельного пользователя в ИС (как просили на предзащите)
+def UserIndividual(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('main')
+    if request.user.role.id not in [3, 4]:
+        print('проникновение туда, куда нельзя')
+        return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+
+    opened_user = User.objects.get(id=pk)
+    title ='Пользователь «'+ opened_user.username +'» | Панель администратора'
+    saved_urls = SavedPubs.objects.filter(saver=opened_user)
+    seen_urls = SeenPubs.objects.filter(watcher=opened_user)
+
+    JournalActions.objects.create(
+        type = ActionTypes.objects.get(id=4010200),
+        action_person = request.user,
+        action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ request.user.username +'».',
+        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
+    )
+
+    context = {
+        'title': title,
+        'opened_user': opened_user,
+        'saved_urls': saved_urls,
+        'seen_urls': seen_urls,
+    }
+    return render(request, 'adminapp/user_individual.html', context)
+
+
+# страница журнала всех событий в ИС
+class JournalList(ListView):
+    model =  JournalActions
+    template_name = 'adminapp/journal.html'
+
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated or not self.request.user.role.id in [3, 4]:
+            print('проникновение туда, куда нельзя')
+            return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+        else:
+            resp = super().get(*args, **kwargs)
+            return resp
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        title ='Журнал всех событий в ИС | Панель администратора'
+        journal = JournalActions.objects.filter().order_by('-when')
+
+        data = {
+            'title': title,
+            'journal': journal,
+        }
+        return data
+
+
 #    отображение, создание,
 #    редактирование и удаление тегов и их категорий
 @csrf_exempt
@@ -439,6 +560,7 @@ def TagsAndTagCategories(request):
 
     errors = ''
     if request.method == 'POST':
+        object = None
         method_POST = request.POST
 
         if (
@@ -448,7 +570,6 @@ def TagsAndTagCategories(request):
 
             if method_POST['tag_or_category_to_create_or_edit'] == 'category':
                 selected_pub_types = [method_POST[item] for item in method_POST.keys() if 'pub_type_' in item]
-                object = None
 
                 if method_POST['to_create_or_edit'] == 'create':
                     action_type = 2010200
@@ -474,7 +595,6 @@ def TagsAndTagCategories(request):
                         errors += message if not errors else '<br>' + message
 
             if method_POST['tag_or_category_to_create_or_edit'] == 'tag':
-                object = None
 
                 if method_POST['to_create_or_edit'] == 'create':
                     action_type = 2011200
@@ -502,16 +622,21 @@ def TagsAndTagCategories(request):
                         message = 'Для редактирования тега не всё заполнено!'
                         errors += message if not errors else '<br>' + message
 
-                if object:
-                    noti=Publication.objects.create(title=('Успешно '+ object_type +'!'), type=PubTypes.objects.get(id=51), preview=(request.user.photo.name), content="Наверное умничкааа) А других уведомить и желательно ещё причину и возможности указать? А?", author=request.user)
-                    Notifications.objects.create(user_receiver=request.user, noti_for_user=noti)
-
             if object:
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=action_type),
                     content = 'Успешно '+ object_type +'!',
-                    hover_text = 'Наверное умничкааа) А других уведомить и желательно ещё причину и возможности указать? А?'
+                    hover_text = 'Наверное умничкааа) А других уведомить и желательно ещё причину и возможности указать? А?',
+                    url = reverse('admin_mine:tags_and_tag_categories'),
+                    url_text = 'Теги и их категории'
                 ).receiver.add(request.user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=action_type),
+                    action_person = request.user,
+                    action_content = object_type.capitalize() +' пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [tag_or_tag_category «'+ str(object) +'» (id: '+ str(object.id) +')]',
+                )
 
         if 'tag_or_category_to_delete' in method_POST and 'object_id' in method_POST and method_POST['tag_or_category_to_delete'] and method_POST['object_id']:
             if method_POST['tag_or_category_to_delete'] == 'category':
@@ -529,11 +654,21 @@ def TagsAndTagCategories(request):
                     object_type = 'удалён тег «'+ object.name +'»'
 
             if object:
-                NotificationsNewTable.objects.create(
+                Notifications.objects.create(
                     type = ActionTypes.objects.get(id=action_type),
                     content = 'Успешно '+ object_type +'!',
-                    hover_text = 'Ну и зачем? А других уведомить и желательно ещё причину указать? А?'
+                    hover_text = 'Ну и зачем? А других уведомить и желательно ещё причину указать? А?',
+                    url = reverse('admin_mine:tags_and_tag_categories'),
+                    url_text = 'Теги и их категории'
                 ).receiver.add(request.user)
+
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=action_type),
+                    action_person = request.user,
+                    action_content = object_type.capitalize() +' пользователем «'+ request.user.username +'».',
+                    action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [tag_or_tag_category «'+ str(object) +'» (id: '+ str(object.id) +')]',
+                )
+
                 object.delete()
 
     title = 'Теги публикаций и их категории'

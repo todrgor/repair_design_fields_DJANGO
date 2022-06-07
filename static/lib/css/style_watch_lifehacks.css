@@ -202,7 +202,7 @@
   top: 150px;
   right: 14%;
   margin: 0 auto;
-  z-index: 15;
+  z-index: 88;
   background: #fff;
   padding: 30px 5px;
   border-radius: 30px;
@@ -309,7 +309,7 @@
   top: 150px;
   right: 14%;
   margin: 0 auto;
-  z-index: 15;
+  z-index: 88;
   background: #fff;
   padding: 30px 5px;
   border-radius: 30px;
@@ -334,12 +334,6 @@
   margin: 0 auto;
   text-align: left;
   /* font-size: 20px; */
-}
-.cancel_or_delete {
-  display: flex;
-  margin: 50px auto 0;
-  width: calc(100% - 40px);
-  justify-content: space-between;
 }
 .cancel_or_delete p, .cancel_or_delete a {
   background: #e6e6e6;

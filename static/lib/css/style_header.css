@@ -478,6 +478,36 @@ table .functions p:hover .icon {
  background: #1a191a;
 }
 
+.notifications_opened .preview_and_icon {
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin-right: 20px;
+  position: relative;
+}
+.notifications_opened .url_and_time {
+  margin-top: 10px;
+  margin-left: 66px;
+  width: -webkit-fill-available;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.notifications_opened a {
+  color: #ffffff;
+  font-size: 13px;
+  padding: 5px 10px;
+  background: #4c4c4c;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+.notifications_opened a:hover {
+  color: #000;
+  background: #fff;
+}
+
 .last_noti {
   width: 100%;
 }
@@ -512,11 +542,21 @@ table .functions p:hover .icon {
 }
 
 .noti_one_logo {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background: url(../../sources/SVG/not_specific.svg) no-repeat;
-  float: left;
-  margin-right: 15px;
+  border: 1px solid gray;
+  border-radius: 50px;
+}
+.noti_one_icon {
+  position: absolute;
+  bottom: -8px;
+  right: -11px;
+  width: 30px;
+  height: 30px;
+  background: url(../../sources/SVG/not_specific.svg) no-repeat;
+  border: 2px solid gray;
+  border-radius: 30px;
 }
 
 .content_noti {
@@ -535,9 +575,7 @@ table .functions p:hover .icon {
 }
 
 .when_happend_noti {
-  margin-top: 5px;
-  margin-left: 55px;
-  font-size: 14px;
+  font-size: 13px;
   font-family: "Roboto", sans-serif;
   color: #8C8787;
 }
@@ -668,7 +706,7 @@ table .functions p:hover .icon {
 }
 .pub_additional_functions_bg.show,
 .additional_functions_bg.show {
-  z-index: 11;
+  z-index: 87;
   opacity: 1;
   display: flex;
   justify-content: flex-end;
@@ -740,6 +778,7 @@ table .functions p:hover .icon {
   width: 500px;
   box-shadow: 0px 0px 200px #202020;
   display: none;
+  z-index: 88;
   /* transition: 0.3s ease; */
 }
 .new_complaint.show,
@@ -763,7 +802,7 @@ table .functions p:hover .icon {
 .cancel_or_delete {
   display: flex;
   margin: 50px auto 0;
-  width: 100%;
+  width: calc(100% - 40px);
   justify-content: space-between;
 }
 .cancel_or_delete p,

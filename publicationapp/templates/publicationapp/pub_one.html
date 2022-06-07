@@ -72,7 +72,7 @@
                         {% if user.is_authenticated %}
                           {% if user != pub.author %}
                             <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
-                            <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                            <div class="get_noti {% if pub.author in user.following_for.all %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                           {% endif %}
                         {% else %}
                           <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
@@ -111,7 +111,7 @@
                     <div class="pub_tag">
                       <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
                       <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                        type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                        type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                       <img src="/static/sources/SVG/search.svg" alt="">
                     </div>
                   </form>
@@ -125,7 +125,7 @@
                     <div class="pub_tag">
                       <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
                       <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                        type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                        type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                       <img src="/static/sources/SVG/search.svg" alt="">
                     </div>
                   </form>
@@ -175,7 +175,7 @@
                   {% if user.is_authenticated %}
                     {% if user != pub.author %}
                       <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
-                      <div class="get_noti {% if pub.author.id in subscribing_authors %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                      <div class="get_noti {% if pub.author in user.following_for.all %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
                     {% endif %}
                   {% else %}
                     <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
@@ -212,7 +212,7 @@
               <div class="pub_tag">
                 <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
                 <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                  type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                  type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                 <img src="/static/sources/SVG/search.svg" alt="">
               </div>
             </form>
@@ -229,7 +229,7 @@
               <div class="pub_tag">
                 <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}">
                 <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                  type="submit" name="to_filter" value="{{ tag.category }}: {{ tag.name }}">
+                  type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
                 <img src="/static/sources/SVG/search.svg" alt="">
               </div>
             </form>
@@ -329,7 +329,7 @@
 
   <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
     <h1>Ссылка на публикацию: </h1>
-    <a href="{% url 'pub:one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/{{ pub.id }}/</a>
+    <a href="{% url 'pub:one' pk=pub.id %}" style="cursor: pointer; text-decoration: underline; margin: 30px 0 10px; display: block;">todrgor.pythonanywhere.com/pub/{{ pub.id }}/</a>
   </div>
 
 </div>
