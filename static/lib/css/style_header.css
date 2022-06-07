@@ -502,6 +502,7 @@ table .functions p:hover .icon {
   background: #4c4c4c;
   border-radius: 10px;
   margin-right: 10px;
+  margin-bottom: 5px;
 }
 .notifications_opened a:hover {
   color: #000;
@@ -528,7 +529,7 @@ table .functions p:hover .icon {
 }
 
 .notification_one {
-  padding: 15px;
+  padding: 10px 15px 20px;
   /* border-top: 2px solid #545151; */
   transition: all 0.2s ease;
 }

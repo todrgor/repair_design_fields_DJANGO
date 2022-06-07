@@ -83,6 +83,8 @@ class Publication(models.Model):
                         is_taking_img_url = False
                         img_urls_list.append(src)
                     i+=1
+        print(self)
+        print(img_urls_list)
         return img_urls_list
 
     @property

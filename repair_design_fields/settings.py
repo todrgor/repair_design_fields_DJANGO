@@ -187,4 +187,8 @@ CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/" # стандартно (и да
 CKEDITOR_RESTRICT_BY_USER = True # показывать только свои загруженные публикации, не все на сервере
 CKEDITOR_BROWSE_SHOW_DIRS = True # для отображения каталогов на странице «Обзор сервера»
 
+# жертвы качества фото ради заканчивающегося пространства на сервере
+CKEDITOR_FORCE_JPEG_COMPRESSION = True
+CKEDITOR_IMAGE_QUALITY = 75
+
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'

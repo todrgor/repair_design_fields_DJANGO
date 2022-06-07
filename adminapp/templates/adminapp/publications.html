@@ -130,7 +130,7 @@
                    <td class="following">
                        <ul>
                          {% for tag in pub.tags.all %}
-                           <li>{{ tag.category }}: {{ tag.name }}</li>
+                           <li>{{ tag.category.name }}: {{ tag.name }}</li>
                          {% endfor %}
                        </ul>
                    </td>

@@ -8,6 +8,7 @@ from django.core.validators import FileExtensionValidator, MaxValueValidator, Mi
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
+from PIL import Image
 from publicationapp.models import Publication
 
 
@@ -37,6 +38,12 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    def save(self, *args, **kwargs): # ужать аватарку для экономии пространства на сервере
+       instance = super(User, self).save(*args, **kwargs)
+       image = Image.open(self.photo.path)
+       image.save(self.photo.path, quality=10, optimize=True)
+       return instance
 
     @property
     def made_pubs_count(self):

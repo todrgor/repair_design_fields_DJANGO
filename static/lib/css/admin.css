@@ -437,7 +437,9 @@ table td.following a {
   cursor: pointer;
   display: flex;
 }
-.functions p#edit:hover {
+.functions p#edit:hover,
+.functions p#individual_statistics:hover
+{
   color: #808036;
   background: #fff3a0;
 }
@@ -663,7 +665,7 @@ label.one_pub_type {
   height: fit-content;
   min-height: 100px;
   padding: 10px 30px;
-  width: 520px;
+  width: 570px;
 }
 
 .journal .photo_and_icon {

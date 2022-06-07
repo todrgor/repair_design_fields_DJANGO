@@ -1,6 +1,10 @@
 
-$('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 40, left:( $('.user_role').offset().left) + 10});
-$('.bio.None').offset({left:( $('.user_role').offset().left) - 88});
+if ($('.bio.notNone').length) {
+  $('.bio.notNone').offset({top: ( $('.bio.notNone').offset().top) - 40, left:( $('.user_role').offset().left) + 10});
+}
+if ($('.bio.None').length) {
+  $('.bio.None').offset({top: ( $('.user_role').offset().top) +40, left:( $('.user_role').offset().left) - 10});
+}
 
 function YouHaveToLogin(action) {
   alert('Вам нужно авторизоваться перед тем, как ' + action + '.')
@@ -335,6 +339,7 @@ function close_additional_functions() {
     $('.pub_additional_functions_bg, .delete_the_user, .new_complaint, .share_the_pub, .statistics, .delete_the_pub, .for_author_or_admin').removeClass('show');
     $('.photo_nickname_role_additionalFunctions .additionalFunctions').removeClass('opened');
     console.log("Закрылись дополнительные действия с публикацией с ID "+ $idPub);
+    console.log("pub_additional_functions_bg closed");
   }
 }
 
@@ -346,7 +351,6 @@ $(document).ready(function() {
 
 $(document).on('click', function(e) {
   if ($(e.target).hasClass('pub_additional_functions_bg') || $(e.target).hasClass('cancel')) {
-    console.log("pub_additional_functions_bg closed");
     close_additional_functions();
   }
 });
@@ -357,3 +361,9 @@ $(window).scroll(function () {
   close_additional_functions();
   startSecundomer();
 });
+
+function togglePubAdditionalFunctionsAuthor_and_deleteTheUser() {
+  $is_opened_pub_additional_functions = 1;
+  $('.pub_additional_functions_bg#author').toggleClass('show');
+  deleteTheUser();
+}

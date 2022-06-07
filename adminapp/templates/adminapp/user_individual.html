@@ -46,7 +46,7 @@
     {% if user.role.id == 4 %}
       <div style="margin-left: 20%; width: -webkit-fill-available;">
         <a href="{% url 'auth:settings' pk=opened_user.id%}" class="create_new">редактировать ›</a>
-        <p href="really_delete_the_account()" class="create_new">удалить ›</p>
+        <p onclick="togglePubAdditionalFunctionsAuthor_and_deleteTheUser()" class="create_new" style="cursor: pointer;">удалить ›</p>
       </div>
     {% endif %}
   </div>
@@ -113,16 +113,20 @@
      </div>
 
   </div>
-  <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
-    <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
-      <h1 class="dont_close_on_click">Вы точно хотите удалить аккаунт?</h1>
-      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить. Никак.</p>
+
+  {% if user.role.id == 4 and opened_user.role.id != 4 %}
+    <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с открытым пользователем -->
+    </div>
+
+    <div class="delete_the_user"> <!-- подтверждение удаления пользователя -->
+      <h1>Вы точно хотите удалить пользователя?</h1>
+      <p style="margin: 20px 0;">Его нельзя будет восстаноить. Никак.</p>
       <div class="cancel_or_delete">
         <p id="cancel_deleting" class="cancel">Отмена</p>
-        <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
+        <a href="{% url 'auth:delete' pk=opened_user.id%}" id="delete">Удалить пользователя</a>
       </div>
     </div>
-  </div>
+  {% endif %}
 
   <div class="to_top_button">
     <img src="/static/sources/SVG/to_top.svg" alt="">
@@ -131,4 +135,5 @@
 
 {% block scripts_individual %}
   <script src="/static/lib/js/animation-admin.js"></script>
+  <script src="/static/lib/js/animation-account-watch.js"></script>
 {% endblock %}
