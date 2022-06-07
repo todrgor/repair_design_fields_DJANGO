@@ -1,5 +1,5 @@
 Проект доступен по ссылке: http://todrgor.pythonanywhere.com/
-Доработанная версия: https://github.com/todrgor/repair_design_fields_DJANGO
+Улучшенная версия: https://github.com/todrgor/repair_design_fields_DJANGO
 
 Пользователи для доступа, если нужно:
 никнейм    - пароль    - роль:
