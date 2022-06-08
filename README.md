@@ -8,12 +8,13 @@
 - скачать и разархивировать проект в корень диска С
 - скачать и установить язык программирования Python версии 3.9 (включая pip) с официльного сайта.
     <br>скачать: https://www.python.org/downloads/release/python-390/
-    <br>установить: https://python.tutorials24x7.com/blog/how-to-install-python-3-9-on-windows-10
+    <br>как установить: https://python.tutorials24x7.com/blog/how-to-install-python-3-9-on-windows-10
 - в командной строке написать:
 ```
     cd <АДРЕС ПАПКИ "repair_design_fields_DJANGO">
+    python -m venv venv
     venv\Scripts\activate
-    pip install requirements.txt
+    pip install requirements.txt // установка необходимых плаагинов, а также самого Django
     python manage.py makemigrations
     python manage.py migrate    
     python manage.py runserver    
