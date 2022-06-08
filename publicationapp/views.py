@@ -285,7 +285,7 @@ def UpdatePub(request, pk):
 
         #   проверка, теги всех ли категорий
         #   выбраны и переадресация обратно, если нет
-        selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()], pub_type=pub.type)
+        selected_tags = Tag.objects.filter(id__in=[unit for unit in method_POST if unit.isnumeric()])
         selected_tags_categories_ids = selected_tags.values_list('category', flat=True).distinct()
         all_tag_categories_for_this_pub_type = TagCategory.objects.filter(pub_type=pub.type)
         for category in all_tag_categories_for_this_pub_type:

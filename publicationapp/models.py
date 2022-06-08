@@ -64,7 +64,7 @@ class Publication(models.Model):
 
     @property
     def unstyled_content(self):  # пройтись по content и убрать все стили, оставить просто текст
-        return bleach.clean(self.content, tags=['script'], strip=True)
+        return bleach.clean(self.content, tags=[], strip=True)
 
     @property
     def img_urls_list(self):  # пройтись по content и получить все img
