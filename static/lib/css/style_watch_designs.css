@@ -550,19 +550,19 @@ input.user_just_saved_it_smbt {
 }
 
 .variant_one_img#repair {
-  background: url(../../images/watch_repairs/2.jpeg);
+  background: url(../../../media/main_page/2.jpeg);
   background-size: 360px;
   background-position: center;
 }
 
 .variant_one_img#design {
-  background: url(../../images/slider-1/9.png);
+  background: url(../../../media/main_page/9.png);
   background-size: 360px;
   background-position: center;
 }
 
 .variant_one_img#lifehacks {
-  background: url(../../images/watch_lifehacks/95.png);
+  background: url(../../../media/main_page/95.png);
   background-size: 390px;
   background-position: center;
 }

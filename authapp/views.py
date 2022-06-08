@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, UpdateView
 
 from django.contrib.auth import logout, login, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, HttpResponseNotFound, Http404
@@ -205,27 +205,16 @@ class UserLoginView(LoginView):
 
 
 #   выход из учётной записи пользователя
-class UserLogoutView(LogoutView):
-    next_page = reverse_lazy('main')
+def UserLogout(request):
+    JournalActions.objects.create(
+        type = ActionTypes.objects.get(id=3010100),
+        action_person = request.user,
+        action_content = 'Вышел из аккаунта пользователь «'+ request.user.username +'».',
+        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+    )
+    logout(request)
+    return redirect('main')
 
-    def get_context_data(self, **kwargs):
-        JournalActions.objects.create(
-            type = ActionTypes.objects.get(id=3010100),
-            action_person = self.request.user,
-            action_content = 'Вышел из аккаунта пользователь «'+ self.request.user.username +'».',
-            action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')]'
-        )
-
-        context = super().get_context_data(**kwargs)
-        current_site = get_current_site(self.request)
-        context.update({
-            'site': current_site,
-            'site_name': current_site.name,
-            'title': _('Logged out'),
-        })
-        if self.extra_context is not None:
-            context.update(self.extra_context)
-        return context
 
 
 #   просмотр одной странички пользователя
@@ -240,12 +229,13 @@ class AccountOneWatch(ListView):
         opened_user.seen_count +=1
         opened_user.save()
 
-        JournalActions.objects.create(
-            type = ActionTypes.objects.get(id=4010200),
-            action_person = self.request.user,
-            action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ self.request.user.username +'».',
-            action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
-        )
+        if self.request.user.is_authenticated:
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=4010200),
+                action_person = self.request.user,
+                action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ self.request.user.username +'».',
+                action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
+            )
         return opened_user
 
     def get_context_data(self, **kwargs):
@@ -920,12 +910,13 @@ def Search(request):
     finded_count = finded_accounts_count + finded_pubs_count
     title = 'Найдено ' + str(finded_count) + ' результатов по запросу «' + looking_for +'»' if finded_count else 'Ничего не найдено по запросу «' + looking_for +'»'
 
-    JournalActions.objects.create(
-        type = ActionTypes.objects.get(id=3090200),
-        action_person = request.user,
-        action_content = 'Поисковый запрос '+ request.GET['search_input'] +' пользователем «'+ request.user.username +'».',
-        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
-    )
+    if request.user.is_authenticated:
+        JournalActions.objects.create(
+            type = ActionTypes.objects.get(id=3090200),
+            action_person = request.user,
+            action_content = 'Поисковый запрос '+ request.GET['search_input'] +' пользователем «'+ request.user.username +'».',
+            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+        )
 
     context = {
         'looking_for': looking_for,

@@ -423,12 +423,13 @@ def UpdatePub(request, pk):
                         url_text = 'Посмотреть'
                     ).receiver.add(pub.author)
 
-                    JournalActions.objects.create(
-                        type = ActionTypes.objects.get(id=9911201),
-                        action_person = request.user,
-                        action_content = 'Изменена публикация «'+ pub.title +'» администратором «'+ request.user.username +'» (её старый автор: удалённый пользователь, новый: «' +pub.author.username+ '»).',
-                        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub «'+ pub.title +'» (id: '+ str(pub.id) +')], [pub_old_author DELETED], [pub_new_author «'+ pub.author.username +'» (id: '+ str(pub.author.id) +')]'
-                    )
+                    if request.user.is_authenticated:
+                        JournalActions.objects.create(
+                            type = ActionTypes.objects.get(id=9911201),
+                            action_person = request.user,
+                            action_content = 'Изменена публикация «'+ pub.title +'» администратором «'+ request.user.username +'» (её старый автор: удалённый пользователь, новый: «' +pub.author.username+ '»).',
+                            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub «'+ pub.title +'» (id: '+ str(pub.id) +')], [pub_old_author DELETED], [pub_new_author «'+ pub.author.username +'» (id: '+ str(pub.author.id) +')]'
+                        )
 
         return redirect('pub:one', pk=pub.id)
 
@@ -600,12 +601,13 @@ def change_shared_count(request, pk):
         pub.shared_count += 1
         pub.save()
 
-        JournalActions.objects.create(
-            type = ActionTypes.objects.get(id=5010900),
-            action_person = request.user,
-            action_content = 'Нажато «Поделиться» у публикации «'+ pub.title +'» пользователем «'+ request.user.username +'». (всего '+ str(pub.shared_count) +' нажатий у публикации)',
-            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub_shared «'+ pub.title +'» (id: '+ str(pub.id) +')]'
-        )
+        if request.user.is_authenticated:
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=5010900),
+                action_person = request.user,
+                action_content = 'Нажато «Поделиться» у публикации «'+ pub.title +'» пользователем «'+ request.user.username +'». (всего '+ str(pub.shared_count) +' нажатий у публикации)',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [pub_shared «'+ pub.title +'» (id: '+ str(pub.id) +')]'
+            )
 
         return JsonResponse({'result': str(pub)})
 
@@ -669,12 +671,13 @@ def filter_pubs (method_GET, request):
         pubs = filter_pubs_by_property(pubs, 'save_percent')   if method_GET['ordering'] == 'by_savest'       else pubs
         pubs = filter_pubs_by_property(pubs, 'reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
 
-    JournalActions.objects.create(
-        type = ActionTypes.objects.get(id=5010300),
-        action_person = request.user,
-        action_content = 'Отфильтровал публикации пользователь «'+ request.user.username +'».',
-        action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
-    )
+    if request.user.is_authenticated:
+        JournalActions.objects.create(
+            type = ActionTypes.objects.get(id=5010300),
+            action_person = request.user,
+            action_content = 'Отфильтровал публикации пользователь «'+ request.user.username +'».',
+            action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')]'
+        )
     return list(pubs)
 
 

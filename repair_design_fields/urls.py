@@ -27,7 +27,7 @@ urlpatterns = [
 	path('account/', include('authapp.urls', namespace='auth')),
     path('register/', authapp.UserRegisterView.as_view(), name='register'),
     path('login/', authapp.UserLoginView.as_view(), name='login'),
-    path('logout/', authapp.UserLogoutView.as_view(), name='logout'),
+    path('logout/', authapp.UserLogout, name='logout'),
     path('search/', authapp.Search, name='search'),
 
     path('admin/', include('adminapp.urls', namespace='admin_mine')),

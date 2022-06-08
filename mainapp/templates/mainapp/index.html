@@ -1,15 +1,13 @@
 {% extends 'mainapp/base.html' %}
 
 {% block title %}
-  Что посмотрим сегодня?
+  Главная | Ремонт и Дизайн
 {% endblock %}
 
 {% block css %}
   <link rel="stylesheet" href="/static/lib\css\style_hello_user.css">
   <link rel="stylesheet" href="/static/lib\css\style_header.css">
   <link rel="stylesheet" href="/static/lib\css\style_footer.css">
-  <link rel="stylesheet" href="/static/lib\css\style_watch_designs.css">
-  <link rel="stylesheet" href="/static/lib\css\style_filter.css">
 {% endblock %}
 
 {% block content %}
@@ -27,27 +25,256 @@
       <div class="opened_filter"></div>
   </div>
 
-  <div class="pubs_container">
-    <h1 class="h1_index">Что посмотрим сегодня?</h1>
-    <div class="variants">
-      <div class="variant_one">
-        <div class="variant_one_img" id="repair"></div>
-        <h4>Про ремонт</h4>
-        <p>Чтобы базово понимать электрику, сантехнику, подбор  материалов и инструментов — здесь всё для понимания «скелета» домов.</p>
-        <a href="{% url 'repairs' %}">Подробнее ›</a>
+  <br><br> <h1 style="color: red;">Стили и картинки ещё не готовы. Но в процессе.</h1>
+  <p style="color: red;">Всё остальное работает и красиво выглядит.</p> <br><br>
+
+  <div class="full_width overflow_hidden slider_container about_pub_tybes">
+    <a href="{% url 'repairs' %}">
+      <div class="slider repairs" id="1">
+        <h1>Про ремонт квартир и домов – всё тут.</h1>
+        <p>Как, где, что именно, когда и в какой последовательности.</p>
+
+        <img src="" alt="" id="1">
+        <img src="" alt="" id="2">
+        <img src="" alt="" id="3">
+        <img src="" alt="" id="4">
+        <img src="" alt="" id="5">
+        <img src="" alt="" id="6">
+        <img src="" alt="" id="7">
+        <img src="" alt="" id="8">
+        <img src="" alt="" id="9">
+        <img src="" alt="" id="10">
+        <img src="" alt="" id="11">
+        <img src="" alt="" id="12">
+        <img src="" alt="" id="13">
+        <img src="" alt="" id="14">
+        <img src="" alt="" id="15">
+        <img src="" alt="" id="16">
+        <img src="" alt="" id="17">
+        <img src="" alt="" id="18">
+        <img src="" alt="" id="19">
+        <img src="" alt="" id="20">
+        <img src="" alt="" id="21">
+        <img src="" alt="" id="22">
+        <img src="" alt="" id="23">
       </div>
-      <div class="variant_one">
-        <div class="variant_one_img" id="design"></div>
-        <h4>Про дизайн</h4>
-        <p>Чтобы подобрать лучшие дизайнерские решения для своей квариры и получить эстетичекое удовольствие!</p>
-        <a href="{% url 'designs' %}">Подробнее ›</a>
+    </a>
+
+    <a href="{% url 'designs' %}">
+      <div class="slider designs" id="2">
+        <h1>Всё про дизайн<br>и интерьер домов</h1>
+        <p>Стили, хитрости, авторские взгляды и готовые решения.</p>
+
+        <img src="" alt="" id="1">
+        <img src="" alt="" id="2">
+        <img src="" alt="" id="3">
+        <img src="" alt="" id="4">
+        <img src="" alt="" id="5">
+        <img src="" alt="" id="6">
+        <img src="" alt="" id="7">
+        <img src="" alt="" id="8">
+        <img src="" alt="" id="9">
+        <img src="" alt="" id="10">
+        <img src="" alt="" id="11">
+        <img src="" alt="" id="12">
+        <img src="" alt="" id="13">
+        <img src="" alt="" id="14">
+        <img src="" alt="" id="15">
+        <img src="" alt="" id="16">
+        <img src="" alt="" id="17">
+        <img src="" alt="" id="18">
+        <img src="" alt="" id="19">
+        <img src="" alt="" id="20">
+        <img src="" alt="" id="21">
+        <img src="" alt="" id="22">
+        <img src="" alt="" id="23">
       </div>
-      <div class="variant_one">
-        <div class="variant_one_img" id="lifehacks"></div>
-        <h4>Всякие лайфхаки</h4>
-        <p>Быстрые ёмкие идеи упростить в кваритире быт или ремонт. И легко повторить, и облегчает дело.</p>
-        <a href="{% url 'lifehacks' %}">Подробнее ›</a>
+    </a>
+
+    <a href="{% url 'lifehacks' %}">
+      <div class="slider lifehacks" id="3">
+        <h1>Лайфхаки – ёмко и полезно.</h1>
+        <p>Маленькие хитрости для упрощения быта, создания уюта или упрощения ремонта.</p>
+
+        <img src="" alt="" id="1">
+        <img src="" alt="" id="2">
+        <img src="" alt="" id="3">
+        <img src="" alt="" id="4">
+        <img src="" alt="" id="5">
+        <img src="" alt="" id="6">
+        <img src="" alt="" id="7">
+        <img src="" alt="" id="8">
+        <img src="" alt="" id="9">
+        <img src="" alt="" id="10">
+        <img src="" alt="" id="11">
+        <img src="" alt="" id="12">
+        <img src="" alt="" id="13">
+        <img src="" alt="" id="14">
+        <img src="" alt="" id="15">
+        <img src="" alt="" id="16">
+        <img src="" alt="" id="17">
+        <img src="" alt="" id="18">
+        <img src="" alt="" id="19">
+        <img src="" alt="" id="20">
+        <img src="" alt="" id="21">
+        <img src="" alt="" id="22">
+        <img src="" alt="" id="23">
       </div>
+    </a>
+  </div>
+
+  <a href="{% if user.is_authenticated %}{% url 'saved' %}{% else %}{% url 'login' %}{% endif %}">
+    <div class="full_width overflow_hidden about_saved">
+      <h1>Не потеряйте ни одной</h1>
+      <p>Чтобы в любой момент быстро вернуться к особенным публикациям, добавляйте их в «Избранное»  </p>
+
+      <div class="saved_buttom_and_signature">
+        <div class="saved_buttom">
+          Избранное <img src="/static/sources/SVG/heart.svg" alt="">
+        </div>
+        <div class="signature">
+          Уже сохранено 99 публикаций
+        </div>
+      </div>
+
+      <div class="images">
+        <img src="" alt="" id="1">
+        <img src="" alt="" id="2">
+        <img src="" alt="" id="3">
+      </div>
+    </div>
+  </a>
+
+  <div class="full_width about_best_authors">
+    <h1>Топ авторов публикаций</h1>
+    <p>Лучший избирается по самой сохраняемой публикации</p>
+    <div class="authors_container">
+      <a href="">
+        <div class="author_one" id="2">
+          <h1 class="place">2</h1>
+          <div class="avatar"></div>
+          <p class="nickname">UyserJJKKKJL</p>
+          <p class="count_follovers">99 подписчиков</p>
+        </div>
+      </a>
+
+      <a href="">
+        <div class="author_one" id="1">
+          <h1 class="place">1</h1>
+          <div class="avatar"></div>
+          <p class="nickname">UyserJJKKKJL</p>
+          <p class="count_follovers">99 подписчиков</p>
+        </div>
+      </a>
+
+      <a href="">
+        <div class="author_one" id="3">
+          <h1 class="place">3</h1>
+          <div class="avatar"></div>
+          <p class="nickname">UyserJJKKKJL</p>
+          <p class="count_follovers">99 подписчиков</p>
+        </div>
+      </a>
+
+      <a href="{% url 'become_an_author' %}" class="join_authors">
+        Стать одним из них
+      </a>
+    </div>
+  </div>
+
+  <div class="full_width overflow_hidden some_divs_in_line">
+    <div class="overflow_hidden one_div_in_line about_filter">
+      <h1>Без лишнего!</h1>
+      <p>Удобная система фильтров.</p>
+      <img src="" alt="" class="logo">
+      <img src="" alt="" class="front">
+      <img src="" alt="" class="back">
+    </div>
+
+    <div class="overflow_hidden one_div_in_line about_pub_funcs">
+      <h1>Хм, довольно<br>   разнообра-ааа-азно </h1>
+      <p>Масса манипуляций над публикацией.</p>
+      <img src="" alt="" class="logo">
+      <img src="" alt="" class="front">
+    </div>
+  </div>
+
+  <div class="full_width overflow_hidden about_notifications">
+    <h1>Быть в курсе всего</h1>
+    <img src="" alt="" class="logo">
+    <p>
+      Уведомления дадут знать о выпуске новых публикаций, напомнят об пополнении<br>
+      в «Избранном», а также расскажут<br>
+      про действия поддержки с Вашим причастием, включая и жалобы на Вас :)
+    </p>
+    <img src="" alt="" class="front">
+    <img src="" alt="" class="back">
+  </div>
+
+  <a href="{% url 'send_to_support' %}">
+    <div class="full_width overflow_hidden about_supporting">
+      <img src="" alt="" class="example">
+      <h1>Неподабающий <span>Б#@%ь! <img src="😡" alt=""></span> контент?</h1>
+      <p>Пожалуйста срочно подайте жалобу на такого пользователя или его публикацию. Администрация разберётся с такими. Заранее Большое Вам Спасибо 🖤️</p>
+    </div>
+  </a>
+
+  <div class="full_width overflow_hidden some_divs_in_line">
+
+    <a href="{% url 'become_an_author' %}">
+      <div class="overflow_hidden one_div_in_line about_becoming_an_author">
+        <h1>Стать автором<br>  публикаций?</h1>
+        <img src="" alt="" class="logo">
+        <p>Скорее отвправляй заявку!</p>
+        <img src="" alt="" class="example">
+      </div>
+    </a>
+
+    <a href="{% url 'become_a_teammemder' %}">
+      <div class="overflow_hidden one_div_in_line about_becoming_an_administrator">
+        <h1>Стать<br>   администратором?</h1>
+        <img src="" alt="" class="logo">
+        <p>Давай заявку скорее!</p>
+        <img src="" alt="" class="example">
+      </div>
+    </a>
+  </div>
+
+  <div class="full_width overflow_hidden some_divs_in_line what_to_start">
+    <h1>Ну что, с чего начнём?</h1>
+
+    <a href="{% url 'repairs' %}">
+      <div class="overflow_hidden one_div_in_line repairs">
+        <img src="" alt="" class="example">
+        <h1>Про ремонт</h1>
+        <p>Инструкции, советы, обзоры – всё, что связано с ремонтом домов и квартир</p>
+      </div>
+    </a>
+
+    <a href="{% url 'designs' %}">
+      <div class="overflow_hidden one_div_in_line designs">
+        <img src="" alt="" class="example">
+        <h1>Про дизайн</h1>
+        <p>Советы, обзоры уроки, готовые решения – всё, что связано с дизайном домов и квартир</p>
+      </div>
+    </a>
+
+    <a href="{% url 'lifehacks' %}">
+      <div class="overflow_hidden one_div_in_line repair">
+        <img src="" alt="" class="example">
+        <h1>Лайфхаки</h1>
+        <p>Несложные хитрости в быту, ремонте или дизайне</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="full_width overflow_hidden search_input_block">
+    <h1>Поиск</h1>
+    <div class="footer_search">
+        <img src="/static/sources/SVG/search.svg" alt="">
+        <form class="" action="{% url 'search' %}" method="get">
+            <input type="text" name="search_input" value="" placeholder="Я ищу...">
+        </form>
     </div>
   </div>
 {% endblock %}
