@@ -1,0 +1,233 @@
+.position_relative {
+  position: relative;
+}
+.full_width {
+  width: 100%;
+}
+
+.overflow_hidden {
+  overflow: hidden;
+}
+
+.slider_container .slider {
+  height: 470px;
+  transition: .015s;
+}
+.slider_container .slider .left_images {
+  position: absolute;
+  left: 0;
+}
+.slider_container .slider .right_images {
+  position: absolute;
+  right: 0;
+}
+.slider_container .img_div {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: url(../../sources/SVG/logo_mini.svg) no-repeat;
+  border-radius: 12px;
+  box-shadow: 0px 5px 20px #00000038;
+}
+.slider_container .slider .text {
+  width: max-content;
+  position: absolute;
+  top: 25%;
+  left: 35%;
+}
+.slider_container .slider h1 { font-size: 40px;}
+.slider_container .slider p {font-size: 24px;}
+
+.slider.repairs {
+  color: #502805;
+  background: #F0E5E3;
+}
+.slider.repairs:hover {
+  background: #fbeae7;
+}
+.slider.repairs h1 {width: 440px;}
+.slider.repairs p {width: 380px;}
+
+.slider.repairs #r1.img_div {
+  background: url(../../../media/main_page/r1.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 168px;
+    height: 154px;
+    top: -100px;
+    left: 385px;
+}
+.slider.repairs #r2.img_div {
+  background: url(../../../media/main_page/r2.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 180px;
+    height: 150px;
+    top: -50px;
+    left: 185px;
+}
+.slider.repairs #r3.img_div {
+  background: url(../../../media/main_page/r3.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 186px;
+    left: -25px;
+    height: 154px;
+    top: -97px;
+}
+.slider.repairs #r4.img_div {
+  background: url(../../../media/main_page/r4.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 122px;
+    height: 102px;
+    top: 75px;
+    left: -110px;
+}
+.slider.repairs #r5.img_div {
+  background: url(../../../media/main_page/r5.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 122px;
+    height: 102px;
+    top: 75px;
+    left: 35px;
+}
+.slider.repairs #r6.img_div {
+  background: url(../../../media/main_page/r4.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 122px;
+    height: 103px;
+    top: 121px;
+    left: 184px;
+}
+.slider.repairs #r7.img_div {
+  background: url(../../../media/main_page/r7.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 175px;
+    height: 147px;
+    top: 198px;
+    left: -15px;
+}
+.slider.repairs #r8.img_div {
+  background: url(../../../media/main_page/r8.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+    width: 97px;
+    height: 84px;
+    left: 185px;
+    top: 244px;
+}
+.slider.repairs #r9.img_div {
+  background: url(../../../media/main_page/r9.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+     width: 122px;
+     height: 102px;
+    left: 302px;
+    top: 260px;
+}
+.slider.repairs #r10.img_div {
+  background: url(../../../media/main_page/r10.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 288px;
+    height: 260px;
+    top: 366px;
+    left: -10px;
+}
+.slider.repairs #r11.img_div {
+  background: url(../../../media/main_page/r5.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+     width: 160px;
+     height: 134px;
+    top: 382px;
+    left: 300px;
+}
+.slider.repairs #r12.img_div {
+  background: url(../../../media/main_page/r12.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 160px;
+    height: 134px;
+    top: 382px;
+    left: 480px;
+}
+.slider.repairs #r13.img_div {
+  background: url(../../../media/main_page/r13.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  height: 154px;
+    width: 186px;
+    right: 343px;
+    top: 360px;
+}
+.slider.repairs #r14.img_div {
+  background: url(../../../media/main_page/r14.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 120px;
+    height: 100px;
+    top: 394px;
+    right: 203px;
+}
+.slider.repairs #r15.img_div {
+  background: url(../../../media/main_page/r15.png);  background-position: center; background-repeat: no-repeat; background-size: cover;
+  right: -80px;
+    top: 399px;
+    width: 265px;
+    height: 219px;
+}
+.slider.repairs #r16.img_div {
+  background: url(../../../media/main_page/r16.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  right: -20px;
+    width: 203px;
+    height: 169px;
+    top: 210px;
+}
+.slider.repairs #r17.img_div {
+  background: url(../../../media/main_page/r17.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 120px;
+    height: 100px;
+    top: 274px;
+    right: 203px;
+}
+.slider.repairs #r18.img_div {
+  background: url(../../../media/main_page/r18.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  top: 90px;
+    right: 204px;
+    width: 197px;
+    height: 164px;
+}
+.slider.repairs #r19.img_div {
+  background: url(../../../media/main_page/r19.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  top: 89px;
+    right: 63px;
+    width: 120px;
+    height: 100px;
+}
+.slider.repairs #r20.img_div {
+  background: url(../../../media/main_page/r20.png);background-position: center; background-repeat: no-repeat; background-size: cover;
+  right: -220px;
+    top: -30px;
+    width: 265px;
+    height: 219px;
+}
+.slider.repairs #r21.img_div {
+  background: url(../../../media/main_page/r21.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  right: 61px;
+    top: -31px;
+    width: 120px;
+    height: 100px;
+}
+.slider.repairs #r22.img_div {
+  background: url(../../../media/main_page/r22.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 144px;
+    height: 120px;
+    top: -50px;
+    right: 201px;
+}
+.slider.repairs #r23.img_div {
+  background: url(../../../media/main_page/r4.png); background-position: center; background-repeat: no-repeat; background-size: cover;
+  width: 122px;
+    height: 102px;
+    right: 365px;
+    top: -31px;
+}
+
+
+.slider.designs {
+  color: #385005;
+  background: #EAF0E3;
+}
+.slider.designs:hover {
+  background: #E4F0D7;
+}
+.slider.designs h1 {width: 440px;}
+.slider.designs p {width: 440px;}
+
+
+.slider.lifehacks {
+  color: #500548;
+  background: #F0E3F0;
+}
+.slider.lifehacks:hover {
+  background: #ECD3ED;
+}
+.slider.lifehacks h1 {width: 600px;}
+.slider.lifehacks p {width: 520px;}
