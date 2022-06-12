@@ -614,7 +614,7 @@ def change_shared_count(request, pk):
 
 #   ОТФИЛЬТРОВАТЬ ПУБЛИКАЦИИ
 
-def filter_pubs_by_property(pubs, attr):
+def order_pubs_by_property(pubs, attr):
     pubs = list(pubs)
     n = 1
     while n < len(pubs):
@@ -667,9 +667,9 @@ def filter_pubs (method_GET, request):
         pubs = pubs.order_by('pushed')                         if method_GET['ordering'] == 'by_old'          else pubs
         pubs = pubs.order_by(Lower('title'))                   if method_GET['ordering'] == 'by_name'         else pubs
         pubs = pubs.order_by('-shared_count')                  if method_GET['ordering'] == 'by_shared_count' else pubs
-        pubs = filter_pubs_by_property(pubs, 'seen_count')     if method_GET['ordering'] == 'by_seen_count'   else pubs
-        pubs = filter_pubs_by_property(pubs, 'save_percent')   if method_GET['ordering'] == 'by_savest'       else pubs
-        pubs = filter_pubs_by_property(pubs, 'reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
+        pubs = order_pubs_by_property(pubs, 'seen_count')     if method_GET['ordering'] == 'by_seen_count'   else pubs
+        pubs = order_pubs_by_property(pubs, 'save_percent')   if method_GET['ordering'] == 'by_savest'       else pubs
+        pubs = order_pubs_by_property(pubs, 'reported_count') if method_GET['ordering'] == 'by_reports'      else pubs
 
     if request.user.is_authenticated:
         JournalActions.objects.create(

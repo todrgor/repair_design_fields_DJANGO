@@ -27,7 +27,7 @@
 
   <div class="slider_container about_pub_tybes position_relative full_width overflow_hidden">
     <a href="{% url 'repairs' %}">
-      <div class="slider repairs overflow_hidden position_relative" id="1">
+      <div class="slide repairs show overflow_hidden position_relative" id="0">
         <div class="text">
           <h1>Про ремонт квартир и домов – всё тут.</h1>
           <p>Как, где, что именно, когда<br>и в какой последовательности.</p>
@@ -64,40 +64,44 @@
     </a>
 
     <a href="{% url 'designs' %}">
-      <div class="slider designs overflow_hidden position_relative" id="2">
+      <div class="slide designs overflow_hidden position_relative" id="1">
         <div class="text">
           <h1>Всё про дизайн<br>и интерьер домов</h1>
           <p>Стили, хитрости, авторские взгляды и готовые решения.</p>
         </div>
 
-        <div class="img_div" id="d1"></div>
-        <div class="img_div" id="d2"></div>
-        <div class="img_div" id="d3"></div>
-        <div class="img_div" id="d4"></div>
-        <div class="img_div" id="d5"></div>
-        <div class="img_div" id="d6"></div>
-        <div class="img_div" id="d7"></div>
-        <div class="img_div" id="d8"></div>
-        <div class="img_div" id="d9"></div>
-        <div class="img_div" id="d10"></div>
-        <div class="img_div" id="d11"></div>
-        <div class="img_div" id="d12"></div>
-        <div class="img_div" id="d13"></div>
-        <div class="img_div" id="d14"></div>
-        <div class="img_div" id="d15"></div>
-        <div class="img_div" id="d16"></div>
-        <div class="img_div" id="d17"></div>
-        <div class="img_div" id="d18"></div>
-        <div class="img_div" id="d19"></div>
-        <div class="img_div" id="d20"></div>
-        <div class="img_div" id="d21"></div>
-        <div class="img_div" id="d22"></div>
-        <div class="img_div" id="d23"></div>
+        <div class="left_images">
+          <div class="img_div" id="d1"></div>
+          <div class="img_div" id="d2"></div>
+          <div class="img_div" id="d3"></div>
+          <div class="img_div" id="d4"></div>
+          <div class="img_div" id="d5"></div>
+          <div class="img_div" id="d6"></div>
+          <div class="img_div" id="d7"></div>
+          <div class="img_div" id="d8"></div>
+          <div class="img_div" id="d9"></div>
+          <div class="img_div" id="d10"></div>
+          <div class="img_div" id="d11"></div>
+        </div>
+        <div class="right_images">
+          <div class="img_div" id="d12"></div>
+          <div class="img_div" id="d13"></div>
+          <div class="img_div" id="d14"></div>
+          <div class="img_div" id="d15"></div>
+          <div class="img_div" id="d16"></div>
+          <div class="img_div" id="d17"></div>
+          <div class="img_div" id="d18"></div>
+          <div class="img_div" id="d19"></div>
+          <div class="img_div" id="d20"></div>
+          <div class="img_div" id="d21"></div>
+          <div class="img_div" id="d22"></div>
+          <div class="img_div" id="d23"></div>
+        </div>
       </div>
     </a>
 
     <a href="{% url 'lifehacks' %}">
-      <div class="slider lifehacks overflow_hidden position_relative" id="3">
+      <div class="slide lifehacks overflow_hidden position_relative" id="2">
         <div class="text">
           <h1>Лайфхаки – ёмко и полезно.</h1>
           <p>Маленькие хитрости для упрощения быта, создания уюта или упрощения ремонта.</p>
@@ -132,156 +136,225 @@
 
   <a href="{% if user.is_authenticated %}{% url 'saved' %}{% else %}{% url 'login' %}{% endif %}">
     <div class="about_saved position_relative full_width overflow_hidden">
-      <h1>Не потеряйте ни одной</h1>
-      <p>Чтобы в любой момент быстро вернуться к особенным публикациям, добавляйте их в «Избранное»  </p>
-
-      <div class="saved_buttom_and_signature">
-        <div class="saved_buttom">
-          Избранное <img src="/static/sources/SVG/heart.svg" alt="">
-        </div>
-        <div class="signature">
-          Уже сохранено 99 публикаций
+      <div class="text position_relative">
+        <h1>Не потеряйте ни одной</h1>
+        <p>Чтобы в любой момент быстро вернуться к особенным<br>публикациям, добавляйте их в <span class="space_for_button noselectable">nnnnnnnnn</span></p>
+        <div class="saved_buttom_and_signature">
+          <div class="saved_buttom_bg"><p class="saved_buttom saved_heart">Избранное <img src="/static/sources/SVG/heart.svg" alt=""></p></div>
+          <p class="signature">
+            {% if user.is_authenticated %}
+              {% if saved_pubs_count %}
+                Уже сохранено {{ saved_pubs_count }} публикаций
+              {% else %}
+                Ещё ни одной публикации не сохранено
+              {% endif %}
+            {% else %}
+              Авторизируйтесь и сохраняйте!
+            {% endif %}
+          </p>
         </div>
       </div>
 
       <div class="images">
-        <div class="img_div" id="1"></div>
-        <div class="img_div" id="2"></div>
-        <div class="img_div" id="3"></div>
+        <div class="img_div" id="s1"></div>
+        <div class="img_div" id="s2"></div>
+        <div class="img_div" id="s3"></div>
       </div>
     </div>
   </a>
 
-  <div class="about_best_authors position_relative full_width">
-    <h1>Топ авторов публикаций</h1>
-    <p>Лучший избирается по самой сохраняемой публикации</p>
-    <div class="authors_container">
-      <a href="">
-        <div class="author_one" id="2">
-          <h1 class="place">2</h1>
-          <div class="avatar"></div>
-          <p class="nickname">UyserJJKKKJL</p>
-          <p class="count_follovers">99 подписчиков</p>
-        </div>
-      </a>
-
-      <a href="">
-        <div class="author_one" id="1">
-          <h1 class="place">1</h1>
-          <div class="avatar"></div>
-          <p class="nickname">UyserJJKKKJL</p>
-          <p class="count_follovers">99 подписчиков</p>
-        </div>
-      </a>
-
-      <a href="">
-        <div class="author_one" id="3">
-          <h1 class="place">3</h1>
-          <div class="avatar"></div>
-          <p class="nickname">UyserJJKKKJL</p>
-          <p class="count_follovers">99 подписчиков</p>
-        </div>
-      </a>
-
-      <a href="{% url 'become_an_author' %}" class="join_authors">
-        Стать одним из них
-      </a>
+  <div class="about_best_authors position_relative overflow_hidden full_width">
+    <div class="text">
+      <h1>Топ авторов публикаций</h1>
+      <p>Лучший избирается по самой сохраняемой публикации</p>
     </div>
+
+    <div class="authors_container">
+      {% if first_author %}
+        {% if second_author %}
+          <a href="{% url 'auth:one' pk=second_author.id %}">
+            <div class="author_one" id="a2">
+              <h1 class="place">2</h1>
+              <div class="avatar" style="background: url({{ second_author.photo.url }}) no-repeat; background-size: cover; background-position: center;"></div>
+              <p class="nickname">{{ second_author.username }}</p>
+              <p class="count_follovers">{{ second_author.made_pubs_count }} публикаций</p>
+            </div>
+          </a>
+        {% endif %}
+
+        <a href="{% url 'auth:one' pk=first_author.id %}">
+          <div class="author_one" id="a1">
+            <h1 class="place">1</h1>
+            <div class="avatar" style="background: url({{ first_author.photo.url }}) no-repeat; background-size: cover; background-position: center;"></div>
+            <p class="nickname">{{ first_author.username }}</p>
+            <p class="count_follovers">{{ first_author.made_pubs_count }} публикаций</p>
+          </div>
+        </a>
+
+        {% if third_author %}
+          <a href="{% url 'auth:one' pk=third_author.id %}">
+            <div class="author_one" id="a3">
+              <h1 class="place">3</h1>
+              <div class="avatar" style="background: url({{ third_author.photo.url }}) no-repeat; background-size: cover; background-position: center;"></div>
+              <p class="nickname">{{ third_author.username }}</p>
+              <p class="count_follovers">{{ third_author.made_pubs_count }} публикаций</p>
+            </div>
+          </a>
+        {% endif %}
+
+      {% else %}
+        <p>По ошибке ли, по их несуществованию ли, но топа авторов почему-то нет...</p>
+      {% endif %}
+    </div>
+
+    <a href="{% url 'become_an_author' %}" class="join_authors">
+      Стать одним из них
+    </a>
   </div>
 
   <div class="some_divs_in_line full_width overflow_hidden">
     <div class="about_filter one_div_in_line position_relative overflow_hidden">
-      <h1>Без лишнего!</h1>
-      <p>Удобная система фильтров.</p>
-      <div class="img_div logo"></div>
-      <div class="img_div front"></div>
-      <div class="img_div back"></div>
+      <div class="content_container margin_0_auto position_relative">
+        <div class="text">
+          <div class="">
+            <h1>Без лишнего!</h1>
+            <p>Удобная система фильтров.</p>
+          </div>
+          <img class="logo" src="/media/main_page/about_filter_logo.svg" alt="">
+        </div>
+        <img class="example" src="/media/main_page/about_filter_example.png" alt="">
+      </div>
     </div>
 
     <div class="about_pub_funcs one_div_in_line position_relative overflow_hidden">
-      <h1>Хм, довольно<br>   разнообра-ааа-азно </h1>
-      <p>Масса манипуляций над публикацией.</p>
-      <div class="img_div logo"></div>
-      <div class="img_div front"></div>
+      <div class="content_container margin_0_auto position_relative">
+        <div class="text">
+          <img class="logo" src="/media/main_page/about_pub_funcs_logo.svg" alt="">
+          <div class="">
+            <h1>Хм, довольно<br><span class="space_for_button noselectable">nn</span>разнообра-ааа-азно </h1>
+            <p>Масса манипуляций над публикацией.</p>
+          </div>
+        </div>
+        <img class="example" src="/media/main_page/about_pub_funcs_example.png" alt="">
+        <div class="img_div front"></div>
+      </div>
     </div>
   </div>
 
   <div class="about_notifications position_relative full_width overflow_hidden">
-    <h1>Быть в курсе всего</h1>
-    <div class="img_div logo"></div>
-    <p>
-      Уведомления дадут знать о выпуске новых публикаций, напомнят об пополнении<br>
-      в «Избранном», а также расскажут<br>
-      про действия поддержки с Вашим причастием, включая и жалобы на Вас :)
-    </p>
-    <div class="img_div front"></div>
-    <div class="img_div back"></div>
+    <div class="content_container margin_0_auto position_relative">
+      <div class="text">
+        <h1>Быть в курсе всего <span><img class="logo" src="/media/main_page/about_notifications_logo.svg" alt=""></span></h1>
+        <p>
+          Уведомления дадут знать о выпуске новых публикаций, напомнят об пополнении<br>
+          в «Избранном», а также расскажут<br>
+          про действия поддержки с Вашим причастием, включая и жалобы на Вас :)
+        </p>
+      </div>
+      <img class="example" src="/media/main_page/about_notifications_example.png" alt="">
+    </div>
   </div>
 
   <a href="{% url 'send_to_support' %}">
     <div class="about_supporting position_relative full_width overflow_hidden">
-      <div class="img_div example"></div>
-      <h1>Неподабающий <span>Б#@%ь! <img src="😡" alt=""></span> контент?</h1>
-      <p>Пожалуйста срочно подайте жалобу на такого пользователя или его публикацию. Администрация разберётся с такими. Заранее Большое Вам Спасибо 🖤️</p>
+      <div class="content_container margin_0_auto position_relative">
+        <img class="example" src="/media/main_page/about_supporting_example.png" alt="">
+        <div class="text">
+          <h1>Неподабающий <span class="space_for_button noselectable">nnnnn</span> контент?</h1>
+          <p class="effect">Б#@%ь! 😡</p>
+          <p>Пожалуйста срочно подайте жалобу на такого пользователя или его публикацию. Администрация разберётся с такими. Заранее Большое Вам Спасибо 🖤️</p>
+        </div>
+      </div>
     </div>
   </a>
 
-  <div class="some_divs_in_line full_width overflow_hidden">
+  <div class="change_role_variants some_divs_in_line full_width overflow_hidden">
 
     <a href="{% url 'become_an_author' %}">
-      <div class="about_becoming_an_author one_div_in_line position_relative overflow_hidden">
-        <h1>Стать автором<br>  публикаций?</h1>
-        <div class="img_div logo"></div>
-        <p>Скорее отвправляй заявку!</p>
-        <div class="img_div example"></div>
+      <div class="about_becoming_an_author one_div_in_line position_relative overflow_hidden full_width">
+        <div class="content_container margin_0_auto position_relative">
+          <div class="text">
+            <div class="">
+              <h1>Стать автором<br><span class="space_for_button noselectable">nn</span>публикаций?</h1>
+              <p>Скорее отвправляй заявку!</p>
+            </div>
+            <img class="logo" src="/media/main_page/about_becoming_an_author_logo.svg" alt="">
+          </div>
+        </div>
+        <img class="example" src="/media/main_page/about_becoming_an_author_example.png" alt="">
       </div>
     </a>
 
     <a href="{% url 'become_a_teammemder' %}">
-      <div class="about_becoming_an_administrator one_div_in_line overflow_hidden">
-        <h1>Стать<br>   администратором?</h1>
-        <div class="img_div logo"></div>
-        <p>Давай заявку скорее!</p>
-        <div class="img_div example"></div>
+      <div class="about_becoming_an_administrator one_div_in_line position_relative overflow_hidden full_width">
+        <div class="content_container margin_0_auto position_relative">
+          <div class="text">
+            <div class="">
+              <h1>Стать<br><span class="space_for_button noselectable">nn</span>администратором?</h1>
+              <p>Давай заявку скорее!</p>
+            </div>
+            <img class="logo" src="/media/main_page/about_becoming_an_administrators_logo.svg" alt="">
+          </div>
+        </div>
+        <img class="example" src="/media/main_page/about_becoming_an_administrator_example.png" alt="">
       </div>
     </a>
   </div>
 
-  <div class="what_to_start some_divs_in_line full_width overflow_hidden">
-    <h1>Ну что, с чего начнём?</h1>
-
+  <div class="what_to_start full_width overflow_hidden">
     <a href="{% url 'repairs' %}">
-      <div class="overflow_hidden one_div_in_line repairs">
-        <div class="img_div example"></div>
-        <h1>Про ремонт</h1>
-        <p>Инструкции, советы, обзоры – всё, что связано с ремонтом домов и квартир</p>
+      <div class="repairs show overflow_hidden pub_type_one full_width position_relative" id="0">
+        <div class="text">
+          <h1>Откройте<br>публикации про ремонт</h1>
+          <p>Инструкции, советы, обзоры – всё, что связано с ремонтом домов и квартир</p>
+        </div>
+        <div class="images">
+          <div class="img_div" id="r1"></div>
+          <div class="img_div" id="r2"></div>
+        </div>
       </div>
     </a>
 
     <a href="{% url 'designs' %}">
-      <div class="overflow_hidden one_div_in_line designs">
-        <div class="img_div example"></div>
-        <h1>Про дизайн</h1>
-        <p>Советы, обзоры уроки, готовые решения – всё, что связано с дизайном домов и квартир</p>
+      <div class="designs overflow_hidden pub_type_one full_width position_relative" id="1">
+        <div class="text">
+          <h1>Посмотрите<br>публикации про дизайн</h1>
+          <p>Советы, обзоры уроки, готовые решения – всё, что связано с дизайном домов и квартир</p>
+        </div>
+        <div class="images">
+          <div class="img_div" id="d1"></div>
+          <div class="img_div" id="d2"></div>
+        </div>
       </div>
     </a>
 
     <a href="{% url 'lifehacks' %}">
-      <div class="overflow_hidden one_div_in_line repair">
-        <div class="img_div example"></div>
-        <h1>Лайфхаки</h1>
-        <p>Несложные хитрости в быту, ремонте или дизайне</p>
+      <div class="lifehacks overflow_hidden pub_type_one full_width position_relative" id="2">
+        <div class="text">
+          <h1>Оцените<br>публикации-лайфхаки</h1>
+          <p>Несложные хитрости в быту,<br>ремонте или дизайне</p>
+        </div>
+        <div class="images">
+          <div class="img_div" id="l1"></div>
+          <div class="img_div" id="l2"></div>
+        </div>
       </div>
     </a>
   </div>
 
-  <div class="full_width overflow_hidden search_input_block">
-    <h1>Поиск</h1>
-    <div class="footer_search">
-        <img src="/static/sources/SVG/search.svg" alt="">
+  <div class="search_input_block full_width overflow_hidden">
+    <div class="content_container margin_0_auto">
+      <h1>Поиск</h1>
+      <div class="footer_search">
+        <img src="/static/sources/SVG/search_white.svg" alt="">
         <form class="" action="{% url 'search' %}" method="get">
-            <input type="text" name="search_input" value="" placeholder="Я ищу...">
+          <input type="text" name="search_input" value="" placeholder="Я ищу...">
         </form>
+      </div>
     </div>
   </div>
+{% endblock %}
+
+{% block scripts_individual %}
+<script src="/static/lib/js/hello-user-animation.js"></script>
 {% endblock %}
