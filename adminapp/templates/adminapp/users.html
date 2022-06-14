@@ -29,18 +29,20 @@
   <div class="admin_menu_bg">
     <div class="admin_menu">
       <a href="{% url 'admin_mine:main' %}">Главная</a>
-      <a href="{% url 'admin_mine:letters_to_support' %}">Обращения в поддержку</a>
+      <a href="{% url 'admin_mine:letters_to_support' %}" class="letters_to_support">Обращения в поддержку{% if new_letters_to_support_count %}<span class="count">{{ new_letters_to_support_count }}</span>{% endif %}</a>
       <a href="">Пользователи</a>
       <a href="{% url 'admin_mine:pubs' %}">Публикации</a>
       <a href="{% url 'admin_mine:tags_and_tag_categories' %}">Теги и их категории</a>
       <a href="{% url 'admin_mine:journal' %}">Журнал событий</a>
     </div>
   </div>
+
   <div class="page_title">
     <p class="title_p">Пользователи</p>
     <p class="count_pubs">всего {{ users.count }}</p>
     {% if user.role.id == 4 %}<a href="{% url 'adminapp:user_create_new' %}" class="create_new" style="margin-left: 56%;">создать нового ›</a>{% endif %}
   </div>
+
    <div class="pubs_container">
      <div class="pubs_container_one_type withBorder show" id='pubs'>
          <table border="1" class="pubs">
@@ -122,15 +124,15 @@
              {% endfor %}
          </table>
      </div>
-
   </div>
+
   <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
     <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
       <h1 class="dont_close_on_click">Вы точно хотите удалить аккаунт?</h1>
       <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Аккаунт нельзя будет восстаноить. Никак.</p>
       <div class="cancel_or_delete">
         <p id="cancel_deleting" class="cancel">Отмена</p>
-        <a href="account/delete/#>" id="delete">Удалить аккаунт</a>
+        <a href="smthng/delete/#>" id="delete">Удалить аккаунт</a>
       </div>
     </div>
   </div>

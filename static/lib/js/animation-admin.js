@@ -4,6 +4,13 @@ function toggleShow(idContainer) {
   $(".letter_type_container_title#"+idContainer+" .triangle_to_open_and_hide").toggleClass('dontShow');
 }
 
+function really_delete_letter(letter_id) {
+  name = $('table tr#'+ letter_id +' .ask_content p').html();
+  $('.question_block h1').html('Вы точно хотите удалить обращение «'+ name +'»?');
+  $('.cancel_or_delete a').attr('href', '/admin/letter_to_support/'+ letter_id +'/delete/');
+  $('.pub_additional_functions_bg, .question_block').addClass('show');
+}
+
 function really_delete_pub(pub_id) {
   name = $('table tr#'+ pub_id +' .preview_and_pub_name a.name').html();
   $('.question_block h1').html('Вы точно хотите удалить публикацию «'+ name +'»?');

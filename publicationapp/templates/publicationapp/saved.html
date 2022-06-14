@@ -169,7 +169,7 @@
 
             <div class="div_pub_text">
               <p class="pub_text">{{ pub.title }}</p>
-              <div class="some_counts lifehack"><p><span class="count_one">👁‍🗨 {{ pub.seen_count }}</span><span class="count_one">❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
+              <div class="some_counts lifehack"><p><span class="count_one" {% if pub.seen_count %}title="Просмотрели: {{ pub.seen_by_list }}"{% endif %}>👁‍🗨 {{ pub.seen_count }}</span><span class="count_one" {% if pub.saved_count %}title="Сохранили: {{ pub.saved_by_list }}"{% endif %}>❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
             </div>
 
             <div class="pub_tags_container">

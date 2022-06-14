@@ -58,11 +58,14 @@
       <div class="letters_container_one_type show" id='ideas'>
         <table border="1" class="withBorder">
             <tr>
+              {% if user.role.id == 4 %}<th class="functions delete_letter"></th>{% endif %}
               <th>Обращение</th>
               <th>Ответ</th>
             </tr>
             {% for idea in new_ideas %}
               <tr class="without_answer_yet">
+                {% if user.role.id == 4 %}<td class="functions delete_letter"></td>{% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -74,9 +77,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ idea.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px;">{{ idea.ask_content }}</p>
                       {% for photo in all_ideas_photos %}
                         {% if photo.contacting_support_action.id == idea.id %}
                           <img src="{{ photo.photo.url }}">
@@ -85,6 +86,7 @@
                     </div>
                   </div>
                 </td>
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
@@ -109,7 +111,13 @@
             {% endfor %}
 
             {% for idea in ideas %}
-              <tr>
+              <tr id="{{ idea.id }}">
+                {% if user.role.id == 4 %}
+                  <td class="functions delete_letter">
+                    <p onclick="really_delete_letter({{ idea.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                  </td>
+                {% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -121,9 +129,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ idea.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ idea.ask_content }}</p>
                       {% for photo in all_ideas_photos %}
                         {% if photo.contacting_support_action.id == idea.id %}
                           <img src="{{ photo.photo.url }}">
@@ -170,11 +176,14 @@
       <div class="letters_container_one_type show" id='questions'>
         <table border="1" class="withBorder">
             <tr>
+              {% if user.role.id == 4 %}<th class="functions delete_letter"></th>{% endif %}
               <th>Обращение</th>
               <th>Ответ</th>
             </tr>
             {% for question in new_questions %}
               <tr class="without_answer_yet">
+                {% if user.role.id == 4 %}<td class="functions delete_letter"></td>{% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -186,9 +195,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ question.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ question.ask_content }}</p>
                       {% for photo in all_questions_photos %}
                         {% if photo.contacting_support_action.id == question.id %}
                           <img src="{{ photo.photo.url }}">
@@ -197,6 +204,7 @@
                     </div>
                   </div>
                 </td>
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
@@ -221,7 +229,13 @@
             {% endfor %}
 
             {% for question in questions %}
-              <tr>
+              <tr id="{{ question.id }}">
+                {% if user.role.id == 4 %}
+                  <td class="functions delete_letter">
+                    <p onclick="really_delete_letter({{ question.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                  </td>
+                {% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -233,9 +247,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ question.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ question.ask_content }}</p>
                       {% for photo in all_questions_photos %}
                         {% if photo.contacting_support_action.id == question.id %}
                           <img src="{{ photo.photo.url }}">
@@ -282,11 +294,14 @@
       <div class="letters_container_one_type show" id='applications'>
         <table border="1" class="withBorder">
             <tr>
+              {% if user.role.id == 4 %}<th class="functions delete_letter"></th>{% endif %}
               <th>Заявка</th>
               <th>Ответ</th>
             </tr>
             {% for application in new_applications %}
               <tr class="without_answer_yet">
+                {% if user.role.id == 4 %}<td class="functions delete_letter"></td>{% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -304,9 +319,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ application.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ application.ask_content }}</p>
                       {% for photo in all_applications_photos %}
                         {% if photo.contacting_support_action.id == application.id %}
                           <img src="{{ photo.photo.url }}">
@@ -315,6 +328,7 @@
                     </div>
                   </div>
                 </td>
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
@@ -340,7 +354,13 @@
             {% endfor %}
 
             {% for application in applications %}
-              <tr>
+              <tr id="{{ application.id }}">
+                {% if user.role.id == 4 %}
+                  <td class="functions delete_letter">
+                    <p onclick="really_delete_letter({{ application.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                  </td>
+                {% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -358,9 +378,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ application.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ application.ask_content }}</p>
                       {% for photo in all_applications_photos %}
                         {% if photo.contacting_support_action.id == application.id %}
                           <img src="{{ photo.photo.url }}">
@@ -416,11 +434,14 @@
       <div class="letters_container_one_type show" id='reports'>
         <table border="1" class="withBorder">
             <tr>
+              {% if user.role.id == 4 %}<th class="functions delete_letter"></th>{% endif %}
               <th>Жалоба</th>
               <th>Ответ</th>
             </tr>
             {% for report in new_reports %}
               <tr class="without_answer_yet">
+                {% if user.role.id == 4 %}<td class="functions delete_letter"></td>{% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -450,9 +471,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ report.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ report.ask_content }}</p>
                       {% for photo in all_reports_photos %}
                         {% if photo.contacting_support_action.id == report.id %}
                           <img src="{{ photo.photo.url }}">
@@ -461,6 +480,7 @@
                     </div>
                   </div>
                 </td>
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
@@ -539,7 +559,13 @@
             {% endfor %}
 
             {% for report in reports %}
-              <tr>
+              <tr id="{{ report.id }}">
+                {% if user.role.id == 4 %}
+                  <td class="functions delete_letter">
+                    <p onclick="really_delete_letter({{ report.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                  </td>
+                {% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -573,10 +599,7 @@
                     </div>
 
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ report.ask_content }}
-                      </p>
-
+                      <p style="margin-bottom: 10px">{{ report.ask_content }}</p>
                       {% for photo in all_reports_photos %}
                         {% if photo.contacting_support_action.id == report.id %}
                           <img src="{{ photo.photo.url }}">
@@ -647,11 +670,14 @@
       <div class="letters_container_one_type show" id='strange_letters'>
         <table border="1" class="withBorder">
             <tr>
+              {% if user.role.id == 4 %}<th class="functions delete_letter"></th>{% endif %}
               <th>Обращение</th>
               <th>Ответ</th>
             </tr>
             {% for strange_letter in new_strange_letters %}
               <tr class="without_answer_yet">
+                {% if user.role.id == 4 %}<td class="functions delete_letter"></td>{% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -664,9 +690,7 @@
                       </div>
                     </div>
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ strange_letter.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ strange_letter.ask_content }}</p>
                       {% for photo in all_strange_letters_photos %}
                         {% if photo.contacting_support_action.id == strange_letter.id %}
                           <img src="{{ photo.photo.url }}">
@@ -675,6 +699,7 @@
                     </div>
                   </div>
                 </td>
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <p class="admin_checked_the_letter">Ответа ещё нет</p>
@@ -699,7 +724,13 @@
             {% endfor %}
 
             {% for strange_letter in strange_letters %}
-              <tr>
+              <tr id="{{ strange_letter.id }}">
+                {% if user.role.id == 4 %}
+                  <td class="functions delete_letter">
+                    <p onclick="really_delete_letter({{ strange_letter.id }})" id="really_delete"><span class="icon p_delete_black"></span></p>
+                  </td>
+                {% endif %}
+
                 <td style='min-width: 520px;'>
                   <div class="letters_to_support_text_and_img">
                     <div class="photo_and_nickname" style="align-items: center;">
@@ -711,10 +742,9 @@
                         <p style="color:gray;">{{ strange_letter.when_asked }}</p>
                       </div>
                     </div>
+
                     <div class="ask_content" style="display: block; padding-left: 25px;">
-                      <p style="margin-bottom: 10px;">
-                        {{ strange_letter.ask_content }}
-                      </p>
+                      <p style="margin-bottom: 10px">{{ strange_letter.ask_content }}</p>
                       {% for photo in all_strange_letters_photos %}
                         {% if photo.contacting_support_action.id == strange_letter.id %}
                           <img src="{{ photo.photo.url }}">
@@ -753,6 +783,17 @@
         </table>
       </div>
     {% endif %}
+  </div>
+
+  <div class="pub_additional_functions_bg" > <!-- доп функции с публикацией -->
+    <div class="delete_the_pub question_block dont_close_on_click"> <!-- подтверждение удаление публикации -->
+      <h1 class="dont_close_on_click">Вы точно хотите удалить обращение в поддержку?</h1>
+      <p style="margin: 20px 0;" class="dont_close_on_click">Вы уверены, что не будете потом об этом жалеть? Обращение нельзя будет восстаноить. Никак.</p>
+      <div class="cancel_or_delete">
+        <p id="cancel_deleting" class="cancel">Отмена</p>
+        <a href="smthng/delete/#>" id="delete">Удалить обращение</a>
+      </div>
+    </div>
   </div>
 
   <div class="to_top_button">

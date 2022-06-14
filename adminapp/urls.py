@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('tags_and_tag_categories/', adminapp.TagsAndTagCategories, name='tags_and_tag_categories'),
     path('letters_to_support/', adminapp.LettersToSupport, name='letters_to_support'),
+    path('letter_to_support/<int:pk>/delete/', adminapp.DeleteLetterToSupport, name='delete_letter_to_support'),
     path('pubs/', adminapp.PubList.as_view(), name='pubs'),
     path('users/', adminapp.UserList.as_view(), name='users'),
     path('user/<int:pk>/', adminapp.UserIndividual, name='user_individual'),

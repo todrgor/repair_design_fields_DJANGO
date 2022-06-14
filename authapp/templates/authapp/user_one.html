@@ -1,7 +1,11 @@
 {% extends 'mainapp/base.html' %}
 
 {% block title %}
-  Пользователь {{opened_user.username}}
+  {% if opened_user %}
+    Пользователь {{opened_user.username}}
+  {% else %}
+    Пользователя не существует
+  {% endif %}
 {% endblock %}
 
 {% block css %}
@@ -14,7 +18,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="pubs_container">
+  <div class="pubs_container" {% if not opened_user %}style="min-height: fit-content; margin-bottom: 0; margin-top: 60px;"{% endif %}>
     <div class="ne_nuzhno_no_dlya_starogo_skripta_nuzhno" style="display: none;"><!-- в header присутствует проверка на ховер, и без этого блока весь js ломается -->
       <div class="pub_id" id="1"></div>
       <div id="tags_count"></div>
@@ -43,374 +47,386 @@
       <div class="other_hover">           <img src="/static/sources/SVG/other_hover.svg" alt=""></div>
     </div>
 
-    <div class="photo_nickname_role_additionalFunctions">
-      <img src="{{ opened_user.photo.url }}" alt="" class="user_photo">
-      <div class="user_nickname_and_role">
-        <h4 class="user_nikname">{{ opened_user.username }}</h4>
-        <p class="user_role">
-          {% if opened_user.role.id == 1 %}
-            Пользователь-зритель
-          {% elif opened_user.role.id == 2 %}
-            Автор публикаций
-          {% elif opened_user.role.id == 3 %}
-            Администратор
-          {% elif opened_user.role.id == 4 and opened_user.id == 1 %}
-            СуперАдминистратор и создатель проекта
-          {% elif opened_user.role.id == 4 and opened_user.id != 1 %}
-            СуперАдминистратор
-          {% else %}
-            Какого-то фига у пользователя не определена его роль
-          {% endif %}
-        </p>
+    {% if not opened_user %}
+        <div style="display: flex; align-items: center;">
+          <div class="text">
+            <h1 style="margin-bottom: 20px;">Не существует пользователя по указанному адресу.</h1>
+            <p style="color: gray;">Возможно, Вы ошиблись адресом.<br>Или произошла какая-то ошибка.</p>
+          </div>
+          <img src="/static/sources/images/user_404.png" alt="" style="margin-right: -30px;">
+        </div>
       </div>
+    {% else %}
+
+      <div class="photo_nickname_role_additionalFunctions">
+        <img src="{{ opened_user.photo.url }}" alt="" class="user_photo">
+        <div class="user_nickname_and_role">
+          <h4 class="user_nikname">{{ opened_user.username }}</h4>
+          <p class="user_role">
+            {% if opened_user.role.id == 1 %}
+              Пользователь-зритель
+            {% elif opened_user.role.id == 2 %}
+              Автор публикаций
+            {% elif opened_user.role.id == 3 %}
+              Администратор
+            {% elif opened_user.role.id == 4 and opened_user.id == 1 %}
+              СуперАдминистратор и создатель проекта
+            {% elif opened_user.role.id == 4 and opened_user.id != 1 %}
+              СуперАдминистратор
+            {% else %}
+              Какого-то фига у пользователя не определена его роль
+            {% endif %}
+          </p>
+        </div>
+
+        {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
+          {% if user.is_authenticated %}
+            {% if user != opened_user %}
+              <a onclick="toggleGetNotiFromAuthor( {{ opened_user.id }} )" class="nickname_noti" id="{{ opened_user.id }}">
+              <div class="get_noti {% if opened_user in user.following_for.all %} noties_gotten {% endif %}" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
+            {% endif %}
+          {% else %}
+            <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
+            <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
+          {% endif %}
+        {% endif %}
+
+        {% if user != opened_user %}
+          <p onclick="togglePubAdditionalFunctionsAuthor({{ opened_user.id }})" class="additionalFunctions">•••</p>
+        {% endif %}
+      </div>
+
+      {% if opened_user.bio %}
+        <p class="bio notNone">
+          <span class="quotes opening noselectable">«</span>
+          <span class="notNone">{{ opened_user.bio }}</span><span class="quotes closing noselectable">»</span>
+        </p>
+      {% else %}
+        <p class="bio None"><span class="user_doesnt_have_bio">У этого пользователя нет статуса.</span></p>
+        <p class="bio notNone" style="display:none"></p>
+      {% endif %}
 
       {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
-        {% if user.is_authenticated %}
-          {% if user != opened_user %}
-            <a onclick="toggleGetNotiFromAuthor( {{ opened_user.id }} )" class="nickname_noti" id="{{ opened_user.id }}">
-            <div class="get_noti {% if opened_user in user.following_for.all %} noties_gotten {% endif %}" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
-          {% endif %}
-        {% else %}
-          <a onclick="YouHaveToLogin('получать уведомления о новых публикациях этого автора')" class="nickname_noti">
-          <div class="get_noti" title="Получать уведомления о новых записях пользователя {{ opened_user.username }}"></div></a>
-        {% endif %}
-      {% endif %}
-
-      {% if user != opened_user %}
-        <p onclick="togglePubAdditionalFunctionsAuthor({{ opened_user.id }})" class="additionalFunctions">•••</p>
-      {% endif %}
-    </div>
-
-    {% if opened_user.bio %}
-      <p class="bio notNone">
-        <span class="quotes opening noselectable">«</span>
-        <span class="notNone">{{ opened_user.bio }}</span><span class="quotes closing noselectable">»</span>
-      </p>
-    {% else %}
-      <p class="bio None"><span class="user_doesnt_have_bio">У этого пользователя нет статуса.</span></p>
-      <p class="bio notNone" style="display:none"></p>
-    {% endif %}
-
-    {% if opened_user.role.id == 2 or opened_user.role.id == 4 %}
-      <div class="expert_info_and_offer_and_contact_info">
-        {% if expert_info.is_not_empty %}
-          <div class="expert_info_and_offer">
-            <div class="expert_info">
-              <h4>Стаж:</h4>
-                {% if expert_info.knowledge %}
-                  <div class="offer_text_frame">
-                    <div class="offer_text">{{ expert_info.knowledge|safe }}</div>
-                  </div>
-                {% else %}
-                  <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
-                {% endif %}
-            </div>
-
-            <div class="offer">
-              <h4>Услуги:</h4>
-                {% if expert_info.offer %}
-                  <div class="offer_text_frame">
-                    <div class="offer_text">{{ expert_info.offer|safe }}</div>
-                  </div>
-                {% else %}
-                  <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
-                {% endif %}
-            </div>
-
-          </div>
-
-          <div class="contact_info_and_user_some_counts">
-            <div class="contact_info">
-              {% if expert_info.site %}                 <a href="http://{{ expert_info.site }}">                            <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p> </a> {% endif %}
-              {% if expert_info.bisness_phone_number %} <a href="tel:{{ expert_info.bisness_phone_number }}">               <p class="telephone"> <span class="icon"></span>  {{ expert_info.bisness_phone_number }} </p> </a> {% endif %}
-              {% if expert_info.telegram %}             <a href="https://t.me/{{ expert_info.telegram }}">                  <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p> </a> {% endif %}
-              {% if expert_info.whatsapp %}             <a href="https://wa.me/{{ expert_info.whatsapp }} ">                <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p> </a> {% endif %}
-              {% if expert_info.viber %}                <a href="https://vb.me/{{ expert_info.viber }}">                    <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p> </a> {% endif %}
-              {% if expert_info.lol %}                  <a href="http://life-online.ru/{{ expert_info.lol }}">              <p class="lol">       <span class="icon"></span>  {{ expert_info.lol }}                  </p> </a> {% endif %}
-              {% if expert_info.vk %}                   <a href="https://vk.com/{{ expert_info.vk }}">                      <p class="vk">        <span class="icon"></span>  {{ expert_info.vk }}                   </p> </a> {% endif %}
-              {% if expert_info.inst %}                 <a href="https://instagram.com/{{ expert_info.inst }}">             <p class="instagram"> <span class="icon"></span>  {{ expert_info.inst }}                 </p> </a> {% endif %}
-              {% if expert_info.twitter %}              <a href="https://twitter.com/{{ expert_info.twitter }}">            <p class="twitter">   <span class="icon"></span>  {{ expert_info.twitter }}              </p> </a> {% endif %}
-              {% if expert_info.ok %}                   <a href="https://ok.ru/{{ expert_info.ok }}">                       <p class="ok">        <span class="icon"></span>  {{ expert_info.ok }}                   </p> </a> {% endif %}
-              {% if expert_info.address %}              <a href="https://yandex.ru/maps/?text={{ expert_info.address }}">   <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p> </a> {% endif %}
-              {% if expert_info.other %}                                                                                    <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>      {% endif %}
-
-              {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
-                <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
-              {% endif %}
-            </div>
-
-            <div class="user_some_counts">
-              <p>{{ expert_info.count_follovers }} подписчиков</p>
-              <p>{{ opened_user.seen_count }} просмотров страницы</p>
-            </div>
-          </div>
-        {% else %}
-          <div class="expert_info" style="flex-direction: column;">
-            <h4 style="width: 100%; transform: translateX(47%); font-size: 25px;">
-              Нет информации о стаже, услугах и контактах
-            </h4>
-
-            <div class="user_some_counts" style="margin-top: 15px; width: 100%; text-align: center; transform: translateX(47%); color: #bbbbbb;">
-              <p>{{ expert_info.count_follovers }} подписчиков • {{ opened_user.seen_count }} просмотров страницы</p>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-
-      {% if expert_pubs %}
-        <h1 class="author_pubs">{{ expert_pubs.count }} публикаций автора:</h1>
-        {% for pub in expert_pubs %}
-
-          {% if pub.type.id == 31 %} <!-- если это лайфхак -->
-            <div class="pub_one lifehack" id="{{ pub.id }}">
-              <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
-              {% if user.is_authenticated %}
-                {% if pub.author == user or user.role.id == 4 %}
-                  <div class="info_for_author_or_admin" style="display: none;">
-                    <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
-                    <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
-                    <div class="statistics">
-                      <p class="seen_count">{{ pub.seen_count }}</p>
-                      <p class="ununique_seen_count">{{ pub.ununique_seen_count }}</p>
-                      <p class="saved_count">{{ pub.saved_count }}</p>
-                      <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
-                      <p class="average_age_savers">{{ pub.average_age_savers }}</p>
-                      <p class="shared_count">{{ pub.shared_count }}</p>
-                      <p class="reported_count">{{ pub.reported_count }}</p>
-                    </div>
-                  </div>
-                {% endif %}
-              {% endif %}
-
-              <div class="media">
-                {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
-                <video class="paused" muted="muted" controls="controls" loop>
-                  <source src="{{ pub.preview.url }}" type='video/mp4;'>
-                  Тег video не поддерживается вашим браузером. Увы.
-                </video>
-                {% else %}
-                  <img src="{{ pub.preview.url }}" alt="">
-                {% endif %}
-                <div class="img_black_gradient"> </div>
-              </div>
-
-              <div class="pub_info">
-                <div class="pub_to_do">
-                  <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}">
-                    <a onclick="
-                    {% if user.is_authenticated %}
-                      toggleSavePub_LH( {{ pub.id }} )
-                    {% else %}
-                      YouHaveToLogin('сохранить публикацию')
-                    {% endif %}
-                    " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
-                  </div>
-
-                  <div class="pub_author_cntnr">
-                    <div class="pub_author">
-                      <a href="{% url 'auth:one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
-                      <div class="nickname_and_role">
-                        <div class="nickname">
-                          <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
-
-                            {% if user.is_authenticated %}
-                              {% if user != pub.author %}
-                                <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
-                                <div class="get_noti {% if pub.author in user.following_for.all %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
-                              {% endif %}
-                            {% else %}
-                              <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
-                              <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
-                            {% endif %}
-                        </div>
-                        <p class="role">Автор публикации</p>
-                      </div>
-                    </div>
-                  </div>
-                  <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
-                </div>
-
-                <div class="div_pub_text">
-                  <div class="some_counts lifehack"><p><span class="count_one">👁‍🗨 {{ pub.seen_count }}</span><span class="count_one">❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
-                  <p class="pub_text">{{ pub.title }}</p>
-                </div>
-
-                <div class="pub_tags_container">
-
-                  {% for tag in pub.tags.all %}
-                    {% if tag.name != 'Другое' %}
-                      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                        <div class="pub_tag">
-                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
-                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                            type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
-                          <img src="/static/sources/SVG/search.svg" alt="">
-                        </div>
-                      </form>
-                    {% endif %}
-                  {% endfor %}
-
-                  {% for tag in pub.tags.all %}
-                    {% if tag.name == 'Другое' %}
-                      <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-                        <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
-                        <div class="pub_tag">
-                          <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
-                          <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
-                            type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
-                          <img src="/static/sources/SVG/search.svg" alt="">
-                        </div>
-                      </form>
-                    {% endif %}
-                  {% endfor %}
-
-                </div>
-              </div>
-            </div>
-          {% endif %}
-
-          {% if pub.type.id == 21 %} <!-- если это публикация о дизайне -->
-            <div class="pub_one design" id="{{ pub.id }}">
-              <div class="img_from_pub">
-                <img src="{{ pub.preview.url }}" alt="">
-                <div class="img_black_gradient"> </div>
-              </div>
-
-              <div class="pub_info">
-                <p class="pub_title">{{pub.title}}</p>
-                <div class="div_pub_text">
-                  <p class="pub_text">
-                    {{ pub.unstyled_content|safe|slice:"1000" }}
-                  </p>
-                </div>
-
-                <div class="pub_to_do">
-                  {% if pub.id in saved_pubs %}
-                    <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ pub.id }} )">
-                      <img src="/static/sources/SVG/heart.svg" alt="">
-                      <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="Сохранено">
+        <div class="expert_info_and_offer_and_contact_info">
+          {% if expert_info.is_not_empty %}
+            <div class="expert_info_and_offer">
+              <div class="expert_info">
+                <h4>Стаж:</h4>
+                  {% if expert_info.knowledge %}
+                    <div class="offer_text_frame">
+                      <div class="offer_text">{{ expert_info.knowledge|safe }}</div>
                     </div>
                   {% else %}
-                    <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ pub.id }} )">
-                      <img src="/static/sources/SVG/heart.svg" alt="">
-                      <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
+                    <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
+                  {% endif %}
+              </div>
+
+              <div class="offer">
+                <h4>Услуги:</h4>
+                  {% if expert_info.offer %}
+                    <div class="offer_text_frame">
+                      <div class="offer_text">{{ expert_info.offer|safe }}</div>
+                    </div>
+                  {% else %}
+                    <p class="offer_text" style="font-style: italic; color: gray; margin: auto;">Нет информации.</p>
+                  {% endif %}
+              </div>
+
+            </div>
+
+            <div class="contact_info_and_user_some_counts">
+              <div class="contact_info">
+                {% if expert_info.site %}                 <a href="http://{{ expert_info.site }}">                            <p class="site">      <span class="icon"></span>  {{ expert_info.site }}                 </p> </a> {% endif %}
+                {% if expert_info.bisness_phone_number %} <a href="tel:{{ expert_info.bisness_phone_number }}">               <p class="telephone"> <span class="icon"></span>  {{ expert_info.bisness_phone_number }} </p> </a> {% endif %}
+                {% if expert_info.telegram %}             <a href="https://t.me/{{ expert_info.telegram }}">                  <p class="telegram">  <span class="icon"></span>  {{ expert_info.telegram }}             </p> </a> {% endif %}
+                {% if expert_info.whatsapp %}             <a href="https://wa.me/{{ expert_info.whatsapp }} ">                <p class="whatsapp">  <span class="icon"></span>  {{ expert_info.whatsapp }}             </p> </a> {% endif %}
+                {% if expert_info.viber %}                <a href="https://vb.me/{{ expert_info.viber }}">                    <p class="viber">     <span class="icon"></span>  {{ expert_info.viber }}                </p> </a> {% endif %}
+                {% if expert_info.lol %}                  <a href="http://life-online.ru/{{ expert_info.lol }}">              <p class="lol">       <span class="icon"></span>  {{ expert_info.lol }}                  </p> </a> {% endif %}
+                {% if expert_info.vk %}                   <a href="https://vk.com/{{ expert_info.vk }}">                      <p class="vk">        <span class="icon"></span>  {{ expert_info.vk }}                   </p> </a> {% endif %}
+                {% if expert_info.inst %}                 <a href="https://instagram.com/{{ expert_info.inst }}">             <p class="instagram"> <span class="icon"></span>  {{ expert_info.inst }}                 </p> </a> {% endif %}
+                {% if expert_info.twitter %}              <a href="https://twitter.com/{{ expert_info.twitter }}">            <p class="twitter">   <span class="icon"></span>  {{ expert_info.twitter }}              </p> </a> {% endif %}
+                {% if expert_info.ok %}                   <a href="https://ok.ru/{{ expert_info.ok }}">                       <p class="ok">        <span class="icon"></span>  {{ expert_info.ok }}                   </p> </a> {% endif %}
+                {% if expert_info.address %}              <a href="https://yandex.ru/maps/?text={{ expert_info.address }}">   <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p> </a> {% endif %}
+                {% if expert_info.other %}                                                                                    <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>      {% endif %}
+
+                {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
+                  <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
+                {% endif %}
+              </div>
+
+              <div class="user_some_counts">
+                <p>{{ expert_info.count_follovers }} подписчиков</p>
+                <p>{{ opened_user.seen_count }} просмотров страницы</p>
+              </div>
+            </div>
+          {% else %}
+            <div class="expert_info" style="flex-direction: column;">
+              <h4 style="width: 100%; transform: translateX(47%); font-size: 25px;">
+                Нет информации о стаже, услугах и контактах
+              </h4>
+
+              <div class="user_some_counts" style="margin-top: 15px; width: 100%; text-align: center; transform: translateX(47%); color: #bbbbbb;">
+                <p>{{ expert_info.count_follovers }} подписчиков • {{ opened_user.seen_count }} просмотров страницы</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if expert_pubs %}
+          <h1 class="author_pubs">{{ expert_pubs.count }} публикаций автора:</h1>
+          {% for pub in expert_pubs %}
+
+            {% if pub.type.id == 31 %} <!-- если это лайфхак -->
+              <div class="pub_one lifehack" id="{{ pub.id }}">
+                <div class="pub_url" style="display: none;">{% url 'pub:one' pk=pub.id %}</div>
+                {% if user.is_authenticated %}
+                  {% if pub.author == user or user.role.id == 4 %}
+                    <div class="info_for_author_or_admin" style="display: none;">
+                      <div class="edit_url">{% url 'pub:edit' pk=pub.id %}</div>
+                      <div class="delete_url">{% url 'pub:delete' pk=pub.id %}</div>
+                      <div class="statistics">
+                        <p class="seen_count">{{ pub.seen_count }}</p>
+                        <p class="ununique_seen_count">{{ pub.ununique_seen_count }}</p>
+                        <p class="saved_count">{{ pub.saved_count }}</p>
+                        <p class="average_age_watchers">{{ pub.average_age_watchers }}</p>
+                        <p class="average_age_savers">{{ pub.average_age_savers }}</p>
+                        <p class="shared_count">{{ pub.shared_count }}</p>
+                        <p class="reported_count">{{ pub.reported_count }}</p>
+                      </div>
                     </div>
                   {% endif %}
-                  <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
+                {% endif %}
+
+                <div class="media">
+                  {% if '.mp4' in pub.preview.url or '.mov' in pub.preview.url %}
+                  <video class="paused" muted="muted" controls="controls" loop>
+                    <source src="{{ pub.preview.url }}" type='video/mp4;'>
+                    Тег video не поддерживается вашим браузером. Увы.
+                  </video>
+                  {% else %}
+                    <img src="{{ pub.preview.url }}" alt="">
+                  {% endif %}
+                  <div class="img_black_gradient"> </div>
                 </div>
 
-                <div class="pub_tags"></div>
-              </div>
-            </div>
-          {% endif %}
+                <div class="pub_info">
+                  <div class="pub_to_do">
+                    <div class="user_just_saved_it {% if pub.id in saved_pubs %} pub_saved {% endif %}">
+                      <a onclick="
+                      {% if user.is_authenticated %}
+                        toggleSavePub_LH( {{ pub.id }} )
+                      {% else %}
+                        YouHaveToLogin('сохранить публикацию')
+                      {% endif %}
+                      " title="Сохранить в «Избранное»"><img src="/static/sources/SVG/heart.svg" alt=""></a>
+                    </div>
 
-          {% if pub.type.id == 11 %} <!-- если это публикация о ремонте -->
-            <div class="pub_one repair" id="{{ pub.id }}">
-              <div class="img_from_pub">
-                <img src="{{ pub.preview.url }}" alt="">
-                <div class="img_black_gradient"> </div>
-              </div>
+                    <div class="pub_author_cntnr">
+                      <div class="pub_author">
+                        <a href="{% url 'auth:one' pk=opened_user.id %}"><img src="{{ pub.author.photo.url }}" alt=""></a>
+                        <div class="nickname_and_role">
+                          <div class="nickname">
+                            <a href="{% url 'auth:one' pk=pub.author.id %}" class="nickname_link">{{ pub.author.username }}</a>
 
-              <div class="pub_info">
-                <p class="pub_title before_slides_ten">{{pub.title}}</p>
-                <p class="pub_stats">👁‍🗨 {{ pub.seen_count }}<br>
-                                     ❤  {{ pub.saved_count }} </p>
-              </div>
+                              {% if user.is_authenticated %}
+                                {% if user != pub.author %}
+                                  <a onclick="toggleGetNotiFromAuthor( {{ pub.author.id }} )" class="nickname_noti" id="{{ pub.author.id }}">
+                                  <div class="get_noti {% if pub.author in user.following_for.all %}noties_gotten{% endif %}" title="Получать уведомления о новых записях пользователя {{ pub.author.username }}"></div></a>
+                                {% endif %}
+                              {% else %}
+                                <a onclick="YouHaveToLogin('получать уведомления о новых публикациях пользователя {{ pub.author.username }}')" class="nickname_noti">
+                                <div class="get_noti" title="Получать уведомления о новых публикациях пользователя {{ pub.author.username }}"></div></a>
+                              {% endif %}
+                          </div>
+                          <p class="role">Автор публикации</p>
+                        </div>
+                      </div>
+                    </div>
+                    <a onclick="togglePubAdditionalFunctions({{ pub.id }})"><div class="pub_show_full">•••</div></a>
+                  </div>
 
-              <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
-            </div>
-          {% endif %}
-        {% endfor %}
+                  <div class="div_pub_text">
+                    <div class="some_counts lifehack"><p><span class="count_one" {% if pub.seen_count %}title="Просмотрели: {{ pub.seen_by_list }}"{% endif %}>👁‍🗨 {{ pub.seen_count }}</span><span class="count_one" {% if pub.saved_count %}title="Сохранили: {{ pub.saved_by_list }}"{% endif %}>❤ {{ pub.saved_count }}</span><span class="count_one">🔗 {{ pub.shared_count }}</span></p></div>
+                    <p class="pub_text">{{ pub.title }}</p>
+                  </div>
+
+                  <div class="pub_tags_container">
+
+                    {% for tag in pub.tags.all %}
+                      {% if tag.name != 'Другое' %}
+                        <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+                          <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                          <div class="pub_tag">
+                            <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                            <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                              type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
+                            <img src="/static/sources/SVG/search.svg" alt="">
+                          </div>
+                        </form>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% for tag in pub.tags.all %}
+                      {% if tag.name == 'Другое' %}
+                        <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+                          <input type="hidden" name="pub_type" value="{{ pub.type.id }}">
+                          <div class="pub_tag">
+                            <input type="hidden" name="{{ tag.id }}" value="{{ tag.name }}" class="selected_tag">
+                            <input style="cursor: pointer; margin: 0; background: none; border: none; font-size: 14px; color: #686868; font-family: 'Open Sans'; padding-right: 10px;"
+                              type="submit" name="to_filter" value="{{ tag.category.name }}: {{ tag.name }}">
+                            <img src="/static/sources/SVG/search.svg" alt="">
+                          </div>
+                        </form>
+                      {% endif %}
+                    {% endfor %}
+
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if pub.type.id == 21 %} <!-- если это публикация о дизайне -->
+              <div class="pub_one design" id="{{ pub.id }}">
+                <div class="img_from_pub">
+                  <img src="{{ pub.preview.url }}" alt="">
+                  <div class="img_black_gradient"> </div>
+                </div>
+
+                <div class="pub_info">
+                  <p class="pub_title">{{pub.title}}</p>
+                  <div class="div_pub_text">
+                    <p class="pub_text">
+                      {{ pub.unstyled_content|safe|slice:"1000" }}
+                    </p>
+                  </div>
+
+                  <div class="pub_to_do">
+                    {% if pub.id in saved_pubs %}
+                      <div class="user_just_saved_it pub_saved" onclick="toggleSavePub_D( {{ pub.id }} )">
+                        <img src="/static/sources/SVG/heart.svg" alt="">
+                        <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="Сохранено">
+                      </div>
+                    {% else %}
+                      <div class="user_just_saved_it" onclick="toggleSavePub_D( {{ pub.id }} )">
+                        <img src="/static/sources/SVG/heart.svg" alt="">
+                        <input class="user_just_saved_it_smbt" type="submit" name="to_save_the_pub" value="В «Избранное»">
+                      </div>
+                    {% endif %}
+                    <a class="pub_show_full" href="{% url 'pub:one' pk=pub.id %}">Подробнее •••</a>
+                  </div>
+
+                  <div class="pub_tags"></div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if pub.type.id == 11 %} <!-- если это публикация о ремонте -->
+              <div class="pub_one repair" id="{{ pub.id }}">
+                <div class="img_from_pub">
+                  <img src="{{ pub.preview.url }}" alt="">
+                  <div class="img_black_gradient"> </div>
+                </div>
+
+                <div class="pub_info">
+                  <p class="pub_title before_slides_ten">{{pub.title}}</p>
+                  <p class="pub_stats">👁‍🗨 {{ pub.seen_count }}<br>
+                                       ❤  {{ pub.saved_count }} </p>
+                </div>
+
+                <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
       {% endif %}
-    {% endif %}
   </div>
 
 
-  {% if user != opened_user %}
-    <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с открытым пользователем -->
-      <div class="pub_additional_functions dont_close_on_click" style="max-height: fit-content;">
-        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}" title="Подать жалобу на пользователя"><span class="icon report"></span>Подать жалобу</p>
-        {% if user.role.id == 4 and opened_user.role.id != 4 %}
-          <a href="{% url 'auth:settings' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon pub_edit" title="Редактировать пользователя"></span>Редактировать</p></a>
-          <p class="dont_close_on_click delete" onclick="deleteTheUser()"><span class="icon p_delete" title="Удалить пользователя"></span>Удалить</p>
-        {% endif %}
+    {% if user != opened_user %}
+      <div class="pub_additional_functions_bg" id="author"> <!-- доп функции с открытым пользователем -->
+        <div class="pub_additional_functions dont_close_on_click" style="max-height: fit-content;">
+          <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу на пользователя'){% endif %}" title="Подать жалобу на пользователя"><span class="icon report"></span>Подать жалобу</p>
+          {% if user.role.id == 4 and opened_user.role.id != 4 %}
+            <a href="{% url 'auth:settings' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon pub_edit" title="Редактировать пользователя"></span>Редактировать</p></a>
+            <p class="dont_close_on_click delete" onclick="deleteTheUser()"><span class="icon p_delete" title="Удалить пользователя"></span>Удалить</p>
+          {% endif %}
 
-        {% if user.role.id == 3 or user.role.id == 4 %}
-          <a href="{% url 'admin_mine:user_individual' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon p_statistics" title="Статистика пользователя"></span>Статистика</p></a>
-        {% endif %}
+          {% if user.role.id == 3 or user.role.id == 4 %}
+            <a href="{% url 'admin_mine:user_individual' pk=opened_user.id %}" class="dont_close_on_click edit"><p class="width100prcnts"><span class="icon p_statistics" title="Статистика пользователя"></span>Статистика</p></a>
+          {% endif %}
+        </div>
       </div>
-    </div>
 
-    {% if user.role.id == 4 and opened_user.role.id != 4 %}
-      <div class="delete_the_user"> <!-- подтверждение удаления пользователя -->
-        <h1>Вы точно хотите удалить пользователя?</h1>
-        <p style="margin: 20px 0;">Его нельзя будет восстаноить. Никак.</p>
+      {% if user.role.id == 4 and opened_user.role.id != 4 %}
+        <div class="delete_the_user"> <!-- подтверждение удаления пользователя -->
+          <h1>Вы точно хотите удалить пользователя?</h1>
+          <p style="margin: 20px 0;">Его нельзя будет восстаноить. Никак.</p>
+          <div class="cancel_or_delete">
+            <p id="cancel_deleting" class="cancel">Отмена</p>
+            <a href="{% url 'auth:delete' pk=opened_user.id%}" id="delete">Удалить пользователя</a>
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% if expert_pubs %}
+      <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
+        <div class="pub_additional_functions dont_close_on_click">
+          <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
+            <input type="hidden" name="pub_type" value="31">
+            <div class="selected_tags" style="display: none;">
+              <!-- js поместит сюда input'ы всех тегов определённой публикации -->
+            </div>
+            <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
+              <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
+            </label>
+          </form>
+
+          <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
+          <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
+
+          <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
+          <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
+          <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
+        </div>
+      </div>
+
+      <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
+        <h1>Ссылка на публикацию: </h1>
+        <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
+      </div>
+
+      <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
+        <h1>Статистика по публикации:</h1>
+        <p>Пользователей просмотрело (хотя бы раз): <span class="seen_count"></span></p>
+        <p>Всего просмотров (включая по несколько раз): <span class="ununique_seen_count"></span></p>
+        <p>Сохранений: <span class="saved_count"></span></p>
+        <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
+        <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
+        <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
+        <p>Жалоб на публикацию: <span class="reported_count"></span></p>
+      </div>
+
+      <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
+        <h1>Вы точно хотите удалить публикацию?</h1>
+        <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
         <div class="cancel_or_delete">
           <p id="cancel_deleting" class="cancel">Отмена</p>
-          <a href="{% url 'auth:delete' pk=opened_user.id%}" id="delete">Удалить пользователя</a>
+          <a href="" id="delete">Удалить публикацию</a>
         </div>
       </div>
     {% endif %}
+
+    <div class="new_complaint"> <!-- написать жалобу -->
+      {% csrf_token %}
+      <h1>Жалоба на публикацию</h1>
+      <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
+      <p>Если у вас есть фотографии по теме:</p>
+      <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
+      <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
+    </div>
+
   {% endif %}
-
-  {% if expert_pubs %}
-    <div class="pub_additional_functions_bg" id="pub"> <!-- доп функции с публикацией -->
-      <div class="pub_additional_functions dont_close_on_click">
-        <form class="opened_filter_form" action="{% url 'lifehacks' %}" method="GET">
-          <input type="hidden" name="pub_type" value="31">
-          <div class="selected_tags" style="display: none;">
-            <!-- js поместит сюда input'ы всех тегов определённой публикации -->
-          </div>
-          <label title="найти публикации-лайфхаки с такими же тэгами, как и эта публикция">
-            <p><span class="icon search"></span><input type="submit" name="to_filter" value="Искать похожее"></p>
-          </label>
-        </form>
-
-        <p class="dont_close_on_click" onclick="shareThePub()" title="Скопировать ссылку на эту публикацию"><span class="icon share"></span>Поделиться</p>
-        <p class="dont_close_on_click" onclick="{% if user.is_authenticated %}openNewComplaintForm(){% else %}YouHaveToLogin('подать жалобу'){% endif %}"><span class="icon report"></span>Подать жалобу</p>
-
-        <a href="" class="dont_close_on_click for_author_or_admin edit" title="Редактировать эту публикацию"><p><span class="icon pub_edit"></span>Редактировать</p></a>
-        <p class="dont_close_on_click for_author_or_admin statistic" onclick="showThePubStatistic()" title="Показать статистику этой публикации"><span class="icon p_statistics"></span>Статистика</p>
-        <p class="dont_close_on_click for_author_or_admin delete" onclick="deleteThePub()" title="Удалить эту публикацию"><span class="icon p_delete"></span>Удалить</p>
-      </div>
-    </div>
-
-    <div class="share_the_pub"> <!-- скопировать ссылку на публикацию -->
-      <h1>Ссылка на публикацию: </h1>
-      <a href="http://127.0.0.1:8000/pub/#netVoyne" style="text-decoration: underline; margin: 30px 0 10px; display: block;">http://127.0.0.1:8000/pub/one/?</a>
-    </div>
-
-    <div class="statistics visible_block"> <!-- посмотреть статистику по публикации -->
-      <h1>Статистика по публикации:</h1>
-      <p>Пользователей просмотрело (хотя бы раз): <span class="seen_count"></span></p>
-      <p>Всего просмотров (включая по несколько раз): <span class="ununique_seen_count"></span></p>
-      <p>Сохранений: <span class="saved_count"></span></p>
-      <p>Средний возраст всех просмотревших: <span class="average_age_watchers"></span></p>
-      <p>Средний возраст только сохранивших: <span class="average_age_savers"></span></p>
-      <p>"Поделиться" нажато раз: <span class="shared_count"></span></p>
-      <p>Жалоб на публикацию: <span class="reported_count"></span></p>
-    </div>
-
-    <div class="delete_the_pub"> <!-- подтверждение удаления публикации -->
-      <h1>Вы точно хотите удалить публикацию?</h1>
-      <p style="margin: 20px 0;">Её нельзя будет восстаноить. Никак.</p>
-      <div class="cancel_or_delete">
-        <p id="cancel_deleting" class="cancel">Отмена</p>
-        <a href="" id="delete">Удалить публикацию</a>
-      </div>
-    </div>
-  {% endif %}
-
-  <div class="new_complaint"> <!-- написать жалобу -->
-    {% csrf_token %}
-    <h1>Жалоба на публикацию</h1>
-    <textarea name="" id="" cols="30" rows="10" title="Напишите, в чём суть жалобы" placeholder="Напишите, в чём суть жалобы. Мы рассмотрим Вашу жалобу и что-нибудь решим, обязательно уведомив о результате вас."></textarea>
-    <p>Если у вас есть фотографии по теме:</p>
-    <input type="file" name="appea_photos" id="appea_photos" multiple accept="image/*" title="Загрузите фотографии по теме, если такие есть">
-    <input type="submit" value="Отправить жалобу" onclick="new_complaint_was_sent()">
-  </div>
-
 {% endblock %}
 
 {% block scripts_individual %}

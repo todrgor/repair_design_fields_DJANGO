@@ -40,7 +40,7 @@ h1 { font-size: 40px;}
 .slider_container .slide,
 .slider_container .slide .text,
 .slider_container .img_div {
-  transition: .15s ease;
+  transition: .15s ease all;
 }
 
 .slider_container .slide .left_images {
@@ -595,7 +595,7 @@ h1 { font-size: 40px;}
   height: auto;
   background: radial-gradient(103.91% 103.91% at 49.12% -3.91%, #4F4E53 0%, #322F40 100%);
   color: #F1EEFF;
-  transition: .15s ease;
+  transition: .15s ease all;
 }
 .about_saved:hover {
   background: radial-gradient(103.91% 103.91% at 49.12% -3.91%, #58575c 0%, #322F40 100%);
@@ -608,7 +608,7 @@ h1 { font-size: 40px;}
   height: fit-content;
   position: absolute;
   top: 75px;
-  right: 282px;
+  right: 279px;
 }
 .about_saved .saved_buttom_bg {
   background: #161515;
@@ -726,7 +726,7 @@ span.space_for_button {opacity: 0;}
   padding: 7px 18px;
   bottom: 0;
   right: 10%;
-  transition: .15s ease;
+  transition: .15s ease all;
 }
 .about_best_authors .join_authors:hover {
   background: #719f10;
@@ -795,7 +795,7 @@ span.space_for_button {opacity: 0;}
 .about_notifications .example {margin-top: 30px;}
 
 .about_supporting {
-  transition: .15s ease;
+  transition: .15s ease all;
   color: #FFEEEE;
   background: radial-gradient(78.09% 300.39% at 19.16% -12.99%, #FA6E09 0%, #AE0808 100%);
 }
@@ -825,7 +825,7 @@ span.space_for_button {opacity: 0;}
 }
 
 .about_becoming_an_author {
-  transition: .15s ease;
+  transition: .15s ease all;
   color: #443900;
   background: radial-gradient(97.86% 100% at 22.96% 0%, #FFEA7B 0%, #E9C81B 100%), #D9D9D9;
 }
@@ -837,10 +837,10 @@ span.space_for_button {opacity: 0;}
 .about_becoming_an_author .text {margin-top: 50px;}
 .about_becoming_an_author p {transform: rotate(-1.61deg); margin-left: 120px;}
 .about_becoming_an_author .logo {transform: rotate(-2.81deg); margin-left: -70px; margin-top: -40px;}
-.about_becoming_an_author .example {position: absolute; bottom: 0; right: 0; transition: .15s ease;}
+.about_becoming_an_author .example {position: absolute; bottom: 0; right: 0; transition: .15s ease all;}
 
 .about_becoming_an_administrator {
-  transition: .15s ease;
+  transition: .15s ease all;
   color: #042B7B;
   background: radial-gradient(104.15% 98.1% at 63.38% 1.9%, #A4DDF5 0%, #B0AAF5 100%), #D9D9D9;
 }
@@ -848,14 +848,14 @@ span.space_for_button {opacity: 0;}
 .about_becoming_an_administrator .text {margin-top: 27px;}
 .about_becoming_an_administrator h1 {transform: rotate(-4.27deg);}
 .about_becoming_an_administrator p {transform: rotate(-2.24deg); margin-left: 120px;}
-.about_becoming_an_administrator .example {position: absolute; bottom: 0; left: 0; transition: .15s ease;}
+.about_becoming_an_administrator .example {position: absolute; bottom: 0; left: 0; transition: .15s ease all;}
 .about_becoming_an_administrator .logo {transform: rotate(-2.81deg); margin-left: -170px; margin-top: -110px;}
 
 
 .pub_type_one {
   background: radial-gradient(117.49% 911.49% at 58.73% 0%, #242623 0%, #151615 100%);
   color: white;
-  transition: .15s ease;
+  transition: .15s ease all;
   display: flex;
   padding-top: 130px;
 }

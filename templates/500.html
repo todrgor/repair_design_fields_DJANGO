@@ -1,0 +1,17 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  Произошла какая-то ошибка...(
+{% endblock %}
+
+{% block content %}
+  <div class="pubs_container" style="margin-bottom: 0; margin-top: 60px;">
+    <div style="display: flex; align-items: center;">
+      <div class="text">
+        <h1 style="margin-bottom: 20px;">У сервера произошла какая-то ошибка.</h1>
+        <p style="color: gray;">А возможно, Вы ошиблись адресом.<br>Можно попробовать перезагрузить страницу.</p>
+      </div>
+      <img src="/static/sources/images/500_something_went_wrong.png" alt="" style="margin-right: -30px;">
+    </div>
+  </div>
+{% endblock %}

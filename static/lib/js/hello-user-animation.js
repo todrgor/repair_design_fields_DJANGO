@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
    ;}
   };
 
-  $slides = $('.slide');
+  $slides = $('.slider_container .slide');
   $slidesFooter = $('.pub_type_one');
   if ($slides.length > 0) {
     $id_showing_slide = 0;

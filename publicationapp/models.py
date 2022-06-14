@@ -28,6 +28,10 @@ class Publication(models.Model):
         ordering = ('-pushed',)
 
     @property
+    def seen_by_list(self):
+        return str(list(SeenPubs.objects.filter(pub=self.id).values_list('watcher__username', flat=True).distinct())).replace("[", "").replace("]", "").replace("'", "")
+
+    @property
     def seen_count(self):
         return SeenPubs.objects.filter(pub=self.id).count()
 
@@ -37,6 +41,10 @@ class Publication(models.Model):
         for s in SeenPubs.objects.filter(pub=self.id):
             count += s.count
         return count
+
+    @property
+    def saved_by_list(self):
+        return str(list(SavedPubs.objects.filter(pub=self.id).values_list('saver__username', flat=True).distinct())).replace("[", "").replace("]", "").replace("'", "")
 
     @property
     def saved_count(self):
@@ -83,8 +91,6 @@ class Publication(models.Model):
                         is_taking_img_url = False
                         img_urls_list.append(src)
                     i+=1
-        print(self)
-        print(img_urls_list)
         return img_urls_list
 
     @property

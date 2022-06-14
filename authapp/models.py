@@ -33,7 +33,7 @@ class User(AbstractUser):
     phone_number = PhoneNumberField(null=True, blank=False, unique=True, verbose_name="Номер телефона")
     last_entry = models.DateTimeField(auto_now=True, verbose_name='Последняя авторизация')
     seen_count = models.IntegerField(default=0, verbose_name='Просмотров страницы пользователя')
-    following_for = models.ManyToManyField('User', related_name="users_in_follows", verbose_name='Пользователь, про кого подписчик получает уведомления')
+    following_for = models.ManyToManyField('User', related_name="users_in_follows", blank=True, verbose_name='Пользователь, про кого подписчик получает уведомления')
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -42,7 +42,7 @@ class User(AbstractUser):
     def save(self, *args, **kwargs): # ужать аватарку для экономии пространства на сервере
        instance = super(User, self).save(*args, **kwargs)
        image = Image.open(self.photo.path)
-       image.save(self.photo.path, quality=10, optimize=True)
+       image.save(self.photo.path, quality=50, optimize=True)
        return instance
 
     @property
@@ -87,6 +87,10 @@ class User(AbstractUser):
     def expert_info(self):
         expert_info = ExpertInfo.objects.get(expert_account=self) if ExpertInfo.objects.filter(expert_account=self) else None
         return expert_info
+
+    @property
+    def count_follovers(self):
+        return User.objects.filter(following_for__id=self.id).count()
 
     def __str__(self):
         return str(self.username) + ', ' + str(self.role)

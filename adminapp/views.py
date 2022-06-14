@@ -2,7 +2,7 @@ from publicationapp.models import *
 from authapp.models import *
 
 from .forms import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, UpdateView, DeleteView, CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
@@ -30,7 +30,7 @@ def NewComplaint(request):
                 Notifications.objects.create(
                     type = ActionTypes.objects.get(id=1012200),
                     preview = pub_complaint.get_preview,
-                    content = 'Ваша жалоба на публикацию «'+ 'pub_complaint.title' +'» принята!',
+                    content = 'Ваша жалоба на публикацию «'+ pub_complaint.title +'» принята!',
                     hover_text = "Ждите результата здесь, в уведомлениях"
                 ).receiver.add(request.user)
 
@@ -108,6 +108,7 @@ class StartPanel(ListView):
         tags = [Tag.objects.annotate(text_len=Length('name')).filter(text_len__lte=20, category=category)[:4] for category in tag_categories]
         new_letters_to_support = ContactingSupport.objects.filter(answer_content=None).order_by('-when_asked')[:5]
         answered_letters_to_support = ContactingSupport.objects.exclude(answer_content=None).order_by('-when_asked')[:3] if not new_letters_to_support else None
+        new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
         data = {
             'title': title,
@@ -115,6 +116,7 @@ class StartPanel(ListView):
             'users': users,
             'new_letters_to_support': new_letters_to_support,
             'answered_letters_to_support': answered_letters_to_support,
+            'new_letters_to_support_count': new_letters_to_support_count,
     		'tags': tags,
     		'tag_categories': tag_categories,
         }
@@ -433,6 +435,56 @@ def LettersToSupport(request):
     return render(request, 'adminapp/letters_to_support.html', content)
 
 
+#   удалить обращение в поддержку, если оно отвеченно
+def DeleteLetterToSupport(request, pk):
+    if not request.user.is_authenticated:
+        return HttpResponse("Сначала авторизируйтесь! <a href='/login/'>Авторизоваться</a>")
+    if request.user.role.id != 4:
+        return HttpResponse("Простите, но у Вас недостаточно прав для этой страницы. <a href='/'>На главную</a>")
+
+    if ContactingSupport.objects.filter(id=pk):
+        letter = ContactingSupport.objects.get(id=pk)
+        asked_by_username = ' пользователем «'+ letter.asked_by.username +'»' if letter.asked_by else ''
+        asked_by_username2 = ' от пользователя «'+ letter.asked_by.username +'»' if letter.asked_by else ''
+
+        if letter.answer_content:
+            photos = ContactingSupportPhotos.objects.filter(contacting_support_action=letter)
+            if photos:
+                fs = FileSystemStorage()
+                for photo in photos:
+                    if fs.exists('../media/'+ photo.photo.name):
+                        fs.delete('../media/'+ photo.photo.name)
+
+            Notifications.objects.create(
+                type = ActionTypes.objects.get(id=9920500),
+                content = 'Успешно удалено обращение «' + letter.title + '», отправленное ' + str(localize(letter.when_asked)) + asked_by_username,
+                hover_text = "Освобождать память сервера -- это круто! Молодцы)"
+            ).receiver.add(request.user)
+
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=9920500),
+                action_person = request.user,
+                action_content = 'Удалено обращение в поддержку «'+ letter.title +'»'+ asked_by_username2 +' пользователем «'+ request.user.username +'».',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+            )
+            letter.delete()
+        else:
+            Notifications.objects.create(
+                type = ActionTypes.objects.get(id=9920501),
+                content = 'Не может быть удалено обращение «' + letter.title + '», отправленное ' + str(localize(letter.when_asked)) + asked_by_username +', поскольку оно ещё не было овечено.',
+                hover_text = "Освобождать память сервера -- это круто! Молодцы) Но на обращения нужно сперва отвечать!"
+            ).receiver.add(request.user)
+
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=9920501),
+                action_person = request.user,
+                action_content = 'Попытка удаления неотвеченного обращения в поддержку «'+ letter.title +'»'+ asked_by_username2 +' пользователем «'+ request.user.username +'».',
+                action_subjects_list = '[user «'+ request.user.username +'». (id: '+ str(request.user.id) +')], [letter_to_support «'+ letter.title +'» (id: '+ str(letter.id) +')]',
+            )
+
+    return redirect('admin_mine:letters_to_support')
+
+
 #   страница всех публикаций в ИС
 class PubList(ListView):
     model =  Publication
@@ -451,6 +503,7 @@ class PubList(ListView):
         pubs = Publication.objects.filter(type__id__in=[11, 21, 31])
         saved_urls = SavedPubs.objects.filter(pub__in = pubs)
         seen_urls = SeenPubs.objects.filter(pub__in = pubs)
+        new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
         print(seen_urls)
         for su in seen_urls:
@@ -464,6 +517,7 @@ class PubList(ListView):
             'pubs': pubs,
             'saved_urls': saved_urls,
             'seen_urls': seen_urls,
+            'new_letters_to_support_count': new_letters_to_support_count,
         }
         return data
 
@@ -486,12 +540,14 @@ class UserList(ListView):
         users = User.objects.filter().order_by('-last_entry')
         saved_urls = SavedPubs.objects.filter()
         seen_urls = SeenPubs.objects.filter()
+        new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
         data = {
             'title': title,
             'users': users,
             'saved_urls': saved_urls,
             'seen_urls': seen_urls,
+            'new_letters_to_support_count': new_letters_to_support_count,
         }
         return data
 
@@ -508,6 +564,7 @@ def UserIndividual(request, pk):
     title ='Пользователь «'+ opened_user.username +'» | Панель администратора'
     saved_urls = SavedPubs.objects.filter(saver=opened_user)
     seen_urls = SeenPubs.objects.filter(watcher=opened_user)
+    new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
     JournalActions.objects.create(
         type = ActionTypes.objects.get(id=4010200),
@@ -521,6 +578,7 @@ def UserIndividual(request, pk):
         'opened_user': opened_user,
         'saved_urls': saved_urls,
         'seen_urls': seen_urls,
+        'new_letters_to_support_count': new_letters_to_support_count,
     }
     return render(request, 'adminapp/user_individual.html', context)
 
@@ -541,10 +599,12 @@ class JournalList(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         title ='Журнал всех событий в ИС | Панель администратора'
         journal = JournalActions.objects.filter().order_by('-when')
+        new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
         data = {
             'title': title,
             'journal': journal,
+            'new_letters_to_support_count': new_letters_to_support_count,
         }
         return data
 
@@ -676,6 +736,7 @@ def TagsAndTagCategories(request):
     tag_categories = TagCategory.objects.all()
     pubs = Publication.objects.filter(type__in=[11, 21, 31])
     pub_types = PubTypes.objects.filter(id__in=[11, 21, 31])
+    new_letters_to_support_count = ContactingSupport.objects.filter(answer_content=None).count()
 
     content = {
         'title': title,
@@ -684,5 +745,6 @@ def TagsAndTagCategories(request):
         'pubs': pubs,
         'pub_types': pub_types,
         'errors': errors,
+        'new_letters_to_support_count': new_letters_to_support_count,
     }
     return render(request, 'adminapp/tags_and_tag_categories.html', content)

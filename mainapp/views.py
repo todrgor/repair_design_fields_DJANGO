@@ -11,7 +11,7 @@ def main(request):
 	if pubs:
 		savest_pubs_list = order_pubs_by_property(pubs, 'saved_count')
 		for pub in savest_pubs_list:
-			if pub.author: # ибо есть возможность сохранения публикаций на случай удаления их автора по какой-либо причине 
+			if pub.author: # ибо есть возможность сохранения публикаций на случай удаления их автора по какой-либо причине
 				if not first_author:
 					first_author = pub.author
 				if first_author and pub.author != first_author and not second_author:

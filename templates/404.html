@@ -1,0 +1,17 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}
+  Нет такой страницы
+{% endblock %}
+
+{% block content %}
+  <div class="pubs_container" style="margin-bottom: 0; margin-top: 60px;">
+    <div style="display: flex; align-items: center;">
+      <div class="text">
+        <h1 style="margin-bottom: 20px;">Нет страницы по указанному адресу.</h1>
+        <p style="color: gray;">Возможно, Вы ошиблись адресом.<br>Или произошла какая-то ошибка.</p>
+      </div>
+      <img src="/static/sources/images/404_no_page.png" alt="" style="margin-right: -30px;">
+    </div>
+  </div>
+{% endblock %}

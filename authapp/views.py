@@ -221,37 +221,43 @@ def UserLogout(request):
 class AccountOneWatch(ListView):
     model = User
     template_name = 'authapp/user_one.html'
-    context_object_name = 'opened_user'
-    allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
-
-    def get_queryset(self):
-        opened_user = User.objects.get(id=self.kwargs['pk'])
-        opened_user.seen_count +=1
-        opened_user.save()
-
-        if self.request.user.is_authenticated:
-            JournalActions.objects.create(
-                type = ActionTypes.objects.get(id=4010200),
-                action_person = self.request.user,
-                action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ self.request.user.username +'».',
-                action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
-            )
-        return opened_user
 
     def get_context_data(self, **kwargs):
         context = super(AccountOneWatch, self).get_context_data(**kwargs)
-        saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=self.request.user)] if self.request.user.is_authenticated else None
+        opened_user = expert_info = expert_pubs = saved_pubs = None
 
-        expert_info = expert_pubs = None
-        if context['opened_user'].role.id in [2, 4]:
-            expert_pubs = Publication.objects.filter(author=self.kwargs['pk'], type__id__in=[11, 21, 31])
-            try:
-                expert_info = ExpertInfo.objects.get(expert_account=self.kwargs['pk'])
-            except ObjectDoesNotExist:
-                expert_info = None
+        if User.objects.filter(id=self.kwargs['pk']):
+            opened_user = User.objects.get(id=self.kwargs['pk'])
+            opened_user.seen_count +=1
+            opened_user.save()
 
+            if self.request.user.is_authenticated:
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=4010200),
+                    action_person = self.request.user,
+                    action_content = 'Просмотрена страница пользователя «'+ opened_user.username +'» пользователем «'+ self.request.user.username +'».',
+                    action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [opened_user «'+ opened_user.username +'». (id: '+ str(opened_user.id) +')]'
+                )
+
+            saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=self.request.user)] if self.request.user.is_authenticated else None
+
+            if opened_user.role.id in [2, 4]:
+                expert_pubs = Publication.objects.filter(author=self.kwargs['pk'], type__id__in=[11, 21, 31])
+                try:
+                    expert_info = ExpertInfo.objects.get(expert_account=self.kwargs['pk'])
+                except ObjectDoesNotExist:
+                    expert_info = None
+        else:
+            if self.request.user.is_authenticated:
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=4010404),
+                    action_person = self.request.user,
+                    action_content = 'Попытка просмотра страницы несуществующего пользователя пользователем «'+ self.request.user.username +'».',
+                    action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [doesnt_exist_user_id: '+ str(self.kwargs['pk']) +')]'
+                )
 
         context.update({
+            'opened_user': opened_user,
             'expert_info': expert_info,
             'expert_pubs': expert_pubs,
             'saved_pubs': saved_pubs,

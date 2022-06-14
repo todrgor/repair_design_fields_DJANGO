@@ -692,33 +692,36 @@ def get_filtered_pubs_count(request):
 class PubWatchOne(ListView):
     model = Publication
     template_name = 'publicationapp/pub_one.html'
-    context_object_name = 'pub'
-    allow_empty = False # сделать ответ на случай, если публикации с введённым id не существует
-
-    def get_queryset(self):
-        return Publication.objects.get(id=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
         context = super(PubWatchOne, self).get_context_data(**kwargs)
-        pub = Publication.objects.get(id=self.kwargs['pk'])
+        saved_pubs = pub = None
+        if Publication.objects.filter(id=self.kwargs['pk']):
+            pub = Publication.objects.get(id=self.kwargs['pk'])
+            if self.request.user.is_authenticated:
+                user = self.request.user
 
-        saved_pubs = None
-        if self.request.user.is_authenticated:
-            user = self.request.user
+                saved_urls = SavedPubs.objects.filter(saver=user, pub=pub)
+                saved_pubs = [sp.pub.id for sp in saved_urls]
 
-            saved_urls = SavedPubs.objects.filter(saver=user, pub=pub)
-            saved_pubs = [sp.pub.id for sp in saved_urls]
+                seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
+                seen_url_object.count += 1
+                seen_url_object.save()
 
-            seen_url_object = SeenPubs.objects.get(watcher=user, pub=pub) if SeenPubs.objects.filter(watcher=user, pub=pub) else SeenPubs.objects.create(watcher=user, pub=pub)
-            seen_url_object.count += 1
-            seen_url_object.save()
-
-            JournalActions.objects.create(
-                type = ActionTypes.objects.get(id=4011200),
-                action_person = self.request.user,
-                action_content = 'Просмотрена публикация «'+ pub.title +'» пользователем «'+ self.request.user.username +'». (всего '+ str(seen_url_object.count) +')',
-                action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [pub_seen «'+ pub.title +'» (id: '+ str(pub.id) +')]'
-            )
+                JournalActions.objects.create(
+                    type = ActionTypes.objects.get(id=4011200),
+                    action_person = user,
+                    action_content = 'Просмотрена публикация «'+ pub.title +'» пользователем «'+ user.username +'». (всего '+ str(seen_url_object.count) +')',
+                    action_subjects_list = '[user «'+ user.username +'». (id: '+ str(user.id) +')], [pub_seen «'+ pub.title +'» (id: '+ str(pub.id) +')]'
+                )
+            else:
+                if self.request.user.is_authenticated:
+                    JournalActions.objects.create(
+                        type = ActionTypes.objects.get(id=4011404),
+                        action_person = self.request.user,
+                        action_content = 'Попытка просмотра несуществующей публикации пользователем «'+ self.request.user.username +'».',
+                        action_subjects_list = '[user «'+ self.request.user.username +'». (id: '+ str(self.request.user.id) +')], [pub_doesnt_exist_id: '+ self.kwargs['pk'] +']'
+                    )
 
         context.update({
             'pub': pub,
@@ -738,7 +741,16 @@ class RepairsWatch(ListView):
         return pubs
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super(RepairsWatch, self).get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=4021200),
+                action_person = user,
+                action_content = 'Просмотрены публикации про ремонт пользователем «'+ user.username +'».',
+                action_subjects_list = '[user «'+ user.username +'». (id: '+ str(user.id) +')]'
+            )
 
         tag_categories = TagCategory.objects.filter(pub_type=11)
         tags = Tag.objects.filter(category__in=tag_categories)
@@ -766,8 +778,16 @@ class DesignsWatch(ListView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super(DesignsWatch, self).get_context_data(**kwargs)
-        saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=21)] if user.is_authenticated else None
 
+        if self.request.user.is_authenticated:
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=4022200),
+                action_person = user,
+                action_content = 'Просмотрены публикации про ремонт пользователем «'+ user.username +'».',
+                action_subjects_list = '[user «'+ user.username +'». (id: '+ str(user.id) +')]'
+            )
+
+        saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=21)] if user.is_authenticated else None
         tag_categories = TagCategory.objects.filter(pub_type=21)
         tags = Tag.objects.filter(category__in=tag_categories)
         selected_filters = self.request.GET if self.request.method == 'GET' and 'to_filter' in self.request.GET else {}
@@ -795,6 +815,14 @@ class LifehacksWatch(ListView):
     def get_context_data(self, **kwargs):
         context = super(LifehacksWatch, self).get_context_data(**kwargs)
         user = self.request.user
+
+        if self.request.user.is_authenticated:
+            JournalActions.objects.create(
+                type = ActionTypes.objects.get(id=4023200),
+                action_person = user,
+                action_content = 'Просмотрены публикации про ремонт пользователем «'+ user.username +'».',
+                action_subjects_list = '[user «'+ user.username +'». (id: '+ str(user.id) +')]'
+            )
 
         saved_pubs = [sp.pub.id for sp in SavedPubs.objects.filter(saver=user, pub__type=31)] if user.is_authenticated else None
 
