@@ -77,8 +77,8 @@ a:hover {
   margin-right: 30px;
 }
 
-tr.one_row {display: none;}
-tr.one_row.show {display: contents;}
+tr.one_row      {}
+tr.one_row.show {}
 
 .errors_content {
   color: #a30000;
