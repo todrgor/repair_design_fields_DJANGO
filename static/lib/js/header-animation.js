@@ -13,6 +13,7 @@ $avatar_wrap.on('click', function () {
 });
 
 function open_noti(idAccount) {
+    $('.notifications_mini .notifications_mini_p').css('display', 'none');
     $('.notifications_container').toggleClass('show_ntfctns_more');
     if ($is_opened_notifications == 0) {
       $is_opened_notifications = 1;

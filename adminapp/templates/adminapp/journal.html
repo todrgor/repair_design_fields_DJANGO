@@ -50,7 +50,7 @@
              </tr>
 
              {% for action in journal %}
-               <tr id="{{ action.id }}">
+               <tr id="{{ action.id }}" class="one_row show">
                  <td class="id">{{ action.id }}</td>
                  <td class="action_subjects_list photo_and_nickname">
                    <div class="photo_and_icon" {% if action.action_person %}style="cursor: no-drop;"{% endif %}>

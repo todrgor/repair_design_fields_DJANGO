@@ -25,7 +25,6 @@
   <div class="opened_filter"></div>
 </div>
 
-
   <div class="admin_menu_bg">
     <div class="admin_menu">
       <a href="{% url 'admin_mine:main' %}">Главная</a>
@@ -62,8 +61,9 @@
                  <th class="with200px">Ссылки на фотографии в публикации</th>
                  <th>Теги</th>
              </tr>
+
              {% for pub in pubs %}
-               <tr id="{{ pub.id }}">
+               <tr id="{{ pub.id }}" class="one_row show">
                   {% if user.role.id == 4 %}
                      <td class="functions">
                        <a href="{% url 'pub:edit' pk=pub.id%}">

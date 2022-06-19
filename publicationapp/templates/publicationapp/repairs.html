@@ -24,19 +24,19 @@
   </div>
 
   <div class="pubs_container" {% if not pubs %} style="height: 500px" {% endif %}>
-    {% for p in pubs %}
+    {% for pub in pubs %}
 
-        <div class="pub_one repair" id="{{ p.id }}">
+        <div class="pub_one repair" id="{{ pub.id }}">
           <div class="img_from_pub">
-            <img src="{{ p.preview.url }}" alt="">
+            <div class="image_div" style="background: url({{ pub.preview.url }}) no-repeat; background-size: cover; background-position: center;"></div>
             <div class="img_black_gradient"> </div>
           </div>
           <div class="pub_info">
-            <p class="pub_title before_slides_ten">{{p.title}}</p>
-            <p class="pub_stats">👁‍🗨 {{ p.seen_count }}<br>
-                                 ❤  {{ p.saved_count }} </p>
+            <p class="pub_title before_slides_ten">{{pub.title}}</p>
+            <p class="pub_stats">👁‍🗨 {{ pub.seen_count }}<br>
+                                 ❤  {{ pub.saved_count }} </p>
           </div>
-          <a href="{% url 'pub:one' pk=p.id %}" class="read_more" id="read_more">Читать ›</a>
+          <a href="{% url 'pub:one' pk=pub.id %}" class="read_more" id="read_more">Читать ›</a>
         </div>
       {% endfor %}
   </div>

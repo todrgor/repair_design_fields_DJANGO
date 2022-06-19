@@ -396,7 +396,7 @@ input::-webkit-inner-spin-button {
   z-index: 1;
 }
 
-.img_from_pub img {
+.img_from_pub .image_div {
   grid-column: 1;
   grid-row: 1;
   /* max-height: 500px;

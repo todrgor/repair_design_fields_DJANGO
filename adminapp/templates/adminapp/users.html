@@ -61,7 +61,7 @@
              </tr>
 
              {% for showing_user in users %}
-               <tr id="{{ showing_user.id }}">
+               <tr id="{{ showing_user.id }}" class="one_row show">
                 {% if user.role.id == 4 %}
                    <td class="functions">
                     <a href="{% url 'auth:settings' pk=showing_user.id%}"><p id="edit"><span class="icon pub_edit_black"></span></p></a>
@@ -80,6 +80,7 @@
                      {% if showing_user.age %}<p>{{ showing_user.age }} лет</p>{% endif %}
                      {% if showing_user.phone_number %}<p>тел.: {{ showing_user.phone_number }}</p>{% endif %}
                      {% if showing_user.email %}<p>{{ showing_user.email }}</p>{% endif %}
+                     <p style="color:gray;">был просмотрен {{ showing_user.seen_count }} раз</p>
                      <p style="color:gray;">{{ showing_user.all_noties_count }} уведомлений, {{ showing_user.new_noties_count }} новых</p>
                      {% if showing_user.role.id == 2 %}
                        <p style="color:gray;">Автор {{ showing_user.made_pubs_count }} публикаций</p>
