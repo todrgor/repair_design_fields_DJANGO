@@ -20,21 +20,23 @@ function open_noti(idAccount) {
     } else {
       $is_opened_notifications = 0;
     }
-    $.ajax({
-          url: "/account/" + idAccount + "/NewNotiWereSeen/",
+    if ($('.noti_new').length) {
+      $.ajax({
+        url: "/account/" + idAccount + "/NewNotiWereSeen/",
 
-          success: function (data) {
-              if (data.result == 0) {
-                console.log("НЕт новых уведомлений");
-              }
-              if (data.result == 1) {
-                console.log("Все новые уведомления теперь прочитаны");
-              }
-          },
-          error: function (data) {
-            console.log("ошибка какая-то с уведомлениями");
+        success: function (data) {
+          if (data.result == 0) {
+            console.log("НЕт новых уведомлений");
           }
+          if (data.result == 1) {
+            console.log("Все новые уведомления теперь прочитаны");
+          }
+        },
+        error: function (data) {
+          console.log("ошибка какая-то с уведомлениями");
+        }
       });
+    }
 };
 
 $filter_button.on('click', function () {

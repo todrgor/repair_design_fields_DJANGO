@@ -137,7 +137,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name != 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 11 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -146,7 +146,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 11 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -175,7 +175,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name != 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 21 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -184,7 +184,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 21 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -214,7 +214,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name != 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 31 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}
@@ -223,7 +223,7 @@
                 {% for tag in tags %}
                   {% if tag.category == category and tag.name == 'Другое' %}
                     <label>
-                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags %} checked {% endif %}>
+                      <input type="checkbox" name="{{ tag.id }}" value="{{ tag.name }}" class="one_tag"  style="margin-right: 0;" {% if tag in selected_tags and pub_type == 31 %} checked {% endif %}>
                       {{ tag.name }}
                     </label>
                   {% endif %}

@@ -134,11 +134,11 @@ DATE_FORMAT = 'd E Y' #26 ноября 2020
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# STATICFILES_DIRS = (
-# 	os.path.join(BASE_DIR, 'static'),
-# )
+STATICFILES_DIRS = (
+	os.path.join(BASE_DIR, 'static'),
+)
 
 
 LOGIN_REDIRECT_URL = 'main'

@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.formats import localize
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
+from django.core.files.storage import FileSystemStorage
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -59,7 +60,7 @@ class User(AbstractUser):
 
     @property
     def noties_old(self):
-        return Notifications.objects.filter(receiver=self, receiver_saw=self)
+        return Notifications.objects.filter(receiver=self, receiver_saw=self)[:30]
 
     @property
     def noties_count(self):
@@ -173,7 +174,7 @@ class ActionTypes(models.Model): # событий много рзных быва
 class Notifications(models.Model):
     when_happend = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания уведомления')
     type = models.ForeignKey('ActionTypes', on_delete=models.SET_NULL, verbose_name='Тип события', blank=False, null=True)
-    preview = models.ImageField(upload_to='notifications_preview', blank=True, null=True, verbose_name='Превью уведомления', default='../../static/sources/SVG/logo_mini.svg')
+    preview = models.ImageField(upload_to='notifications_preview', blank=True, null=True, verbose_name='Превью уведомления', default='main_page/logo_mini.svg')
     content = models.CharField(max_length=500, verbose_name='Содержание уведомления')
     hover_text = models.CharField(max_length=100, verbose_name='Подсказка при наведении на уведомление')
     url = models.CharField(max_length=500, blank=True, null=True, verbose_name='Ссылка')
@@ -188,7 +189,10 @@ class Notifications(models.Model):
 
     @property
     def get_preview(self):
-        preview = self.preview.url if not 'static/sources/SVG/logo_mini.svg' in self.preview.url else '../../static/sources/SVG/logo_mini.svg'
+        fs = FileSystemStorage()
+        preview = '../../media/main_page/logo_mini.svg'
+        if self.preview and not 'main_page/logo_mini.svg' in self.preview.name and fs.exists('../media/'+ self.preview.name):
+            preview = self.preview.url
         return preview
 
     @property

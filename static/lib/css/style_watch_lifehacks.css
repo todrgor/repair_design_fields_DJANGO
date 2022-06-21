@@ -29,7 +29,7 @@
   /* min-height: 400px; */
   /* height: 100%; */
   max-width: 100%;
-  margin: 0 auto;
+  margin: auto auto;
 }
 .pub_one.lifehack .media video.paused {
   filter: blur(5px);

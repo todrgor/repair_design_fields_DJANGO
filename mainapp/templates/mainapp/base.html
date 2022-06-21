@@ -109,7 +109,7 @@
                               {% for nn in user.noties_new %}
                                 <div class="notification_one noti_new">
                                   <div class="preview_and_icon">
-                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: 50px 50px; background-position: center;"></div>
+                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: cover; background-position: center;"></div>
                                     <div class="noti_one_icon" style="background: url({{ nn.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
                                   </div>
                                   <p class="content_noti" title="{{ nn.hover_text }}">{{ nn.content|safe }}</p>
@@ -128,7 +128,7 @@
                               {% for nn in user.noties_old %}
                                 <div class="notification_one noti_old">
                                   <div class="preview_and_icon">
-                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: 50px 50px; background-position: center;"></div>
+                                    <div class="noti_one_logo" style="background: url({{ nn.get_preview }}) no-repeat; background-size: cover; background-position: center;"></div>
                                     <div class="noti_one_icon" style="background: url({{ nn.icon.url }}) no-repeat; background-size: 30px 30px; background-position: center;"></div>
                                   </div>
                                   <p class="content_noti" title="{{ nn.hover_text }}">{{ nn.content|safe }}</p>

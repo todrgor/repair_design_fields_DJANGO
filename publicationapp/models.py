@@ -1,14 +1,14 @@
 from django.db import models
-# from authapp.models import User, ContactingSupport
-import authapp
-from repair_design_fields import settings
-from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
+from django.db.models import Sum
 # from django.db.models.functions import Lower
+from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
 import bleach
+# from authapp.models import User, ContactingSupport
+import authapp
+from repair_design_fields import settings
 
-from django.db.models import Sum
 
 class Publication(models.Model):
     title = models.CharField(max_length=135, verbose_name='Заголовок публикации')
