@@ -21,10 +21,10 @@ from publicationapp.models import Publication
 # NewUser : MOYproektTHEbest : watcher
 # 222 : 222 : admin
 # ksyu : 1212ks12 : Watcher
-# Gleb_Olivki : GlebKrasavchik99 : Watcher
 # Egor226 : Egor226 : author ????????????????
-# rakamakafo : rakamakafo : author
 # 18091 : 18091 : author
+# testUser3 : testUser3 : admin
+# Gleb_Olivki : GlebKrasavchik99 : Watcher
 
 class User(AbstractUser):
     photo = models.ImageField(upload_to='users_avatars', blank=True, null=True, default='users_avatars/no_avatar.png', verbose_name='Аватарка')

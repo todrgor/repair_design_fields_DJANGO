@@ -136,9 +136,10 @@ DATE_FORMAT = 'd E Y' #26 ноября 2020
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# STATICFILES_DIRS = (
-# 	os.path.join(BASE_DIR, 'static'),
-# )
+STATICFILES_DIRS = (
+	# os.path.join(BASE_DIR, 'static'),
+    STATIC_URL,
+)
 
 
 LOGIN_REDIRECT_URL = 'main'
