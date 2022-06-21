@@ -187,15 +187,18 @@ def CreateNewPub(request):
                 url_text = 'Посмотреть'
             ).receiver.add(pub_created.author)
 
-        if User.objects.filter(following_for__id=pub_created.author.id):
-            Notifications.objects.create(
+        receivers = User.objects.filter(following_for__id=pub_created.author.id)
+        if receivers:
+            noti = Notifications.objects.create(
                 type = ActionTypes.objects.get(id=action_type),
                 preview = pub_created.get_preview,
                 content = 'Пользователь «'+ pub_created.author.username +'» выпустил публикацию «' + pub_created.title +'»!',
                 hover_text = 'Скорее открывайте её!',
                 url = reverse('pub:one', args=(pub_created.id,)),
                 url_text = 'Посмотреть'
-            ).receiver.add(User.objects.filter(following_for__id=pub_created.author.id))
+            )
+            for receiver in receivers:
+                noti.receiver.add(receiver)
 
         JournalActions.objects.create(
             type = ActionTypes.objects.get(id=action_type),

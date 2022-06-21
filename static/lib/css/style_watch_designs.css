@@ -365,11 +365,11 @@ input::-webkit-inner-spin-button {
 .pub_one {
   display: grid;
   border-radius: 18px;
-  min-height: 460px;
   max-height: 480px;
   overflow: hidden;
   margin: 0 0 30px;
 }
+.pub_one.design {min-height: 460px;}
 
 .img_black_gradient {
   background: linear-gradient(

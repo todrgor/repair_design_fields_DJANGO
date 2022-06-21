@@ -149,8 +149,8 @@
                 {% if expert_info.address %}              <a href="https://yandex.ru/maps/?text={{ expert_info.address }}">   <p class="address">   <span class="icon"></span>  {{ expert_info.address }}              </p> </a> {% endif %}
                 {% if expert_info.other %}                                                                                    <p class="other">     <span class="icon"></span>  {{ expert_info.other }}                </p>      {% endif %}
 
-                {% if opened_user.phone_number is None and expert_info.site is None and expert_info.telegram is None and expert_info.whatsapp is None and expert_info.viber is None and expert_info.lol is None and expert_info.vk is None and expert_info.inst is None and expert_info.twitter is None and expert_info.ok is None and expert_info.address is None and expert_info.other %}
-                  <p class="other" style="opacity: 0.6;"><img src="/static/sources/SVG/other.svg">Нет ни одного контакта.</p>
+                {% if not expert_info.bisness_phone_number and not expert_info.site and not expert_info.telegram and not expert_info.whatsapp and not expert_info.viber and not expert_info.lol and not expert_info.vk and not expert_info.inst and not expert_info.twitter and not expert_info.ok and not expert_info.address and not expert_info.other %}
+                  <p class="other"><span class="icon"></span>Ни одного контакта.</p>
                 {% endif %}
               </div>
 
